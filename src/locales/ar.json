@@ -1,0 +1,166 @@
+{
+  "app": {
+    "name": "",
+    "tagline": "",
+    "taglineSub": ""
+  },
+  "onboarding": {
+    "slide1": {
+      "title": "",
+      "body": ""
+    },
+    "slide2": {
+      "title": "",
+      "body": ""
+    },
+    "slide3": {
+      "title": "",
+      "body": ""
+    },
+    "permissionButton": "",
+    "skipButton": "",
+    "continueButton": "",
+    "lastButton": "",
+    "preferences": {
+      "title": "",
+      "body": ""
+    }
+  },
+  "home": {
+    "nextQuote": "",
+    "prevQuote": "",
+    "favoriteAdd": "",
+    "favoriteRemove": "",
+    "shareQuote": "",
+    "swipeHint": "",
+    "patience": "",
+    "randomFromHistory": "",
+    "historyEmpty": ""
+  },
+  "quote": {
+    "authorPrefix": "",
+    "originSeparator": "",
+    "categories": {
+      "resilience": "",
+      "fire": "",
+      "discipline": "",
+      "regret": "",
+      "wisdom": "",
+      "identity": "",
+      "suffering": "",
+      "legacy": ""
+    },
+    "eras": {
+      "ancient": "",
+      "medieval": "",
+      "modern": "",
+      "contemporary": ""
+    }
+  },
+  "favorites": {
+    "screenTitle": "",
+    "emptyTitle": "",
+    "emptyBody": "",
+    "removeConfirm": "",
+    "removeYes": "",
+    "removeNo": ""
+  },
+  "settings": {
+    "screenTitle": "",
+    "sections": {
+      "notifications": "",
+      "schedule": "",
+      "appearance": "",
+      "about": "",
+      "preferences": ""
+    },
+    "notifications": {
+      "masterToggle": "",
+      "masterToggleOff": "",
+      "frequencyLabel": "",
+      "frequency": {
+        "3": "",
+        "5": "",
+        "7": "",
+        "10": ""
+      }
+    },
+    "schedule": {
+      "startTime": "",
+      "endTime": "",
+      "timeRangeLabel": "",
+      "weekendsToggle": "",
+      "timeRangeError": ""
+    },
+    "appearance": {
+      "themeLabel": "",
+      "themes": {
+        "dark": "",
+        "light": "",
+        "system": ""
+      },
+      "languageLabel": "",
+      "languageComingSoon": ""
+    },
+    "about": {
+      "version": "",
+      "rateApp": "",
+      "privacyPolicy": "",
+      "madeWith": ""
+    },
+    "preferences": {
+      "hint": ""
+    }
+  },
+  "notifications": {
+    "titles": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "permissionTitle": "",
+    "permissionBody": "",
+    "permissionGranted": "",
+    "permissionDenied": ""
+  },
+  "share": {
+    "quoteTemplate": "",
+    "shareTitle": ""
+  },
+  "widget": {
+    "defaultQuote": "",
+    "defaultAuthor": "",
+    "tapHint": ""
+  },
+  "errors": {
+    "noQuotes": "",
+    "generic": "",
+    "retry": ""
+  },
+  "common": {
+    "ok": "",
+    "cancel": "",
+    "save": "",
+    "close": "",
+    "back": "",
+    "yes": "",
+    "no": "",
+    "loading": "",
+    "comingSoon": ""
+  },
+  "themes": {
+    "motivation": "",
+    "discipline": "",
+    "resilience": "",
+    "focus": "",
+    "wisdom": "",
+    "peace": "",
+    "reckoning": "",
+    "legacy": ""
+  }
+}

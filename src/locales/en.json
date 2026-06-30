@@ -1,0 +1,166 @@
+{
+  "app": {
+    "name": "DriftStop",
+    "tagline": "Don't drift.",
+    "taglineSub": "Don't let your fire die."
+  },
+  "onboarding": {
+    "slide1": {
+      "title": "We'll nudge you through the day.",
+      "body": "The right words at the right moment — that's all."
+    },
+    "slide2": {
+      "title": "For everyone about to give up.",
+      "body": "These words aren't for you. They're for the you about to quit."
+    },
+    "slide3": {
+      "title": "We need notification access.",
+      "body": "We won't bother you. We'll just remind you."
+    },
+    "permissionButton": "Allow",
+    "skipButton": "Skip",
+    "continueButton": "Continue →",
+    "lastButton": "Start",
+    "preferences": {
+      "title": "What are you looking for?",
+      "body": "Pick more than one. We'll show quotes to match — change it anytime."
+    }
+  },
+  "home": {
+    "nextQuote": "Next",
+    "prevQuote": "Previous",
+    "favoriteAdd": "Add to favorites",
+    "favoriteRemove": "Remove from favorites",
+    "shareQuote": "Share",
+    "swipeHint": "Swipe or tap",
+    "patience": "The next one comes when it's time. Be patient.",
+    "randomFromHistory": "Random from history",
+    "historyEmpty": "No history yet."
+  },
+  "quote": {
+    "authorPrefix": "—",
+    "originSeparator": "·",
+    "categories": {
+      "resilience": "Resilience",
+      "fire": "Fire",
+      "discipline": "Discipline",
+      "regret": "Regret",
+      "wisdom": "Wisdom",
+      "identity": "Identity",
+      "suffering": "Suffering",
+      "legacy": "Legacy"
+    },
+    "eras": {
+      "ancient": "Ancient",
+      "medieval": "Medieval",
+      "modern": "Modern",
+      "contemporary": "Contemporary"
+    }
+  },
+  "favorites": {
+    "screenTitle": "My Favorites",
+    "emptyTitle": "No favorites yet.",
+    "emptyBody": "Save the words that hit. Keep them here.",
+    "removeConfirm": "Remove this quote from favorites?",
+    "removeYes": "Remove",
+    "removeNo": "Cancel"
+  },
+  "settings": {
+    "screenTitle": "Settings",
+    "sections": {
+      "notifications": "Notifications",
+      "schedule": "Schedule",
+      "appearance": "Appearance",
+      "about": "About",
+      "preferences": "Interests"
+    },
+    "notifications": {
+      "masterToggle": "Turn on notifications",
+      "masterToggleOff": "Notifications off",
+      "frequencyLabel": "Daily notification count",
+      "frequency": {
+        "3": "3 / day",
+        "5": "5 / day",
+        "7": "7 / day",
+        "10": "10 / day"
+      }
+    },
+    "schedule": {
+      "startTime": "Start time",
+      "endTime": "End time",
+      "timeRangeLabel": "Notification window",
+      "weekendsToggle": "Turn off weekend notifications",
+      "timeRangeError": "End time must be at least 2 hours after the start."
+    },
+    "appearance": {
+      "themeLabel": "Theme",
+      "themes": {
+        "dark": "Dark",
+        "light": "Light",
+        "system": "System"
+      },
+      "languageLabel": "Language",
+      "languageComingSoon": "More languages coming soon"
+    },
+    "about": {
+      "version": "Version",
+      "rateApp": "Rate the app",
+      "privacyPolicy": "Privacy policy",
+      "madeWith": "Made with patience and ink."
+    },
+    "preferences": {
+      "hint": "If none are selected, all are shown."
+    }
+  },
+  "notifications": {
+    "titles": [
+      "🔥 Don't stop.",
+      "⚡ What are you doing right now?",
+      "💀 No regrets.",
+      "✦ Remember.",
+      "🖊 Left you a note.",
+      "→ Come back.",
+      "Don't let your fire die.",
+      "You're drifting."
+    ],
+    "permissionTitle": "Notification Access",
+    "permissionBody": "We need permission to reach you through the day.",
+    "permissionGranted": "Thank you. We're with you.",
+    "permissionDenied": "You can turn it on from settings anytime."
+  },
+  "share": {
+    "quoteTemplate": "{{quote}}\n\n— {{author}}\n\nvia DriftStop",
+    "shareTitle": "Share this quote"
+  },
+  "widget": {
+    "defaultQuote": "What are you doing right now?",
+    "defaultAuthor": "DriftStop",
+    "tapHint": "Open"
+  },
+  "errors": {
+    "noQuotes": "No quotes found.",
+    "generic": "Something went wrong.",
+    "retry": "Try again"
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "save": "Save",
+    "close": "Close",
+    "back": "Back",
+    "yes": "Yes",
+    "no": "No",
+    "loading": "Loading...",
+    "comingSoon": "Coming soon"
+  },
+  "themes": {
+    "motivation": "Motivation",
+    "discipline": "Discipline",
+    "resilience": "Resilience",
+    "focus": "Focus",
+    "wisdom": "Wisdom",
+    "peace": "Peace",
+    "reckoning": "Reckoning",
+    "legacy": "Legacy"
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "app": {
+    "name": "DriftStop",
+    "tagline": "Non andare alla deriva.",
+    "taglineSub": "Non spegnere il tuo fuoco."
+  },
+  "onboarding": {
+    "slide1": {
+      "title": "Ti scuoteremo durante la giornata.",
+      "body": "Nei momenti che contano, al momento giusto, una frase. Tutto qui."
+    },
+    "slide2": {
+      "title": "Per chi sta per mollare.",
+      "body": "Queste frasi non sono per te. Sono per il te che sta per arrendersi."
+    },
+    "slide3": {
+      "title": "Ci serve il permesso per le notifiche.",
+      "body": "Non ti disturberemo. Ti ricorderemo soltanto."
+    },
+    "permissionButton": "Consenti",
+    "skipButton": "Salta",
+    "continueButton": "Avanti →",
+    "lastButton": "Inizia",
+    "preferences": {
+      "title": "Cosa cerchi?",
+      "body": "Scegline più di uno. Mostreremo frasi adatte — modificabile quando vuoi."
+    }
+  },
+  "home": {
+    "nextQuote": "Successiva",
+    "prevQuote": "Precedente",
+    "favoriteAdd": "Aggiungi ai preferiti",
+    "favoriteRemove": "Rimuovi dai preferiti",
+    "shareQuote": "Condividi",
+    "swipeHint": "Scorri o tocca",
+    "patience": "La prossima arriva quando è il momento. Abbi pazienza.",
+    "randomFromHistory": "Casuale dalla cronologia",
+    "historyEmpty": "Nessuna cronologia."
+  },
+  "quote": {
+    "authorPrefix": "—",
+    "originSeparator": "·",
+    "categories": {
+      "resilience": "Resilienza",
+      "fire": "Fuoco",
+      "discipline": "Disciplina",
+      "regret": "Rimpianto",
+      "wisdom": "Saggezza",
+      "identity": "Identità",
+      "suffering": "Dolore",
+      "legacy": "Eredità"
+    },
+    "eras": {
+      "ancient": "Antica",
+      "medieval": "Medievale",
+      "modern": "Moderna",
+      "contemporary": "Contemporanea"
+    }
+  },
+  "favorites": {
+    "screenTitle": "I miei preferiti",
+    "emptyTitle": "Ancora nessun preferito.",
+    "emptyBody": "Salva le frasi che ti colpiscono, restano qui.",
+    "removeConfirm": "Vuoi rimuovere questa frase dai preferiti?",
+    "removeYes": "Rimuovi",
+    "removeNo": "Annulla"
+  },
+  "settings": {
+    "screenTitle": "Impostazioni",
+    "sections": {
+      "notifications": "Notifiche",
+      "schedule": "Orari",
+      "appearance": "Aspetto",
+      "about": "Info",
+      "preferences": "Interessi"
+    },
+    "notifications": {
+      "masterToggle": "Attiva le notifiche",
+      "masterToggleOff": "Notifiche disattivate",
+      "frequencyLabel": "Notifiche al giorno",
+      "frequency": {
+        "3": "3 / giorno",
+        "5": "5 / giorno",
+        "7": "7 / giorno",
+        "10": "10 / giorno"
+      }
+    },
+    "schedule": {
+      "startTime": "Ora di inizio",
+      "endTime": "Ora di fine",
+      "timeRangeLabel": "Intervallo notifiche",
+      "weekendsToggle": "Disattiva le notifiche nel weekend",
+      "timeRangeError": "L'ora di fine deve essere almeno 2 ore dopo l'inizio."
+    },
+    "appearance": {
+      "themeLabel": "Tema",
+      "themes": {
+        "dark": "Scuro",
+        "light": "Chiaro",
+        "system": "Di sistema"
+      },
+      "languageLabel": "Lingua",
+      "languageComingSoon": "Presto altre lingue"
+    },
+    "about": {
+      "version": "Versione",
+      "rateApp": "Valuta l'app",
+      "privacyPolicy": "Informativa sulla privacy",
+      "madeWith": "Fatto con pazienza e inchiostro."
+    },
+    "preferences": {
+      "hint": "Se non selezioni nulla, vengono mostrate tutte."
+    }
+  },
+  "notifications": {
+    "titles": [
+      "🔥 Non fermarti.",
+      "⚡ Cosa stai facendo ora?",
+      "💀 Niente rimpianti.",
+      "✦ Ricorda.",
+      "🖊 Ti ho lasciato una nota.",
+      "→ Torna indietro.",
+      "Non spegnere il tuo fuoco.",
+      "Stai andando alla deriva."
+    ],
+    "permissionTitle": "Permesso notifiche",
+    "permissionBody": "Ci serve il permesso per scuoterti durante la giornata.",
+    "permissionGranted": "Grazie. Siamo con te.",
+    "permissionDenied": "Puoi attivarle quando vuoi dalle impostazioni."
+  },
+  "share": {
+    "quoteTemplate": "{{quote}}\n\n— {{author}}\n\ncon DriftStop",
+    "shareTitle": "Condividi questa frase"
+  },
+  "widget": {
+    "defaultQuote": "Cosa stai facendo ora?",
+    "defaultAuthor": "DriftStop",
+    "tapHint": "Apri"
+  },
+  "errors": {
+    "noQuotes": "Nessuna frase trovata.",
+    "generic": "Qualcosa è andato storto.",
+    "retry": "Riprova"
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Annulla",
+    "save": "Salva",
+    "close": "Chiudi",
+    "back": "Indietro",
+    "yes": "Sì",
+    "no": "No",
+    "loading": "Caricamento...",
+    "comingSoon": "Presto"
+  },
+  "themes": {
+    "motivation": "Motivazione",
+    "discipline": "Disciplina",
+    "resilience": "Resilienza",
+    "focus": "Concentrazione",
+    "wisdom": "Saggezza",
+    "peace": "Pace",
+    "reckoning": "Resa dei conti",
+    "legacy": "Eredità"
+  }
+}

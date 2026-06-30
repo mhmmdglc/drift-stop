@@ -1,0 +1,166 @@
+{
+  "app": {
+    "name": "DriftStop",
+    "tagline": "Sürüklenme.",
+    "taglineSub": "Ateşini söndürme."
+  },
+  "onboarding": {
+    "slide1": {
+      "title": "Gün içinde seni uyaracağız.",
+      "body": "Önemli anlarda, doğru zamanda bir söz — hepsi bu."
+    },
+    "slide2": {
+      "title": "Vazgeçmek üzere olan herkese.",
+      "body": "Bu sözler senin için değil. Bırakmak üzere olan sen için."
+    },
+    "slide3": {
+      "title": "Bildirim iznine ihtiyacımız var.",
+      "body": "Seni rahatsız etmeyeceğiz. Sadece hatırlatacağız."
+    },
+    "permissionButton": "İzin Ver",
+    "skipButton": "Atla",
+    "continueButton": "Devam →",
+    "lastButton": "Başla",
+    "preferences": {
+      "title": "Ne arıyorsun?",
+      "body": "Birden fazla seç. Sözleri buna göre göstereceğiz — istediğin zaman değiştir."
+    }
+  },
+  "home": {
+    "nextQuote": "Sonraki",
+    "prevQuote": "Önceki",
+    "favoriteAdd": "Favorilere ekle",
+    "favoriteRemove": "Favorilerden çıkar",
+    "shareQuote": "Paylaş",
+    "swipeHint": "Kaydır ya da dokun",
+    "patience": "Yenisi vakti gelince gelir. Sabret.",
+    "randomFromHistory": "Geçmişten rastgele",
+    "historyEmpty": "Henüz geçmişin yok."
+  },
+  "quote": {
+    "authorPrefix": "—",
+    "originSeparator": "·",
+    "categories": {
+      "resilience": "Dayanıklılık",
+      "fire": "Ateş",
+      "discipline": "Disiplin",
+      "regret": "Pişmanlık",
+      "wisdom": "Hikmet",
+      "identity": "Kimlik",
+      "suffering": "Acı",
+      "legacy": "Miras"
+    },
+    "eras": {
+      "ancient": "Antik",
+      "medieval": "Orta Çağ",
+      "modern": "Modern",
+      "contemporary": "Çağdaş"
+    }
+  },
+  "favorites": {
+    "screenTitle": "Favorilerim",
+    "emptyTitle": "Henüz hiç favori yok.",
+    "emptyBody": "Beğendiğin sözleri kaydet, burada dursunlar.",
+    "removeConfirm": "Bu sözü favorilerden çıkarmak istiyor musun?",
+    "removeYes": "Çıkar",
+    "removeNo": "Vazgeç"
+  },
+  "settings": {
+    "screenTitle": "Ayarlar",
+    "sections": {
+      "notifications": "Bildirimler",
+      "schedule": "Zamanlama",
+      "appearance": "Görünüm",
+      "about": "Hakkında",
+      "preferences": "İlgi Alanları"
+    },
+    "notifications": {
+      "masterToggle": "Bildirimleri aç",
+      "masterToggleOff": "Bildirimler kapalı",
+      "frequencyLabel": "Günlük bildirim sayısı",
+      "frequency": {
+        "3": "3 / gün",
+        "5": "5 / gün",
+        "7": "7 / gün",
+        "10": "10 / gün"
+      }
+    },
+    "schedule": {
+      "startTime": "Başlangıç saati",
+      "endTime": "Bitiş saati",
+      "timeRangeLabel": "Bildirim aralığı",
+      "weekendsToggle": "Hafta sonu bildirimleri kapat",
+      "timeRangeError": "Bitiş saati başlangıçtan en az 2 saat sonra olmalı."
+    },
+    "appearance": {
+      "themeLabel": "Tema",
+      "themes": {
+        "dark": "Karanlık",
+        "light": "Aydınlık",
+        "system": "Sisteme göre"
+      },
+      "languageLabel": "Dil",
+      "languageComingSoon": "Yakında daha fazla dil"
+    },
+    "about": {
+      "version": "Sürüm",
+      "rateApp": "Uygulamayı değerlendir",
+      "privacyPolicy": "Gizlilik politikası",
+      "madeWith": "Sabırla ve mürekkeple yapıldı."
+    },
+    "preferences": {
+      "hint": "Hiçbiri seçili değilse hepsi gösterilir."
+    }
+  },
+  "notifications": {
+    "titles": [
+      "🔥 Durma.",
+      "⚡ Şuan ne yapıyorsun?",
+      "💀 Pişman olma.",
+      "✦ Hatırla.",
+      "🖊 Bir not düştüm.",
+      "→ Geri dön.",
+      "Ateşini söndürme.",
+      "Sürükleniyorsun."
+    ],
+    "permissionTitle": "Bildirim İzni",
+    "permissionBody": "Gün içinde seni uyarmamız için izne ihtiyacımız var.",
+    "permissionGranted": "Teşekkürler. Seninleyiz.",
+    "permissionDenied": "Dilediğin zaman ayarlardan açabilirsin."
+  },
+  "share": {
+    "quoteTemplate": "{{quote}}\n\n— {{author}}\n\nDriftStop ile",
+    "shareTitle": "Bu sözü paylaş"
+  },
+  "widget": {
+    "defaultQuote": "Şimdi ne yapıyorsun?",
+    "defaultAuthor": "DriftStop",
+    "tapHint": "Aç"
+  },
+  "errors": {
+    "noQuotes": "Söz bulunamadı.",
+    "generic": "Bir şeyler ters gitti.",
+    "retry": "Tekrar dene"
+  },
+  "common": {
+    "ok": "Tamam",
+    "cancel": "İptal",
+    "save": "Kaydet",
+    "close": "Kapat",
+    "back": "Geri",
+    "yes": "Evet",
+    "no": "Hayır",
+    "loading": "Yükleniyor...",
+    "comingSoon": "Yakında"
+  },
+  "themes": {
+    "motivation": "Motivasyon",
+    "discipline": "Disiplin",
+    "resilience": "Dayanıklılık",
+    "focus": "Odak",
+    "wisdom": "Bilgelik",
+    "peace": "Huzur",
+    "reckoning": "Yüzleşme",
+    "legacy": "Miras"
+  }
+}

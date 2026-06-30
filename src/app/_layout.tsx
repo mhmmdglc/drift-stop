@@ -1,15 +1,107 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
-import { useColorScheme } from 'react-native';
+import { ArchitectsDaughter_400Regular } from '@expo-google-fonts/architects-daughter';
+import { Caveat_400Regular, Caveat_700Bold } from '@expo-google-fonts/caveat';
+import { Kalam_400Regular, Kalam_700Bold } from '@expo-google-fonts/kalam';
+import * as Notifications from 'expo-notifications';
+import { useFonts } from 'expo-font';
+import { Stack, useRouter } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect, useRef, useState } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
+import { SplashOverlay } from '@/components/SplashOverlay';
+import { HistoryProvider, useHistory } from '@/hooks/useHistory';
+import { useNotificationObserver } from '@/hooks/useNotifications';
+import { SettingsProvider, useSettings } from '@/hooks/useSettings';
+import { ThemeProvider, useTheme } from '@/hooks/use-theme';
+import { initAds } from '@/utils/ads';
+import { nativeFeaturesAvailable } from '@/utils/runtime';
+import { ensurePermissions, rescheduleIfNeeded, setupAndroidChannel } from '@/utils/scheduler';
+import { getJSON, StorageKeys } from '@/utils/storage';
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+SplashScreen.preventAutoHideAsync();
+
+function AppShell() {
+  useNotificationObserver();
+  const { settings, loaded: settingsLoaded } = useSettings();
+  const { themeName } = useTheme();
+  const { record } = useHistory();
+  const router = useRouter();
+  const [onboarded, setOnboarded] = useState<boolean | null>(null);
+  const [splashDone, setSplashDone] = useState(false);
+  const bootRan = useRef(false);
+
+  useEffect(() => {
+    void setupAndroidChannel();
+    initAds();
+    getJSON<boolean>(StorageKeys.onboardingComplete, false).then(setOnboarded);
+  }, []);
+
+  // Ön plandayken gelen bildirimin sözünü geçmişe ekle
+  useEffect(() => {
+    if (!nativeFeaturesAvailable) return;
+    const sub = Notifications.addNotificationReceivedListener((n) => {
+      const id = (n.request.content.data as { quoteId?: number } | undefined)?.quoteId;
+      if (typeof id === 'number') record(id);
+    });
+    return () => sub.remove();
+  }, [record]);
+
+  useEffect(() => {
+    if (bootRan.current) return;
+    if (!splashDone || !settingsLoaded || onboarded === null) return;
+    bootRan.current = true;
+    if (!onboarded) {
+      router.replace('/onboarding');
+    } else {
+      void ensurePermissions().then(() => rescheduleIfNeeded(settings));
+    }
+  }, [splashDone, settingsLoaded, onboarded, router, settings]);
+
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-    </ThemeProvider>
+    <>
+      <StatusBar style={themeName === 'dark' ? 'light' : 'dark'} />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="onboarding" />
+        <Stack.Screen name="quote/[id]" />
+      </Stack>
+      {!splashDone && <SplashOverlay onDone={() => setSplashDone(true)} />}
+    </>
+  );
+}
+
+export default function RootLayout() {
+  const [loaded] = useFonts({
+    Caveat_400Regular,
+    Caveat_700Bold,
+    Kalam_400Regular,
+    Kalam_700Bold,
+    ArchitectsDaughter_400Regular,
+  });
+
+  useEffect(() => {
+    if (loaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded]);
+
+  if (!loaded) {
+    return null;
+  }
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <SettingsProvider>
+          <ThemeProvider>
+            <HistoryProvider>
+              <AppShell />
+            </HistoryProvider>
+          </ThemeProvider>
+        </SettingsProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }

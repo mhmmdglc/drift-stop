@@ -1,0 +1,857 @@
+[
+  {
+    "text": "He who has a why to live can bear almost any how.",
+    "textTr": "Yaşamak için bir nedeni olan, neredeyse her nasıla katlanabilir.",
+    "author": "Friedrich Nietzsche",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "suffering",
+    "era": "modern"
+  },
+  {
+    "text": "Suffering ceases to be suffering at the moment it finds a meaning.",
+    "textTr": "Acı, bir anlam bulduğu anda acı olmaktan çıkar.",
+    "author": "Viktor Frankl",
+    "origin": "Avusturya",
+    "originEmoji": "🇦🇹",
+    "category": "suffering",
+    "era": "modern"
+  },
+  {
+    "text": "From suffering I have learned this: that whoever is sore wounded with love will never be made whole again.",
+    "textTr": "Acıdan şunu öğrendim: aşkla derinden yaralanan, bir daha asla tam olarak iyileşemez.",
+    "author": "Mechthild von Magdeburg",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "suffering",
+    "era": "medieval"
+  },
+  {
+    "text": "The cure for pain is in the pain.",
+    "textTr": "Acının ilacı, acının kendisindedir.",
+    "author": "Mevlana Celaleddin Rumi",
+    "origin": "Anadolu",
+    "originEmoji": "🌹",
+    "category": "suffering",
+    "era": "medieval"
+  },
+  {
+    "text": "Difficulties strengthen the mind, as labor does the body.",
+    "textTr": "Zorluklar zihni güçlendirir, tıpkı emeğin bedeni güçlendirdiği gibi.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "suffering",
+    "era": "ancient"
+  },
+  {
+    "text": "A gem cannot be polished without friction, nor a person perfected without trials.",
+    "textTr": "Mücevher sürtünmesiz parlatılamaz, insan da çilesiz olgunlaşamaz.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "suffering",
+    "era": "ancient"
+  },
+  {
+    "text": "We must embrace pain and burn it as fuel for our journey.",
+    "textTr": "Acıyı kucaklamalı ve onu yolculuğumuz için yakıt olarak yakmalıyız.",
+    "author": "Kenji Miyazawa",
+    "origin": "Japonya",
+    "originEmoji": "🇯🇵",
+    "category": "suffering",
+    "era": "modern"
+  },
+  {
+    "text": "It is not the load that breaks you down, it is the way you carry it.",
+    "textTr": "Seni çökerten yük değildir, onu taşıyış biçimindir.",
+    "author": "Lou Holtz",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "suffering",
+    "era": "contemporary"
+  },
+  {
+    "text": "Pain is inevitable. Suffering is optional.",
+    "textTr": "Acı kaçınılmazdır. Çile ise tercihtir.",
+    "author": "Haruki Murakami",
+    "origin": "Japonya",
+    "originEmoji": "🇯🇵",
+    "category": "suffering",
+    "era": "contemporary"
+  },
+  {
+    "text": "He who fears he shall suffer, already suffers what he fears.",
+    "textTr": "Acı çekmekten korkan, korktuğu acıyı şimdiden çeker.",
+    "author": "Michel de Montaigne",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "suffering",
+    "era": "medieval"
+  },
+  {
+    "text": "What seems bitter today may yet feed you tomorrow.",
+    "textTr": "Bugün acı gelen, yarın seni doyurabilir.",
+    "author": "Arap Atasözü",
+    "origin": "Arabistan",
+    "originEmoji": "🐪",
+    "category": "suffering",
+    "era": "medieval"
+  },
+  {
+    "text": "Through hardship to the stars.",
+    "textTr": "Zorluklardan geçerek yıldızlara.",
+    "author": "Latin Atasözü",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "suffering",
+    "era": "ancient"
+  },
+  {
+    "text": "Call it pain if you wish, but it is only your old self dying.",
+    "textTr": "İstersen acı de, ama bu sadece eski benliğinin ölmesidir.",
+    "author": "Epiktetos",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "suffering",
+    "era": "ancient"
+  },
+  {
+    "text": "No mud, no lotus.",
+    "textTr": "Çamur olmadan, nilüfer olmaz.",
+    "author": "Thich Nhat Hanh",
+    "origin": "Vietnam",
+    "originEmoji": "🇻🇳",
+    "category": "suffering",
+    "era": "contemporary"
+  },
+  {
+    "text": "The blade is sharpened on the very stone that grinds it.",
+    "textTr": "Bıçak, onu aşındıran taşın üstünde keskinleşir.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "suffering",
+    "era": "ancient"
+  },
+  {
+    "text": "The greatest grief is to remember the days of contentment in misery.",
+    "textTr": "En büyük keder, sefalet içinde mutlu günleri hatırlamaktır.",
+    "author": "Dante Alighieri",
+    "origin": "İtalya",
+    "originEmoji": "🇮🇹",
+    "category": "suffering",
+    "era": "medieval"
+  },
+  {
+    "text": "He who has not tasted bitterness does not know what is sweet.",
+    "textTr": "Acıyı tatmamış olan, tatlının ne olduğunu bilmez.",
+    "author": "Alman Atasözü",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "suffering",
+    "era": "medieval"
+  },
+  {
+    "text": "The anvil fears no blow; learn to be struck and stay whole.",
+    "textTr": "Örs darbeden korkmaz; vurulmayı ve sağlam kalmayı öğren.",
+    "author": "Fars Atasözü",
+    "origin": "İran",
+    "originEmoji": "🇮🇷",
+    "category": "suffering",
+    "era": "medieval"
+  },
+  {
+    "text": "Adversity is the diamond dust Heaven polishes its jewels with.",
+    "textTr": "Sıkıntı, Cennetin mücevherlerini cilaladığı elmas tozudur.",
+    "author": "Thomas Carlyle",
+    "origin": "İskoçya",
+    "originEmoji": "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+    "category": "suffering",
+    "era": "modern"
+  },
+  {
+    "text": "When the roots are deep, there is no reason to fear the wind.",
+    "textTr": "Kökler derinse, rüzgârdan korkmaya gerek yoktur.",
+    "author": "Afrika Atasözü",
+    "origin": "Afrika",
+    "originEmoji": "🌍",
+    "category": "suffering",
+    "era": "ancient"
+  },
+  {
+    "text": "Pain plants the flag of truth in the rebel territory of the heart.",
+    "textTr": "Acı, doğruluk bayrağını kalbin isyankâr topraklarına diker.",
+    "author": "C.S. Lewis",
+    "origin": "İngiltere",
+    "originEmoji": "🇬🇧",
+    "category": "suffering",
+    "era": "modern"
+  },
+  {
+    "text": "What does not kill the wolf only teaches him to hunt at night.",
+    "textTr": "Kurdu öldürmeyen şey, ona yalnızca geceleri avlanmayı öğretir.",
+    "author": "Rus Atasözü",
+    "origin": "Rusya",
+    "originEmoji": "🇷🇺",
+    "category": "suffering",
+    "era": "ancient"
+  },
+  {
+    "text": "The salt of the sea is the tears of the men who would not quit.",
+    "textTr": "Denizin tuzu, pes etmeyen adamların gözyaşlarıdır.",
+    "author": "Fars Atasözü",
+    "origin": "İran",
+    "originEmoji": "🇮🇷",
+    "category": "suffering",
+    "era": "medieval"
+  },
+  {
+    "text": "Of all the words of tongue or pen, the saddest are these: it might have been.",
+    "textTr": "Dilden ve kalemden çıkan tüm sözler içinde en hüzünlüsü şudur: olabilirdi.",
+    "author": "John Greenleaf Whittier",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "regret",
+    "era": "modern"
+  },
+  {
+    "text": "Twenty years from now you will be more disappointed by the things you did not do than by the ones you did.",
+    "textTr": "Yirmi yıl sonra, yaptıklarından çok yapmadıkların için hayıflanacaksın.",
+    "author": "Mark Twain",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "regret",
+    "era": "modern"
+  },
+  {
+    "text": "The saddest summary of a life contains three descriptions: could have, might have, and should have.",
+    "textTr": "Bir hayatın en hüzünlü özeti üç ifade içerir: olabilirdi, yapabilirdi ve yapmalıydı.",
+    "author": "Louis E. Boone",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "regret",
+    "era": "modern"
+  },
+  {
+    "text": "Regret for wasted time is more wasted time.",
+    "textTr": "Boşa harcanan zamana üzülmek, daha çok zaman israfıdır.",
+    "author": "Mason Cooley",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "regret",
+    "era": "modern"
+  },
+  {
+    "text": "You will never find time for anything. If you want time, you must make it.",
+    "textTr": "Hiçbir şey için zaman bulamazsın. Zaman istiyorsan, onu yaratmalısın.",
+    "author": "Charles Buxton",
+    "origin": "İngiltere",
+    "originEmoji": "🇬🇧",
+    "category": "regret",
+    "era": "modern"
+  },
+  {
+    "text": "How we spend our days is, of course, how we spend our lives.",
+    "textTr": "Günlerimizi nasıl geçiriyorsak, hayatımızı da öyle geçiriyoruz.",
+    "author": "Annie Dillard",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "regret",
+    "era": "contemporary"
+  },
+  {
+    "text": "The trouble is, you think you have time.",
+    "textTr": "Sorun şu ki, zamanın olduğunu sanıyorsun.",
+    "author": "Buddha",
+    "origin": "Hindistan",
+    "originEmoji": "🇮🇳",
+    "category": "regret",
+    "era": "ancient"
+  },
+  {
+    "text": "I wasted time, and now doth time waste me.",
+    "textTr": "Zamanı boşa harcadım, şimdi zaman beni harcıyor.",
+    "author": "William Shakespeare",
+    "origin": "İngiltere",
+    "originEmoji": "🇬🇧",
+    "category": "regret",
+    "era": "medieval"
+  },
+  {
+    "text": "Yesterday is gone. Tomorrow has not yet come. We have only today; let us begin.",
+    "textTr": "Dün gitti. Yarın henüz gelmedi. Elimizde sadece bugün var; başlayalım.",
+    "author": "Rahibe Teresa",
+    "origin": "Arnavutluk",
+    "originEmoji": "🇦🇱",
+    "category": "regret",
+    "era": "modern"
+  },
+  {
+    "text": "He who postpones the hour of living rightly is like the rustic who waits for the river to run dry.",
+    "textTr": "Doğru yaşamayı erteleyen, nehir kuruyacak diye bekleyen köylü gibidir.",
+    "author": "Horatius",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "regret",
+    "era": "ancient"
+  },
+  {
+    "text": "Nothing is more expensive than a missed opportunity.",
+    "textTr": "Kaçırılmış bir fırsattan daha pahalı hiçbir şey yoktur.",
+    "author": "Hugh Allen",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "regret",
+    "era": "modern"
+  },
+  {
+    "text": "Procrastination is the thief of time.",
+    "textTr": "Erteleme, zamanın hırsızıdır.",
+    "author": "Edward Young",
+    "origin": "İngiltere",
+    "originEmoji": "🇬🇧",
+    "category": "regret",
+    "era": "medieval"
+  },
+  {
+    "text": "One day you will wake up and there won't be any more time to do the things you've always wanted.",
+    "textTr": "Bir gün uyanacaksın ve hep yapmak istediğin şeyler için artık zaman kalmamış olacak.",
+    "author": "Paulo Coelho",
+    "origin": "Brezilya",
+    "originEmoji": "🇧🇷",
+    "category": "regret",
+    "era": "contemporary"
+  },
+  {
+    "text": "Do not wait to strike till the iron is hot; make it hot by striking.",
+    "textTr": "Vurmak için demirin kızmasını bekleme; vurarak kızdır.",
+    "author": "William Butler Yeats",
+    "origin": "İrlanda",
+    "originEmoji": "🇮🇪",
+    "category": "regret",
+    "era": "modern"
+  },
+  {
+    "text": "Defer not till tomorrow to be wise; tomorrow's sun to thee may never rise.",
+    "textTr": "Bilge olmayı yarına bırakma; yarının güneşi senin için belki hiç doğmaz.",
+    "author": "William Congreve",
+    "origin": "İngiltere",
+    "originEmoji": "🇬🇧",
+    "category": "regret",
+    "era": "medieval"
+  },
+  {
+    "text": "What you do not change, you choose.",
+    "textTr": "Değiştirmediğin şeyi seçmiş olursun.",
+    "author": "Sandra Cisneros",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "regret",
+    "era": "contemporary"
+  },
+  {
+    "text": "Time is the coin of your life; only you can determine how it will be spent.",
+    "textTr": "Zaman hayatının parasıdır; nasıl harcanacağına yalnızca sen karar verirsin.",
+    "author": "Carl Sandburg",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "regret",
+    "era": "modern"
+  },
+  {
+    "text": "A year from now you may wish you had started today.",
+    "textTr": "Bir yıl sonra, keşke bugün başlasaydım diyebilirsin.",
+    "author": "Karen Lamb",
+    "origin": "Avustralya",
+    "originEmoji": "🇦🇺",
+    "category": "regret",
+    "era": "contemporary"
+  },
+  {
+    "text": "Regret is an appalling waste of energy; you cannot build on it.",
+    "textTr": "Pişmanlık, korkunç bir enerji israfıdır; üzerine bir şey inşa edemezsin.",
+    "author": "Katherine Mansfield",
+    "origin": "Yeni Zelanda",
+    "originEmoji": "🇳🇿",
+    "category": "regret",
+    "era": "modern"
+  },
+  {
+    "text": "Someday is not a day of the week.",
+    "textTr": "Bir gün, haftanın günlerinden biri değildir.",
+    "author": "Janet Dailey",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "regret",
+    "era": "contemporary"
+  },
+  {
+    "text": "The clock is running. Make the most of today.",
+    "textTr": "Saat işliyor. Bugünü en iyi şekilde değerlendir.",
+    "author": "H. Jackson Brown Jr.",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "regret",
+    "era": "contemporary"
+  },
+  {
+    "text": "While we are postponing, life speeds by.",
+    "textTr": "Biz erteledikçe, hayat hızla akıp gidiyor.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "regret",
+    "era": "ancient"
+  },
+  {
+    "text": "You may delay, but time will not.",
+    "textTr": "Sen erteleyebilirsin ama zaman ertelemez.",
+    "author": "Benjamin Franklin",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "regret",
+    "era": "modern"
+  },
+  {
+    "text": "The best time to plant a tree was twenty years ago; the second best time is now.",
+    "textTr": "Ağaç dikmenin en iyi zamanı yirmi yıl önceydi; ikinci en iyi zamanı şimdi.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "regret",
+    "era": "ancient"
+  },
+  {
+    "text": "Carve your name on hearts, not tombstones. A legacy is etched into the minds of others.",
+    "textTr": "Adını mezar taşlarına değil, kalplere kazı. Miras, başkalarının zihnine işlenir.",
+    "author": "Shannon L. Alder",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "legacy",
+    "era": "contemporary"
+  },
+  {
+    "text": "The life of the dead is placed in the memory of the living.",
+    "textTr": "Ölülerin hayatı, yaşayanların hafızasına yerleştirilmiştir.",
+    "author": "Marcus Tullius Cicero",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "legacy",
+    "era": "ancient"
+  },
+  {
+    "text": "The great use of a life is to spend it for something that outlasts it.",
+    "textTr": "Bir hayatın en büyük yararı, onu kendinden daha uzun yaşayacak bir şeye adamaktır.",
+    "author": "William James",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "legacy",
+    "era": "modern"
+  },
+  {
+    "text": "What we have done for ourselves alone dies with us; what we have done for others remains and is immortal.",
+    "textTr": "Yalnızca kendimiz için yaptıklarımız bizimle ölür; başkaları için yaptıklarımız kalır ve ölümsüzdür.",
+    "author": "Albert Pike",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "legacy",
+    "era": "modern"
+  },
+  {
+    "text": "Do not go where the path may lead; go instead where there is no path and leave a trail.",
+    "textTr": "Yolun götürdüğü yere gitme; yol olmayan yere git ve ardında bir iz bırak.",
+    "author": "Ralph Waldo Emerson",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "legacy",
+    "era": "modern"
+  },
+  {
+    "text": "The purpose of life is to be useful, to have it make some difference that you have lived.",
+    "textTr": "Hayatın amacı yararlı olmaktır; yaşamış olmanın bir fark yaratmasıdır.",
+    "author": "Ralph Waldo Emerson",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "legacy",
+    "era": "modern"
+  },
+  {
+    "text": "To live in hearts we leave behind is not to die.",
+    "textTr": "Geride bıraktığımız kalplerde yaşamak, ölmek değildir.",
+    "author": "Thomas Campbell",
+    "origin": "İskoçya",
+    "originEmoji": "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+    "category": "legacy",
+    "era": "modern"
+  },
+  {
+    "text": "What you leave behind is not what is engraved in stone, but what is woven into the lives of others.",
+    "textTr": "Geride bıraktığın, taşa kazınan değil, başkalarının hayatlarına işlenen şeydir.",
+    "author": "Perikles",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "legacy",
+    "era": "ancient"
+  },
+  {
+    "text": "He who plants a tree plants a hope.",
+    "textTr": "Ağaç diken, bir umut diker.",
+    "author": "Lucy Larcom",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "legacy",
+    "era": "modern"
+  },
+  {
+    "text": "We do not inherit the earth from our ancestors; we borrow it from our children.",
+    "textTr": "Toprağı atalarımızdan miras almayız; çocuklarımızdan ödünç alırız.",
+    "author": "Kızılderili Atasözü",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🦅",
+    "category": "legacy",
+    "era": "ancient"
+  },
+  {
+    "text": "A name once kindled by good deeds burns long after the hand that lit it is dust.",
+    "textTr": "İyi işlerle tutuşmuş bir isim, onu yakan el toprak olduktan çok sonra da yanar.",
+    "author": "Fars Atasözü",
+    "origin": "İran",
+    "originEmoji": "🇮🇷",
+    "category": "legacy",
+    "era": "medieval"
+  },
+  {
+    "text": "Build your reputation by helping others build theirs.",
+    "textTr": "İtibarını, başkalarının itibarını inşa etmelerine yardım ederek inşa et.",
+    "author": "Anthony J. D'Angelo",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "legacy",
+    "era": "contemporary"
+  },
+  {
+    "text": "The dead are not under the earth; they are in the fire that dies down, in the grass that weeps.",
+    "textTr": "Ölüler toprağın altında değildir; sönen ateşte, ağlayan ottadır.",
+    "author": "Birago Diop",
+    "origin": "Senegal",
+    "originEmoji": "🇸🇳",
+    "category": "legacy",
+    "era": "modern"
+  },
+  {
+    "text": "Each man's life touches so many other lives, and when he isn't around he leaves an awful hole.",
+    "textTr": "Her insanın hayatı pek çok başka hayata dokunur ve o yokken büyük bir boşluk bırakır.",
+    "author": "Frank Capra",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "legacy",
+    "era": "modern"
+  },
+  {
+    "text": "What we do for the world remains and is immortal.",
+    "textTr": "Dünya için yaptığımız kalır ve ölümsüzdür.",
+    "author": "Albert Schweitzer",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "legacy",
+    "era": "modern"
+  },
+  {
+    "text": "A candle loses nothing by lighting another candle, yet it lights the way for those behind.",
+    "textTr": "Bir mum başka bir mumu yakmakla hiçbir şey kaybetmez, üstelik arkadan gelenlere yol gösterir.",
+    "author": "James Keller",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "legacy",
+    "era": "modern"
+  },
+  {
+    "text": "Plant trees under whose shade you do not expect to sit.",
+    "textTr": "Gölgesinde oturmayı ummadığın ağaçları dik.",
+    "author": "Nelson Henderson",
+    "origin": "Kanada",
+    "originEmoji": "🇨🇦",
+    "category": "legacy",
+    "era": "modern"
+  },
+  {
+    "text": "Death smiles at us all; all a man can do is smile back with a life worth remembering.",
+    "textTr": "Ölüm hepimize gülümser; bir insanın yapabileceği tek şey, hatırlanmaya değer bir hayatla karşılık vermektir.",
+    "author": "Marcus Aurelius",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "legacy",
+    "era": "ancient"
+  },
+  {
+    "text": "The mark a man leaves is measured not in years lived but in lives lifted.",
+    "textTr": "Bir insanın bıraktığı iz, yaşanan yıllarla değil, ayağa kaldırılan hayatlarla ölçülür.",
+    "author": "Booker T. Washington",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "legacy",
+    "era": "modern"
+  },
+  {
+    "text": "A good name is rather to be chosen than great riches.",
+    "textTr": "İyi bir nam, büyük servetten daha çok tercih edilmelidir.",
+    "author": "Kral Süleyman",
+    "origin": "İsrail",
+    "originEmoji": "🇮🇱",
+    "category": "legacy",
+    "era": "ancient"
+  },
+  {
+    "text": "Long after your money is spent, the work of your hands will keep speaking.",
+    "textTr": "Paran çoktan harcandıktan sonra bile, ellerinin işi konuşmaya devam edecek.",
+    "author": "Türk Atasözü",
+    "origin": "Türkiye",
+    "originEmoji": "🇹🇷",
+    "category": "legacy",
+    "era": "ancient"
+  },
+  {
+    "text": "Generations to come will scarcely believe that such a one walked the earth in flesh and blood.",
+    "textTr": "Gelecek nesiller, böyle birinin etten kemikten bir bedenle bu dünyada yürüdüğüne pek inanmayacak.",
+    "author": "Albert Einstein",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "legacy",
+    "era": "modern"
+  },
+  {
+    "text": "Whatever you do may seem insignificant, but it is most important that you do it.",
+    "textTr": "Yaptığın şey önemsiz görünebilir, ama onu yapman son derece önemlidir.",
+    "author": "Mahatma Gandhi",
+    "origin": "Hindistan",
+    "originEmoji": "🇮🇳",
+    "category": "legacy",
+    "era": "modern"
+  },
+  {
+    "text": "Until you make the unconscious conscious, it will direct your life and you will call it fate.",
+    "textTr": "Bilinçdışını bilince çıkarmadıkça, o hayatını yönetir ve sen buna kader dersin.",
+    "author": "Carl Gustav Jung",
+    "origin": "İsviçre",
+    "originEmoji": "🇨🇭",
+    "category": "identity",
+    "era": "modern"
+  },
+  {
+    "text": "Knowing yourself is the beginning of all wisdom.",
+    "textTr": "Kendini bilmek, tüm bilgeliğin başlangıcıdır.",
+    "author": "Aristoteles",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "He who knows others is wise; he who knows himself is enlightened.",
+    "textTr": "Başkalarını bilen bilgedir; kendini bilen ise aydınlanmıştır.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "We are what we repeatedly do; excellence, then, is not an act but a habit.",
+    "textTr": "Tekrar tekrar yaptığımız şeyin ta kendisiyiz; o halde mükemmellik bir eylem değil, bir alışkanlıktır.",
+    "author": "Will Durant",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "identity",
+    "era": "modern"
+  },
+  {
+    "text": "It is not death that a man should fear, but never beginning to live.",
+    "textTr": "İnsanın korkması gereken ölüm değil, hiç yaşamaya başlamamış olmaktır.",
+    "author": "Marcus Aurelius",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "To be nobody but yourself in a world doing its best to make you everybody else is the hardest battle.",
+    "textTr": "Seni herkese benzetmeye çalışan bir dünyada sadece kendin olmak, verilebilecek en zorlu savaştır.",
+    "author": "E. E. Cummings",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "identity",
+    "era": "modern"
+  },
+  {
+    "text": "The wolf on the hill is never as hungry as the wolf climbing it.",
+    "textTr": "Tepedeki kurt, tepeyi tırmanan kurt kadar asla aç değildir.",
+    "author": "Arap Atasözü",
+    "origin": "Arabistan",
+    "originEmoji": "🐪",
+    "category": "identity",
+    "era": "medieval"
+  },
+  {
+    "text": "What lies behind us and before us are tiny matters compared to what lies within us.",
+    "textTr": "Ardımızda ve önümüzde olanlar, içimizde olanın yanında küçük şeylerdir.",
+    "author": "Ralph Waldo Emerson",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "identity",
+    "era": "modern"
+  },
+  {
+    "text": "I am not what happened to me; I am what I choose to become.",
+    "textTr": "Ben başıma gelenler değilim; olmayı seçtiğim kişiyim.",
+    "author": "Carl Gustav Jung",
+    "origin": "İsviçre",
+    "originEmoji": "🇨🇭",
+    "category": "identity",
+    "era": "modern"
+  },
+  {
+    "text": "The snake which cannot cast its skin must die. So do the minds prevented from changing.",
+    "textTr": "Derisini değiştiremeyen yılan ölmek zorundadır. Değişmesi engellenen zihinler de öyle.",
+    "author": "Friedrich Nietzsche",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "identity",
+    "era": "modern"
+  },
+  {
+    "text": "You were born an original; do not die a copy.",
+    "textTr": "Bir orijinal olarak doğdun; bir kopya olarak ölme.",
+    "author": "John Mason",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "identity",
+    "era": "contemporary"
+  },
+  {
+    "text": "Be a lion at home and a fox abroad, but never a sheep anywhere.",
+    "textTr": "Evinde aslan, dışarıda tilki ol, ama hiçbir yerde koyun olma.",
+    "author": "Fars Atasözü",
+    "origin": "İran",
+    "originEmoji": "🇮🇷",
+    "category": "identity",
+    "era": "medieval"
+  },
+  {
+    "text": "The man who chases two rabbits catches neither, and forgets which one he was.",
+    "textTr": "İki tavşanı kovalayan adam ikisini de yakalayamaz ve hangisi olduğunu unutur.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "When you reach the top of the mountain, keep climbing within yourself.",
+    "textTr": "Dağın zirvesine vardığında, kendi içinde tırmanmaya devam et.",
+    "author": "Tibet Atasözü",
+    "origin": "Tibet",
+    "originEmoji": "🏔️",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "Your task is not to seek for strength, but to tear down the walls you built against it.",
+    "textTr": "Görevin gücü aramak değil, ona karşı ördüğün duvarları yıkmaktır.",
+    "author": "Mevlana Celaleddin Rumi",
+    "origin": "Anadolu",
+    "originEmoji": "🌹",
+    "category": "identity",
+    "era": "medieval"
+  },
+  {
+    "text": "He who has overcome his fears will truly be free.",
+    "textTr": "Korkularını yenen, gerçekten özgür olacaktır.",
+    "author": "Aristoteles",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "We are what we pretend to be, so we must be careful about what we pretend to be.",
+    "textTr": "Neymiş gibi davranıyorsak oyuz, bu yüzden neymiş gibi davrandığımıza dikkat etmeliyiz.",
+    "author": "Kurt Vonnegut",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "identity",
+    "era": "modern"
+  },
+  {
+    "text": "Resolve to be thyself, and know that he who finds himself loses his misery.",
+    "textTr": "Kendin olmaya karar ver ve bil ki kendini bulan, sefaletini kaybeder.",
+    "author": "Matthew Arnold",
+    "origin": "İngiltere",
+    "originEmoji": "🇬🇧",
+    "category": "identity",
+    "era": "modern"
+  },
+  {
+    "text": "The eagle does not change his nest for the chatter of crows.",
+    "textTr": "Kartal, kargaların gevezeliği yüzünden yuvasını değiştirmez.",
+    "author": "Latin Atasözü",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "A river that forgets its source soon dries up.",
+    "textTr": "Kaynağını unutan nehir, çok geçmeden kurur.",
+    "author": "Afrika Atasözü",
+    "origin": "Afrika",
+    "originEmoji": "🌍",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "Suffer the pain of discipline or suffer the pain of regret.",
+    "textTr": "Ya disiplinin acısına katlan ya da pişmanlığın acısına.",
+    "author": "Jim Rohn",
+    "origin": "Amerika Birleşik Devletleri",
+    "originEmoji": "🇺🇸",
+    "category": "discipline",
+    "era": "modern"
+  },
+  {
+    "text": "Hard choices, easy life. Easy choices, hard life.",
+    "textTr": "Zor seçimler, kolay bir hayat. Kolay seçimler, zor bir hayat.",
+    "author": "Jerzy Gregorek",
+    "origin": "Polonya",
+    "originEmoji": "🇵🇱",
+    "category": "discipline",
+    "era": "contemporary"
+  },
+  {
+    "text": "Fall down seven times, but rise as someone harder each time.",
+    "textTr": "Yedi kez düş, ama her seferinde daha sert biri olarak kalk.",
+    "author": "Japon Atasözü",
+    "origin": "Japonya",
+    "originEmoji": "🇯🇵",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "Set your life on fire; seek those who fan your flames.",
+    "textTr": "Hayatını ateşe ver; alevlerini körükleyenleri ara.",
+    "author": "Mevlana Celaleddin Rumi",
+    "origin": "Anadolu",
+    "originEmoji": "🌹",
+    "category": "fire",
+    "era": "medieval"
+  },
+  {
+    "text": "The two most powerful warriors are patience and time.",
+    "textTr": "En güçlü iki savaşçı sabır ve zamandır.",
+    "author": "Lev Tolstoy",
+    "origin": "Rusya",
+    "originEmoji": "🇷🇺",
+    "category": "wisdom",
+    "era": "modern"
+  }
+]

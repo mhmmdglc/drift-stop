@@ -1,0 +1,902 @@
+[
+  {
+    "text": "You could leave life right now. Let that determine what you do and say and think.",
+    "textTr": "Şu an hayattan ayrılabilirsin. Bunu ne yaptığını, ne söylediğini ve ne düşündüğünü belirlesin.",
+    "author": "Marcus Aurelius",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "regret",
+    "era": "ancient"
+  },
+  {
+    "text": "Waste no more time arguing about what a good man should be. Be one.",
+    "textTr": "İyi bir insanın nasıl olması gerektiğini tartışarak vakit kaybetme. Öyle ol.",
+    "author": "Marcus Aurelius",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "The impediment to action advances action. What stands in the way becomes the way.",
+    "textTr": "Eyleme engel olan, eylemi ilerletir. Yolu kapatan şey, yolun kendisi olur.",
+    "author": "Marcus Aurelius",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "Confine yourself to the present.",
+    "textTr": "Kendini şimdiye hapset.",
+    "author": "Marcus Aurelius",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "If it is not right, do not do it. If it is not true, do not say it.",
+    "textTr": "Doğru değilse yapma. Gerçek değilse söyleme.",
+    "author": "Marcus Aurelius",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "The best revenge is to not be like your enemy.",
+    "textTr": "En iyi intikam, düşmanın gibi olmamaktır.",
+    "author": "Marcus Aurelius",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "You have power over your mind, not outside events. Realize this, and you will find strength.",
+    "textTr": "Zihnin üzerinde gücün var, dışarıdaki olaylar üzerinde değil. Bunu kavra, gücü orada bulacaksın.",
+    "author": "Marcus Aurelius",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "Do every act of your life as if it were your last.",
+    "textTr": "Hayatındaki her işi sanki sonuncusuymuş gibi yap.",
+    "author": "Marcus Aurelius",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "Stop drifting. You are not going to reread your notebooks, your old battles, the histories you collected for old age.",
+    "textTr": "Sürüklenmeyi bırak. O notları, eski savaşları, yaşlılık için biriktirdiğin tarihleri bir daha okumayacaksın.",
+    "author": "Marcus Aurelius",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "Death smiles at us all; all we can do is smile back.",
+    "textTr": "Ölüm hepimize gülümser; tek yapabileceğimiz geri gülümsemektir.",
+    "author": "Marcus Aurelius",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "suffering",
+    "era": "ancient"
+  },
+  {
+    "text": "The soul becomes dyed with the color of its thoughts.",
+    "textTr": "Ruh, düşüncelerinin rengine boyanır.",
+    "author": "Marcus Aurelius",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "Begin at once to live, and count each separate day as a separate life.",
+    "textTr": "Hemen yaşamaya başla ve her bir günü ayrı bir hayat olarak say.",
+    "author": "Marcus Aurelius",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "regret",
+    "era": "ancient"
+  },
+  {
+    "text": "Look well into thyself; there is a source of strength which will always spring up if thou wilt always look.",
+    "textTr": "Kendine iyi bak; bakmaya devam edersen daima fışkıracak bir güç kaynağı orada.",
+    "author": "Marcus Aurelius",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "Reject your sense of injury and the injury itself disappears.",
+    "textTr": "İncindiğin duygusunu reddet, incinmenin kendisi de yok olur.",
+    "author": "Marcus Aurelius",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "Dig within. There lies the wellspring of good; ever dig, and it will ever flow.",
+    "textTr": "İçini kaz. İyiliğin pınarı oradadır; kazmaya devam et, akmaya devam edecek.",
+    "author": "Marcus Aurelius",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "Never let the future disturb you. You will meet it with the same weapons of reason which today arm you against the present.",
+    "textTr": "Geleceğin seni asla rahatsız etmesine izin verme. Onunla, bugün seni şimdiye karşı silahlandıran aynı akıl silahlarıyla karşılaşacaksın.",
+    "author": "Marcus Aurelius",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "It is not death that a man should fear, but he should fear never beginning to live.",
+    "textTr": "İnsanın korkması gereken ölüm değil, hiç yaşamaya başlamamaktır.",
+    "author": "Marcus Aurelius",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "regret",
+    "era": "ancient"
+  },
+  {
+    "text": "The happiness of your life depends upon the quality of your thoughts.",
+    "textTr": "Hayatının mutluluğu, düşüncelerinin kalitesine bağlıdır.",
+    "author": "Marcus Aurelius",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "A man's worth is no greater than the worth of his ambitions.",
+    "textTr": "Bir insanın değeri, hedeflerinin değerinden büyük değildir.",
+    "author": "Marcus Aurelius",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "legacy",
+    "era": "ancient"
+  },
+  {
+    "text": "Our life is what our thoughts make it.",
+    "textTr": "Hayatımız, düşüncelerimizin onu yaptığı şeydir.",
+    "author": "Marcus Aurelius",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "We suffer more often in imagination than in reality.",
+    "textTr": "Çoğu zaman gerçeklikten çok hayal gücümüzde acı çekeriz.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "suffering",
+    "era": "ancient"
+  },
+  {
+    "text": "It is not that we have a short time to live, but that we waste a lot of it.",
+    "textTr": "Sorun yaşayacak az zamanımız olması değil, çoğunu ziyan etmemizdir.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "regret",
+    "era": "ancient"
+  },
+  {
+    "text": "You act like mortals in all that you fear, and like immortals in all that you desire.",
+    "textTr": "Korktuğun her şeyde ölümlü gibi, arzuladığın her şeyde ölümsüz gibi davranıyorsun.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "regret",
+    "era": "ancient"
+  },
+  {
+    "text": "Difficulties strengthen the mind, as labor does the body.",
+    "textTr": "Zorluklar zihni güçlendirir, emeğin bedeni güçlendirdiği gibi.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "Luck is what happens when preparation meets opportunity.",
+    "textTr": "Şans, hazırlığın fırsatla buluştuğu anda olan şeydir.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "While we are postponing, life speeds by.",
+    "textTr": "Biz erteleyip dururken, hayat hızla geçip gidiyor.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "regret",
+    "era": "ancient"
+  },
+  {
+    "text": "He suffers more than necessary, who suffers before it is necessary.",
+    "textTr": "Vakti gelmeden acı çeken, gereğinden fazla acı çeker.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "suffering",
+    "era": "ancient"
+  },
+  {
+    "text": "A gem cannot be polished without friction, nor a man perfected without trials.",
+    "textTr": "Bir mücevher sürtünme olmadan parlatılamaz, bir insan da çilesiz olgunlaşamaz.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "suffering",
+    "era": "ancient"
+  },
+  {
+    "text": "As long as you live, keep learning how to live.",
+    "textTr": "Yaşadığın sürece, nasıl yaşanacağını öğrenmeye devam et.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "If a man knows not to which port he sails, no wind is favorable.",
+    "textTr": "İnsan hangi limana yelken açtığını bilmiyorsa, hiçbir rüzgar elverişli değildir.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "Sometimes even to live is an act of courage.",
+    "textTr": "Bazen yaşamak bile bir cesaret eylemidir.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "The greatest obstacle to living is expectancy, which hangs upon tomorrow and loses today.",
+    "textTr": "Yaşamanın önündeki en büyük engel, yarına asılı kalıp bugünü kaybeden beklentidir.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "regret",
+    "era": "ancient"
+  },
+  {
+    "text": "It is the power of the mind to be unconquerable.",
+    "textTr": "Yenilmez olmak, zihnin gücüdür.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "Begin at once to live, and count each day as a complete life.",
+    "textTr": "Hemen yaşamaya başla ve her günü eksiksiz bir hayat olarak say.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "Throw me to the wolves and I will return leading the pack.",
+    "textTr": "Beni kurtların önüne at, sürünün başında dönerim.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "fire",
+    "era": "ancient"
+  },
+  {
+    "text": "Fire tests gold, suffering tests brave men.",
+    "textTr": "Ateş altını sınar, acı cesur insanları.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "fire",
+    "era": "ancient"
+  },
+  {
+    "text": "The bravest sight in the world is to see a great man struggling against adversity.",
+    "textTr": "Dünyadaki en yiğit manzara, büyük bir insanın belaya karşı mücadele etmesidir.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "fire",
+    "era": "ancient"
+  },
+  {
+    "text": "Most powerful is he who has himself in his own power.",
+    "textTr": "En güçlü insan, kendini kendi gücü altında tutandır.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "We are more often frightened than hurt; and we suffer more from imagination than from reality.",
+    "textTr": "Çoğu zaman incinmekten çok korkarız; ve gerçeklikten çok hayal gücünden acı çekeriz.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "suffering",
+    "era": "ancient"
+  },
+  {
+    "text": "It is not the man who has too little, but the man who craves more, that is poor.",
+    "textTr": "Fakir olan az şeyi olan değil, daha fazlasına can atan insandır.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "It is not because things are difficult that we do not dare; it is because we do not dare that things are difficult.",
+    "textTr": "Cesaret edemememiz şeyler zor olduğu için değil; cesaret edemediğimiz için şeyler zordur.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "fire",
+    "era": "ancient"
+  },
+  {
+    "text": "No person has the power to have everything they want, but it is in their power not to want what they don't have.",
+    "textTr": "Hiç kimsenin istediği her şeye sahip olma gücü yoktur, ama sahip olmadığını istememek elindedir.",
+    "author": "Seneca",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "It's not what happens to you, but how you react to it that matters.",
+    "textTr": "Önemli olan başına ne geldiği değil, ona nasıl tepki verdiğindir.",
+    "author": "Epictetus",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "No man is free who is not master of himself.",
+    "textTr": "Kendinin efendisi olmayan hiç kimse özgür değildir.",
+    "author": "Epictetus",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "First say to yourself what you would be; and then do what you have to do.",
+    "textTr": "Önce kendine ne olmak istediğini söyle; sonra yapman gerekeni yap.",
+    "author": "Epictetus",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "Don't explain your philosophy. Embody it.",
+    "textTr": "Felsefeni anlatma. Onu yaşa.",
+    "author": "Epictetus",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "Only the educated are free.",
+    "textTr": "Sadece eğitilmiş olanlar özgürdür.",
+    "author": "Epictetus",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "Wealth consists not in having great possessions, but in having few wants.",
+    "textTr": "Zenginlik, çok şeye sahip olmakta değil, az şey istemekte yatar.",
+    "author": "Epictetus",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "It is impossible for a man to learn what he thinks he already knows.",
+    "textTr": "Bir insanın zaten bildiğini sandığı şeyi öğrenmesi imkansızdır.",
+    "author": "Epictetus",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "Make the best use of what is in your power, and take the rest as it happens.",
+    "textTr": "Elinde olanı en iyi şekilde kullan, geri kalanını olduğu gibi kabul et.",
+    "author": "Epictetus",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "No great thing is created suddenly.",
+    "textTr": "Hiçbir büyük şey aniden yaratılmaz.",
+    "author": "Epictetus",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "If you want to improve, be content to be thought foolish and stupid.",
+    "textTr": "Gelişmek istiyorsan, aptal ve budala sanılmaya razı ol.",
+    "author": "Epictetus",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "Circumstances don't make the man, they only reveal him to himself.",
+    "textTr": "Koşullar insanı yaratmaz, sadece onu kendine gösterir.",
+    "author": "Epictetus",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "Don't seek to have events happen as you wish, but wish them to happen as they do.",
+    "textTr": "Olayların dilediğin gibi olmasını isteme, olduğu gibi olmasını dile.",
+    "author": "Epictetus",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "Any person capable of angering you becomes your master.",
+    "textTr": "Seni öfkelendirebilen herhangi biri, senin efendin olur.",
+    "author": "Epictetus",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "The key is to keep company only with people who uplift you.",
+    "textTr": "İşin sırrı, sadece seni yükselten insanlarla yol almaktır.",
+    "author": "Epictetus",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "Man is not worried by real problems so much as by his imagined anxieties about real problems.",
+    "textTr": "İnsanı gerçek sorunlar değil, gerçek sorunlara dair hayal ettiği kaygılar bunaltır.",
+    "author": "Epictetus",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "suffering",
+    "era": "ancient"
+  },
+  {
+    "text": "It's not what happens to you that determines how far you will go in life; it is how you handle what happens to you.",
+    "textTr": "Hayatta ne kadar ileri gideceğini başına gelen belirlemez; başına geleni nasıl ele aldığın belirler.",
+    "author": "Epictetus",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "There is only one way to happiness, and that is to cease worrying about things which are beyond the power of our will.",
+    "textTr": "Mutluluğa giden tek yol var: irademizin gücünü aşan şeyler için endişelenmeyi bırakmak.",
+    "author": "Epictetus",
+    "origin": "Roma",
+    "originEmoji": "🏛️",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "Knowing yourself is the beginning of all wisdom.",
+    "textTr": "Kendini bilmek, tüm bilgeliğin başlangıcıdır.",
+    "author": "Aristotle",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "We are what we repeatedly do. Excellence, then, is not an act, but a habit.",
+    "textTr": "Bizler, tekrar tekrar yaptığımız şeyiz. Mükemmellik bir eylem değil, bir alışkanlıktır.",
+    "author": "Aristotle",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "It is during our darkest moments that we must focus to see the light.",
+    "textTr": "Işığı görmek için odaklanmamız gereken an, en karanlık anlarımızdır.",
+    "author": "Aristotle",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "Patience is bitter, but its fruit is sweet.",
+    "textTr": "Sabır acıdır, ama meyvesi tatlıdır.",
+    "author": "Aristotle",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "Through discipline comes freedom.",
+    "textTr": "Özgürlük disiplinden gelir.",
+    "author": "Aristotle",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "He who has overcome his fears will truly be free.",
+    "textTr": "Korkularını yenen, gerçekten özgür olacaktır.",
+    "author": "Aristotle",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "fire",
+    "era": "ancient"
+  },
+  {
+    "text": "Excellence is never an accident.",
+    "textTr": "Mükemmellik asla bir kaza değildir.",
+    "author": "Aristotle",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "What lies in our power to do, lies in our power not to do.",
+    "textTr": "Yapmak gücümüzde olan şey, yapmamak da gücümüzdedir.",
+    "author": "Aristotle",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "Courage is the first of human qualities because it is the quality which guarantees the others.",
+    "textTr": "Cesaret, insani niteliklerin ilkidir çünkü diğerlerini güvence altına alan niteliktir.",
+    "author": "Aristotle",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "fire",
+    "era": "ancient"
+  },
+  {
+    "text": "The energy of the mind is the essence of life.",
+    "textTr": "Zihnin enerjisi, hayatın özüdür.",
+    "author": "Aristotle",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "fire",
+    "era": "ancient"
+  },
+  {
+    "text": "Quality is not an act, it is a habit.",
+    "textTr": "Kalite bir eylem değil, bir alışkanlıktır.",
+    "author": "Aristotle",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "Well begun is half done.",
+    "textTr": "İyi başlanan iş, yarı bitmiştir.",
+    "author": "Aristotle",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "The more you know, the more you realize you don't know.",
+    "textTr": "Ne kadar çok bilirsen, ne kadar az bildiğini o kadar anlarsın.",
+    "author": "Aristotle",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "The unexamined life is not worth living.",
+    "textTr": "Sorgulanmamış bir hayat, yaşanmaya değmez.",
+    "author": "Socrates",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "The secret of change is to focus all of your energy not on fighting the old, but on building the new.",
+    "textTr": "Değişimin sırrı, tüm enerjini eskiyle savaşmaya değil, yeniyi inşa etmeye odaklamaktır.",
+    "author": "Socrates",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "fire",
+    "era": "ancient"
+  },
+  {
+    "text": "Strong minds discuss ideas, average minds discuss events, weak minds discuss people.",
+    "textTr": "Güçlü zihinler fikirleri, ortalama zihinler olayları, zayıf zihinler insanları konuşur.",
+    "author": "Socrates",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "He who is not contented with what he has, would not be contented with what he would like to have.",
+    "textTr": "Sahip olduğuyla yetinmeyen, sahip olmak istediğiyle de yetinmez.",
+    "author": "Socrates",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "To find yourself, think for yourself.",
+    "textTr": "Kendini bulmak için, kendin düşün.",
+    "author": "Socrates",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "The only true wisdom is in knowing you know nothing.",
+    "textTr": "Tek gerçek bilgelik, hiçbir şey bilmediğini bilmektir.",
+    "author": "Socrates",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "Let him who would move the world first move himself.",
+    "textTr": "Dünyayı kımıldatmak isteyen, önce kendini kımıldatsın.",
+    "author": "Socrates",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "The greatest way to live with honor in this world is to be what we pretend to be.",
+    "textTr": "Bu dünyada onurla yaşamanın en büyük yolu, taklit ettiğimiz şey olmaktır.",
+    "author": "Socrates",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "Education is the kindling of a flame, not the filling of a vessel.",
+    "textTr": "Eğitim bir kabı doldurmak değil, bir alevi tutuşturmaktır.",
+    "author": "Socrates",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "fire",
+    "era": "ancient"
+  },
+  {
+    "text": "The greatest victory is the victory over oneself.",
+    "textTr": "En büyük zafer, insanın kendine karşı kazandığı zaferdir.",
+    "author": "Plato",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "The first and greatest victory is to conquer yourself.",
+    "textTr": "İlk ve en büyük zafer, kendini fethetmektir.",
+    "author": "Plato",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "Courage is knowing what not to fear.",
+    "textTr": "Cesaret, neyden korkulmayacağını bilmektir.",
+    "author": "Plato",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "fire",
+    "era": "ancient"
+  },
+  {
+    "text": "The beginning is the most important part of the work.",
+    "textTr": "Başlangıç, işin en önemli kısmıdır.",
+    "author": "Plato",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "We can easily forgive a child who is afraid of the dark; the real tragedy of life is when men are afraid of the light.",
+    "textTr": "Karanlıktan korkan bir çocuğu kolayca affederiz; hayatın gerçek trajedisi, insanların aydınlıktan korkmasıdır.",
+    "author": "Plato",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "fire",
+    "era": "ancient"
+  },
+  {
+    "text": "Wise men speak because they have something to say; fools because they have to say something.",
+    "textTr": "Bilgeler söyleyecek bir şeyleri olduğu için konuşur; aptallar bir şey söylemek zorunda oldukları için.",
+    "author": "Plato",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "The price good men pay for indifference to public affairs is to be ruled by evil men.",
+    "textTr": "İyi insanların kamu işlerine kayıtsız kalmanın bedeli, kötü insanlar tarafından yönetilmektir.",
+    "author": "Plato",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "legacy",
+    "era": "ancient"
+  },
+  {
+    "text": "Excellence is not a gift, but a skill that takes practice.",
+    "textTr": "Mükemmellik bir armağan değil, pratikle kazanılan bir beceridir.",
+    "author": "Plato",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "Ignorance is the root and stem of all evil.",
+    "textTr": "Cehalet, tüm kötülüğün kökü ve gövdesidir.",
+    "author": "Plato",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "There is nothing permanent except change.",
+    "textTr": "Değişimden başka kalıcı hiçbir şey yoktur.",
+    "author": "Heraclitus",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "No man ever steps in the same river twice, for it is not the same river and he is not the same man.",
+    "textTr": "Hiç kimse aynı nehre iki kez basamaz, çünkü o aynı nehir değildir ve o aynı insan değildir.",
+    "author": "Heraclitus",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "The soul is dyed the color of its thoughts.",
+    "textTr": "Ruh, düşüncelerinin rengine boyanır.",
+    "author": "Heraclitus",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "Big results require big ambitions.",
+    "textTr": "Büyük sonuçlar büyük hırslar gerektirir.",
+    "author": "Heraclitus",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "fire",
+    "era": "ancient"
+  },
+  {
+    "text": "Character is destiny.",
+    "textTr": "Karakter kaderdir.",
+    "author": "Heraclitus",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "Out of every one hundred men, ten shouldn't even be there, eighty are just targets, nine are the real fighters, and we are lucky to have them, for they make the battle. Ah, but the one, one is a warrior.",
+    "textTr": "Her yüz adamdan onu orada bile olmamalı, sekseni sadece hedef, dokuzu gerçek savaşçıdır ve onlara sahip olduğumuz için şanslıyız, çünkü savaşı onlar yapar. Ah ama biri, biri bir cengaverdir.",
+    "author": "Heraclitus",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "fire",
+    "era": "ancient"
+  },
+  {
+    "text": "Day by day, what you choose, what you think and what you do is who you become.",
+    "textTr": "Gün be gün, ne seçtiğin, ne düşündüğün ve ne yaptığın, kim olacağındır.",
+    "author": "Heraclitus",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "Good character is not formed in a week or a month. It is created little by little, day by day.",
+    "textTr": "İyi karakter bir hafta ya da bir ayda oluşmaz. Azar azar, gün be gün yaratılır.",
+    "author": "Heraclitus",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "The sun is new each day.",
+    "textTr": "Güneş her gün yenidir.",
+    "author": "Heraclitus",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "Much learning does not teach understanding.",
+    "textTr": "Çok şey öğrenmek, anlayışı öğretmez.",
+    "author": "Heraclitus",
+    "origin": "Yunanistan",
+    "originEmoji": "🇬🇷",
+    "category": "wisdom",
+    "era": "ancient"
+  }
+]

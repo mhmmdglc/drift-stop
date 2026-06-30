@@ -1,0 +1,902 @@
+[
+  {
+    "text": "It does not matter how slowly you go as long as you do not stop.",
+    "textTr": "Ne kadar yavaş gittiğin önemli değil, yeter ki durma.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "The man who moves a mountain begins by carrying away small stones.",
+    "textTr": "Dağı yerinden oynatan adam, küçük taşları taşıyarak başlar.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "Our greatest glory is not in never falling, but in rising every time we fall.",
+    "textTr": "En büyük zaferimiz hiç düşmemekte değil, her düştüğümüzde ayağa kalkmaktadır.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "The journey of a thousand miles begins with a single step.",
+    "textTr": "Bin millik yolculuk tek bir adımla başlar.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "He who conquers himself is the mightiest warrior.",
+    "textTr": "Kendini yenen, en güçlü savaşçıdır.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "Mastering others is strength; mastering yourself is true power.",
+    "textTr": "Başkalarını yönetmek kuvvettir; kendini yönetmek gerçek güçtür.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "When it is obvious that the goals cannot be reached, do not adjust the goals, adjust the action steps.",
+    "textTr": "Hedeflere ulaşılamayacağı belli olduğunda hedefleri değil, attığın adımları değiştir.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "The superior man is modest in speech but exceeds in his actions.",
+    "textTr": "Üstün insan sözünde alçakgönüllü, işinde fazlasıyla cömerttir.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "Wherever you go, go with all your heart.",
+    "textTr": "Nereye gidersen git, bütün kalbinle git.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "fire",
+    "era": "ancient"
+  },
+  {
+    "text": "Real knowledge is to know the extent of one's ignorance.",
+    "textTr": "Gerçek bilgi, cehaletinin sınırlarını bilmektir.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "The will to win means nothing without the will to prepare.",
+    "textTr": "Kazanma isteği, hazırlanma isteği olmadan hiçbir şey ifade etmez.",
+    "author": "Sun Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "Every battle is won before it is ever fought.",
+    "textTr": "Her savaş, daha başlamadan önce kazanılır.",
+    "author": "Sun Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "If you know the enemy and know yourself, you need not fear the result of a hundred battles.",
+    "textTr": "Düşmanını ve kendini bilirsen, yüz savaşın sonucundan korkmana gerek yoktur.",
+    "author": "Sun Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "Opportunities multiply as they are seized.",
+    "textTr": "Fırsatlar, yakaladıkça çoğalır.",
+    "author": "Sun Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "fire",
+    "era": "ancient"
+  },
+  {
+    "text": "In the midst of chaos, there is also opportunity.",
+    "textTr": "Kaosun tam ortasında fırsat da vardır.",
+    "author": "Sun Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "He will win who knows when to fight and when not to fight.",
+    "textTr": "Ne zaman savaşacağını ve ne zaman savaşmayacağını bilen kazanır.",
+    "author": "Sun Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "Victorious warriors win first and then go to war; defeated warriors go to war first and then seek to win.",
+    "textTr": "Galip savaşçılar önce kazanır sonra savaşa gider; mağlup olanlar önce savaşa gider sonra kazanmayı umar.",
+    "author": "Sun Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "A leader leads by example, not by force.",
+    "textTr": "Lider zorla değil, örnek olarak yönetir.",
+    "author": "Sun Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "legacy",
+    "era": "ancient"
+  },
+  {
+    "text": "The supreme art of war is to subdue the enemy without fighting.",
+    "textTr": "Savaşın en yüce sanatı, düşmanı dövüşmeden boyun eğdirmektir.",
+    "author": "Sun Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "Move swift as the wind and closely formed as the wood.",
+    "textTr": "Rüzgar gibi hızlı hareket et, orman gibi sıkı dur.",
+    "author": "Sun Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "When strong, appear weak; when weak, appear strong.",
+    "textTr": "Güçlüyken zayıf görün, zayıfken güçlü görün.",
+    "author": "Sun Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "Do not repeat the tactics which have gained you one victory, but let your methods be regulated by the infinite variety of circumstances.",
+    "textTr": "Bir zafer kazandıran taktikleri tekrarlama; yöntemlerini koşulların sonsuz çeşitliliğine göre belirle.",
+    "author": "Sun Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "In the practice of any virtue, do not wait for orders.",
+    "textTr": "Hiçbir erdemi uygularken emir bekleme.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "Choose a job you love, and you will never have to work a day in your life.",
+    "textTr": "Sevdiğin işi seç, ömrün boyunca tek gün çalışmış olmazsın.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "Study the past if you would define the future.",
+    "textTr": "Geleceği tanımlamak istiyorsan, geçmişi incele.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "Before you embark on a journey of revenge, dig two graves.",
+    "textTr": "İntikam yolculuğuna çıkmadan önce iki mezar kaz.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "When anger rises, think of the consequences.",
+    "textTr": "Öfke yükseldiğinde sonuçlarını düşün.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "The gem cannot be polished without friction, nor man perfected without trials.",
+    "textTr": "Mücevher sürtünme olmadan parlatılamaz, insan da çile çekmeden olgunlaşamaz.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "suffering",
+    "era": "ancient"
+  },
+  {
+    "text": "Better a diamond with a flaw than a pebble without.",
+    "textTr": "Kusurlu bir elmas, kusursuz bir çakıl taşından iyidir.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "Silence is a true friend who never betrays.",
+    "textTr": "Sessizlik, asla ihanet etmeyen gerçek bir dosttur.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "To see what is right and not do it is the want of courage.",
+    "textTr": "Doğruyu görüp yapmamak, cesaret yoksunluğudur.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "fire",
+    "era": "ancient"
+  },
+  {
+    "text": "The man who asks a question is a fool for a minute, the man who does not ask is a fool for life.",
+    "textTr": "Soru soran bir dakika cahildir, sormayan ömür boyu cahil kalır.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "Respect yourself and others will respect you.",
+    "textTr": "Kendine saygı duy, başkaları da sana saygı duyar.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "Hold faithfulness and sincerity as first principles.",
+    "textTr": "Sadakati ve içtenliği temel ilke olarak tut.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "When you know a thing, to hold that you know it; and when you do not, to admit it: this is knowledge.",
+    "textTr": "Bir şeyi bildiğinde bildiğini, bilmediğinde bilmediğini kabul etmek; işte bilgi budur.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "He who learns but does not think is lost; he who thinks but does not learn is in great danger.",
+    "textTr": "Öğrenip düşünmeyen kaybolur; düşünüp öğrenmeyen büyük tehlikededir.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "If you are the smartest person in the room, you are in the wrong room.",
+    "textTr": "Odadaki en akıllı kişi sensen, yanlış odadasın.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "A journey is best measured in friends, rather than miles.",
+    "textTr": "Bir yolculuk en iyi millerle değil, dostlarla ölçülür.",
+    "author": "Konfüçyüs",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "legacy",
+    "era": "ancient"
+  },
+  {
+    "text": "Watch your thoughts, they become your words; watch your words, they become your actions.",
+    "textTr": "Düşüncelerine dikkat et, sözlerin olur; sözlerine dikkat et, eylemlerin olur.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "When I let go of what I am, I become what I might be.",
+    "textTr": "Olduğum şeyi bıraktığımda, olabileceğim şeye dönüşürüm.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "A man with outward courage dares to die; a man with inner courage dares to live.",
+    "textTr": "Dışarıdan cesur olan ölmeye cüret eder; içeriden cesur olan yaşamaya cüret eder.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "Knowing others is intelligence; knowing yourself is true wisdom.",
+    "textTr": "Başkalarını tanımak zekadır; kendini tanımak gerçek bilgeliktir.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "If you do not change direction, you may end up where you are heading.",
+    "textTr": "Yönünü değiştirmezsen, gittiğin yerde son bulursun.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "Do the difficult things while they are easy and do the great things while they are small.",
+    "textTr": "Zor işleri kolayken yap, büyük işleri küçükken hallet.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "New beginnings are often disguised as painful endings.",
+    "textTr": "Yeni başlangıçlar çoğu zaman acı verici sonların kılığında gelir.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "Care about what other people think and you will always be their prisoner.",
+    "textTr": "Başkalarının ne düşündüğünü dert edersen, daima onların esiri olursun.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "Time is a created thing. To say 'I don't have time' is to say 'I don't want to.'",
+    "textTr": "Zaman yaratılmış bir şeydir. 'Zamanım yok' demek, 'istemiyorum' demektir.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "Great acts are made up of small deeds.",
+    "textTr": "Büyük işler küçük adımlardan oluşur.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "Be content with what you have; rejoice in the way things are.",
+    "textTr": "Sahip olduklarınla yetin; işlerin haliyle huzur bul.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "When you are content to be simply yourself, everyone will respect you.",
+    "textTr": "Sadece kendin olmaya razı olduğunda, herkes sana saygı duyar.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "The flame that burns twice as bright burns half as long.",
+    "textTr": "İki kat parlak yanan alev, yarı yarıya kısa yanar.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "Water is fluid, soft, and yielding, but water will wear away rock, which is rigid and cannot yield.",
+    "textTr": "Su akışkan, yumuşak ve esnektir; ama su, katı ve esneyemeyen kayayı aşındırır.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "Nothing is softer or more flexible than water, yet nothing can resist it.",
+    "textTr": "Hiçbir şey sudan daha yumuşak ve esnek değildir, yine de hiçbir şey ona direnemez.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "Stop thinking, and end your problems.",
+    "textTr": "Fazla düşünmeyi bırak, sorunların biter.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "When there is no desire, all things are at peace.",
+    "textTr": "Arzu olmadığında, her şey huzur içindedir.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "Those who know do not speak; those who speak do not know.",
+    "textTr": "Bilen konuşmaz; konuşan bilmez.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "To attain knowledge, add things every day. To attain wisdom, remove things every day.",
+    "textTr": "Bilgiye ulaşmak için her gün bir şey ekle. Bilgeliğe ulaşmak için her gün bir şey çıkar.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "A good traveler has no fixed plans and is not intent on arriving.",
+    "textTr": "İyi bir yolcunun sabit planı yoktur ve varmaya da takıntılı değildir.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "The flow of the Tao does not strive, yet nothing is left undone.",
+    "textTr": "Tao'nun akışı zorlamaz, yine de yapılmadık hiçbir şey kalmaz.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "The wise man does not lay up treasure; the more he gives, the more he has.",
+    "textTr": "Bilge insan hazine biriktirmez; ne kadar verirse o kadar çok sahip olur.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "legacy",
+    "era": "ancient"
+  },
+  {
+    "text": "Happiness is the absence of the striving for happiness.",
+    "textTr": "Mutluluk, mutluluğu kovalamanın bittiği yerdedir.",
+    "author": "Zhuangzi",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "Flow with whatever may happen, and let your mind be free.",
+    "textTr": "Ne olursa onunla ak, zihnini özgür bırak.",
+    "author": "Zhuangzi",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "The wise man knows he knows nothing; the fool thinks he knows all.",
+    "textTr": "Bilge hiçbir şey bilmediğini bilir; ahmak her şeyi bildiğini sanır.",
+    "author": "Zhuangzi",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "Great wisdom is generous; petty wisdom is contentious.",
+    "textTr": "Büyük bilgelik cömerttir; küçük bilgelik kavgacıdır.",
+    "author": "Zhuangzi",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "When the shoe fits, the foot is forgotten.",
+    "textTr": "Ayakkabı tam oturduğunda, ayak unutulur.",
+    "author": "Zhuangzi",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "Rewards and punishment is the lowest form of education.",
+    "textTr": "Ödül ve ceza, eğitimin en alt biçimidir.",
+    "author": "Zhuangzi",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "A path is made by walking on it.",
+    "textTr": "Yol, üzerinde yürüyerek yapılır.",
+    "author": "Zhuangzi",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "Cherish that which is within you, and shut off that which is without.",
+    "textTr": "İçindekine değer ver, dışarıdakine kapını kapat.",
+    "author": "Zhuangzi",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "Do not seek fame. Do not make plans. Do not be absorbed by activities.",
+    "textTr": "Şöhret arama. Plan yapma. Meşguliyetlere kendini kaptırma.",
+    "author": "Zhuangzi",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "The fish trap exists because of the fish; once you have the fish, you can forget the trap.",
+    "textTr": "Balık tuzağı balık için vardır; balığı yakaladığında tuzağı unutabilirsin.",
+    "author": "Zhuangzi",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "A frog in a well cannot conceive of the ocean.",
+    "textTr": "Kuyudaki kurbağa okyanusu hayal edemez.",
+    "author": "Zhuangzi",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "Dig the well before you are thirsty.",
+    "textTr": "Susamadan önce kuyuyu kaz.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "The best time to plant a tree was twenty years ago. The second best time is now.",
+    "textTr": "Bir ağaç dikmek için en iyi zaman yirmi yıl önceydi. İkinci en iyi zaman şimdi.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "regret",
+    "era": "ancient"
+  },
+  {
+    "text": "Be not afraid of growing slowly, be afraid only of standing still.",
+    "textTr": "Yavaş büyümekten korkma, yalnızca yerinde saymaktan kork.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "A bird does not sing because it has an answer; it sings because it has a song.",
+    "textTr": "Kuş, cevabı olduğu için ötmez; şarkısı olduğu için öter.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "Talk does not cook rice.",
+    "textTr": "Laf, pirinci pişirmez.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "A single conversation with a wise man is worth a month's study of books.",
+    "textTr": "Bilge bir adamla tek bir sohbet, bir aylık kitap çalışmasına bedeldir.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "Tension is who you think you should be. Relaxation is who you are.",
+    "textTr": "Gerginlik kim olman gerektiğini sandığın şeydir. Rahatlık ise kim olduğundur.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "The man who removes a mountain begins by carrying away the smallest stones.",
+    "textTr": "Dağı kaldıran adam, en küçük taşları taşıyarak işe başlar.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "Teachers open the door, but you must enter by yourself.",
+    "textTr": "Öğretmenler kapıyı açar, ama içeri kendin girmek zorundasın.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "An inch of time is an inch of gold, but you cannot buy that inch of time with an inch of gold.",
+    "textTr": "Bir karış zaman bir karış altındır, ama bir karış altınla o bir karış zamanı satın alamazsın.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "regret",
+    "era": "ancient"
+  },
+  {
+    "text": "Do not be afraid to go slowly; be afraid only of staying still.",
+    "textTr": "Yavaş gitmekten korkma; sadece hareketsiz kalmaktan kork.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "One who returns to a place sees it with new eyes.",
+    "textTr": "Bir yere geri dönen, oraya yeni gözlerle bakar.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "If you want happiness for an hour, take a nap; if you want happiness for a lifetime, help others.",
+    "textTr": "Bir saatlik mutluluk istiyorsan kestir; bir ömürlük mutluluk istiyorsan başkalarına yardım et.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "legacy",
+    "era": "ancient"
+  },
+  {
+    "text": "The diamond cannot be polished without friction.",
+    "textTr": "Elmas sürtünme olmadan parlatılamaz.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "suffering",
+    "era": "ancient"
+  },
+  {
+    "text": "A bit of fragrance always clings to the hand that gives roses.",
+    "textTr": "Gül veren elde her zaman biraz koku kalır.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "legacy",
+    "era": "ancient"
+  },
+  {
+    "text": "Failure is the mother of success.",
+    "textTr": "Başarısızlık, başarının anasıdır.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "Fall down seven times, stand up eight.",
+    "textTr": "Yedi kez düş, sekiz kez kalk.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "A wise man makes his own decisions; an ignorant man follows public opinion.",
+    "textTr": "Bilge insan kendi kararını verir; cahil insan halkın görüşüne uyar.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "identity",
+    "era": "ancient"
+  },
+  {
+    "text": "Patience is power; with time and patience the mulberry leaf becomes silk.",
+    "textTr": "Sabır güçtür; zaman ve sabırla dut yaprağı ipek olur.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "The palest ink is better than the best memory.",
+    "textTr": "En soluk mürekkep, en iyi hafızadan daha iyidir.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "He who fears being conquered is sure of defeat.",
+    "textTr": "Yenilmekten korkan, yenilgiye mahkumdur.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "fire",
+    "era": "ancient"
+  },
+  {
+    "text": "Better to light a candle than to curse the darkness.",
+    "textTr": "Karanlığa sövmektense bir mum yakmak yeğdir.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "fire",
+    "era": "ancient"
+  },
+  {
+    "text": "A gem is not polished without rubbing, nor a man perfected without trials.",
+    "textTr": "Mücevher ovulmadan parlamaz, insan da denenmeden olgunlaşmaz.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "suffering",
+    "era": "ancient"
+  },
+  {
+    "text": "Dripping water hollows out stone, not through force but through persistence.",
+    "textTr": "Damlayan su taşı oyar, kuvvetiyle değil, ısrarıyla.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "The years teach much which the days never know.",
+    "textTr": "Yıllar, günlerin asla bilmediği çok şeyi öğretir.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "Do not remove a fly from your friend's forehead with a hatchet.",
+    "textTr": "Dostunun alnındaki sineği baltayla kovma.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  },
+  {
+    "text": "If you must play, decide three things at the start: the rules, the stakes, and the quitting time.",
+    "textTr": "Oynamak zorundaysan baştan üç şeye karar ver: kuralları, bedeli ve bırakma vaktini.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "discipline",
+    "era": "ancient"
+  },
+  {
+    "text": "An ant may well destroy a whole dam.",
+    "textTr": "Bir karınca koca bir barajı yıkabilir.",
+    "author": "Çin Atasözü",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "resilience",
+    "era": "ancient"
+  },
+  {
+    "text": "Govern a great nation as you would cook a small fish: do not overdo it.",
+    "textTr": "Büyük bir ulusu, küçük bir balık pişirir gibi yönet: abartma.",
+    "author": "Lao Tzu",
+    "origin": "Çin",
+    "originEmoji": "🇨🇳",
+    "category": "wisdom",
+    "era": "ancient"
+  }
+]

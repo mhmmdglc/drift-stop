@@ -1,0 +1,722 @@
+[
+  {
+    "text": "That which does not kill me makes me stronger.",
+    "textTr": "Beni öldürmeyen, beni güçlendirir.",
+    "author": "Friedrich Nietzsche",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "resilience",
+    "era": "modern"
+  },
+  {
+    "text": "He who has a why to live can bear almost any how.",
+    "textTr": "Yaşamak için bir nedeni olan, neredeyse her nasıla katlanır.",
+    "author": "Friedrich Nietzsche",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "wisdom",
+    "era": "modern"
+  },
+  {
+    "text": "You must have chaos within you to give birth to a dancing star.",
+    "textTr": "Dans eden bir yıldız doğurmak için içinde kaos taşımalısın.",
+    "author": "Friedrich Nietzsche",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "fire",
+    "era": "modern"
+  },
+  {
+    "text": "What is the seal of liberation? To no longer be ashamed in front of oneself.",
+    "textTr": "Özgürlüğün mührü nedir? Artık kendinden utanmamak.",
+    "author": "Friedrich Nietzsche",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "identity",
+    "era": "modern"
+  },
+  {
+    "text": "The man who cannot obey himself will be commanded by others.",
+    "textTr": "Kendine itaat edemeyen, başkaları tarafından yönetilir.",
+    "author": "Friedrich Nietzsche",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "discipline",
+    "era": "modern"
+  },
+  {
+    "text": "No price is too high to pay for the privilege of owning yourself.",
+    "textTr": "Kendine sahip olmanın bedeli ne olursa olsun ucuzdur.",
+    "author": "Friedrich Nietzsche",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "identity",
+    "era": "modern"
+  },
+  {
+    "text": "What does not destroy your will only sharpens it.",
+    "textTr": "İradeni yok etmeyen şey, onu yalnızca biler.",
+    "author": "Friedrich Nietzsche",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "fire",
+    "era": "modern"
+  },
+  {
+    "text": "The higher we soar, the smaller we appear to those who cannot fly.",
+    "textTr": "Ne kadar yükselirsek, uçamayanların gözünde o kadar küçülürüz.",
+    "author": "Friedrich Nietzsche",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "legacy",
+    "era": "modern"
+  },
+  {
+    "text": "Become who you are.",
+    "textTr": "Ne isen o ol.",
+    "author": "Friedrich Nietzsche",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "identity",
+    "era": "modern"
+  },
+  {
+    "text": "He who fights with monsters must take care not to become one.",
+    "textTr": "Canavarlarla savaşan, canavara dönüşmemeye dikkat etmeli.",
+    "author": "Friedrich Nietzsche",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "wisdom",
+    "era": "modern"
+  },
+  {
+    "text": "One must still have chaos in oneself to dare what others will not.",
+    "textTr": "Başkalarının cesaret edemediğini göze almak için içinde hâlâ kaos taşımalısın.",
+    "author": "Friedrich Nietzsche",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "fire",
+    "era": "modern"
+  },
+  {
+    "text": "The doer alone learneth.",
+    "textTr": "Yalnızca yapan öğrenir.",
+    "author": "Friedrich Nietzsche",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "discipline",
+    "era": "modern"
+  },
+  {
+    "text": "Success has always been a great liar.",
+    "textTr": "Başarı her zaman büyük bir yalancı olmuştur.",
+    "author": "Friedrich Nietzsche",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "wisdom",
+    "era": "modern"
+  },
+  {
+    "text": "Never surrender. Never, never, never.",
+    "textTr": "Asla teslim olma. Asla, asla, asla.",
+    "author": "Winston Churchill",
+    "origin": "İngiltere",
+    "originEmoji": "🇬🇧",
+    "category": "resilience",
+    "era": "contemporary"
+  },
+  {
+    "text": "Success is not final, failure is not fatal: it is the courage to continue that counts.",
+    "textTr": "Başarı son değildir, başarısızlık ölümcül değildir; asıl önemli olan devam etme cesaretidir.",
+    "author": "Winston Churchill",
+    "origin": "İngiltere",
+    "originEmoji": "🇬🇧",
+    "category": "resilience",
+    "era": "contemporary"
+  },
+  {
+    "text": "If you are going through hell, keep going.",
+    "textTr": "Cehennemden geçiyorsan, durma, yürümeye devam et.",
+    "author": "Winston Churchill",
+    "origin": "İngiltere",
+    "originEmoji": "🇬🇧",
+    "category": "suffering",
+    "era": "contemporary"
+  },
+  {
+    "text": "I have nothing to offer but blood, toil, tears, and sweat.",
+    "textTr": "Sunabileceğim tek şey kan, ter, gözyaşı ve emektir.",
+    "author": "Winston Churchill",
+    "origin": "İngiltere",
+    "originEmoji": "🇬🇧",
+    "category": "suffering",
+    "era": "contemporary"
+  },
+  {
+    "text": "We shall fight, and we shall never surrender.",
+    "textTr": "Savaşacağız ve asla teslim olmayacağız.",
+    "author": "Winston Churchill",
+    "origin": "İngiltere",
+    "originEmoji": "🇬🇧",
+    "category": "fire",
+    "era": "contemporary"
+  },
+  {
+    "text": "Difficulties mastered are opportunities won.",
+    "textTr": "Alt edilen zorluklar, kazanılmış fırsatlardır.",
+    "author": "Winston Churchill",
+    "origin": "İngiltere",
+    "originEmoji": "🇬🇧",
+    "category": "resilience",
+    "era": "contemporary"
+  },
+  {
+    "text": "Courage is what it takes to stand up and speak; and to sit down and listen.",
+    "textTr": "Cesaret, ayağa kalkıp konuşmaktır; ve oturup dinlemektir.",
+    "author": "Winston Churchill",
+    "origin": "İngiltere",
+    "originEmoji": "🇬🇧",
+    "category": "wisdom",
+    "era": "contemporary"
+  },
+  {
+    "text": "The price of greatness is responsibility.",
+    "textTr": "Büyüklüğün bedeli sorumluluktur.",
+    "author": "Winston Churchill",
+    "origin": "İngiltere",
+    "originEmoji": "🇬🇧",
+    "category": "discipline",
+    "era": "contemporary"
+  },
+  {
+    "text": "Attitude is a little thing that makes a big difference.",
+    "textTr": "Tutum, büyük fark yaratan küçük bir şeydir.",
+    "author": "Winston Churchill",
+    "origin": "İngiltere",
+    "originEmoji": "🇬🇧",
+    "category": "discipline",
+    "era": "contemporary"
+  },
+  {
+    "text": "It is not enough that we do our best; sometimes we must do what is required.",
+    "textTr": "Elimizden gelenin en iyisini yapmak yetmez; bazen gerekeni yapmak zorundayız.",
+    "author": "Winston Churchill",
+    "origin": "İngiltere",
+    "originEmoji": "🇬🇧",
+    "category": "discipline",
+    "era": "contemporary"
+  },
+  {
+    "text": "You have enemies? Good. That means you stood up for something.",
+    "textTr": "Düşmanların mı var? Güzel. Demek ki bir şeyin arkasında dik durdun.",
+    "author": "Winston Churchill",
+    "origin": "İngiltere",
+    "originEmoji": "🇬🇧",
+    "category": "identity",
+    "era": "contemporary"
+  },
+  {
+    "text": "History will be kind to me, for I intend to write it.",
+    "textTr": "Tarih bana cömert davranacak, çünkü onu kendim yazmaya niyetliyim.",
+    "author": "Winston Churchill",
+    "origin": "İngiltere",
+    "originEmoji": "🇬🇧",
+    "category": "legacy",
+    "era": "contemporary"
+  },
+  {
+    "text": "We make a living by what we get, but we make a life by what we give.",
+    "textTr": "Aldıklarımızla geçinir, verdiklerimizle bir hayat kurarız.",
+    "author": "Winston Churchill",
+    "origin": "İngiltere",
+    "originEmoji": "🇬🇧",
+    "category": "legacy",
+    "era": "contemporary"
+  },
+  {
+    "text": "Impossible is a word found only in the dictionary of fools.",
+    "textTr": "İmkânsız, yalnızca aptalların sözlüğünde bulunan bir kelimedir.",
+    "author": "Napoleon Bonaparte",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "fire",
+    "era": "modern"
+  },
+  {
+    "text": "Victory belongs to the most persevering.",
+    "textTr": "Zafer, en çok direnenindir.",
+    "author": "Napoleon Bonaparte",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "resilience",
+    "era": "modern"
+  },
+  {
+    "text": "The battlefield is a scene of constant chaos; the winner will be the one who controls that chaos.",
+    "textTr": "Savaş alanı sürekli bir kaos sahnesidir; kazanan, o kaosa hâkim olandır.",
+    "author": "Napoleon Bonaparte",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "discipline",
+    "era": "modern"
+  },
+  {
+    "text": "Take time to deliberate, but when the time for action comes, stop thinking and go in.",
+    "textTr": "Düşünmeye zaman ayır, ama eylem vakti gelince düşünmeyi bırak ve dal.",
+    "author": "Napoleon Bonaparte",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "discipline",
+    "era": "modern"
+  },
+  {
+    "text": "He who fears being conquered is sure of defeat.",
+    "textTr": "Yenilmekten korkan, yenilgiye mahkûmdur.",
+    "author": "Napoleon Bonaparte",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "fire",
+    "era": "modern"
+  },
+  {
+    "text": "Death is nothing, but to live defeated and inglorious is to die daily.",
+    "textTr": "Ölüm hiçbir şeydir, ama yenik ve onursuz yaşamak her gün ölmektir.",
+    "author": "Napoleon Bonaparte",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "regret",
+    "era": "modern"
+  },
+  {
+    "text": "The truest wisdom is a resolute determination.",
+    "textTr": "En gerçek bilgelik, kararlı bir azimdir.",
+    "author": "Napoleon Bonaparte",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "wisdom",
+    "era": "modern"
+  },
+  {
+    "text": "Courage is like love; it must have hope to nourish it.",
+    "textTr": "Cesaret aşk gibidir; onu besleyecek umuda muhtaçtır.",
+    "author": "Napoleon Bonaparte",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "resilience",
+    "era": "modern"
+  },
+  {
+    "text": "A leader is a dealer in hope.",
+    "textTr": "Lider, umut tüccarıdır.",
+    "author": "Napoleon Bonaparte",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "legacy",
+    "era": "modern"
+  },
+  {
+    "text": "Ability is nothing without opportunity, and opportunity is seized, not given.",
+    "textTr": "Yetenek fırsat olmadan hiçbir şeydir, ve fırsat verilmez, kapılır.",
+    "author": "Napoleon Bonaparte",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "fire",
+    "era": "modern"
+  },
+  {
+    "text": "Glory is fleeting, but obscurity is forever.",
+    "textTr": "Şan geçicidir, ama silinip gitmek sonsuza dek sürer.",
+    "author": "Napoleon Bonaparte",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "legacy",
+    "era": "modern"
+  },
+  {
+    "text": "There are no great men, only great challenges that ordinary men are forced to meet.",
+    "textTr": "Büyük insanlar yoktur, yalnızca sıradan insanların yüzleşmek zorunda kaldığı büyük sınavlar vardır.",
+    "author": "Napoleon Bonaparte",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "identity",
+    "era": "modern"
+  },
+  {
+    "text": "The word impossible is not in my dictionary.",
+    "textTr": "İmkânsız kelimesi benim sözlüğümde yoktur.",
+    "author": "Napoleon Bonaparte",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "fire",
+    "era": "modern"
+  },
+  {
+    "text": "Pain is the great teacher of mankind. Beneath its breath souls develop.",
+    "textTr": "Acı, insanlığın en büyük öğretmenidir. Onun nefesi altında ruhlar olgunlaşır.",
+    "author": "Fyodor Dostoevsky",
+    "origin": "Rusya",
+    "originEmoji": "🇷🇺",
+    "category": "suffering",
+    "era": "modern"
+  },
+  {
+    "text": "It is not the brains that matter most, but that which guides them: the character, the will.",
+    "textTr": "En çok önemli olan zekâ değil, ona yön veren şeydir: karakter ve irade.",
+    "author": "Fyodor Dostoevsky",
+    "origin": "Rusya",
+    "originEmoji": "🇷🇺",
+    "category": "discipline",
+    "era": "modern"
+  },
+  {
+    "text": "The man who lies to himself can be more easily offended than anyone.",
+    "textTr": "Kendine yalan söyleyen insan, herkesten daha kolay alınır.",
+    "author": "Fyodor Dostoevsky",
+    "origin": "Rusya",
+    "originEmoji": "🇷🇺",
+    "category": "identity",
+    "era": "modern"
+  },
+  {
+    "text": "To go wrong in one's own way is better than to go right in someone else's.",
+    "textTr": "Kendi yolunda yanılmak, başkasının yolunda haklı olmaktan iyidir.",
+    "author": "Fyodor Dostoevsky",
+    "origin": "Rusya",
+    "originEmoji": "🇷🇺",
+    "category": "identity",
+    "era": "modern"
+  },
+  {
+    "text": "Suffering is the sole origin of consciousness.",
+    "textTr": "Acı, bilincin tek kaynağıdır.",
+    "author": "Fyodor Dostoevsky",
+    "origin": "Rusya",
+    "originEmoji": "🇷🇺",
+    "category": "suffering",
+    "era": "modern"
+  },
+  {
+    "text": "Man is what he believes.",
+    "textTr": "İnsan, neye inanıyorsa odur.",
+    "author": "Fyodor Dostoevsky",
+    "origin": "Rusya",
+    "originEmoji": "🇷🇺",
+    "category": "identity",
+    "era": "modern"
+  },
+  {
+    "text": "Taking a new step, uttering a new word, is what people fear most.",
+    "textTr": "Yeni bir adım atmak, yeni bir söz söylemek, insanların en çok korktuğu şeydir.",
+    "author": "Fyodor Dostoevsky",
+    "origin": "Rusya",
+    "originEmoji": "🇷🇺",
+    "category": "fire",
+    "era": "modern"
+  },
+  {
+    "text": "To live without hope is to cease to live.",
+    "textTr": "Umutsuz yaşamak, yaşamaktan vazgeçmektir.",
+    "author": "Fyodor Dostoevsky",
+    "origin": "Rusya",
+    "originEmoji": "🇷🇺",
+    "category": "resilience",
+    "era": "modern"
+  },
+  {
+    "text": "Nothing is easier than to denounce the evildoer; nothing more difficult than to understand him.",
+    "textTr": "Kötülük edeni suçlamak kadar kolay bir şey yoktur; onu anlamak kadar zor da.",
+    "author": "Fyodor Dostoevsky",
+    "origin": "Rusya",
+    "originEmoji": "🇷🇺",
+    "category": "wisdom",
+    "era": "modern"
+  },
+  {
+    "text": "The mystery of human existence lies not in just staying alive, but in finding something to live for.",
+    "textTr": "İnsan varoluşunun sırrı sadece hayatta kalmakta değil, uğruna yaşanacak bir şey bulmaktadır.",
+    "author": "Fyodor Dostoevsky",
+    "origin": "Rusya",
+    "originEmoji": "🇷🇺",
+    "category": "wisdom",
+    "era": "modern"
+  },
+  {
+    "text": "What is hell? The suffering of being unable to love.",
+    "textTr": "Cehennem nedir? Sevememenin çektirdiği acıdır.",
+    "author": "Fyodor Dostoevsky",
+    "origin": "Rusya",
+    "originEmoji": "🇷🇺",
+    "category": "suffering",
+    "era": "modern"
+  },
+  {
+    "text": "Above all, do not lie to yourself.",
+    "textTr": "Her şeyden önce, kendine yalan söyleme.",
+    "author": "Fyodor Dostoevsky",
+    "origin": "Rusya",
+    "originEmoji": "🇷🇺",
+    "category": "discipline",
+    "era": "modern"
+  },
+  {
+    "text": "Power is given only to those who dare to lower themselves and pick it up.",
+    "textTr": "Güç, yalnızca eğilip onu yerden almaya cesaret edenlere verilir.",
+    "author": "Fyodor Dostoevsky",
+    "origin": "Rusya",
+    "originEmoji": "🇷🇺",
+    "category": "fire",
+    "era": "modern"
+  },
+  {
+    "text": "It is not enough to take steps which may some day lead to a goal; each step must be itself a goal.",
+    "textTr": "Bir gün hedefe götürebilecek adımlar atmak yetmez; her adım kendi başına bir hedef olmalı.",
+    "author": "Johann Wolfgang von Goethe",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "discipline",
+    "era": "modern"
+  },
+  {
+    "text": "Whatever you can do, or dream you can, begin it. Boldness has genius, power, and magic in it.",
+    "textTr": "Yapabildiğin ya da hayalini kurduğun ne varsa, başla. Cesaretin içinde deha, güç ve sihir vardır.",
+    "author": "Johann Wolfgang von Goethe",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "fire",
+    "era": "modern"
+  },
+  {
+    "text": "Knowing is not enough; we must apply. Willing is not enough; we must do.",
+    "textTr": "Bilmek yetmez; uygulamalıyız. İstemek yetmez; yapmalıyız.",
+    "author": "Johann Wolfgang von Goethe",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "discipline",
+    "era": "modern"
+  },
+  {
+    "text": "Nothing is worth more than this day.",
+    "textTr": "Hiçbir şey bu günden daha değerli değildir.",
+    "author": "Johann Wolfgang von Goethe",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "regret",
+    "era": "modern"
+  },
+  {
+    "text": "He who moves not forward, goes backward.",
+    "textTr": "İleri gitmeyen, geri gider.",
+    "author": "Johann Wolfgang von Goethe",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "discipline",
+    "era": "modern"
+  },
+  {
+    "text": "As soon as you trust yourself, you will know how to live.",
+    "textTr": "Kendine güvendiğin an, nasıl yaşayacağını bileceksin.",
+    "author": "Johann Wolfgang von Goethe",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "identity",
+    "era": "modern"
+  },
+  {
+    "text": "What you can do or dream you can, you must dare.",
+    "textTr": "Yapabildiğin ya da hayalini kurduğun şeye cesaret etmek zorundasın.",
+    "author": "Johann Wolfgang von Goethe",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "fire",
+    "era": "modern"
+  },
+  {
+    "text": "A man sees in the world what he carries in his heart.",
+    "textTr": "İnsan dünyada, yüreğinde taşıdığını görür.",
+    "author": "Johann Wolfgang von Goethe",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "wisdom",
+    "era": "modern"
+  },
+  {
+    "text": "We are shaped and fashioned by what we love.",
+    "textTr": "Neyi seviyorsak, onun tarafından biçimlenir ve şekilleniriz.",
+    "author": "Johann Wolfgang von Goethe",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "identity",
+    "era": "modern"
+  },
+  {
+    "text": "Whoever wants to reach a distant goal must take many small steps.",
+    "textTr": "Uzak bir hedefe ulaşmak isteyen, çok sayıda küçük adım atmalıdır.",
+    "author": "Johann Wolfgang von Goethe",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "discipline",
+    "era": "modern"
+  },
+  {
+    "text": "The dangers of life are infinite, and among them is safety.",
+    "textTr": "Hayatın tehlikeleri sonsuzdur, ve bunların arasında güvenlik de vardır.",
+    "author": "Johann Wolfgang von Goethe",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "wisdom",
+    "era": "modern"
+  },
+  {
+    "text": "One must be something in order to do something.",
+    "textTr": "Bir şey yapabilmek için önce bir şey olmak gerekir.",
+    "author": "Johann Wolfgang von Goethe",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "identity",
+    "era": "modern"
+  },
+  {
+    "text": "Daring ideas are like chessmen moved forward; they may be beaten, but they may start a winning game.",
+    "textTr": "Cüretkâr fikirler ileri sürülmüş satranç taşları gibidir; yenilebilirler, ama kazanan bir oyunu da başlatabilirler.",
+    "author": "Johann Wolfgang von Goethe",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "fire",
+    "era": "modern"
+  },
+  {
+    "text": "God gives the nuts, but he does not crack them.",
+    "textTr": "Tanrı cevizi verir, ama onu senin yerine kırmaz.",
+    "author": "Johann Wolfgang von Goethe",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "discipline",
+    "era": "modern"
+  },
+  {
+    "text": "Let us read, and let us dance; these two amusements will never do any harm to the world.",
+    "textTr": "Okuyalım ve dans edelim; bu iki uğraş dünyaya asla zarar vermez.",
+    "author": "Voltaire",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "wisdom",
+    "era": "modern"
+  },
+  {
+    "text": "The perfect is the enemy of the good.",
+    "textTr": "Mükemmel, iyinin düşmanıdır.",
+    "author": "Voltaire",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "discipline",
+    "era": "modern"
+  },
+  {
+    "text": "God is a comedian playing to an audience too afraid to laugh.",
+    "textTr": "Tanrı, gülmekten korkan bir seyirciye oynayan bir komedyendir.",
+    "author": "Voltaire",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "wisdom",
+    "era": "modern"
+  },
+  {
+    "text": "Judge a man by his questions rather than by his answers.",
+    "textTr": "Bir insanı cevaplarına değil, sorularına bakarak değerlendir.",
+    "author": "Voltaire",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "wisdom",
+    "era": "modern"
+  },
+  {
+    "text": "Each player must accept the cards life deals him; but once they are in hand, he alone must decide how to play.",
+    "textTr": "Herkes hayatın dağıttığı kartları kabul etmek zorundadır; ama kartlar eline geçince, nasıl oynayacağına yalnızca o karar verir.",
+    "author": "Voltaire",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "resilience",
+    "era": "modern"
+  },
+  {
+    "text": "No problem can withstand the assault of sustained thinking.",
+    "textTr": "Hiçbir sorun, sürekli düşünmenin saldırısına dayanamaz.",
+    "author": "Voltaire",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "discipline",
+    "era": "modern"
+  },
+  {
+    "text": "Appreciation is a wonderful thing; it makes what is excellent in others belong to us as well.",
+    "textTr": "Takdir harika bir şeydir; başkalarındaki üstünlüğü bizim de yapar.",
+    "author": "Voltaire",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "wisdom",
+    "era": "modern"
+  },
+  {
+    "text": "Life is a shipwreck, but we must not forget to sing in the lifeboats.",
+    "textTr": "Hayat bir gemi enkazıdır, ama can filikalarında şarkı söylemeyi unutmamalıyız.",
+    "author": "Voltaire",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "resilience",
+    "era": "modern"
+  },
+  {
+    "text": "It is dangerous to be right in matters on which the established authorities are wrong.",
+    "textTr": "Yerleşik otoritelerin yanıldığı konularda haklı olmak tehlikelidir.",
+    "author": "Voltaire",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "identity",
+    "era": "modern"
+  },
+  {
+    "text": "Work spares us from three great evils: boredom, vice, and need.",
+    "textTr": "Çalışmak bizi üç büyük beladan kurtarır: can sıkıntısı, ahlaksızlık ve yoksulluk.",
+    "author": "Voltaire",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "discipline",
+    "era": "modern"
+  },
+  {
+    "text": "Men argue, nature acts.",
+    "textTr": "İnsanlar tartışır, doğa eyler.",
+    "author": "Voltaire",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "fire",
+    "era": "modern"
+  },
+  {
+    "text": "Cherish those who seek the truth but beware of those who find it.",
+    "textTr": "Gerçeği arayanları kucakla, ama onu bulduğunu sananlardan sakın.",
+    "author": "Voltaire",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "wisdom",
+    "era": "modern"
+  },
+  {
+    "text": "Regret for time wasted can become a power for good in the time that remains.",
+    "textTr": "Boşa harcanmış zamanın pişmanlığı, geriye kalan zaman için bir güce dönüşebilir.",
+    "author": "Voltaire",
+    "origin": "Fransa",
+    "originEmoji": "🇫🇷",
+    "category": "regret",
+    "era": "modern"
+  },
+  {
+    "text": "The will is free; strong is the soul, and wise, and beautiful.",
+    "textTr": "İrade özgürdür; ruh güçlü, bilge ve güzeldir.",
+    "author": "Friedrich Nietzsche",
+    "origin": "Almanya",
+    "originEmoji": "🇩🇪",
+    "category": "fire",
+    "era": "modern"
+  }
+]

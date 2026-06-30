@@ -1,0 +1,166 @@
+{
+  "app": {
+    "name": "DriftStop",
+    "tagline": "Treib nicht ab.",
+    "taglineSub": "Lass dein Feuer nicht ausgehen."
+  },
+  "onboarding": {
+    "slide1": {
+      "title": "Wir rütteln dich auf, mitten am Tag.",
+      "body": "In den entscheidenden Momenten, zur richtigen Zeit ein Satz — mehr nicht."
+    },
+    "slide2": {
+      "title": "Für alle, die kurz vorm Aufgeben sind.",
+      "body": "Diese Sätze sind nicht für dich. Sie sind für das Du, das gleich aufgibt."
+    },
+    "slide3": {
+      "title": "Wir brauchen die Erlaubnis für Mitteilungen.",
+      "body": "Wir stören dich nicht. Wir erinnern dich nur."
+    },
+    "permissionButton": "Erlauben",
+    "skipButton": "Überspringen",
+    "continueButton": "Weiter →",
+    "lastButton": "Los geht's",
+    "preferences": {
+      "title": "Wonach suchst du?",
+      "body": "Wähle mehrere. Wir zeigen passende Zitate — jederzeit änderbar."
+    }
+  },
+  "home": {
+    "nextQuote": "Weiter",
+    "prevQuote": "Zurück",
+    "favoriteAdd": "Zu Favoriten",
+    "favoriteRemove": "Aus Favoriten",
+    "shareQuote": "Teilen",
+    "swipeHint": "Wisch oder tipp",
+    "patience": "Das nächste kommt, wenn es Zeit ist. Sei geduldig.",
+    "randomFromHistory": "Zufällig aus dem Verlauf",
+    "historyEmpty": "Noch kein Verlauf."
+  },
+  "quote": {
+    "authorPrefix": "—",
+    "originSeparator": "·",
+    "categories": {
+      "resilience": "Widerstand",
+      "fire": "Feuer",
+      "discipline": "Disziplin",
+      "regret": "Reue",
+      "wisdom": "Weisheit",
+      "identity": "Identität",
+      "suffering": "Schmerz",
+      "legacy": "Vermächtnis"
+    },
+    "eras": {
+      "ancient": "Antike",
+      "medieval": "Mittelalter",
+      "modern": "Moderne",
+      "contemporary": "Zeitgenössisch"
+    }
+  },
+  "favorites": {
+    "screenTitle": "Meine Favoriten",
+    "emptyTitle": "Noch keine Favoriten.",
+    "emptyBody": "Speichere die Sätze, die dich treffen — hier bleiben sie.",
+    "removeConfirm": "Willst du diesen Satz aus den Favoriten entfernen?",
+    "removeYes": "Entfernen",
+    "removeNo": "Abbrechen"
+  },
+  "settings": {
+    "screenTitle": "Einstellungen",
+    "sections": {
+      "notifications": "Mitteilungen",
+      "schedule": "Zeitplan",
+      "appearance": "Darstellung",
+      "about": "Über",
+      "preferences": "Interessen"
+    },
+    "notifications": {
+      "masterToggle": "Mitteilungen an",
+      "masterToggleOff": "Mitteilungen aus",
+      "frequencyLabel": "Mitteilungen pro Tag",
+      "frequency": {
+        "3": "3 / Tag",
+        "5": "5 / Tag",
+        "7": "7 / Tag",
+        "10": "10 / Tag"
+      }
+    },
+    "schedule": {
+      "startTime": "Startzeit",
+      "endTime": "Endzeit",
+      "timeRangeLabel": "Zeitfenster",
+      "weekendsToggle": "Mitteilungen am Wochenende aus",
+      "timeRangeError": "Die Endzeit muss mindestens 2 Stunden nach der Startzeit liegen."
+    },
+    "appearance": {
+      "themeLabel": "Design",
+      "themes": {
+        "dark": "Dunkel",
+        "light": "Hell",
+        "system": "Wie das System"
+      },
+      "languageLabel": "Sprache",
+      "languageComingSoon": "Bald mehr Sprachen"
+    },
+    "about": {
+      "version": "Version",
+      "rateApp": "App bewerten",
+      "privacyPolicy": "Datenschutz",
+      "madeWith": "Mit Geduld und Tinte gemacht."
+    },
+    "preferences": {
+      "hint": "Wenn nichts gewählt ist, wird alles gezeigt."
+    }
+  },
+  "notifications": {
+    "titles": [
+      "🔥 Hör nicht auf.",
+      "⚡ Was machst du gerade?",
+      "💀 Keine Reue.",
+      "✦ Erinnere dich.",
+      "🖊 Eine Notiz für dich.",
+      "→ Komm zurück.",
+      "Lass dein Feuer nicht ausgehen.",
+      "Du treibst ab."
+    ],
+    "permissionTitle": "Mitteilungen erlauben",
+    "permissionBody": "Wir brauchen die Erlaubnis, um dich im Lauf des Tages aufzurütteln.",
+    "permissionGranted": "Danke. Wir sind bei dir.",
+    "permissionDenied": "Du kannst es jederzeit in den Einstellungen aktivieren."
+  },
+  "share": {
+    "quoteTemplate": "{{quote}}\n\n— {{author}}\n\nmit DriftStop",
+    "shareTitle": "Diesen Satz teilen"
+  },
+  "widget": {
+    "defaultQuote": "Was machst du gerade?",
+    "defaultAuthor": "DriftStop",
+    "tapHint": "Öffnen"
+  },
+  "errors": {
+    "noQuotes": "Kein Satz gefunden.",
+    "generic": "Etwas ist schiefgelaufen.",
+    "retry": "Erneut versuchen"
+  },
+  "common": {
+    "ok": "OK",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "close": "Schließen",
+    "back": "Zurück",
+    "yes": "Ja",
+    "no": "Nein",
+    "loading": "Wird geladen...",
+    "comingSoon": "Bald"
+  },
+  "themes": {
+    "motivation": "Motivation",
+    "discipline": "Disziplin",
+    "resilience": "Widerstandskraft",
+    "focus": "Fokus",
+    "wisdom": "Weisheit",
+    "peace": "Ruhe",
+    "reckoning": "Abrechnung",
+    "legacy": "Vermächtnis"
+  }
+}
