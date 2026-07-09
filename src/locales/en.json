@@ -72,7 +72,8 @@
       "schedule": "Schedule",
       "appearance": "Appearance",
       "about": "About",
-      "preferences": "Interests"
+      "preferences": "Interests",
+      "account": "Account"
     },
     "notifications": {
       "masterToggle": "Turn on notifications",
@@ -110,6 +111,13 @@
     },
     "preferences": {
       "hint": "If none are selected, all are shown."
+    },
+    "account": {
+      "signedInAs": "Email",
+      "signOut": "Sign out",
+      "signOutConfirmTitle": "Are you sure you want to sign out?",
+      "guestHint": "You're using DriftStop as a guest. Create an account to sync favorites and settings across devices.",
+      "signInLink": "Sign in / Create account"
     }
   },
   "notifications": {
@@ -162,5 +170,31 @@
     "peace": "Peace",
     "reckoning": "Reckoning",
     "legacy": "Legacy"
+  },
+  "auth": {
+    "signInTitle": "Sign in",
+    "signUpTitle": "Create account",
+    "subtitle": "Sync your favorites and settings across devices.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "••••••••",
+    "passwordHint": "At least 6 characters",
+    "signInButton": "Sign in",
+    "signUpButton": "Create account",
+    "switchToSignUp": "No account yet? Create one",
+    "switchToSignIn": "Already have an account? Sign in",
+    "skip": "Skip",
+    "signUpSuccess": "Account created. Check your email and sign in.",
+    "errors": {
+      "emailInUse": "This email is already registered.",
+      "invalidCredentials": "Incorrect email or password.",
+      "emailNotConfirmed": "You haven't confirmed your email yet. Check your inbox.",
+      "weakPassword": "Password must be at least 6 characters.",
+      "rateLimited": "Too many attempts, try again shortly.",
+      "network": "Connection error. Check your internet.",
+      "generic": "Something went wrong. Please try again.",
+      "notConfigured": "Accounts aren't available right now."
+    }
   }
 }

@@ -72,7 +72,8 @@
       "schedule": "Zamanlama",
       "appearance": "Görünüm",
       "about": "Hakkında",
-      "preferences": "İlgi Alanları"
+      "preferences": "İlgi Alanları",
+      "account": "Hesap"
     },
     "notifications": {
       "masterToggle": "Bildirimleri aç",
@@ -110,6 +111,13 @@
     },
     "preferences": {
       "hint": "Hiçbiri seçili değilse hepsi gösterilir."
+    },
+    "account": {
+      "signedInAs": "E-posta",
+      "signOut": "Çıkış yap",
+      "signOutConfirmTitle": "Çıkış yapmak istediğine emin misin?",
+      "guestHint": "Misafir olarak kullanıyorsun. Favorilerini ve ayarlarını cihazlar arasında senkronlamak için hesap oluştur.",
+      "signInLink": "Giriş yap / Hesap oluştur"
     }
   },
   "notifications": {
@@ -162,5 +170,31 @@
     "peace": "Huzur",
     "reckoning": "Yüzleşme",
     "legacy": "Miras"
+  },
+  "auth": {
+    "signInTitle": "Giriş yap",
+    "signUpTitle": "Hesap oluştur",
+    "subtitle": "Favorilerini ve ayarlarını cihazlar arasında senkronla.",
+    "emailLabel": "E-posta",
+    "emailPlaceholder": "ornek@eposta.com",
+    "passwordLabel": "Şifre",
+    "passwordPlaceholder": "••••••••",
+    "passwordHint": "En az 6 karakter",
+    "signInButton": "Giriş yap",
+    "signUpButton": "Hesap oluştur",
+    "switchToSignUp": "Hesabın yok mu? Oluştur",
+    "switchToSignIn": "Zaten hesabın var mı? Giriş yap",
+    "skip": "Geç",
+    "signUpSuccess": "Hesabın oluşturuldu. E-postanı kontrol et ve giriş yap.",
+    "errors": {
+      "emailInUse": "Bu e-posta zaten kayıtlı.",
+      "invalidCredentials": "E-posta veya şifre hatalı.",
+      "emailNotConfirmed": "E-postanı henüz onaylamadın. Gelen kutunu kontrol et.",
+      "weakPassword": "Şifre en az 6 karakter olmalı.",
+      "rateLimited": "Çok fazla deneme yapıldı, biraz sonra tekrar dene.",
+      "network": "Bağlantı hatası. İnterneti kontrol et.",
+      "generic": "Bir şeyler ters gitti. Tekrar dene.",
+      "notConfigured": "Hesap sistemi şu an kullanılamıyor."
+    }
   }
 }

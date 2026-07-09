@@ -11,6 +11,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { SplashOverlay } from '@/components/SplashOverlay';
+import { AuthProvider } from '@/hooks/useAuth';
 import { HistoryProvider, useHistory } from '@/hooks/useHistory';
 import { useNotificationObserver } from '@/hooks/useNotifications';
 import { SettingsProvider, useSettings } from '@/hooks/useSettings';
@@ -68,6 +69,7 @@ function AppShell() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="onboarding" />
         <Stack.Screen name="quote/[id]" />
+        <Stack.Screen name="auth" />
       </Stack>
       {!splashDone && <SplashOverlay onDone={() => setSplashDone(true)} />}
     </>
@@ -98,9 +100,11 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <SettingsProvider>
           <ThemeProvider>
-            <HistoryProvider>
-              <AppShell />
-            </HistoryProvider>
+            <AuthProvider>
+              <HistoryProvider>
+                <AppShell />
+              </HistoryProvider>
+            </AuthProvider>
           </ThemeProvider>
         </SettingsProvider>
       </SafeAreaProvider>

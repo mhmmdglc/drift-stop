@@ -72,7 +72,8 @@
       "schedule": "Horario",
       "appearance": "Apariencia",
       "about": "Acerca de",
-      "preferences": "Intereses"
+      "preferences": "Intereses",
+      "account": "Cuenta"
     },
     "notifications": {
       "masterToggle": "Activar notificaciones",
@@ -110,6 +111,13 @@
     },
     "preferences": {
       "hint": "Si no eliges ninguno, se muestran todas."
+    },
+    "account": {
+      "signedInAs": "Correo",
+      "signOut": "Cerrar sesión",
+      "signOutConfirmTitle": "¿Seguro que quieres cerrar sesión?",
+      "guestHint": "Estás usando DriftStop como invitado. Crea una cuenta para sincronizar tus favoritos y ajustes entre dispositivos.",
+      "signInLink": "Iniciar sesión / Crear cuenta"
     }
   },
   "notifications": {
@@ -162,5 +170,31 @@
     "peace": "Paz",
     "reckoning": "Confrontación",
     "legacy": "Legado"
+  },
+  "auth": {
+    "signInTitle": "Iniciar sesión",
+    "signUpTitle": "Crear cuenta",
+    "subtitle": "Sincroniza tus favoritos y ajustes entre dispositivos.",
+    "emailLabel": "Correo",
+    "emailPlaceholder": "tu@correo.com",
+    "passwordLabel": "Contraseña",
+    "passwordPlaceholder": "••••••••",
+    "passwordHint": "Al menos 6 caracteres",
+    "signInButton": "Iniciar sesión",
+    "signUpButton": "Crear cuenta",
+    "switchToSignUp": "¿No tienes cuenta? Créala",
+    "switchToSignIn": "¿Ya tienes cuenta? Inicia sesión",
+    "skip": "Omitir",
+    "signUpSuccess": "Cuenta creada. Revisa tu correo e inicia sesión.",
+    "errors": {
+      "emailInUse": "Este correo ya está registrado.",
+      "invalidCredentials": "Correo o contraseña incorrectos.",
+      "emailNotConfirmed": "Aún no has confirmado tu correo. Revisa tu bandeja de entrada.",
+      "weakPassword": "La contraseña debe tener al menos 6 caracteres.",
+      "rateLimited": "Demasiados intentos, prueba de nuevo en un momento.",
+      "network": "Error de conexión. Revisa tu internet.",
+      "generic": "Algo salió mal. Inténtalo de nuevo.",
+      "notConfigured": "Las cuentas no están disponibles ahora mismo."
+    }
   }
 }

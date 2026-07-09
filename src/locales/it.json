@@ -72,7 +72,8 @@
       "schedule": "Orari",
       "appearance": "Aspetto",
       "about": "Info",
-      "preferences": "Interessi"
+      "preferences": "Interessi",
+      "account": "Account"
     },
     "notifications": {
       "masterToggle": "Attiva le notifiche",
@@ -110,6 +111,13 @@
     },
     "preferences": {
       "hint": "Se non selezioni nulla, vengono mostrate tutte."
+    },
+    "account": {
+      "signedInAs": "Email",
+      "signOut": "Esci",
+      "signOutConfirmTitle": "Sei sicuro di voler uscire?",
+      "guestHint": "Stai usando DriftStop come ospite. Crea un account per sincronizzare preferiti e impostazioni tra dispositivi.",
+      "signInLink": "Accedi / Crea account"
     }
   },
   "notifications": {
@@ -162,5 +170,31 @@
     "peace": "Pace",
     "reckoning": "Resa dei conti",
     "legacy": "Eredità"
+  },
+  "auth": {
+    "signInTitle": "Accedi",
+    "signUpTitle": "Crea account",
+    "subtitle": "Sincronizza i tuoi preferiti e le impostazioni tra dispositivi.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "tu@esempio.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "••••••••",
+    "passwordHint": "Almeno 6 caratteri",
+    "signInButton": "Accedi",
+    "signUpButton": "Crea account",
+    "switchToSignUp": "Non hai un account? Creane uno",
+    "switchToSignIn": "Hai già un account? Accedi",
+    "skip": "Salta",
+    "signUpSuccess": "Account creato. Controlla la tua email e accedi.",
+    "errors": {
+      "emailInUse": "Questa email è già registrata.",
+      "invalidCredentials": "Email o password errati.",
+      "emailNotConfirmed": "Non hai ancora confermato la tua email. Controlla la tua casella di posta.",
+      "weakPassword": "La password deve contenere almeno 6 caratteri.",
+      "rateLimited": "Troppi tentativi, riprova tra poco.",
+      "network": "Errore di connessione. Controlla la tua connessione internet.",
+      "generic": "Qualcosa è andato storto. Riprova.",
+      "notConfigured": "Gli account non sono disponibili al momento."
+    }
   }
 }

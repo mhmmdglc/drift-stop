@@ -69,7 +69,7 @@ create policy "own_rows_only" on favorites for all
 |---|---|---|
 | 0 | ✅ Supabase iskeleti | Tablolar + RLS + Auth. Kullanıcı görmez. |
 | 1 | ✅ Sözler → API + lokal cache | Görünmez geçiş, delta sync |
-| 2 | Giriş/Kayıt (guest-first) | E-posta + Google |
+| 2 | ✅ Giriş/Kayıt (guest-first) | E-posta/şifre tamam. Google ile devam et → OAuth client gerekiyor, ertelendi. |
 | 3 | **RevenueCat + "Reklamı Kaldır"** | İlk gelir burada |
 | 4 | Premium içerik paketleri | Server-driven, entitlement-gated |
 | 5 | Cihazlar arası senkron | Favoriler + ayarlar + streak |
@@ -97,3 +97,12 @@ Faz 0'a başlamak için: Supabase project URL + anon key + (migration için) ser
 - İstemci: `src/lib/supabase.ts` (client, `EXPO_PUBLIC_SUPABASE_ANON_KEY` boşsa `null` — senkron sessizce devre dışı kalır), `src/db/quotesCache.ts` (expo-sqlite, senkron API — `driftstop.db`), `src/services/quotesSync.ts` (`updated_at` bazlı delta sync). `src/app/_layout.tsx` boot akışında arka planda, hataları yutarak çağrılır.
 - **Bilinçli karar:** `src/data/quotes.ts`'teki statik `QUOTES` dizisi (widget headless task, testler, mevcut ekranlar) DEĞİŞMEDİ — hâlâ tek okuma kaynağı. SQLite cache şimdilik sadece arkada dolup senkronize oluyor; ekranların oradan okumaya geçişi Faz 4'te premium paketlerle birlikte yapılacak (o zaman gerçek bir ihtiyaç doğuyor).
 - **Eksik:** `EXPO_PUBLIC_SUPABASE_ANON_KEY` henüz `.env`'de yok (bkz. `.env.example`) — Supabase → Project Settings → API'den alınıp eklenmeden istemci senkronu devreye girmez (uygulama bundan etkilenmez, sadece senkron no-op kalır).
+
+## Faz 2 notları (tamamlandı — e-posta/şifre; Google ertelendi)
+- `src/hooks/useAuth.tsx` — `AuthProvider`/`useAuth()`: Supabase Auth session state (`getSession` + `onAuthStateChange`), `signUpWithEmail`/`signInWithEmail`/`signOut`. `configured=false` (anon key yoksa) her yerde guest gibi davranır.
+- `src/app/auth.tsx` — e-posta/şifre ile giriş/kayıt ekranı, "Karalama" tasarım sistemine uygun, `Skip` ile her zaman atlanabilir (guest-first bozulmuyor).
+- `src/app/(tabs)/settings.tsx` — yeni "Hesap" bölümü: guest → "Giriş yap/Hesap oluştur" linki; giriş yapılmışsa → e-posta + "Çıkış yap" (onay dialoglu).
+- 6 aktif dile (tr/en/es/de/fr/it) `auth.*` ve `settings.account.*` çevirileri eklendi.
+- **Android emulator'de uçtan uca doğrulandı:** kayıt ol → Supabase e-posta onayı (gerçek mailinator adresiyle) → giriş yap → `profiles` satırı otomatik oluştu (Faz 0 trigger'ı çalışıyor) → çıkış yap. Test kullanıcısı temizlendi.
+- **Google ile devam et ertelendi** — Google Cloud OAuth client gerekiyor, kullanıcıda henüz yok (bkz. §7 tablosu). Kod, `signInWithEmail`/`signUpWithEmail` yanına eklenecek şekilde tasarlandı; Google butonu eklenmedi (yok fonksiyon çağrısı yanıltıcı olurdu).
+- Supabase projesinde e-posta onayı **zorunlu** (varsayılan) — `mapAuthError` bunu `auth.errors.emailNotConfirmed` ile karşılıyor. Prod'da gerçek kullanıcılar gerçek e-posta alacağı için sorun değil.

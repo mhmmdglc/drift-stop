@@ -1,4 +1,5 @@
 import Constants from 'expo-constants';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Alert, Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -15,6 +16,7 @@ import { Links } from '@/constants/links';
 import { Spacing } from '@/constants/layout';
 import { SUPPORTED_LANGUAGES } from '@/i18n';
 import { useTranslation } from '@/i18n/useTranslation';
+import { useAuth } from '@/hooks/useAuth';
 import { useSettings } from '@/hooks/useSettings';
 import { useTheme } from '@/hooks/use-theme';
 import type { QuoteTag } from '@/types/quote';
@@ -26,8 +28,17 @@ const THEME_MODES: ThemeMode[] = ['dark', 'light', 'system'];
 export default function SettingsScreen() {
   const { colors } = useTheme();
   const { t } = useTranslation();
+  const router = useRouter();
   const { settings, update, setThemeMode, setLanguage } = useSettings();
+  const { user, configured, signOut } = useAuth();
   const [timeError, setTimeError] = useState<string | null>(null);
+
+  const confirmSignOut = () => {
+    Alert.alert(t('settings.account.signOutConfirmTitle'), undefined, [
+      { text: t('common.cancel'), style: 'cancel' },
+      { text: t('settings.account.signOut'), style: 'destructive', onPress: () => void signOut() },
+    ]);
+  };
 
   const tryUpdateTimes = (startH: number, startM: number, endH: number, endM: number) => {
     if (!isValidWindow(toMinutes(startH, startM), toMinutes(endH, endM))) {
@@ -190,6 +201,37 @@ export default function SettingsScreen() {
             </ThemedText>
           </Section>
 
+          {/* Hesap */}
+          {configured && (
+            <Section title={t('settings.sections.account')}>
+              {user ? (
+                <>
+                  <Row label={t('settings.account.signedInAs')}>
+                    <ThemedText variant="body" tone="textMuted" numberOfLines={1} style={styles.emailValue}>
+                      {user.email}
+                    </ThemedText>
+                  </Row>
+                  <Pressable onPress={confirmSignOut}>
+                    <ThemedText variant="body" tone="fire" style={styles.link}>
+                      {t('settings.account.signOut')}
+                    </ThemedText>
+                  </Pressable>
+                </>
+              ) : (
+                <>
+                  <ThemedText variant="body" tone="textMuted">
+                    {t('settings.account.guestHint')}
+                  </ThemedText>
+                  <Pressable onPress={() => router.push('/auth')}>
+                    <ThemedText variant="body" tone="accent" style={styles.link}>
+                      {t('settings.account.signInLink')}
+                    </ThemedText>
+                  </Pressable>
+                </>
+              )}
+            </Section>
+          )}
+
           {/* Hakkında */}
           <Section title={t('settings.sections.about')}>
             <Row label={t('settings.about.version')}>
@@ -303,5 +345,9 @@ const styles = StyleSheet.create({
   madeWith: {
     marginTop: Spacing.sm,
     fontStyle: 'italic',
+  },
+  emailValue: {
+    flexShrink: 1,
+    textAlign: 'right',
   },
 });

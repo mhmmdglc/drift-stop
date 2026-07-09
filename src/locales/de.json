@@ -72,7 +72,8 @@
       "schedule": "Zeitplan",
       "appearance": "Darstellung",
       "about": "Über",
-      "preferences": "Interessen"
+      "preferences": "Interessen",
+      "account": "Konto"
     },
     "notifications": {
       "masterToggle": "Mitteilungen an",
@@ -110,6 +111,13 @@
     },
     "preferences": {
       "hint": "Wenn nichts gewählt ist, wird alles gezeigt."
+    },
+    "account": {
+      "signedInAs": "E-Mail",
+      "signOut": "Abmelden",
+      "signOutConfirmTitle": "Möchtest du dich wirklich abmelden?",
+      "guestHint": "Du nutzt DriftStop als Gast. Erstelle ein Konto, um Favoriten und Einstellungen geräteübergreifend zu synchronisieren.",
+      "signInLink": "Anmelden / Konto erstellen"
     }
   },
   "notifications": {
@@ -162,5 +170,31 @@
     "peace": "Ruhe",
     "reckoning": "Abrechnung",
     "legacy": "Vermächtnis"
+  },
+  "auth": {
+    "signInTitle": "Anmelden",
+    "signUpTitle": "Konto erstellen",
+    "subtitle": "Synchronisiere deine Favoriten und Einstellungen geräteübergreifend.",
+    "emailLabel": "E-Mail",
+    "emailPlaceholder": "du@beispiel.com",
+    "passwordLabel": "Passwort",
+    "passwordPlaceholder": "••••••••",
+    "passwordHint": "Mindestens 6 Zeichen",
+    "signInButton": "Anmelden",
+    "signUpButton": "Konto erstellen",
+    "switchToSignUp": "Noch kein Konto? Erstellen",
+    "switchToSignIn": "Schon ein Konto? Anmelden",
+    "skip": "Überspringen",
+    "signUpSuccess": "Konto erstellt. Prüfe deine E-Mails und melde dich an.",
+    "errors": {
+      "emailInUse": "Diese E-Mail ist bereits registriert.",
+      "invalidCredentials": "E-Mail oder Passwort falsch.",
+      "emailNotConfirmed": "Du hast deine E-Mail noch nicht bestätigt. Prüfe dein Postfach.",
+      "weakPassword": "Passwort muss mindestens 6 Zeichen haben.",
+      "rateLimited": "Zu viele Versuche, versuch es gleich noch mal.",
+      "network": "Verbindungsfehler. Prüfe deine Internetverbindung.",
+      "generic": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
+      "notConfigured": "Konten sind derzeit nicht verfügbar."
+    }
   }
 }

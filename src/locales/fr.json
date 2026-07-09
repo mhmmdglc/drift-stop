@@ -72,7 +72,8 @@
       "schedule": "Horaires",
       "appearance": "Apparence",
       "about": "À propos",
-      "preferences": "Centres d'intérêt"
+      "preferences": "Centres d'intérêt",
+      "account": "Compte"
     },
     "notifications": {
       "masterToggle": "Activer les notifications",
@@ -110,6 +111,13 @@
     },
     "preferences": {
       "hint": "Si rien n’est sélectionné, tout s’affiche."
+    },
+    "account": {
+      "signedInAs": "E-mail",
+      "signOut": "Se déconnecter",
+      "signOutConfirmTitle": "Voulez-vous vraiment vous déconnecter ?",
+      "guestHint": "Tu utilises DriftStop en tant qu'invité. Crée un compte pour synchroniser tes favoris et réglages entre appareils.",
+      "signInLink": "Se connecter / Créer un compte"
     }
   },
   "notifications": {
@@ -162,5 +170,31 @@
     "peace": "Paix",
     "reckoning": "Confrontation",
     "legacy": "Héritage"
+  },
+  "auth": {
+    "signInTitle": "Se connecter",
+    "signUpTitle": "Créer un compte",
+    "subtitle": "Synchronise tes favoris et réglages entre appareils.",
+    "emailLabel": "E-mail",
+    "emailPlaceholder": "toi@exemple.com",
+    "passwordLabel": "Mot de passe",
+    "passwordPlaceholder": "••••••••",
+    "passwordHint": "Au moins 6 caractères",
+    "signInButton": "Se connecter",
+    "signUpButton": "Créer un compte",
+    "switchToSignUp": "Pas encore de compte ? Créer",
+    "switchToSignIn": "Déjà un compte ? Se connecter",
+    "skip": "Passer",
+    "signUpSuccess": "Compte créé. Vérifie ton e-mail et connecte-toi.",
+    "errors": {
+      "emailInUse": "Cet e-mail est déjà utilisé.",
+      "invalidCredentials": "E-mail ou mot de passe incorrect.",
+      "emailNotConfirmed": "Tu n'as pas encore confirmé ton e-mail. Vérifie ta boîte de réception.",
+      "weakPassword": "Le mot de passe doit contenir au moins 6 caractères.",
+      "rateLimited": "Trop de tentatives, réessaie dans un instant.",
+      "network": "Erreur de connexion. Vérifie ta connexion internet.",
+      "generic": "Une erreur s'est produite. Réessaie.",
+      "notConfigured": "Les comptes ne sont pas disponibles pour le moment."
+    }
   }
 }
