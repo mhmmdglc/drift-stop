@@ -46,6 +46,8 @@
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
+    "dotenv": "^17.4.2",
+    "pg": "^8.22.0",
     "typescript": "~6.0.3"
   },
   "scripts": {
@@ -57,7 +59,8 @@
     "lint": "expo lint",
     "test": "jest",
     "build:quotes": "node ./scripts/build-quotes.js",
-    "export:quotes": "node ./scripts/export-quotes.js"
+    "export:quotes": "node ./scripts/export-quotes.js",
+    "db:migrate": "node ./scripts/db-migrate.js"
   },
   "private": true
 }
