@@ -19,6 +19,7 @@ import { initAds } from '@/utils/ads';
 import { nativeFeaturesAvailable } from '@/utils/runtime';
 import { ensurePermissions, rescheduleIfNeeded, setupAndroidChannel } from '@/utils/scheduler';
 import { getJSON, StorageKeys } from '@/utils/storage';
+import { syncQuotes } from '@/services/quotesSync';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -35,6 +36,7 @@ function AppShell() {
   useEffect(() => {
     void setupAndroidChannel();
     initAds();
+    void syncQuotes();
     getJSON<boolean>(StorageKeys.onboardingComplete, false).then(setOnboarded);
   }, []);
 

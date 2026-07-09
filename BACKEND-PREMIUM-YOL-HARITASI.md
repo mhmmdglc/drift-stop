@@ -67,8 +67,8 @@ create policy "own_rows_only" on favorites for all
 
 | # | Faz | Not |
 |---|---|---|
-| 0 | Supabase iskeleti | Tablolar + RLS + Auth. Kullanıcı görmez. |
-| 1 | Sözler → API + lokal cache | Görünmez geçiş, delta sync |
+| 0 | ✅ Supabase iskeleti | Tablolar + RLS + Auth. Kullanıcı görmez. |
+| 1 | ✅ Sözler → API + lokal cache | Görünmez geçiş, delta sync |
 | 2 | Giriş/Kayıt (guest-first) | E-posta + Google |
 | 3 | **RevenueCat + "Reklamı Kaldır"** | İlk gelir burada |
 | 4 | Premium içerik paketleri | Server-driven, entitlement-gated |
@@ -90,3 +90,10 @@ create policy "own_rows_only" on favorites for all
 
 ---
 Faz 0'a başlamak için: Supabase project URL + anon key + (migration için) service_role key yeter.
+
+## Faz 1 notları (tamamlandı)
+- `supabase/migrations/0002_quotes_extra_fields.sql` — `quotes` tablosuna `origin_emoji`, `category` eklendi (istemcideki `Quote` tipiyle birebir eşleşsin diye).
+- `scripts/seed-quotes.js` (`npm run db:seed-quotes`) — `src/data/quotes.json`'daki 1000 sözü Supabase'e upsert eder, tekrar çalıştırılabilir. `is_premium`/`pack_id`'ye dokunmaz.
+- İstemci: `src/lib/supabase.ts` (client, `EXPO_PUBLIC_SUPABASE_ANON_KEY` boşsa `null` — senkron sessizce devre dışı kalır), `src/db/quotesCache.ts` (expo-sqlite, senkron API — `driftstop.db`), `src/services/quotesSync.ts` (`updated_at` bazlı delta sync). `src/app/_layout.tsx` boot akışında arka planda, hataları yutarak çağrılır.
+- **Bilinçli karar:** `src/data/quotes.ts`'teki statik `QUOTES` dizisi (widget headless task, testler, mevcut ekranlar) DEĞİŞMEDİ — hâlâ tek okuma kaynağı. SQLite cache şimdilik sadece arkada dolup senkronize oluyor; ekranların oradan okumaya geçişi Faz 4'te premium paketlerle birlikte yapılacak (o zaman gerçek bir ihtiyaç doğuyor).
+- **Eksik:** `EXPO_PUBLIC_SUPABASE_ANON_KEY` henüz `.env`'de yok (bkz. `.env.example`) — Supabase → Project Settings → API'den alınıp eklenmeden istemci senkronu devreye girmez (uygulama bundan etkilenmez, sadece senkron no-op kalır).

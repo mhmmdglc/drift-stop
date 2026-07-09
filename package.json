@@ -8,6 +8,7 @@
     "@expo-google-fonts/kalam": "^0.4.1",
     "@expo/ui": "~56.0.18",
     "@react-native-async-storage/async-storage": "2.2.0",
+    "@supabase/supabase-js": "^2.109.0",
     "@types/jest": "29.5.14",
     "date-fns": "^4.4.0",
     "expo": "~56.0.12",
@@ -23,6 +24,7 @@
     "expo-router": "~56.2.11",
     "expo-sharing": "~56.0.18",
     "expo-splash-screen": "~56.0.10",
+    "expo-sqlite": "~56.0.5",
     "expo-status-bar": "~56.0.4",
     "expo-symbols": "~56.0.6",
     "expo-system-ui": "~56.0.5",
@@ -60,7 +62,8 @@
     "test": "jest",
     "build:quotes": "node ./scripts/build-quotes.js",
     "export:quotes": "node ./scripts/export-quotes.js",
-    "db:migrate": "node ./scripts/db-migrate.js"
+    "db:migrate": "node ./scripts/db-migrate.js",
+    "db:seed-quotes": "node ./scripts/seed-quotes.js"
   },
   "private": true
 }
