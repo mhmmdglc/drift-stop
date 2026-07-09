@@ -1,0 +1,92 @@
+# DriftStop Pro — Hesap, Premium ve Uzaktan İçerik Mimarisi
+
+> Görsel/detaylı versiyon: Artifact olarak yayınlandı (kenar notlarıyla, daktilo-dosya tasarımıyla).
+> Bu dosya, aynı planın düz-metin/git'te aranabilir referansı.
+
+## Karar özeti
+1. **Free bozulmuyor.** 1000 söz, offline okuma, temel bildirim ve widget aynen kalır.
+2. **Hesap = kapı, Pro = anahtar.** Kayıt tek başına bir şey açmaz; asıl değeri senkron ve satın almanın cihazlar arası taşınmasıdır.
+3. **Sözler sunucudan gelir ama offline-first bozulmaz.** Cihazda tam kopya tutulur; sunucu sadece güncelleme/premium kaynağıdır.
+
+## 1) Mimari
+```
+Uygulama (Expo) — offline-first, SQLite cache
+   ↓
+Supabase (Postgres + Auth + RLS) — sözlerin/favorilerin/profilin gerçek kaynağı
+   ↓
+RevenueCat (Play Billing üzerinde) — satın alma gerçeğinin tek kaynağı
+   └─ webhook → Supabase Edge Function → profiles.is_premium günceller
+```
+**Kritik ilke:** Entitlement (premium olup olmama) asla istemcide karar verilmez. Sadece `profiles.is_premium` alanına bakılır, o alanı da sadece RevenueCat webhook'u yazar.
+
+## 2) Veri modeli (Supabase / Postgres)
+
+**profiles** — id, display_name, is_premium, premium_since, streak_count, streak_last_date, created_at
+
+**quotes** — id, text, text_tr, author, origin, era, tags[], pack_id, is_premium, updated_at
+```sql
+create policy "public_read_free" on quotes for select
+  using (is_premium = false);
+
+create policy "premium_read_entitled" on quotes for select
+  using (
+    is_premium = true and exists (
+      select 1 from profiles
+      where profiles.id = auth.uid() and profiles.is_premium = true
+    )
+  );
+```
+
+**quote_packs, favorites, reflections, user_settings** — hepsi RLS ile korunur:
+```sql
+alter table favorites enable row level security;
+create policy "own_rows_only" on favorites for all
+  using (auth.uid() = user_id) with check (auth.uid() = user_id);
+```
+
+**Bilinçli karar:** `seenHistory` (200 kapak) senkron edilmez, sadece cihazda kalır. Senkronun değeri favoriler + ayarlar + streak'te.
+
+## 3) Kimlik doğrulama
+- Supabase Auth: e-posta/şifre + Google ile devam et
+- Guest-first: login zorunlu değil, sadece "Pro ol"/"Senkron et" tetikler
+- Mevcut kullanıcılar korunur: ilk girişte cihaz verisi otomatik sunucuya taşınır (migration-on-login)
+- Satın alma hesaba bağlanır: RevenueCat `app_user_id` = Supabase user id → yeni cihazda otomatik restore
+
+## 4) İçerik taşıma
+- quotes.json → Postgres (tek seferlik migration script)
+- İstemci: seed set gömülü + `updated_at` bazlı delta sync + **expo-sqlite** (AsyncStorage değil)
+- Premium paket satın alınca ilgili `pack_id` indirilir + kilit açılır
+
+## 5) Ödeme
+- **RevenueCat + Google Play Billing** (Play politikası: dijital içerik satışında zorunlu, harici ödeme kullanılamaz)
+- `remove_ads` — tek seferlik (~$3-5)
+- `pro_yearly` / `pro_monthly` — abonelik: reklamsız + premium paketler + ritüel + senkron
+- Webhook → Supabase Edge Function → `profiles.is_premium`
+
+## 6) Uygulama sırası (bağımlılığa göre dizilmiş)
+
+| # | Faz | Not |
+|---|---|---|
+| 0 | Supabase iskeleti | Tablolar + RLS + Auth. Kullanıcı görmez. |
+| 1 | Sözler → API + lokal cache | Görünmez geçiş, delta sync |
+| 2 | Giriş/Kayıt (guest-first) | E-posta + Google |
+| 3 | **RevenueCat + "Reklamı Kaldır"** | İlk gelir burada |
+| 4 | Premium içerik paketleri | Server-driven, entitlement-gated |
+| 5 | Cihazlar arası senkron | Favoriler + ayarlar + streak |
+| 6 | Ritüel katmanı | Streak, not/yansıma, haftalık özet |
+| 7 | Kişiselleştirme | Temalar, ikonlar, widget stilleri |
+| 8 | Paylaşım gücü | Watermark'sız kartlar, story formatı |
+| 9 | **Play Console beyan güncellemesi** | Zorunlu — e-posta/kişisel veri toplanacak |
+| 10 | Analitik | Supabase Studio yeter, ayrı panel gerekmez |
+
+## 7) Başlamak için gereken bilgiler
+
+| Ne | Nereden | Hassasiyet |
+|---|---|---|
+| Proje URL + `anon` key | Supabase → Project Settings → API | Herkese açık, güvenle paylaşılır |
+| `service_role` key | Aynı sayfa | Sadece migration script'inde, `.env`'de, asla commit edilmez |
+| RevenueCat hesabı | Yoksa birlikte açarız | — |
+| Google OAuth client | Google Cloud Console | Faz 2'de gerekecek |
+
+---
+Faz 0'a başlamak için: Supabase project URL + anon key + (migration için) service_role key yeter.

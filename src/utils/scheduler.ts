@@ -21,6 +21,10 @@ import {
 export const NOTIFICATION_CHANNEL_ID = 'driftstop_motivation';
 const DAYS_AHEAD = 3; // tampon: birkaç gün önceden zamanla
 const MIN_GAP = 90; // dakika
+const HISTORY_CAP = 200; // useHistory ile aynı
+
+/** Zamanlanmış bir bildirimin sözü + ne zaman gösterileceği (epoch ms). */
+type ScheduledQuote = { id: number; at: number };
 
 /** Android bildirim kanalını oluştur (HIGH önem, titreşim, badge). */
 export async function setupAndroidChannel(): Promise<void> {
@@ -90,7 +94,7 @@ export async function applySchedule(settings: Settings): Promise<void> {
 
   const now = new Date();
   const pool = getQuotesByThemes(settings.themes);
-  const scheduledIds: number[] = [];
+  const scheduled: ScheduledQuote[] = [];
   let prevId: number | null = null;
 
   for (let offset = 0; offset < DAYS_AHEAD; offset++) {
@@ -124,12 +128,61 @@ export async function applySchedule(settings: Settings): Promise<void> {
           channelId: NOTIFICATION_CHANNEL_ID,
         },
       });
-      scheduledIds.push(quoteId);
+      scheduled.push({ id: quoteId, at: fireDate.getTime() });
     }
   }
 
-  await setJSON(StorageKeys.scheduledQuoteIds, scheduledIds);
+  await setJSON(StorageKeys.scheduledQuoteIds, scheduled);
   await setJSON(StorageKeys.lastScheduledDate, dateKey(now));
+}
+
+/**
+ * Teslim edilmiş (fire zamanı geçmiş veya çekmecede duran) bildirimlerin sözlerini
+ * geçmişe (seenHistory) taşır. Uygulama açıldığında/öne geldiğinde çağrılır — böylece
+ * kullanıcı gün içinde bildirimle gelen TÜM sözleri app içinde görebilir.
+ * Değişiklik olduysa güncellenmiş geçmiş dizisini, yoksa null döndürür.
+ */
+export async function syncDeliveredToHistory(): Promise<number[] | null> {
+  if (!nativeFeaturesAvailable) return null;
+
+  const deliveredIds: number[] = [];
+
+  // 1) Şu an bildirim çekmecesinde duran bildirimler (kesin teslim edilmiş).
+  try {
+    const presented = await Notifications.getPresentedNotificationsAsync();
+    for (const n of presented) {
+      const qid = (n.request.content.data as { quoteId?: number } | undefined)?.quoteId;
+      if (typeof qid === 'number') deliveredIds.push(qid);
+    }
+  } catch {
+    // çekmece okunamadıysa yoksay
+  }
+
+  // 2) Zamanlanan listede fire zamanı geçmiş olanlar (çekmeceden silinmiş olsalar bile).
+  const scheduled = await getJSON<ScheduledQuote[] | number[]>(StorageKeys.scheduledQuoteIds, []);
+  if (Array.isArray(scheduled) && scheduled.length > 0 && typeof scheduled[0] === 'object') {
+    const list = scheduled as ScheduledQuote[];
+    const now = Date.now();
+    const remaining: ScheduledQuote[] = [];
+    for (const s of list.slice().sort((a, b) => a.at - b.at)) {
+      if (s && s.at <= now) deliveredIds.push(s.id);
+      else if (s) remaining.push(s);
+    }
+    if (remaining.length !== list.length) {
+      await setJSON(StorageKeys.scheduledQuoteIds, remaining);
+    }
+  }
+
+  if (deliveredIds.length === 0) return null;
+
+  const history = await getJSON<number[]>(StorageKeys.seenHistory, []);
+  let next = history;
+  for (const id of deliveredIds) {
+    next = [id, ...next.filter((x) => x !== id)]; // en son eklenen index 0'da (en yeni)
+  }
+  next = next.slice(0, HISTORY_CAP);
+  await setJSON(StorageKeys.seenHistory, next);
+  return next;
 }
 
 /** Bugün için plan yoksa (yeni gün / yeniden başlatma) yeniden zamanla. */
@@ -141,7 +194,12 @@ export async function rescheduleIfNeeded(settings: Settings): Promise<void> {
   }
   const last = await getJSON<string>(StorageKeys.lastScheduledDate, '');
   const today = dateKey(new Date());
-  if (last !== today) {
+  // Eski format (number[]) tespit edilirse de yeniden zamanla → ileriki bildirimler
+  // fire zamanı bilgisiyle saklanır ve geçmişe taşıma çalışır.
+  const scheduled = await getJSON<unknown[]>(StorageKeys.scheduledQuoteIds, []);
+  const oldFormat =
+    Array.isArray(scheduled) && scheduled.length > 0 && typeof scheduled[0] === 'number';
+  if (last !== today || oldFormat) {
     await applySchedule(settings);
   }
 }

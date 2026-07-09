@@ -25,10 +25,19 @@ function clip(s: string): string {
  * bu yüzden renkler doğrudan DarkColors'tan alınır. Tıklayınca deep link ile sözü açar.
  */
 export function DriftStopWidget({ quote }: { quote: Quote | null }) {
-  const text = quote ? clip(quoteDisplayText(quote, i18n.locale)) : i18n.t('widget.defaultQuote');
-  const author = quote
-    ? `— ${localizeAuthor(quote.author, i18n.locale)}`
-    : `— ${i18n.t('widget.defaultAuthor')}`;
+  // Headless render'da i18n/locale beklenmedik olabilir; asla throw etmesin.
+  const locale = i18n.locale ?? 'tr';
+  let text: string;
+  let author: string;
+  try {
+    text = quote ? clip(quoteDisplayText(quote, locale)) : i18n.t('widget.defaultQuote');
+    author = quote
+      ? `— ${localizeAuthor(quote.author, locale)}`
+      : `— ${i18n.t('widget.defaultAuthor')}`;
+  } catch {
+    text = quote?.text ?? 'Sürüklenme. Geri dön.';
+    author = quote?.author ? `— ${quote.author}` : '— DriftStop';
+  }
   const uri = `driftstop://quote/${quote?.id ?? ''}`;
 
   return (

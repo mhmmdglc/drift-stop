@@ -2,7 +2,7 @@
   "expo": {
     "name": "drift-stop",
     "slug": "drift-stop",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "driftstop",
@@ -12,6 +12,7 @@
     },
     "android": {
       "package": "com.driftstop.app",
+      "versionCode": 4,
       "permissions": [
         "RECEIVE_BOOT_COMPLETED",
         "SCHEDULE_EXACT_ALARM"
@@ -78,6 +79,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "fb1bca5b-8847-4c5f-9073-fa68ad53f539"
+      }
+    },
+    "owner": "evolaroa.app"
   }
 }

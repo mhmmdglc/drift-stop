@@ -31,6 +31,7 @@ yarn-error.*
 *.pem
 
 # local env files
+.env
 .env*.local
 
 # typescript
@@ -41,3 +42,14 @@ example
 # generated native folders
 /ios
 /android
+credentials/
+credentials.json
+
+# build artifacts (Play Console / EAS'te zaten var, repoyu şişirmesin)
+*.aab
+*.apk
+
+# yerel yedek görseller (design iterasyonu sırasında alınan güvenlik kopyaları)
+*-OLD-*.png
+*-WITHAD.bak.png
+_old-blue-icons.bak/

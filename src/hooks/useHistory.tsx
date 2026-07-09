@@ -7,11 +7,13 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { AppState } from 'react-native';
 
 import { getQuoteById, getQuotesByThemes } from '@/data/quotes';
 import { useSettings } from '@/hooks/useSettings';
 import type { Quote } from '@/types/quote';
 import { randomIndex } from '@/utils/quoteSelector';
+import { syncDeliveredToHistory } from '@/utils/scheduler';
 import { getJSON, setJSON, StorageKeys } from '@/utils/storage';
 
 const CAP = 200; // en fazla bu kadar geçmiş tutulur
@@ -43,7 +45,10 @@ export function HistoryProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let active = true;
-    getJSON<number[]>(StorageKeys.seenHistory, []).then((stored) => {
+    (async () => {
+      // Önce bildirimle gelen (teslim edilmiş) sözleri geçmişe taşı, sonra yükle.
+      await syncDeliveredToHistory().catch(() => null);
+      const stored = await getJSON<number[]>(StorageKeys.seenHistory, []);
       if (!active) return;
       let next = stored;
       if (next.length === 0) {
@@ -55,12 +60,28 @@ export function HistoryProvider({ children }: { children: ReactNode }) {
       setHistory(next);
       setPointer(0);
       setLoaded(true);
-    });
+    })();
     return () => {
       active = false;
     };
     // sadece ilk yüklemede seed; themes sonradan değişse de geçmiş korunur
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Uygulama öne geldiğinde, arka planda gelen bildirimlerin sözlerini geçmişe ekle.
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state !== 'active') return;
+      syncDeliveredToHistory()
+        .then((next) => {
+          if (next) {
+            setHistory(next);
+            setPointer(0);
+          }
+        })
+        .catch(() => {});
+    });
+    return () => sub.remove();
   }, []);
 
   const record = useCallback((id: number) => {
