@@ -16,8 +16,16 @@ let interstitial: InterstitialAd | null = null;
 let isLoaded = false;
 let lastShownAt = 0;
 
+/** "no_ads" entitlement'ı (remove_ads satın alımı ya da Pro abonelik) aktifse true. */
+let adsSuppressed = false;
+
+/** usePurchases hook'u tarafından entitlement değiştikçe çağrılır. */
+export function setAdsSuppressed(suppressed: boolean): void {
+  adsSuppressed = suppressed;
+}
+
 export function preloadInterstitial(): void {
-  if (!adsEnabled) return;
+  if (!adsEnabled || adsSuppressed) return;
   interstitial = InterstitialAd.createForAdRequest(AdUnits.interstitial, {
     requestNonPersonalizedAdsOnly: true,
   });
@@ -36,7 +44,7 @@ export function preloadInterstitial(): void {
 
 /** Reklam SDK'sını başlat ve ilk interstitial'ı ön-yükle. */
 export function initAds(): void {
-  if (!adsEnabled) return;
+  if (!adsEnabled || adsSuppressed) return;
   lastShownAt = Date.now(); // açılıştan sonra ilk birkaç dakika reklamsız (es geçme süresi)
   mobileAds()
     .initialize()
@@ -49,7 +57,7 @@ export function initAds(): void {
  * true = gösterildi. Sık göstermeyi engeller → kullanıcıyı darlamaz.
  */
 export function showInterstitialIfReady(): boolean {
-  if (!adsEnabled || !interstitial || !isLoaded) return false;
+  if (!adsEnabled || adsSuppressed || !interstitial || !isLoaded) return false;
   if (Date.now() - lastShownAt < MIN_INTERSTITIAL_GAP_MS) return false;
   try {
     interstitial.show();

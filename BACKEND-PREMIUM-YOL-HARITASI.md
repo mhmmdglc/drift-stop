@@ -70,7 +70,7 @@ create policy "own_rows_only" on favorites for all
 | 0 | ✅ Supabase iskeleti | Tablolar + RLS + Auth. Kullanıcı görmez. |
 | 1 | ✅ Sözler → API + lokal cache | Görünmez geçiş, delta sync |
 | 2 | ✅ Giriş/Kayıt (guest-first) | E-posta/şifre tamam. Google ile devam et → OAuth client gerekiyor, ertelendi. |
-| 3 | **RevenueCat + "Reklamı Kaldır"** | İlk gelir burada |
+| 3 | ✅ RevenueCat + "Reklamı Kaldır" | SDK + paywall + entitlement gating tamam. Test Store ile doğrulandı; gerçek Play Console bağlantısı bekliyor. |
 | 4 | Premium içerik paketleri | Server-driven, entitlement-gated |
 | 5 | Cihazlar arası senkron | Favoriler + ayarlar + streak |
 | 6 | Ritüel katmanı | Streak, not/yansıma, haftalık özet |
@@ -106,3 +106,12 @@ Faz 0'a başlamak için: Supabase project URL + anon key + (migration için) ser
 - **Android emulator'de uçtan uca doğrulandı:** kayıt ol → Supabase e-posta onayı (gerçek mailinator adresiyle) → giriş yap → `profiles` satırı otomatik oluştu (Faz 0 trigger'ı çalışıyor) → çıkış yap. Test kullanıcısı temizlendi.
 - **Google ile devam et ertelendi** — Google Cloud OAuth client gerekiyor, kullanıcıda henüz yok (bkz. §7 tablosu). Kod, `signInWithEmail`/`signUpWithEmail` yanına eklenecek şekilde tasarlandı; Google butonu eklenmedi (yok fonksiyon çağrısı yanıltıcı olurdu).
 - Supabase projesinde e-posta onayı **zorunlu** (varsayılan) — `mapAuthError` bunu `auth.errors.emailNotConfirmed` ile karşılıyor. Prod'da gerçek kullanıcılar gerçek e-posta alacağı için sorun değil.
+
+## Faz 3 notları (tamamlandı — sandbox/Test Store ile)
+- **RevenueCat projesi kuruldu:** proje adı "DriftStop" (proj9019ea60), Android app `com.driftstop.app` (app2be5c8cadb). Hesapta otomatik gelen örnek "EvolaRoa" App Store app'i (iOS, kullanılmıyor — iOS Faz 8'e ertelendi) dokunulmadan bırakıldı.
+- **Entitlement'lar:** `pro` (mevcut, hesapla birlikte gelen varsayılan) + yeni eklenen `no_ads`. `pro_monthly`/`pro_yearly` ürünleri her ikisine birden bağlı (Pro abone olan otomatik reklamsız da olur); `remove_ads` sadece `no_ads`'a bağlı.
+- **Ürünler (Test Store'da, fiyatlar kullanıcı onaylı):** `remove_ads` ($2.99, non-consumable), `pro_monthly` ($2.99/ay), `pro_yearly` ($19.99/yıl). Offering: `default` (3 paket: Lifetime/Annual/Monthly).
+- **Gerçek Play Store app'i de var** (`DriftStop (Play Store)`, public key `goog_kfnkyAeLFJPffpZuAGGaYfiRWEN`) ama servis hesabı kimlik bilgileri geçersiz/örnek veri — Play Console bağlantısı henüz kurulmadı. İstemci şu an **Test Store key'i** (`test_...`, `.env`'de `EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY`) kullanıyor — satın alımlar simüle, gerçek para geçmiyor.
+- **İstemci:** `src/lib/purchases.ts` (configure), `src/hooks/usePurchases.tsx` (PurchasesProvider/usePurchases — customerInfo, isPro, isAdsRemoved, purchasePackage, restorePurchases), `src/app/paywall.tsx` (paket listesi + satın al + restore), Settings'e "Premium" bölümü eklendi. `src/utils/ads.ts`'e `setAdsSuppressed` — `no_ads` aktifse hem banner (reaktif hook) hem interstitial (modül seviyesi flag) devre dışı kalıyor.
+- **Android emulator'de uçtan uca doğrulandı:** paywall açıldı → "Remove ads" satın alındı (RevenueCat'in native Test Store dialogu üzerinden "TEST VALID PURCHASE") → entitlement anında aktif oldu → reklam banner'ı restart gerekmeden kayboldu → Settings "Ads removed" gösterdi → RevenueCat dashboard'da customer'da "Total Spent: USD 2.99" + "No Ads" entitlement'ı aktif olarak doğrulandı.
+- **Prod'a çıkmadan önce gereken:** Play Console'da gerçek in-app ürünler (`remove_ads`, `pro_monthly`, `pro_yearly`) oluşturulmalı, gerçek bir Play Console servis hesabı RevenueCat'e bağlanmalı, sonra `.env`'deki key `goog_...` ile değiştirilmeli. Bu adım kullanıcının Play Console'da ürün/fiyat kararı vermesini gerektiriyor.

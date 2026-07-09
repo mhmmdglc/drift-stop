@@ -73,7 +73,8 @@
       "appearance": "Darstellung",
       "about": "Über",
       "preferences": "Interessen",
-      "account": "Konto"
+      "account": "Konto",
+      "premium": "Premium"
     },
     "notifications": {
       "masterToggle": "Mitteilungen an",
@@ -118,6 +119,11 @@
       "signOutConfirmTitle": "Möchtest du dich wirklich abmelden?",
       "guestHint": "Du nutzt DriftStop als Gast. Erstelle ein Konto, um Favoriten und Einstellungen geräteübergreifend zu synchronisieren.",
       "signInLink": "Anmelden / Konto erstellen"
+    },
+    "premium": {
+      "goProLink": "Werbung entfernen / Pro werden",
+      "proActive": "Pro aktiv",
+      "adsRemovedActive": "Werbung entfernt"
     }
   },
   "notifications": {
@@ -195,6 +201,31 @@
       "network": "Verbindungsfehler. Prüfe deine Internetverbindung.",
       "generic": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
       "notConfigured": "Konten sind derzeit nicht verfügbar."
+    }
+  },
+  "paywall": {
+    "title": "Pro werden",
+    "subtitle": "Entferne Werbung dauerhaft und schalte kommende Funktionen automatisch frei.",
+    "skip": "Vielleicht später",
+    "restorePurchases": "Käufe wiederherstellen",
+    "restoreSuccess": "Käufe wiederhergestellt.",
+    "restoreNothingFound": "Kein früherer Kauf gefunden.",
+    "purchaseSuccess": "Danke! Werbung ist jetzt aus.",
+    "buyButton": "Weiter",
+    "alreadyPro": "Du bist bereits Pro. Danke für deine Unterstützung!",
+    "alreadyAdsRemoved": "Werbung ist auf diesem Konto bereits entfernt.",
+    "packages": {
+      "lifetimeLabel": "Werbung entfernen",
+      "lifetimeHint": "Einmaliger Kauf",
+      "annualLabel": "Pro — Jährlich",
+      "annualHint": "Bester Preis",
+      "monthlyLabel": "Pro — Monatlich",
+      "proFeatures": "Keine Werbung · Premium-Pakete (bald) · Synchronisierung (bald)"
+    },
+    "errors": {
+      "generic": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
+      "notConfigured": "Käufe sind derzeit nicht verfügbar.",
+      "noOffering": "Gerade nichts anzuzeigen. Versuch es später erneut."
     }
   }
 }

@@ -73,7 +73,8 @@
       "appearance": "Apariencia",
       "about": "Acerca de",
       "preferences": "Intereses",
-      "account": "Cuenta"
+      "account": "Cuenta",
+      "premium": "Premium"
     },
     "notifications": {
       "masterToggle": "Activar notificaciones",
@@ -118,6 +119,11 @@
       "signOutConfirmTitle": "¿Seguro que quieres cerrar sesión?",
       "guestHint": "Estás usando DriftStop como invitado. Crea una cuenta para sincronizar tus favoritos y ajustes entre dispositivos.",
       "signInLink": "Iniciar sesión / Crear cuenta"
+    },
+    "premium": {
+      "goProLink": "Quitar anuncios / Hazte Pro",
+      "proActive": "Pro activo",
+      "adsRemovedActive": "Anuncios eliminados"
     }
   },
   "notifications": {
@@ -195,6 +201,31 @@
       "network": "Error de conexión. Revisa tu internet.",
       "generic": "Algo salió mal. Inténtalo de nuevo.",
       "notConfigured": "Las cuentas no están disponibles ahora mismo."
+    }
+  },
+  "paywall": {
+    "title": "Hazte Pro",
+    "subtitle": "Elimina los anuncios para siempre y desbloquea automáticamente las próximas funciones.",
+    "skip": "Quizás después",
+    "restorePurchases": "Restaurar compras",
+    "restoreSuccess": "Compras restauradas.",
+    "restoreNothingFound": "No se encontró ninguna compra anterior.",
+    "purchaseSuccess": "¡Gracias! Los anuncios ya están desactivados.",
+    "buyButton": "Continuar",
+    "alreadyPro": "Ya eres Pro. ¡Gracias por tu apoyo!",
+    "alreadyAdsRemoved": "Los anuncios ya están eliminados en esta cuenta.",
+    "packages": {
+      "lifetimeLabel": "Quitar anuncios",
+      "lifetimeHint": "Pago único",
+      "annualLabel": "Pro — Anual",
+      "annualHint": "Mejor precio",
+      "monthlyLabel": "Pro — Mensual",
+      "proFeatures": "Sin anuncios · Paquetes premium (pronto) · Sincronización (pronto)"
+    },
+    "errors": {
+      "generic": "Algo salió mal. Inténtalo de nuevo.",
+      "notConfigured": "Las compras no están disponibles ahora mismo.",
+      "noOffering": "No hay nada que mostrar ahora. Inténtalo más tarde."
     }
   }
 }

@@ -14,6 +14,7 @@ import { SplashOverlay } from '@/components/SplashOverlay';
 import { AuthProvider } from '@/hooks/useAuth';
 import { HistoryProvider, useHistory } from '@/hooks/useHistory';
 import { useNotificationObserver } from '@/hooks/useNotifications';
+import { PurchasesProvider } from '@/hooks/usePurchases';
 import { SettingsProvider, useSettings } from '@/hooks/useSettings';
 import { ThemeProvider, useTheme } from '@/hooks/use-theme';
 import { initAds } from '@/utils/ads';
@@ -70,6 +71,7 @@ function AppShell() {
         <Stack.Screen name="onboarding" />
         <Stack.Screen name="quote/[id]" />
         <Stack.Screen name="auth" />
+        <Stack.Screen name="paywall" />
       </Stack>
       {!splashDone && <SplashOverlay onDone={() => setSplashDone(true)} />}
     </>
@@ -101,9 +103,11 @@ export default function RootLayout() {
         <SettingsProvider>
           <ThemeProvider>
             <AuthProvider>
-              <HistoryProvider>
-                <AppShell />
-              </HistoryProvider>
+              <PurchasesProvider>
+                <HistoryProvider>
+                  <AppShell />
+                </HistoryProvider>
+              </PurchasesProvider>
             </AuthProvider>
           </ThemeProvider>
         </SettingsProvider>

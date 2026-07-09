@@ -73,7 +73,8 @@
       "appearance": "Görünüm",
       "about": "Hakkında",
       "preferences": "İlgi Alanları",
-      "account": "Hesap"
+      "account": "Hesap",
+      "premium": "Premium"
     },
     "notifications": {
       "masterToggle": "Bildirimleri aç",
@@ -118,6 +119,11 @@
       "signOutConfirmTitle": "Çıkış yapmak istediğine emin misin?",
       "guestHint": "Misafir olarak kullanıyorsun. Favorilerini ve ayarlarını cihazlar arasında senkronlamak için hesap oluştur.",
       "signInLink": "Giriş yap / Hesap oluştur"
+    },
+    "premium": {
+      "goProLink": "Reklamları kaldır / Pro'ya geç",
+      "proActive": "Pro aktif",
+      "adsRemovedActive": "Reklamlar kaldırıldı"
     }
   },
   "notifications": {
@@ -195,6 +201,31 @@
       "network": "Bağlantı hatası. İnterneti kontrol et.",
       "generic": "Bir şeyler ters gitti. Tekrar dene.",
       "notConfigured": "Hesap sistemi şu an kullanılamıyor."
+    }
+  },
+  "paywall": {
+    "title": "Pro'ya geç",
+    "subtitle": "Reklamları kalıcı olarak kaldır, gelecek özellikleri otomatik aç.",
+    "skip": "Belki sonra",
+    "restorePurchases": "Satın alımları geri yükle",
+    "restoreSuccess": "Satın alımlar geri yüklendi.",
+    "restoreNothingFound": "Önceki bir satın alım bulunamadı.",
+    "purchaseSuccess": "Teşekkürler! Reklamlar artık kapalı.",
+    "buyButton": "Devam et",
+    "alreadyPro": "Zaten Pro'sun. Desteğin için teşekkürler!",
+    "alreadyAdsRemoved": "Bu hesapta reklamlar zaten kaldırılmış.",
+    "packages": {
+      "lifetimeLabel": "Reklamları kaldır",
+      "lifetimeHint": "Tek seferlik",
+      "annualLabel": "Pro — Yıllık",
+      "annualHint": "En avantajlı",
+      "monthlyLabel": "Pro — Aylık",
+      "proFeatures": "Reklamsız · Premium paketler (yakında) · Senkron (yakında)"
+    },
+    "errors": {
+      "generic": "Bir şeyler ters gitti. Tekrar dene.",
+      "notConfigured": "Satın alımlar şu an kullanılamıyor.",
+      "noOffering": "Şu an gösterilecek bir şey yok. Daha sonra tekrar dene."
     }
   }
 }

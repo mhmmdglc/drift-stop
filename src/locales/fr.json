@@ -73,7 +73,8 @@
       "appearance": "Apparence",
       "about": "À propos",
       "preferences": "Centres d'intérêt",
-      "account": "Compte"
+      "account": "Compte",
+      "premium": "Premium"
     },
     "notifications": {
       "masterToggle": "Activer les notifications",
@@ -118,6 +119,11 @@
       "signOutConfirmTitle": "Voulez-vous vraiment vous déconnecter ?",
       "guestHint": "Tu utilises DriftStop en tant qu'invité. Crée un compte pour synchroniser tes favoris et réglages entre appareils.",
       "signInLink": "Se connecter / Créer un compte"
+    },
+    "premium": {
+      "goProLink": "Supprimer les pubs / Passer en Pro",
+      "proActive": "Pro actif",
+      "adsRemovedActive": "Publicités supprimées"
     }
   },
   "notifications": {
@@ -195,6 +201,31 @@
       "network": "Erreur de connexion. Vérifie ta connexion internet.",
       "generic": "Une erreur s'est produite. Réessaie.",
       "notConfigured": "Les comptes ne sont pas disponibles pour le moment."
+    }
+  },
+  "paywall": {
+    "title": "Passer en Pro",
+    "subtitle": "Supprime les publicités pour de bon et débloque automatiquement les prochaines fonctionnalités.",
+    "skip": "Plus tard",
+    "restorePurchases": "Restaurer les achats",
+    "restoreSuccess": "Achats restaurés.",
+    "restoreNothingFound": "Aucun achat précédent trouvé.",
+    "purchaseSuccess": "Merci ! Les publicités sont désormais désactivées.",
+    "buyButton": "Continuer",
+    "alreadyPro": "Tu es déjà Pro. Merci pour ton soutien !",
+    "alreadyAdsRemoved": "Les publicités sont déjà supprimées sur ce compte.",
+    "packages": {
+      "lifetimeLabel": "Supprimer les pubs",
+      "lifetimeHint": "Achat unique",
+      "annualLabel": "Pro — Annuel",
+      "annualHint": "Meilleure offre",
+      "monthlyLabel": "Pro — Mensuel",
+      "proFeatures": "Sans pub · Packs premium (bientôt) · Synchronisation (bientôt)"
+    },
+    "errors": {
+      "generic": "Une erreur s'est produite. Réessaie.",
+      "notConfigured": "Les achats ne sont pas disponibles pour le moment.",
+      "noOffering": "Rien à afficher pour le moment. Réessaie plus tard."
     }
   }
 }

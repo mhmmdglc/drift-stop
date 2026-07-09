@@ -73,7 +73,8 @@
       "appearance": "Appearance",
       "about": "About",
       "preferences": "Interests",
-      "account": "Account"
+      "account": "Account",
+      "premium": "Premium"
     },
     "notifications": {
       "masterToggle": "Turn on notifications",
@@ -118,6 +119,11 @@
       "signOutConfirmTitle": "Are you sure you want to sign out?",
       "guestHint": "You're using DriftStop as a guest. Create an account to sync favorites and settings across devices.",
       "signInLink": "Sign in / Create account"
+    },
+    "premium": {
+      "goProLink": "Remove ads / Go Pro",
+      "proActive": "Pro active",
+      "adsRemovedActive": "Ads removed"
     }
   },
   "notifications": {
@@ -195,6 +201,31 @@
       "network": "Connection error. Check your internet.",
       "generic": "Something went wrong. Please try again.",
       "notConfigured": "Accounts aren't available right now."
+    }
+  },
+  "paywall": {
+    "title": "Go Pro",
+    "subtitle": "Remove ads for good, and unlock upcoming features automatically.",
+    "skip": "Maybe later",
+    "restorePurchases": "Restore purchases",
+    "restoreSuccess": "Purchases restored.",
+    "restoreNothingFound": "No previous purchase found.",
+    "purchaseSuccess": "Thank you! Ads are now off.",
+    "buyButton": "Continue",
+    "alreadyPro": "You're already Pro. Thank you for your support!",
+    "alreadyAdsRemoved": "Ads are already removed on this account.",
+    "packages": {
+      "lifetimeLabel": "Remove ads",
+      "lifetimeHint": "One-time purchase",
+      "annualLabel": "Pro — Yearly",
+      "annualHint": "Best value",
+      "monthlyLabel": "Pro — Monthly",
+      "proFeatures": "No ads · Premium packs (soon) · Sync (soon)"
+    },
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "notConfigured": "Purchases aren't available right now.",
+      "noOffering": "Nothing to show right now. Try again later."
     }
   }
 }

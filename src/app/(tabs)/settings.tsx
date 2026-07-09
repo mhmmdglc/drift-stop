@@ -17,6 +17,7 @@ import { Spacing } from '@/constants/layout';
 import { SUPPORTED_LANGUAGES } from '@/i18n';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useAuth } from '@/hooks/useAuth';
+import { usePurchases } from '@/hooks/usePurchases';
 import { useSettings } from '@/hooks/useSettings';
 import { useTheme } from '@/hooks/use-theme';
 import type { QuoteTag } from '@/types/quote';
@@ -30,7 +31,8 @@ export default function SettingsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { settings, update, setThemeMode, setLanguage } = useSettings();
-  const { user, configured, signOut } = useAuth();
+  const { user, configured: authConfigured, signOut } = useAuth();
+  const { configured: purchasesConfigured, isPro, isAdsRemoved } = usePurchases();
   const [timeError, setTimeError] = useState<string | null>(null);
 
   const confirmSignOut = () => {
@@ -202,7 +204,7 @@ export default function SettingsScreen() {
           </Section>
 
           {/* Hesap */}
-          {configured && (
+          {authConfigured && (
             <Section title={t('settings.sections.account')}>
               {user ? (
                 <>
@@ -228,6 +230,27 @@ export default function SettingsScreen() {
                     </ThemedText>
                   </Pressable>
                 </>
+              )}
+            </Section>
+          )}
+
+          {/* Premium */}
+          {purchasesConfigured && (
+            <Section title={t('settings.sections.premium')}>
+              {isPro ? (
+                <ThemedText variant="body" tone="accent">
+                  {t('settings.premium.proActive')}
+                </ThemedText>
+              ) : isAdsRemoved ? (
+                <ThemedText variant="body" tone="accent">
+                  {t('settings.premium.adsRemovedActive')}
+                </ThemedText>
+              ) : (
+                <Pressable onPress={() => router.push('/paywall')}>
+                  <ThemedText variant="body" tone="accent" style={styles.link}>
+                    {t('settings.premium.goProLink')}
+                  </ThemedText>
+                </Pressable>
               )}
             </Section>
           )}
