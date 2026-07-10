@@ -194,26 +194,6 @@ export function getCachedQuotesByPackId(packId: string): Quote[] {
   return rows.map(rowToQuote);
 }
 
-/** Her pack_id için cache'te kaç söz senkronize olduğunu döner (paket kartlarında sayı göstermek için). */
-export function getCachedPackQuoteCounts(): Record<string, number> {
-  const conn = getDb();
-  const rows = conn.getAllSync<{ pack_id: string; count: number }>(
-    `select pack_id, count(*) as count from quotes where pack_id is not null group by pack_id`
-  );
-  return Object.fromEntries(rows.map((r) => [r.pack_id, r.count]));
-}
-
-/**
- * Premium (paketlere ait) sözlerdeki tüm YAZARLARI + söz sayılarını döner
- * (hangi pakete ait olduğundan bağımsız — "Yazara Göre" gezinme ekseni).
- */
-export function getCachedPremiumAuthors(): { author: string; count: number }[] {
-  const conn = getDb();
-  return conn.getAllSync<{ author: string; count: number }>(
-    `select author, count(*) as count from quotes where is_premium = 1 group by author order by author`
-  );
-}
-
 /** Belirli bir yazarın TÜM premium sözlerini cache'ten okur. */
 export function getCachedQuotesByAuthor(author: string): Quote[] {
   const conn = getDb();

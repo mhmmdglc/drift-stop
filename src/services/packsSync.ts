@@ -8,6 +8,7 @@ type PackRow = {
   cover_image_url: string | null;
   is_premium: boolean;
   sort_order: number;
+  quote_count: number;
 };
 
 function toRemotePack(row: PackRow): RemotePack {
@@ -18,6 +19,7 @@ function toRemotePack(row: PackRow): RemotePack {
     coverImageUrl: row.cover_image_url,
     isPremium: row.is_premium,
     sortOrder: row.sort_order,
+    quoteCount: row.quote_count,
   };
 }
 
@@ -33,7 +35,7 @@ export async function syncPacks(): Promise<{ synced: number }> {
   try {
     const { data, error } = await supabase
       .from('quote_packs')
-      .select('id, name, description, cover_image_url, is_premium, sort_order')
+      .select('id, name, description, cover_image_url, is_premium, sort_order, quote_count')
       .order('sort_order', { ascending: true });
 
     if (error) throw error;

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { getAllCachedPacks } from '@/db/packsCache';
-import { getCachedPackQuoteCounts, getCachedPremiumAuthors } from '@/db/quotesCache';
+import { getAllCachedPacks, getCachedPremiumAuthorCounts } from '@/db/packsCache';
+import { syncAuthorCounts } from '@/services/authorsSync';
 import { syncPacks } from '@/services/packsSync';
 import { usePurchases } from '@/hooks/usePurchases';
 import type { QuotePack } from '@/types/quotePack';
@@ -33,10 +33,8 @@ export function usePacks() {
 
   const packs = useMemo<PackWithState[]>(() => {
     const rawPacks = getAllCachedPacks();
-    const counts = getCachedPackQuoteCounts();
     return rawPacks.map((p) => ({
       ...p,
-      quoteCount: counts[p.id] ?? 0,
       locked: p.isPremium && !isPro,
     }));
     // `version` sadece yeniden-okuma tetiklemek için bağımlılık; değeri kullanılmıyor.
@@ -44,9 +42,12 @@ export function usePacks() {
   }, [isPro, version]);
 
   const authors = useMemo<AuthorWithState[]>(() => {
-    return getCachedPremiumAuthors().map((a) => ({
+    // Herkese açık RPC'den senkronize edilen sayılar (bkz. authorsSync.ts) —
+    // free/guest kullanıcı da bu bölümü (kilitli haliyle) görebilsin diye
+    // gerçek söz içeriğinin senkronize olup olmamasına bağlı DEĞİL.
+    return getCachedPremiumAuthorCounts().map((a) => ({
       author: a.author,
-      quoteCount: a.count,
+      quoteCount: a.quoteCount,
       locked: !isPro,
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -54,7 +55,7 @@ export function usePacks() {
 
   const refresh = useCallback(async () => {
     setLoading(true);
-    await syncPacks();
+    await Promise.all([syncPacks(), syncAuthorCounts()]);
     setVersion((v) => v + 1);
     setLoading(false);
   }, []);

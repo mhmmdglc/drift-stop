@@ -7,6 +7,8 @@ export type QuotePack = {
   coverImageUrl: string | null;
   isPremium: boolean;
   sortOrder: number;
+  /** Paketteki gerçek söz sayısı (herkese açık metadata — içerik değil). */
+  quoteCount: number;
 };
 
 /** `QuotePack.name`/`description` gibi çok dilli jsonb alanlarından güvenli okuma. */

@@ -26,6 +26,7 @@ const packRow = (id: string) => ({
   cover_image_url: null,
   is_premium: true,
   sort_order: 0,
+  quote_count: 24,
 });
 
 beforeEach(() => {
@@ -40,7 +41,13 @@ describe('syncPacks', () => {
 
     expect(result.synced).toBe(1);
     expect(upsertPacks).toHaveBeenCalledWith([
-      expect.objectContaining({ id: 'stoics', coverImageUrl: null, isPremium: true, sortOrder: 0 }),
+      expect.objectContaining({
+        id: 'stoics',
+        coverImageUrl: null,
+        isPremium: true,
+        sortOrder: 0,
+        quoteCount: 24,
+      }),
     ]);
   });
 

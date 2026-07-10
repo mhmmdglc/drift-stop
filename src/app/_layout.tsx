@@ -23,6 +23,7 @@ import { ensurePermissions, rescheduleIfNeeded, setupAndroidChannel } from '@/ut
 import { getJSON, StorageKeys } from '@/utils/storage';
 import { syncQuotes } from '@/services/quotesSync';
 import { syncPacks } from '@/services/packsSync';
+import { syncAuthorCounts } from '@/services/authorsSync';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -41,6 +42,7 @@ function AppShell() {
     initAds();
     void syncQuotes();
     void syncPacks();
+    void syncAuthorCounts();
     getJSON<boolean>(StorageKeys.onboardingComplete, false).then(setOnboarded);
   }, []);
 

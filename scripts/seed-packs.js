@@ -195,6 +195,14 @@ async function main() {
   const { rows } = await client.query(
     'select pack_id, count(*)::int as count from quotes where pack_id is not null group by pack_id'
   );
+
+  // Paketin gerçek söz sayısını quote_packs.quote_count'a yazar — bu alan RLS'siz
+  // (herkese açık) okunabildiği için free/guest kullanıcılar bile kilitli
+  // paketin GERÇEK söz sayısını görebilir (içeriğin kendisi yine korunur).
+  for (const row of rows) {
+    await client.query('update quote_packs set quote_count = $1 where id = $2', [row.count, row.pack_id]);
+  }
+
   console.log('\n✔ Tamamlandı. Paket başına söz sayısı:', rows);
 
   await client.end();

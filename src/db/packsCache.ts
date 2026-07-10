@@ -16,6 +16,7 @@ export type RemotePack = {
   coverImageUrl: string | null;
   isPremium: boolean;
   sortOrder: number;
+  quoteCount: number;
 };
 
 let db: SQLite.SQLiteDatabase | null = null;
@@ -30,7 +31,20 @@ function getDb(): SQLite.SQLiteDatabase {
         description text,
         cover_image_url text,
         is_premium integer not null default 1,
-        sort_order integer not null default 0
+        sort_order integer not null default 0,
+        quote_count integer not null default 0
+      );
+    `);
+    try {
+      // Var olan yüklemelerde tablo bu sütun olmadan oluşmuş olabilir.
+      db.execSync(`alter table packs add column quote_count integer not null default 0;`);
+    } catch {
+      // sütun zaten var — yeni kurulumlarda create table zaten ekliyor
+    }
+    db.execSync(`
+      create table if not exists premium_authors (
+        author text primary key,
+        quote_count integer not null default 0
       );
     `);
   }
@@ -42,14 +56,15 @@ export function upsertPacks(rows: RemotePack[]): void {
   const conn = getDb();
   conn.withTransactionSync(() => {
     const stmt = conn.prepareSync(
-      `insert into packs (id, name, description, cover_image_url, is_premium, sort_order)
-       values ($id, $name, $description, $coverImageUrl, $isPremium, $sortOrder)
+      `insert into packs (id, name, description, cover_image_url, is_premium, sort_order, quote_count)
+       values ($id, $name, $description, $coverImageUrl, $isPremium, $sortOrder, $quoteCount)
        on conflict (id) do update set
         name = excluded.name,
         description = excluded.description,
         cover_image_url = excluded.cover_image_url,
         is_premium = excluded.is_premium,
-        sort_order = excluded.sort_order`
+        sort_order = excluded.sort_order,
+        quote_count = excluded.quote_count`
     );
     try {
       for (const r of rows) {
@@ -60,6 +75,7 @@ export function upsertPacks(rows: RemotePack[]): void {
           $coverImageUrl: r.coverImageUrl,
           $isPremium: r.isPremium ? 1 : 0,
           $sortOrder: r.sortOrder,
+          $quoteCount: r.quoteCount,
         });
       }
     } finally {
@@ -77,7 +93,10 @@ export function getAllCachedPacks(): QuotePack[] {
     cover_image_url: string | null;
     is_premium: number;
     sort_order: number;
-  }>('select id, name, description, cover_image_url, is_premium, sort_order from packs order by sort_order, id');
+    quote_count: number;
+  }>(
+    'select id, name, description, cover_image_url, is_premium, sort_order, quote_count from packs order by sort_order, id'
+  );
 
   return rows.map((r) => ({
     id: r.id,
@@ -86,5 +105,33 @@ export function getAllCachedPacks(): QuotePack[] {
     coverImageUrl: r.cover_image_url,
     isPremium: !!r.is_premium,
     sortOrder: r.sort_order,
+    quoteCount: r.quote_count,
   }));
+}
+
+/** Premium sözlerdeki tüm yazarlar + söz sayıları (herkese açık metadata — bkz. `authorsSync.ts`). */
+export function upsertPremiumAuthorCounts(rows: { author: string; quoteCount: number }[]): void {
+  const conn = getDb();
+  conn.withTransactionSync(() => {
+    const stmt = conn.prepareSync(
+      `insert into premium_authors (author, quote_count)
+       values ($author, $quoteCount)
+       on conflict (author) do update set quote_count = excluded.quote_count`
+    );
+    try {
+      for (const r of rows) {
+        stmt.executeSync({ $author: r.author, $quoteCount: r.quoteCount });
+      }
+    } finally {
+      stmt.finalizeSync();
+    }
+  });
+}
+
+export function getCachedPremiumAuthorCounts(): { author: string; quoteCount: number }[] {
+  const conn = getDb();
+  const rows = conn.getAllSync<{ author: string; quote_count: number }>(
+    'select author, quote_count from premium_authors order by author'
+  );
+  return rows.map((r) => ({ author: r.author, quoteCount: r.quote_count }));
 }
