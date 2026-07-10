@@ -252,6 +252,11 @@ export default function SettingsScreen() {
                   </ThemedText>
                 </Pressable>
               )}
+              <Pressable onPress={() => router.push('/packs')}>
+                <ThemedText variant="body" tone="text" style={styles.link}>
+                  {t('settings.premium.packsLink')}
+                </ThemedText>
+              </Pressable>
             </Section>
           )}
 

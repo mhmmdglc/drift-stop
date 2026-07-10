@@ -123,7 +123,8 @@
     "premium": {
       "goProLink": "Rimuovi annunci / Passa a Pro",
       "proActive": "Pro attivo",
-      "adsRemovedActive": "Annunci rimossi"
+      "adsRemovedActive": "Annunci rimossi",
+      "packsLink": "Esplora i pacchetti di contenuti"
     }
   },
   "notifications": {
@@ -220,12 +221,25 @@
       "annualLabel": "Pro — Annuale",
       "annualHint": "Il migliore",
       "monthlyLabel": "Pro — Mensile",
-      "proFeatures": "Senza annunci · Pacchetti premium (presto) · Sincronizzazione (presto)"
+      "proFeatures": "Senza annunci · Pacchetti premium · Sincronizzazione (presto)"
     },
     "errors": {
       "generic": "Qualcosa è andato storto. Riprova.",
       "notConfigured": "Gli acquisti non sono disponibili al momento.",
       "noOffering": "Niente da mostrare ora. Riprova più tardi."
     }
+  },
+  "packs": {
+    "screenTitle": "Pacchetti di contenuti",
+    "subtitle": "Collezioni curate di citazioni. Pro le sblocca tutte.",
+    "emptyTitle": "Ancora nessun pacchetto. Torna presto.",
+    "lockedBadge": "Bloccato",
+    "lockedTitle": "Questo pacchetto è bloccato",
+    "lockedBody": "Passa a Pro per sbloccare questa collezione.",
+    "unlockCta": "Passa a Pro",
+    "quoteCount": "%{count} citazioni",
+    "syncingBody": "Sincronizzazione delle citazioni, saranno qui a breve.",
+    "collectionsSectionTitle": "Collezioni",
+    "authorsSectionTitle": "Autori"
   }
 }

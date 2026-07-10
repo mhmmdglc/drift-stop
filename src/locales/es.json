@@ -123,7 +123,8 @@
     "premium": {
       "goProLink": "Quitar anuncios / Hazte Pro",
       "proActive": "Pro activo",
-      "adsRemovedActive": "Anuncios eliminados"
+      "adsRemovedActive": "Anuncios eliminados",
+      "packsLink": "Explorar paquetes de contenido"
     }
   },
   "notifications": {
@@ -220,12 +221,25 @@
       "annualLabel": "Pro — Anual",
       "annualHint": "Mejor precio",
       "monthlyLabel": "Pro — Mensual",
-      "proFeatures": "Sin anuncios · Paquetes premium (pronto) · Sincronización (pronto)"
+      "proFeatures": "Sin anuncios · Paquetes premium · Sincronización (pronto)"
     },
     "errors": {
       "generic": "Algo salió mal. Inténtalo de nuevo.",
       "notConfigured": "Las compras no están disponibles ahora mismo.",
       "noOffering": "No hay nada que mostrar ahora. Inténtalo más tarde."
     }
+  },
+  "packs": {
+    "screenTitle": "Paquetes de contenido",
+    "subtitle": "Colecciones de frases seleccionadas. Pro las desbloquea todas.",
+    "emptyTitle": "Aún no hay paquetes. Vuelve pronto.",
+    "lockedBadge": "Bloqueado",
+    "lockedTitle": "Este paquete está bloqueado",
+    "lockedBody": "Hazte Pro para desbloquear esta colección.",
+    "unlockCta": "Hazte Pro",
+    "quoteCount": "%{count} frases",
+    "syncingBody": "Sincronizando frases, estarán aquí en breve.",
+    "collectionsSectionTitle": "Colecciones",
+    "authorsSectionTitle": "Autores"
   }
 }

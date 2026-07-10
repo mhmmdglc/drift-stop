@@ -9,7 +9,7 @@ import { PaperBackground } from '@/components/PaperBackground';
 import { QuoteCard } from '@/components/QuoteCard';
 import { ThemedText } from '@/components/ThemedText';
 import { Spacing } from '@/constants/layout';
-import { getQuoteById } from '@/data/quotes';
+import { getQuoteByIdAnySource } from '@/data/quotesAnySource';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useHistory } from '@/hooks/useHistory';
 import { useTheme } from '@/hooks/use-theme';
@@ -25,12 +25,14 @@ export default function QuoteDetailScreen() {
   const { record } = useHistory();
 
   const id = Number(params.id);
-  const quote = Number.isFinite(id) ? getQuoteById(id) : undefined;
+  const quote = Number.isFinite(id) ? getQuoteByIdAnySource(id) : undefined;
 
-  // Bildirimden/widget'tan açılan sözü geçmişe ekle
+  // Bildirimden/widget'tan açılan sözü geçmişe ekle.
+  // Premium paket sözleri hariç: Home'un geçmişi sadece statik 1000 sözden id çözebiliyor
+  // (bkz. useHistory + getQuoteById) — premium id'yi geçmişe yazmak Home'da boş karta yol açar.
   useEffect(() => {
-    if (quote) record(quote.id);
-  }, [quote?.id, record]);
+    if (quote && !quote.isPremium) record(quote.id);
+  }, [quote?.id, quote?.isPremium, record]);
 
   const goBack = useCallback(() => {
     if (router.canGoBack()) router.back();

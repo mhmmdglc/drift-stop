@@ -62,22 +62,22 @@ Sürüklenme. Geri dön.
 
 ---
 
-## App content (declarations) — hazır cevaplar
+## App content (declarations) — ready-made answers
 - **Privacy policy:** https://mgulcu.me/driftstop/privacy
-- **App access:** Tüm işlevler kısıtlama olmadan kullanılabilir (giriş yok).
-- **Ads:** Evet, uygulama reklam içerir.
-- **Content rating (anket):** Şiddet/cinsellik/küfür yok; metinler motivasyon sözleri. Tahmini: Everyone / Teen.
-- **Target audience:** 13+ (çocuklara yönelik değil).
+- **App access:** All functionality is usable without restriction (no login).
+- **Ads:** Yes, the app contains ads.
+- **Content rating (questionnaire):** No violence/sexual content/profanity; text is motivational quotes. Estimated: Everyone / Teen.
+- **Target audience:** 13+ (not directed at children).
 - **Data safety:**
-  - Toplanan veri: "Device or other IDs" → Reklam kimliği (yalnızca Google AdMob aracılığıyla, reklam için).
-  - Geliştirici doğrudan kişisel veri TOPLAMAZ.
-  - Veri şifrelenerek aktarılır (AdMob/Google), kullanıcı silme talebi: uygulamayı kaldırmak yerel veriyi siler.
-  - Reklam kimliği "Advertising or marketing" amacıyla, üçüncü taraf (Google) tarafından işlenir.
+  - Data collected: "Device or other IDs" → advertising ID (only via Google AdMob, for ads).
+  - The developer does NOT directly collect personal data.
+  - Data is transmitted encrypted (AdMob/Google); deletion request: uninstalling the app deletes local data.
+  - The advertising ID is processed by a third party (Google) for "advertising or marketing" purposes.
 
 ---
 
-## NOT — Feature graphic (1024×500)
-ImageMagick yok; markalı tanıtım grafiği otomatik üretilemedi. Seçenekler:
-1. Canva'da 2 dk: koyu zemin (#1C1A16) + amber (#C8923A) "DriftStop" + "Sürüklenme." → 1024×500 PNG.
-2. İstersem tarayıcıda HTML render edip ekran görüntüsüyle üretebilirim (tam piksel ayarı gerekir).
-Bu, yayına gönderim için gereken son görsel.
+## NOTE — Feature graphic (1024×500)
+No ImageMagick available; the branded promo graphic couldn't be auto-generated. Options:
+1. 2 minutes in Canva: dark background (#1C1A16) + amber (#C8923A) "DriftStop" + "Stop drifting." → 1024×500 PNG.
+2. If you want, I can render HTML in a browser and produce it via screenshot (needs exact pixel sizing).
+This is the last graphic needed before submitting for review.

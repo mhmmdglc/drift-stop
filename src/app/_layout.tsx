@@ -22,6 +22,7 @@ import { nativeFeaturesAvailable } from '@/utils/runtime';
 import { ensurePermissions, rescheduleIfNeeded, setupAndroidChannel } from '@/utils/scheduler';
 import { getJSON, StorageKeys } from '@/utils/storage';
 import { syncQuotes } from '@/services/quotesSync';
+import { syncPacks } from '@/services/packsSync';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -39,6 +40,7 @@ function AppShell() {
     void setupAndroidChannel();
     initAds();
     void syncQuotes();
+    void syncPacks();
     getJSON<boolean>(StorageKeys.onboardingComplete, false).then(setOnboarded);
   }, []);
 
@@ -70,6 +72,9 @@ function AppShell() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="onboarding" />
         <Stack.Screen name="quote/[id]" />
+        <Stack.Screen name="packs/index" />
+        <Stack.Screen name="packs/[id]" />
+        <Stack.Screen name="packs/author/[name]" />
         <Stack.Screen name="auth" />
         <Stack.Screen name="paywall" />
       </Stack>

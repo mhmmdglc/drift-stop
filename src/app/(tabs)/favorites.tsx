@@ -10,7 +10,7 @@ import { WobblyBorder } from '@/components/WobblyBorder';
 import { Spacing } from '@/constants/layout';
 import { localizeAuthor } from '@/i18n/quoteLocalization';
 import { quoteDisplayText } from '@/utils/quoteText';
-import { getQuoteById } from '@/data/quotes';
+import { getQuoteByIdAnySource } from '@/data/quotesAnySource';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useTheme } from '@/hooks/use-theme';
 import { useTranslation } from '@/i18n/useTranslation';
@@ -23,7 +23,7 @@ export default function FavoritesScreen() {
   const { ids, remove } = useFavorites();
 
   const quotes = useMemo(
-    () => ids.map((id) => getQuoteById(id)).filter((q): q is Quote => !!q),
+    () => ids.map((id) => getQuoteByIdAnySource(id)).filter((q): q is Quote => !!q),
     [ids]
   );
 

@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import Purchases, {
   type CustomerInfo,
   type PurchasesOffering,
@@ -6,6 +6,7 @@ import Purchases, {
 } from 'react-native-purchases';
 
 import { configurePurchases, purchasesConfigured } from '@/lib/purchases';
+import { useAuth } from '@/hooks/useAuth';
 import { setAdsSuppressed } from '@/utils/ads';
 
 const PRO_ENTITLEMENT = 'pro';
@@ -34,9 +35,11 @@ function deriveFlags(info: CustomerInfo | null) {
 }
 
 export function PurchasesProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo | null>(null);
   const [offering, setOffering] = useState<PurchasesOffering | null>(null);
   const [loading, setLoading] = useState(true);
+  const linkedUserId = useRef<string | null>(null);
 
   useEffect(() => {
     if (!purchasesConfigured) {
@@ -51,21 +54,50 @@ export function PurchasesProvider({ children }: { children: ReactNode }) {
     };
     Purchases.addCustomerInfoUpdateListener(listener);
 
-    Promise.all([Purchases.getCustomerInfo(), Purchases.getOfferings()])
-      .then(([info, offerings]) => {
-        if (!active) return;
-        setCustomerInfo(info);
-        setOffering(offerings.current);
+    Purchases.getCustomerInfo()
+      .then((info) => {
+        if (active) setCustomerInfo(info);
       })
+      .catch(() => {})
       .finally(() => {
         if (active) setLoading(false);
       });
+
+    // Ayrı tutuluyor: offerings (RevenueCat dashboard'da yapılandırılmamışsa
+    // ya da cihazda Play Billing kullanılamıyorsa) hata verebilir — bu, customerInfo'nun
+    // (yani isPro/isAdsRemoved'ın) güncellenmesini asla engellememeli.
+    Purchases.getOfferings()
+      .then((offerings) => {
+        if (active) setOffering(offerings.current);
+      })
+      .catch(() => {});
 
     return () => {
       active = false;
       Purchases.removeCustomerInfoUpdateListener(listener);
     };
   }, []);
+
+  // RevenueCat'in app_user_id'sini Supabase kullanıcı id'sine bağlar/çözer.
+  // Webhook'un (Faz 4) hangi profiles satırını güncelleyeceğini bilmesi için şart —
+  // bağlanmazsa RevenueCat anonim bir id kullanır ve profiles.is_premium hiç yazılamaz.
+  useEffect(() => {
+    if (!purchasesConfigured) return;
+    const nextId = user?.id ?? null;
+    if (nextId === linkedUserId.current) return;
+    const prevId = linkedUserId.current;
+    linkedUserId.current = nextId;
+
+    if (nextId) {
+      Purchases.logIn(nextId)
+        .then(({ customerInfo: info }) => setCustomerInfo(info))
+        .catch(() => {});
+    } else if (prevId) {
+      Purchases.logOut()
+        .then((info) => setCustomerInfo(info))
+        .catch(() => {});
+    }
+  }, [user]);
 
   const { isPro, isAdsRemoved } = useMemo(() => deriveFlags(customerInfo), [customerInfo]);
 

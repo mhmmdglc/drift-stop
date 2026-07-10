@@ -1,12 +1,12 @@
 /**
- * quotes.json'ı insan-okur QUOTES.md'ye döker (kategoriye göre gruplu).
- * Çalıştır: node scripts/export-quotes.js
+ * Dumps quotes.json into a human-readable quotes-reference.md (grouped by category).
+ * Run: node scripts/export-quotes.js
  */
 const fs = require('fs');
 const path = require('path');
 
 const quotes = require('../src/data/quotes.json');
-const OUT = path.join(__dirname, '..', 'QUOTES.md');
+const OUT = path.join(__dirname, '..', '.claude', 'docs', 'quotes-reference.md');
 
 const CAT_TR = {
   resilience: 'Dayanıklılık',

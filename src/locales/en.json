@@ -123,7 +123,8 @@
     "premium": {
       "goProLink": "Remove ads / Go Pro",
       "proActive": "Pro active",
-      "adsRemovedActive": "Ads removed"
+      "adsRemovedActive": "Ads removed",
+      "packsLink": "Explore content packs"
     }
   },
   "notifications": {
@@ -220,12 +221,25 @@
       "annualLabel": "Pro — Yearly",
       "annualHint": "Best value",
       "monthlyLabel": "Pro — Monthly",
-      "proFeatures": "No ads · Premium packs (soon) · Sync (soon)"
+      "proFeatures": "No ads · Premium packs · Sync (soon)"
     },
     "errors": {
       "generic": "Something went wrong. Please try again.",
       "notConfigured": "Purchases aren't available right now.",
       "noOffering": "Nothing to show right now. Try again later."
     }
+  },
+  "packs": {
+    "screenTitle": "Content Packs",
+    "subtitle": "Curated quote collections. A Pro subscription unlocks all of them.",
+    "emptyTitle": "No packs yet. Check back soon.",
+    "lockedBadge": "Locked",
+    "lockedTitle": "This pack is locked",
+    "lockedBody": "Go Pro to unlock this collection.",
+    "unlockCta": "Go Pro",
+    "quoteCount": "%{count} quotes",
+    "syncingBody": "Syncing quotes, they'll be here shortly.",
+    "collectionsSectionTitle": "Collections",
+    "authorsSectionTitle": "Authors"
   }
 }

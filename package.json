@@ -50,6 +50,8 @@
   "devDependencies": {
     "@types/react": "~19.2.2",
     "dotenv": "^17.4.2",
+    "eslint": "^9.0.0",
+    "eslint-config-expo": "~56.0.4",
     "pg": "^8.22.0",
     "typescript": "~6.0.3"
   },
@@ -64,7 +66,8 @@
     "build:quotes": "node ./scripts/build-quotes.js",
     "export:quotes": "node ./scripts/export-quotes.js",
     "db:migrate": "node ./scripts/db-migrate.js",
-    "db:seed-quotes": "node ./scripts/seed-quotes.js"
+    "db:seed-quotes": "node ./scripts/seed-quotes.js",
+    "db:seed-packs": "node ./scripts/seed-packs.js"
   },
   "private": true
 }

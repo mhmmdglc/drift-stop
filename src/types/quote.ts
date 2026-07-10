@@ -45,4 +45,8 @@ export type Quote = {
   era: QuoteEra;
   /** Tema tag'leri (en az 1). */
   tags: QuoteTag[];
+  /** Premium paket sözü mü? Gömülü 1000 söz için hep false/undefined. */
+  isPremium?: boolean;
+  /** Ait olduğu premium paketin id'si (bkz. QuotePack). Free sözlerde null/undefined. */
+  packId?: string | null;
 };

@@ -13,10 +13,10 @@ import type { Quote } from '@/types/quote';
 export async function shareQuote(quote: Quote): Promise<void> {
   const locale = i18n.locale;
   const text = quoteDisplayText(quote, locale);
-  const template = i18n.t('share.quoteTemplate');
-  const message = template
-    .replace('{{quote}}', text)
-    .replace('{{author}}', localizeAuthor(quote.author, locale));
+  const message = i18n.t('share.quoteTemplate', {
+    quote: text,
+    author: localizeAuthor(quote.author, locale),
+  });
 
   try {
     await Share.share({ message });

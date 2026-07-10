@@ -123,7 +123,8 @@
     "premium": {
       "goProLink": "Werbung entfernen / Pro werden",
       "proActive": "Pro aktiv",
-      "adsRemovedActive": "Werbung entfernt"
+      "adsRemovedActive": "Werbung entfernt",
+      "packsLink": "Inhaltspakete entdecken"
     }
   },
   "notifications": {
@@ -220,12 +221,25 @@
       "annualLabel": "Pro — Jährlich",
       "annualHint": "Bester Preis",
       "monthlyLabel": "Pro — Monatlich",
-      "proFeatures": "Keine Werbung · Premium-Pakete (bald) · Synchronisierung (bald)"
+      "proFeatures": "Keine Werbung · Premium-Pakete · Synchronisierung (bald)"
     },
     "errors": {
       "generic": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
       "notConfigured": "Käufe sind derzeit nicht verfügbar.",
       "noOffering": "Gerade nichts anzuzeigen. Versuch es später erneut."
     }
+  },
+  "packs": {
+    "screenTitle": "Inhaltspakete",
+    "subtitle": "Kuratierte Zitatsammlungen. Ein Pro-Abo schaltet alle frei.",
+    "emptyTitle": "Noch keine Pakete. Schau bald wieder vorbei.",
+    "lockedBadge": "Gesperrt",
+    "lockedTitle": "Dieses Paket ist gesperrt",
+    "lockedBody": "Werde Pro, um diese Sammlung freizuschalten.",
+    "unlockCta": "Pro werden",
+    "quoteCount": "%{count} Zitate",
+    "syncingBody": "Zitate werden synchronisiert, sie sind gleich da.",
+    "collectionsSectionTitle": "Sammlungen",
+    "authorsSectionTitle": "Autoren"
   }
 }

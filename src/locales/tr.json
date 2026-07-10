@@ -123,7 +123,8 @@
     "premium": {
       "goProLink": "Reklamları kaldır / Pro'ya geç",
       "proActive": "Pro aktif",
-      "adsRemovedActive": "Reklamlar kaldırıldı"
+      "adsRemovedActive": "Reklamlar kaldırıldı",
+      "packsLink": "İçerik paketlerini keşfet"
     }
   },
   "notifications": {
@@ -220,12 +221,25 @@
       "annualLabel": "Pro — Yıllık",
       "annualHint": "En avantajlı",
       "monthlyLabel": "Pro — Aylık",
-      "proFeatures": "Reklamsız · Premium paketler (yakında) · Senkron (yakında)"
+      "proFeatures": "Reklamsız · Premium paketler · Senkron (yakında)"
     },
     "errors": {
       "generic": "Bir şeyler ters gitti. Tekrar dene.",
       "notConfigured": "Satın alımlar şu an kullanılamıyor.",
       "noOffering": "Şu an gösterilecek bir şey yok. Daha sonra tekrar dene."
     }
+  },
+  "packs": {
+    "screenTitle": "İçerik Paketleri",
+    "subtitle": "Küratörlü söz koleksiyonları. Pro üyelik hepsinin kilidini açar.",
+    "emptyTitle": "Henüz paket yok. Yakında burada olacak.",
+    "lockedBadge": "Kilitli",
+    "lockedTitle": "Bu paket kilitli",
+    "lockedBody": "Bu koleksiyonun kilidini açmak için Pro'ya geç.",
+    "unlockCta": "Pro'ya geç",
+    "quoteCount": "%{count} söz",
+    "syncingBody": "Sözler senkronize ediliyor, birazdan burada olacak.",
+    "collectionsSectionTitle": "Koleksiyonlar",
+    "authorsSectionTitle": "Yazarlar"
   }
 }
