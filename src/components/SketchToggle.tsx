@@ -15,10 +15,11 @@ const KNOB = 20;
 type Props = {
   value: boolean;
   onChange: (next: boolean) => void;
+  accessibilityLabel?: string;
 };
 
 /** Elle çizilmiş ray üzerinde kayan daire — karakalem toggle. */
-export function SketchToggle({ value, onChange }: Props) {
+export function SketchToggle({ value, onChange, accessibilityLabel }: Props) {
   const { colors } = useTheme();
   const progress = useDerivedValue(() => withTiming(value ? 1 : 0, { duration: 160 }));
 
@@ -27,7 +28,12 @@ export function SketchToggle({ value, onChange }: Props) {
   }));
 
   return (
-    <Pressable onPress={() => onChange(!value)} hitSlop={8}>
+    <Pressable
+      onPress={() => onChange(!value)}
+      hitSlop={8}
+      accessibilityRole="switch"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityState={{ checked: value }}>
       <View
         style={[
           styles.track,

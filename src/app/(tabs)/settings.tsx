@@ -82,6 +82,11 @@ export default function SettingsScreen() {
               <SketchToggle
                 value={settings.notificationsEnabled}
                 onChange={(v) => update({ notificationsEnabled: v })}
+                accessibilityLabel={
+                  settings.notificationsEnabled
+                    ? t('settings.notifications.masterToggle')
+                    : t('settings.notifications.masterToggleOff')
+                }
               />
             </Row>
             <View style={styles.stack}>
@@ -132,6 +137,7 @@ export default function SettingsScreen() {
               <SketchToggle
                 value={settings.disableWeekends}
                 onChange={(v) => update({ disableWeekends: v })}
+                accessibilityLabel={t('settings.schedule.weekendsToggle')}
               />
             </Row>
           </Section>

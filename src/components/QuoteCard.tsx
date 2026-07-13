@@ -73,10 +73,16 @@ export function QuoteCard({
           <Pressable
             onPress={onToggleFavorite}
             hitSlop={12}
-            accessibilityLabel={t(isFavorite ? 'home.favoriteRemove' : 'home.favoriteAdd')}>
+            accessibilityRole="button"
+            accessibilityLabel={t(isFavorite ? 'home.favoriteRemove' : 'home.favoriteAdd')}
+            accessibilityState={{ selected: isFavorite }}>
             <SketchHeart size={26} filled={isFavorite} />
           </Pressable>
-          <Pressable onPress={onShare} hitSlop={12} accessibilityLabel={t('home.shareQuote')}>
+          <Pressable
+            onPress={onShare}
+            hitSlop={12}
+            accessibilityRole="button"
+            accessibilityLabel={t('home.shareQuote')}>
             <SketchShare size={26} />
           </Pressable>
         </View>

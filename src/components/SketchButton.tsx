@@ -44,6 +44,9 @@ export function SketchButton({
         onPressOut={() => {
           scale.value = withTiming(1, { duration: 120 });
         }}
+        accessibilityRole="button"
+        accessibilityLabel={label}
+        accessibilityState={{ disabled }}
         style={[styles.btn, { opacity: disabled ? 0.4 : 1 }, style]}>
         <View style={StyleSheet.absoluteFill}>
           <WobblyBorder stroke={stroke ?? colors.accent} strokeWidth={1.5} />

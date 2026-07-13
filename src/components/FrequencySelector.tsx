@@ -20,7 +20,14 @@ export function FrequencySelector({ value, onChange }: Props) {
       {FREQUENCY_OPTIONS.map((opt) => {
         const selected = opt === value;
         return (
-          <Pressable key={opt} onPress={() => onChange(opt)} style={styles.bubble} hitSlop={6}>
+          <Pressable
+            key={opt}
+            onPress={() => onChange(opt)}
+            style={styles.bubble}
+            hitSlop={6}
+            accessibilityRole="radio"
+            accessibilityLabel={String(opt)}
+            accessibilityState={{ checked: selected }}>
             {selected && <WobblyBorder stroke={colors.accent} strokeWidth={1.6} inset={2} />}
             <ThemedText variant="author" tone={selected ? 'accent' : 'textMuted'}>
               {opt}

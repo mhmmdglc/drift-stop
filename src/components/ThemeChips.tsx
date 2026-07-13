@@ -23,7 +23,14 @@ export function ThemeChips({ selected, onToggle }: Props) {
       {QUOTE_TAGS.map((tag) => {
         const on = set.has(tag);
         return (
-          <Pressable key={tag} onPress={() => onToggle(tag)} style={styles.chip} hitSlop={4}>
+          <Pressable
+            key={tag}
+            onPress={() => onToggle(tag)}
+            style={styles.chip}
+            hitSlop={4}
+            accessibilityRole="checkbox"
+            accessibilityLabel={t(`themes.${tag}`)}
+            accessibilityState={{ checked: on }}>
             <WobblyBorder
               stroke={on ? colors.accent : colors.faintLine}
               strokeWidth={on ? 1.6 : 1.2}

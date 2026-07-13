@@ -8,6 +8,7 @@
     "@expo-google-fonts/kalam": "^0.4.1",
     "@expo/ui": "~56.0.18",
     "@react-native-async-storage/async-storage": "2.2.0",
+    "@sentry/react-native": "^8.18.0",
     "@supabase/supabase-js": "^2.109.0",
     "@types/jest": "29.5.14",
     "date-fns": "^4.4.0",
@@ -48,6 +49,7 @@
     "react-native-worklets": "0.8.3"
   },
   "devDependencies": {
+    "@testing-library/react-native": "^14.0.1",
     "@types/react": "~19.2.2",
     "dotenv": "^17.4.2",
     "eslint": "^9.0.0",

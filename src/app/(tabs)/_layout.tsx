@@ -55,7 +55,10 @@ function SketchTabBar({
             key={item.key}
             onPress={() => onPress(item)}
             style={styles.tab}
-            hitSlop={8}>
+            hitSlop={8}
+            accessibilityRole="tab"
+            accessibilityLabel={item.title}
+            accessibilityState={{ selected: item.focused }}>
             <Icon
               size={24}
               weight="thin"

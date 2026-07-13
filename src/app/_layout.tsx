@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { SplashOverlay } from '@/components/SplashOverlay';
 import { AuthProvider } from '@/hooks/useAuth';
 import { HistoryProvider, useHistory } from '@/hooks/useHistory';
@@ -18,6 +19,7 @@ import { PurchasesProvider } from '@/hooks/usePurchases';
 import { SettingsProvider, useSettings } from '@/hooks/useSettings';
 import { ThemeProvider, useTheme } from '@/hooks/use-theme';
 import { initAds } from '@/utils/ads';
+import { initCrashReporting } from '@/utils/crashReporting';
 import { nativeFeaturesAvailable } from '@/utils/runtime';
 import { ensurePermissions, rescheduleIfNeeded, setupAndroidChannel } from '@/utils/scheduler';
 import { getJSON, StorageKeys } from '@/utils/storage';
@@ -26,6 +28,7 @@ import { syncPacks } from '@/services/packsSync';
 import { syncAuthorCounts } from '@/services/authorsSync';
 
 SplashScreen.preventAutoHideAsync();
+initCrashReporting();
 
 function AppShell() {
   useNotificationObserver();
@@ -105,20 +108,22 @@ export default function RootLayout() {
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <SettingsProvider>
-          <ThemeProvider>
-            <AuthProvider>
-              <PurchasesProvider>
-                <HistoryProvider>
-                  <AppShell />
-                </HistoryProvider>
-              </PurchasesProvider>
-            </AuthProvider>
-          </ThemeProvider>
-        </SettingsProvider>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
+    <ErrorBoundary>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaProvider>
+          <SettingsProvider>
+            <ThemeProvider>
+              <AuthProvider>
+                <PurchasesProvider>
+                  <HistoryProvider>
+                    <AppShell />
+                  </HistoryProvider>
+                </PurchasesProvider>
+              </AuthProvider>
+            </ThemeProvider>
+          </SettingsProvider>
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    </ErrorBoundary>
   );
 }
