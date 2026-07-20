@@ -117,6 +117,10 @@
       "signedInAs": "E-Mail",
       "signOut": "Abmelden",
       "signOutConfirmTitle": "Möchtest du dich wirklich abmelden?",
+      "deleteAccount": "Konto löschen",
+      "deleteAccountConfirmTitle": "Konto dauerhaft löschen?",
+      "deleteAccountConfirmMessage": "Alles, was mit deinem Konto verknüpft ist — Favoriten, Reflexionen und Einstellungen — wird gelöscht. Dies kann nicht rückgängig gemacht werden.",
+      "deleteAccountErrorTitle": "Konto konnte nicht gelöscht werden",
       "guestHint": "Du nutzt DriftStop als Gast. Erstelle ein Konto, um Favoriten und Einstellungen geräteübergreifend zu synchronisieren.",
       "signInLink": "Anmelden / Konto erstellen"
     },

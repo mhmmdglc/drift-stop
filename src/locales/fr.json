@@ -117,6 +117,10 @@
       "signedInAs": "E-mail",
       "signOut": "Se déconnecter",
       "signOutConfirmTitle": "Voulez-vous vraiment vous déconnecter ?",
+      "deleteAccount": "Supprimer le compte",
+      "deleteAccountConfirmTitle": "Supprimer définitivement ton compte ?",
+      "deleteAccountConfirmMessage": "Tout ce qui est lié à ton compte — favoris, réflexions et réglages — sera supprimé. Cette action est irréversible.",
+      "deleteAccountErrorTitle": "Impossible de supprimer le compte",
       "guestHint": "Tu utilises DriftStop en tant qu'invité. Crée un compte pour synchroniser tes favoris et réglages entre appareils.",
       "signInLink": "Se connecter / Créer un compte"
     },

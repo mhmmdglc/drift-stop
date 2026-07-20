@@ -53,3 +53,6 @@ credentials.json
 *-OLD-*.png
 *-WITHAD.bak.png
 _old-blue-icons.bak/
+
+# Supabase CLI local cache (link metadata, not secrets, but machine-local)
+supabase/.temp/

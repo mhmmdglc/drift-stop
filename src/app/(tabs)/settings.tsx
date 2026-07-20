@@ -31,14 +31,29 @@ export default function SettingsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { settings, update, setThemeMode, setLanguage } = useSettings();
-  const { user, configured: authConfigured, signOut } = useAuth();
+  const { user, configured: authConfigured, signOut, deleteAccount } = useAuth();
   const { configured: purchasesConfigured, isPro, isAdsRemoved } = usePurchases();
   const [timeError, setTimeError] = useState<string | null>(null);
+  const [deletingAccount, setDeletingAccount] = useState(false);
 
   const confirmSignOut = () => {
     Alert.alert(t('settings.account.signOutConfirmTitle'), undefined, [
       { text: t('common.cancel'), style: 'cancel' },
       { text: t('settings.account.signOut'), style: 'destructive', onPress: () => void signOut() },
+    ]);
+  };
+
+  const runDeleteAccount = async () => {
+    setDeletingAccount(true);
+    const { error } = await deleteAccount();
+    setDeletingAccount(false);
+    if (error) Alert.alert(t('settings.account.deleteAccountErrorTitle'), t(error));
+  };
+
+  const confirmDeleteAccount = () => {
+    Alert.alert(t('settings.account.deleteAccountConfirmTitle'), t('settings.account.deleteAccountConfirmMessage'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      { text: t('settings.account.deleteAccount'), style: 'destructive', onPress: () => void runDeleteAccount() },
     ]);
   };
 
@@ -224,6 +239,11 @@ export default function SettingsScreen() {
                       {t('settings.account.signOut')}
                     </ThemedText>
                   </Pressable>
+                  <Pressable onPress={confirmDeleteAccount} disabled={deletingAccount}>
+                    <ThemedText variant="body" tone="fire" style={[styles.link, deletingAccount && styles.linkDisabled]}>
+                      {deletingAccount ? t('common.loading') : t('settings.account.deleteAccount')}
+                    </ThemedText>
+                  </Pressable>
                 </>
               ) : (
                 <>
@@ -375,6 +395,9 @@ const styles = StyleSheet.create({
   },
   link: {
     paddingVertical: Spacing.xs,
+  },
+  linkDisabled: {
+    opacity: 0.5,
   },
   madeWith: {
     marginTop: Spacing.sm,

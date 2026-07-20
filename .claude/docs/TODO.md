@@ -4,11 +4,21 @@ Single place to check what's actually outstanding, instead of hunting through sc
 
 ## Needs your action (blocking)
 
-- **Deploy the RevenueCat webhook** (`supabase/functions/revenuecat-webhook/`). Code is fully written; deploying requires `supabase login`/`link`/`deploy` + generating a secret + entering the webhook URL in the RevenueCat dashboard — all account-auth/integration steps that have to be done by you (see the function's own `README.md`). Until this is deployed, `profiles.is_premium` never gets set, so premium pack *content* won't actually sync for Pro users even though the paywall/lock UI works fine client-side. Details: [backend-roadmap.md](backend-roadmap.md) (Phase 4 notes).
+- Nothing blocking right now — see below.
+
+## Done, no longer blocking (2026-07-20)
+
+- **versionCode 9 (account deletion) uploaded and submitted for review.** Uploaded via Play Console (evolaroa.app@gmail.com developer account — the DriftStop-owning one; note `muhammed.gulcu@gmail.com`'s own personal developer account is separate and shows as closed/suspended, not the right one) to Kapalı test → Alpha channel, then submitted for Google's review from the "Yayın özeti" (publishing overview) page. As of submission it was in Google's automated pre-check (~13 min), then goes to full review (usually much faster than production for closed testing). Check status at Play Console → DriftStop → Test edin ve yayınlayın → Yayın özeti.
+
+- **Privacy policy at `mgulcu.me/driftstop/privacy` rewritten and pushed** (`my-site` repo, commit `6d8781b`, auto-deployed). Now covers: guest mode vs. optional accounts, what's stored server-side (email, favorites, reflections, settings via Supabase), RevenueCat-processed subscriptions, and the in-app account-deletion flow (Settings → Account → "Delete account"). Both EN and TR sections updated, dated 20 July 2026.
+
+- **Both Supabase Edge Functions are deployed and verified live**, via `supabase login` (you) + `link`/`deploy`/`secrets set` (me):
+  - `revenuecat-webhook` — `profiles.is_premium` now syncs from RevenueCat events. Webhook registered in the RevenueCat dashboard (DriftStop → Integrations → Webhooks → "Supabase profiles.is_premium sync"), auth secret generated and set via `supabase secrets set REVENUECAT_WEBHOOK_AUTH_TOKEN=...`. Verified end-to-end: "Send test event" → `200 {"ok":true,"test":true}`.
+  - `delete-account` — verified deployed (`supabase functions list` shows `ACTIVE`, `verify_jwt: true`) and correctly rejects unauthenticated/invalid-token requests (`401` for both no `Authorization` header and a garbage token, checked via `curl`). Not exercised with a real logged-in user yet — do that once the next build with this feature is on a device.
 
 ## Not started yet (future phases, no urgency)
 
-From the backend roadmap's rollout order — these come after the webhook deploy above:
+From the backend roadmap's rollout order — now unblocked since the webhook is deployed:
 - Cross-device sync (favorites + settings + streak)
 - Ritual layer (streak, notes/reflection, weekly summary)
 - Personalization (themes, icons, widget styles)
@@ -25,6 +35,7 @@ From the build plan:
 
 ## Recently fixed (for context, not action items)
 
+- **Added in-app account deletion (2026-07-15)** — `supabase/functions/delete-account/` (new Edge Function, service-role, verifies the caller's own JWT before deleting), `useAuth.tsx` gained `deleteAccount()`, Settings → Account has a destructive "Delete account" link with a confirm dialog, localized into all 6 active languages. Not yet deployed — see the blocking item above.
 - `usePurchases.tsx`: `getOfferings()` failing used to silently block `getCustomerInfo()` from ever updating `isPro`/`isAdsRemoved` (both were awaited in one `Promise.all`). Now independent calls.
 - `quote/[id].tsx`: viewing a premium pack quote used to record its ID into the Home screen's own history, which only resolves static-quote IDs — this left the Home quote card blank. Premium quotes are now excluded from that recording.
 - Free/guest users saw "0 söz" on locked packs and the entire "Yazarlar" (Authors) section was invisible, because pack quote counts and author counts were previously derived from RLS-restricted quote rows. Added `quote_packs.quote_count` (public column) and `get_premium_author_counts()` (public `SECURITY DEFINER` RPC) so counts are visible without exposing quote content — see migration `supabase/migrations/0003_pack_public_counts.sql`.

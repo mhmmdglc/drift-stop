@@ -117,6 +117,10 @@
       "signedInAs": "Email",
       "signOut": "Sign out",
       "signOutConfirmTitle": "Are you sure you want to sign out?",
+      "deleteAccount": "Delete account",
+      "deleteAccountConfirmTitle": "Permanently delete your account?",
+      "deleteAccountConfirmMessage": "Everything tied to your account — favorites, reflections, and settings — will be deleted. This cannot be undone.",
+      "deleteAccountErrorTitle": "Couldn't delete account",
       "guestHint": "You're using DriftStop as a guest. Create an account to sync favorites and settings across devices.",
       "signInLink": "Sign in / Create account"
     },

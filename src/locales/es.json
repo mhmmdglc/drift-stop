@@ -117,6 +117,10 @@
       "signedInAs": "Correo",
       "signOut": "Cerrar sesión",
       "signOutConfirmTitle": "¿Seguro que quieres cerrar sesión?",
+      "deleteAccount": "Eliminar cuenta",
+      "deleteAccountConfirmTitle": "¿Eliminar tu cuenta permanentemente?",
+      "deleteAccountConfirmMessage": "Se eliminará todo lo asociado a tu cuenta: favoritos, reflexiones y ajustes. Esta acción no se puede deshacer.",
+      "deleteAccountErrorTitle": "No se pudo eliminar la cuenta",
       "guestHint": "Estás usando DriftStop como invitado. Crea una cuenta para sincronizar tus favoritos y ajustes entre dispositivos.",
       "signInLink": "Iniciar sesión / Crear cuenta"
     },
