@@ -4,7 +4,12 @@ Single place to check what's actually outstanding, instead of hunting through sc
 
 ## Needs your action (blocking)
 
-- **Upload versionCode 10 to Play Console once the build finishes** — see critical bug below. This build actually has working Supabase/RevenueCat config; 7, 8, and 9 did not.
+- **Upload versionCode 10 to Play Console** (`~/Downloads/DriftStop-v10.aab`) — first build with working Supabase/RevenueCat config (7/8/9 shipped without any backend config, see below). NOTE: it does NOT include the monetization-UX commit (`715e69f`) — decide whether to ship v10 now and follow with v11, or cut a fresh build including it.
+- **iOS App Store prep** (user has an Apple dev account, wants iOS live): needs an iOS RevenueCat API key (`EXPO_PUBLIC_REVENUECAT_IOS_API_KEY`, both in `.env` and `eas env:create`) + App Store Connect app + IAP products mirroring Play's (`remove_ads`, `pro_monthly`, `pro_yearly`) + App Privacy form + screenshots. No 12-tester requirement on iOS; TestFlight optional; App Review is the only gate. Until the key exists, iOS builds run with purchases cleanly disabled (no paywall/Pro card/ads-removal UI shown).
+
+## Monetization UX overhaul shipped (commit 715e69f, 2026-07-23)
+
+User demanded a real monetization funnel ("how will we sell subscriptions?"). Now: Account section at TOP of Settings, Pro benefits card under it (→ paywall), notification counts 7/10 are Pro-gated (lock badge → paywall; `useEnforceFreeLimits` downgrades stale >5 frequency when entitlement lapses), "Remove ads" link above the AdMob banner, paywall subtitle sells the actual catalog. All copy in 6 locales. **Visual verification of the gated/Pro-card UI still pending on Android** (only Android has `purchasesConfigured=true`; iOS sim correctly hides it) — verify on the Android emulator before shipping v11.
 
 ## CRITICAL bug found and fixed (2026-07-20)
 
