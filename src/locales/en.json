@@ -85,7 +85,9 @@
         "5": "5 / day",
         "7": "7 / day",
         "10": "10 / day"
-      }
+      },
+      "lockedOption": "Pro only",
+      "lockedHint": "7 and 10 daily reminders are a Pro feature."
     },
     "schedule": {
       "startTime": "Start time",
@@ -128,7 +130,10 @@
       "goProLink": "Remove ads / Go Pro",
       "proActive": "Pro active",
       "adsRemovedActive": "Ads removed",
-      "packsLink": "Explore content packs"
+      "packsLink": "Explore content packs",
+      "cardTitle": "DriftStop Pro",
+      "cardBenefits": "No ads · 3,325+ premium quotes in 18 packs · Up to 10 daily reminders",
+      "cardCta": "Go Pro"
     }
   },
   "notifications": {
@@ -210,7 +215,7 @@
   },
   "paywall": {
     "title": "Go Pro",
-    "subtitle": "Remove ads for good, and unlock upcoming features automatically.",
+    "subtitle": "Remove ads for good, unlock 3,325+ premium quotes in 18 packs, and set up to 10 daily reminders.",
     "skip": "Maybe later",
     "restorePurchases": "Restore purchases",
     "restoreSuccess": "Purchases restored.",
@@ -245,5 +250,8 @@
     "syncingBody": "Syncing quotes, they'll be here shortly.",
     "collectionsSectionTitle": "Collections",
     "authorsSectionTitle": "Authors"
+  },
+  "ads": {
+    "removeAds": "Remove ads"
   }
 }

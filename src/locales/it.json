@@ -85,7 +85,9 @@
         "5": "5 / giorno",
         "7": "7 / giorno",
         "10": "10 / giorno"
-      }
+      },
+      "lockedOption": "Solo Pro",
+      "lockedHint": "7 e 10 promemoria giornalieri sono una funzione Pro."
     },
     "schedule": {
       "startTime": "Ora di inizio",
@@ -128,7 +130,10 @@
       "goProLink": "Rimuovi annunci / Passa a Pro",
       "proActive": "Pro attivo",
       "adsRemovedActive": "Annunci rimossi",
-      "packsLink": "Esplora i pacchetti di contenuti"
+      "packsLink": "Esplora i pacchetti di contenuti",
+      "cardTitle": "DriftStop Pro",
+      "cardBenefits": "Niente annunci · Oltre 3.325 citazioni premium in 18 pacchetti · Fino a 10 promemoria al giorno",
+      "cardCta": "Passa a Pro"
     }
   },
   "notifications": {
@@ -210,7 +215,7 @@
   },
   "paywall": {
     "title": "Passa a Pro",
-    "subtitle": "Rimuovi gli annunci per sempre e sblocca automaticamente le prossime funzionalità.",
+    "subtitle": "Rimuovi gli annunci per sempre, sblocca oltre 3.325 citazioni premium in 18 pacchetti e imposta fino a 10 promemoria al giorno.",
     "skip": "Forse più tardi",
     "restorePurchases": "Ripristina acquisti",
     "restoreSuccess": "Acquisti ripristinati.",
@@ -245,5 +250,8 @@
     "syncingBody": "Sincronizzazione delle citazioni, saranno qui a breve.",
     "collectionsSectionTitle": "Collezioni",
     "authorsSectionTitle": "Autori"
+  },
+  "ads": {
+    "removeAds": "Rimuovi annunci"
   }
 }

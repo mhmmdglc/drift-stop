@@ -4,7 +4,13 @@ Single place to check what's actually outstanding, instead of hunting through sc
 
 ## Needs your action (blocking)
 
-- Nothing blocking right now — see below.
+- **Upload versionCode 10 to Play Console once the build finishes** — see critical bug below. This build actually has working Supabase/RevenueCat config; 7, 8, and 9 did not.
+
+## CRITICAL bug found and fixed (2026-07-20)
+
+- **Every Play Store build so far (versionCode 7, 8, 9) shipped with NO backend config at all** — no Supabase, no RevenueCat. Root cause: `.env` is (correctly) gitignored, but there was no `.easignore` file, so EAS Build fell back to `.gitignore` to decide what to upload to its cloud build servers — which excluded `.env` from every single cloud build. `eas build` even printed "No environment variables found for the 'production' environment" on every past build, but nobody was watching for that line. Locally (`expo run:android` on the emulator) this was invisible because the local dev server reads `.env` directly — so every "verified on-device" claim from earlier phases was true for the emulator/dev build, but never true for the actual shipped Play Store binary. This is why the user's phone showed no "Hesap" (Account) section after installing versionCode 9 from Play Store: `authConfigured` was false because `EXPO_PUBLIC_SUPABASE_ANON_KEY` was undefined in that binary. Real accounts, real sync, and real purchases have likely never worked for any actual Play Store tester until this fix.
+  - **Fix:** registered the three public `EXPO_PUBLIC_*` vars (`EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`, `EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY`) as EAS's own cloud Environment Variables (`eas env:create`, visibility `plaintext`, scoped to production/preview/development) — confirmed via `eas env:list` and via the next builds' logs actually printing "Environment variables ... loaded from the ... environment on EAS: EXPO_PUBLIC_...". `SUPABASE_PASSWORD` (a real DB credential, non-public) was deliberately NOT added here — it stays local-only for `scripts/db-migrate.js`.
+  - New builds triggered: production AAB (versionCode 10) and a preview-profile installable APK, both with the fix. Once they finish, versionCode 10 needs uploading to Play Console the same way as before (Kapalı test → Alpha → Yeni sürüm oluştur → submit from Yayın özeti).
 
 ## Done, no longer blocking (2026-07-20)
 

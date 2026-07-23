@@ -85,7 +85,9 @@
         "5": "5 / jour",
         "7": "7 / jour",
         "10": "10 / jour"
-      }
+      },
+      "lockedOption": "Réservé à Pro",
+      "lockedHint": "7 et 10 rappels quotidiens sont une fonctionnalité Pro."
     },
     "schedule": {
       "startTime": "Heure de début",
@@ -128,7 +130,10 @@
       "goProLink": "Supprimer les pubs / Passer en Pro",
       "proActive": "Pro actif",
       "adsRemovedActive": "Publicités supprimées",
-      "packsLink": "Découvrir les packs de contenu"
+      "packsLink": "Découvrir les packs de contenu",
+      "cardTitle": "DriftStop Pro",
+      "cardBenefits": "Sans publicité · Plus de 3 325 citations premium dans 18 packs · Jusqu’à 10 rappels par jour",
+      "cardCta": "Passer en Pro"
     }
   },
   "notifications": {
@@ -210,7 +215,7 @@
   },
   "paywall": {
     "title": "Passer en Pro",
-    "subtitle": "Supprime les publicités pour de bon et débloque automatiquement les prochaines fonctionnalités.",
+    "subtitle": "Supprime les publicités pour de bon, débloque plus de 3 325 citations premium dans 18 packs et configure jusqu’à 10 rappels par jour.",
     "skip": "Plus tard",
     "restorePurchases": "Restaurer les achats",
     "restoreSuccess": "Achats restaurés.",
@@ -245,5 +250,8 @@
     "syncingBody": "Synchronisation des citations, elles arrivent bientôt.",
     "collectionsSectionTitle": "Collections",
     "authorsSectionTitle": "Auteurs"
+  },
+  "ads": {
+    "removeAds": "Supprimer les pubs"
   }
 }

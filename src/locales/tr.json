@@ -85,7 +85,9 @@
         "5": "5 / gün",
         "7": "7 / gün",
         "10": "10 / gün"
-      }
+      },
+      "lockedOption": "Sadece Pro",
+      "lockedHint": "Günde 7 ve 10 hatırlatma Pro’ya özel."
     },
     "schedule": {
       "startTime": "Başlangıç saati",
@@ -128,7 +130,10 @@
       "goProLink": "Reklamları kaldır / Pro'ya geç",
       "proActive": "Pro aktif",
       "adsRemovedActive": "Reklamlar kaldırıldı",
-      "packsLink": "İçerik paketlerini keşfet"
+      "packsLink": "İçerik paketlerini keşfet",
+      "cardTitle": "DriftStop Pro",
+      "cardBenefits": "Reklamsız kullanım · 3.325+ premium söz, 18 koleksiyon · Günde 10’a kadar hatırlatma",
+      "cardCta": "Pro’ya geç"
     }
   },
   "notifications": {
@@ -210,7 +215,7 @@
   },
   "paywall": {
     "title": "Pro'ya geç",
-    "subtitle": "Reklamları kalıcı olarak kaldır, gelecek özellikleri otomatik aç.",
+    "subtitle": "Reklamları kalıcı olarak kaldır, 3.325+ premium söze ve 18 koleksiyona eriş, günde 10’a kadar hatırlatma kur.",
     "skip": "Belki sonra",
     "restorePurchases": "Satın alımları geri yükle",
     "restoreSuccess": "Satın alımlar geri yüklendi.",
@@ -245,5 +250,8 @@
     "syncingBody": "Sözler senkronize ediliyor, birazdan burada olacak.",
     "collectionsSectionTitle": "Koleksiyonlar",
     "authorsSectionTitle": "Yazarlar"
+  },
+  "ads": {
+    "removeAds": "Reklamları kaldır"
   }
 }

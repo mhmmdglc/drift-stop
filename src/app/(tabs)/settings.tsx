@@ -21,7 +21,7 @@ import { usePurchases } from '@/hooks/usePurchases';
 import { useSettings } from '@/hooks/useSettings';
 import { useTheme } from '@/hooks/use-theme';
 import type { QuoteTag } from '@/types/quote';
-import type { Frequency, ThemeMode } from '@/types/settings';
+import { FREE_FREQUENCY_MAX, FREQUENCY_OPTIONS, type Frequency, type ThemeMode } from '@/types/settings';
 import { isValidWindow, toMinutes } from '@/utils/timeUtils';
 
 const THEME_MODES: ThemeMode[] = ['dark', 'light', 'system'];
@@ -35,6 +35,10 @@ export default function SettingsScreen() {
   const { configured: purchasesConfigured, isPro, isAdsRemoved } = usePurchases();
   const [timeError, setTimeError] = useState<string | null>(null);
   const [deletingAccount, setDeletingAccount] = useState(false);
+
+  // 7/10 bildirim Pro'ya özel — satın almalar bu platformda kapalıysa gate yok.
+  const proOnlyFrequencies: Frequency[] =
+    purchasesConfigured && !isPro ? FREQUENCY_OPTIONS.filter((f) => f > FREE_FREQUENCY_MAX) : [];
 
   const confirmSignOut = () => {
     Alert.alert(t('settings.account.signOutConfirmTitle'), undefined, [
@@ -89,6 +93,74 @@ export default function SettingsScreen() {
         <ScrollView contentContainerStyle={styles.content}>
           <ThemedText variant="heading">{t('settings.screenTitle')}</ThemedText>
 
+          {/* Hesap — en üstte: global ürün deseni (profil + upgrade önce gelir) */}
+          {authConfigured && (
+            <Section title={t('settings.sections.account')}>
+              {user ? (
+                <>
+                  <Row label={t('settings.account.signedInAs')}>
+                    <ThemedText variant="body" tone="textMuted" numberOfLines={1} style={styles.emailValue}>
+                      {user.email}
+                    </ThemedText>
+                  </Row>
+                  {(isPro || isAdsRemoved) && (
+                    <ThemedText variant="label" tone="accent">
+                      {isPro ? t('settings.premium.proActive') : t('settings.premium.adsRemovedActive')}
+                    </ThemedText>
+                  )}
+                  <Pressable onPress={confirmSignOut}>
+                    <ThemedText variant="body" tone="fire" style={styles.link}>
+                      {t('settings.account.signOut')}
+                    </ThemedText>
+                  </Pressable>
+                  <Pressable onPress={confirmDeleteAccount} disabled={deletingAccount}>
+                    <ThemedText variant="body" tone="fire" style={[styles.link, deletingAccount && styles.linkDisabled]}>
+                      {deletingAccount ? t('common.loading') : t('settings.account.deleteAccount')}
+                    </ThemedText>
+                  </Pressable>
+                </>
+              ) : (
+                <>
+                  <ThemedText variant="body" tone="textMuted">
+                    {t('settings.account.guestHint')}
+                  </ThemedText>
+                  <Pressable onPress={() => router.push('/auth')} accessibilityRole="button">
+                    <ThemedText variant="body" tone="accent" style={styles.link}>
+                      {t('settings.account.signInLink')}
+                    </ThemedText>
+                  </Pressable>
+                </>
+              )}
+            </Section>
+          )}
+
+          {/* Pro kartı — ücretsiz kullanıcıya değer önerisi her zaman görünür */}
+          {purchasesConfigured && !isPro && (
+            <Pressable
+              onPress={() => router.push('/paywall')}
+              style={styles.proCard}
+              accessibilityRole="button"
+              accessibilityLabel={t('settings.premium.cardTitle')}>
+              <WobblyBorder stroke={colors.accent} strokeWidth={1.6} inset={2} />
+              <ThemedText variant="body" tone="accent" style={styles.proCardTitle}>
+                {t('settings.premium.cardTitle')}
+              </ThemedText>
+              <ThemedText variant="label" tone="textMuted">
+                {t('settings.premium.cardBenefits')}
+              </ThemedText>
+              <ThemedText variant="body" tone="accent">
+                {t('settings.premium.cardCta')} →
+              </ThemedText>
+            </Pressable>
+          )}
+          {purchasesConfigured && (
+            <Pressable onPress={() => router.push('/packs')}>
+              <ThemedText variant="body" tone="text" style={styles.link}>
+                {t('settings.premium.packsLink')}
+              </ThemedText>
+            </Pressable>
+          )}
+
           {/* Bildirimler */}
           <Section title={t('settings.sections.notifications')}>
             <Row label={settings.notificationsEnabled
@@ -111,7 +183,14 @@ export default function SettingsScreen() {
               <FrequencySelector
                 value={settings.frequency}
                 onChange={(f: Frequency) => update({ frequency: f })}
+                lockedValues={proOnlyFrequencies}
+                onLockedPress={() => router.push('/paywall')}
               />
+              {proOnlyFrequencies.length > 0 && (
+                <ThemedText variant="label" tone="textMuted">
+                  {t('settings.notifications.lockedHint')}
+                </ThemedText>
+              )}
             </View>
           </Section>
 
@@ -223,68 +302,6 @@ export default function SettingsScreen() {
               {t('settings.preferences.hint')}
             </ThemedText>
           </Section>
-
-          {/* Hesap */}
-          {authConfigured && (
-            <Section title={t('settings.sections.account')}>
-              {user ? (
-                <>
-                  <Row label={t('settings.account.signedInAs')}>
-                    <ThemedText variant="body" tone="textMuted" numberOfLines={1} style={styles.emailValue}>
-                      {user.email}
-                    </ThemedText>
-                  </Row>
-                  <Pressable onPress={confirmSignOut}>
-                    <ThemedText variant="body" tone="fire" style={styles.link}>
-                      {t('settings.account.signOut')}
-                    </ThemedText>
-                  </Pressable>
-                  <Pressable onPress={confirmDeleteAccount} disabled={deletingAccount}>
-                    <ThemedText variant="body" tone="fire" style={[styles.link, deletingAccount && styles.linkDisabled]}>
-                      {deletingAccount ? t('common.loading') : t('settings.account.deleteAccount')}
-                    </ThemedText>
-                  </Pressable>
-                </>
-              ) : (
-                <>
-                  <ThemedText variant="body" tone="textMuted">
-                    {t('settings.account.guestHint')}
-                  </ThemedText>
-                  <Pressable onPress={() => router.push('/auth')}>
-                    <ThemedText variant="body" tone="accent" style={styles.link}>
-                      {t('settings.account.signInLink')}
-                    </ThemedText>
-                  </Pressable>
-                </>
-              )}
-            </Section>
-          )}
-
-          {/* Premium */}
-          {purchasesConfigured && (
-            <Section title={t('settings.sections.premium')}>
-              {isPro ? (
-                <ThemedText variant="body" tone="accent">
-                  {t('settings.premium.proActive')}
-                </ThemedText>
-              ) : isAdsRemoved ? (
-                <ThemedText variant="body" tone="accent">
-                  {t('settings.premium.adsRemovedActive')}
-                </ThemedText>
-              ) : (
-                <Pressable onPress={() => router.push('/paywall')}>
-                  <ThemedText variant="body" tone="accent" style={styles.link}>
-                    {t('settings.premium.goProLink')}
-                  </ThemedText>
-                </Pressable>
-              )}
-              <Pressable onPress={() => router.push('/packs')}>
-                <ThemedText variant="body" tone="text" style={styles.link}>
-                  {t('settings.premium.packsLink')}
-                </ThemedText>
-              </Pressable>
-            </Section>
-          )}
 
           {/* Hakkında */}
           <Section title={t('settings.sections.about')}>
@@ -406,5 +423,12 @@ const styles = StyleSheet.create({
   emailValue: {
     flexShrink: 1,
     textAlign: 'right',
+  },
+  proCard: {
+    padding: Spacing.lg,
+    gap: Spacing.sm,
+  },
+  proCardTitle: {
+    letterSpacing: 1,
   },
 });

@@ -85,7 +85,9 @@
         "5": "5 / día",
         "7": "7 / día",
         "10": "10 / día"
-      }
+      },
+      "lockedOption": "Solo Pro",
+      "lockedHint": "7 y 10 recordatorios diarios son una función Pro."
     },
     "schedule": {
       "startTime": "Hora de inicio",
@@ -128,7 +130,10 @@
       "goProLink": "Quitar anuncios / Hazte Pro",
       "proActive": "Pro activo",
       "adsRemovedActive": "Anuncios eliminados",
-      "packsLink": "Explorar paquetes de contenido"
+      "packsLink": "Explorar paquetes de contenido",
+      "cardTitle": "DriftStop Pro",
+      "cardBenefits": "Sin anuncios · Más de 3.325 citas premium en 18 packs · Hasta 10 recordatorios diarios",
+      "cardCta": "Hazte Pro"
     }
   },
   "notifications": {
@@ -210,7 +215,7 @@
   },
   "paywall": {
     "title": "Hazte Pro",
-    "subtitle": "Elimina los anuncios para siempre y desbloquea automáticamente las próximas funciones.",
+    "subtitle": "Elimina los anuncios para siempre, desbloquea más de 3.325 citas premium en 18 packs y configura hasta 10 recordatorios diarios.",
     "skip": "Quizás después",
     "restorePurchases": "Restaurar compras",
     "restoreSuccess": "Compras restauradas.",
@@ -245,5 +250,8 @@
     "syncingBody": "Sincronizando frases, estarán aquí en breve.",
     "collectionsSectionTitle": "Colecciones",
     "authorsSectionTitle": "Autores"
+  },
+  "ads": {
+    "removeAds": "Quitar anuncios"
   }
 }

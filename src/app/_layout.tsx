@@ -15,6 +15,7 @@ import { SplashOverlay } from '@/components/SplashOverlay';
 import { AuthProvider } from '@/hooks/useAuth';
 import { HistoryProvider, useHistory } from '@/hooks/useHistory';
 import { useNotificationObserver } from '@/hooks/useNotifications';
+import { useEnforceFreeLimits } from '@/hooks/useEnforceFreeLimits';
 import { PurchasesProvider } from '@/hooks/usePurchases';
 import { SettingsProvider, useSettings } from '@/hooks/useSettings';
 import { ThemeProvider, useTheme } from '@/hooks/use-theme';
@@ -32,6 +33,7 @@ initCrashReporting();
 
 function AppShell() {
   useNotificationObserver();
+  useEnforceFreeLimits();
   const { settings, loaded: settingsLoaded } = useSettings();
   const { themeName } = useTheme();
   const { record } = useHistory();

@@ -6,6 +6,13 @@ export type ThemeMode = 'dark' | 'light' | 'system';
 export const FREQUENCY_OPTIONS = [3, 5, 7, 10] as const;
 export type Frequency = (typeof FREQUENCY_OPTIONS)[number];
 
+/**
+ * Ücretsiz kullanıcı için günlük bildirim üst sınırı — 7 ve 10 Pro'ya özel.
+ * (Satın almalar bu platformda yapılandırılmamışsa gate uygulanmaz; bkz.
+ * useEnforceFreeLimits ve settings ekranındaki lockedValues.)
+ */
+export const FREE_FREQUENCY_MAX: Frequency = 5;
+
 export type Settings = {
   notificationsEnabled: boolean;
   frequency: Frequency;

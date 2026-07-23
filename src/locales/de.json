@@ -85,7 +85,9 @@
         "5": "5 / Tag",
         "7": "7 / Tag",
         "10": "10 / Tag"
-      }
+      },
+      "lockedOption": "Nur Pro",
+      "lockedHint": "7 und 10 tägliche Erinnerungen sind eine Pro-Funktion."
     },
     "schedule": {
       "startTime": "Startzeit",
@@ -128,7 +130,10 @@
       "goProLink": "Werbung entfernen / Pro werden",
       "proActive": "Pro aktiv",
       "adsRemovedActive": "Werbung entfernt",
-      "packsLink": "Inhaltspakete entdecken"
+      "packsLink": "Inhaltspakete entdecken",
+      "cardTitle": "DriftStop Pro",
+      "cardBenefits": "Keine Werbung · Über 3.325 Premium-Zitate in 18 Paketen · Bis zu 10 tägliche Erinnerungen",
+      "cardCta": "Pro werden"
     }
   },
   "notifications": {
@@ -210,7 +215,7 @@
   },
   "paywall": {
     "title": "Pro werden",
-    "subtitle": "Entferne Werbung dauerhaft und schalte kommende Funktionen automatisch frei.",
+    "subtitle": "Entferne Werbung für immer, schalte über 3.325 Premium-Zitate in 18 Paketen frei und richte bis zu 10 tägliche Erinnerungen ein.",
     "skip": "Vielleicht später",
     "restorePurchases": "Käufe wiederherstellen",
     "restoreSuccess": "Käufe wiederhergestellt.",
@@ -245,5 +250,8 @@
     "syncingBody": "Zitate werden synchronisiert, sie sind gleich da.",
     "collectionsSectionTitle": "Sammlungen",
     "authorsSectionTitle": "Autoren"
+  },
+  "ads": {
+    "removeAds": "Werbung entfernen"
   }
 }
