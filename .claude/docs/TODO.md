@@ -4,8 +4,14 @@ Single place to check what's actually outstanding, instead of hunting through sc
 
 ## Needs your action (blocking)
 
-- **Upload versionCode 11 to Play Console once it finishes building** (supersedes v10 — skip uploading v10 entirely). v11 = env fix + monetization UX + account deletion + app display name fix. Build id `1b0d9e7a-c306-44f6-b70b-5b325a37fa74`; will be downloaded to `~/Downloads/DriftStop-v11.aab` when done.
-- **On your real phone after v11 ships:** verify the paywall lists the 3 products with real prices (the emulator has no Play services, so product listing/purchase flow could NOT be verified there — everything else was).
+- **On your real phone once v11 reaches the Alpha track:** verify the paywall lists all 3 products with real prices and that a purchase completes. This is the ONLY thing never verified anywhere — the Android emulator has no Play Billing (`BILLING_UNAVAILABLE`), so product listing/purchase can only be checked on a real device with a Play account on the closed-testing list.
+- **Play Console needs 12 testers + 14 days** on closed testing before production is unlockable (personal developer account rule). Currently 1 tester registered — send the ~12 emails when ready and they get added to the Alpha track's tester list.
+
+## v11 submitted for review (2026-07-24)
+
+versionCode 11 (1.0.1) uploaded to Kapalı test → Alpha, release name "11 (1.0.1)", en-US release notes written, submitted for Google review (status: "İncelenmekte olan değişiklikler"). Contains: EAS env fix (first builds with working Supabase/RevenueCat config were v10/v11 — 7/8/9 shipped with none), in-app account deletion, monetization UX overhaul, app display name fix. Only warning at review time was the missing R8/proguard mapping file — informational, non-blocking. Device support unchanged (12,268 phones, 0 dropped).
+
+**Note on uploading:** the AAB drag-drop is the one step that can't be automated from here — the browser file-upload tool only accepts session-shared files and caps at 10 MB (the AAB is 86 MB), and `eas submit` needs a Google service-account JSON key (creating/downloading that key + granting it Play "Release manager" is a credential/permission op for the user). Everything after the upload (release name, notes, review submission) is automatable and was done here.
 - **iOS App Store prep** (user has an Apple dev account, wants iOS live): needs an iOS RevenueCat API key (`EXPO_PUBLIC_REVENUECAT_IOS_API_KEY`, both in `.env` and `eas env:create`) + App Store Connect app + IAP products mirroring Play's (`remove_ads`, `pro_monthly`, `pro_yearly`) + App Privacy form + screenshots. No 12-tester requirement on iOS; TestFlight optional; App Review is the only gate. Until the key exists, iOS builds run with purchases cleanly disabled (no paywall/Pro card/ads-removal UI shown).
 
 ## Monetization UX overhaul shipped (commit 715e69f, 2026-07-23)
