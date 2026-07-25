@@ -251,8 +251,14 @@ means Settings → Account shows the email address and a "Sign out" row.
 
 **iOS Simulator (`npx expo run:ios`) — in scope for this release**
 
-14. `/auth` shows Apple's native "Sign in with Apple" button (Apple's own styling — not a `SketchButton`
-    lookalike) **and** the "Continue with Google" button.
+14. `/auth` shows Apple's native `AppleAuthenticationButton` **and** the Google button. The Apple button uses
+    one of Apple's three approved button texts (the design specifies
+    `AppleAuthenticationButtonType.CONTINUE` → "Continue with Apple", which stays truthful in sign-up mode and
+    mirrors "Continue with Google"), is **unrestyled apart from `buttonStyle` and `cornerRadius`**, renders
+    full-width, and is at least as visually prominent as the Google button.
+    **Do not fail this criterion because the label is not the literal words "Sign in with Apple"** — any of
+    Apple's approved types passes; what fails is a restyled or custom-drawn Apple button, a `backgroundColor`
+    or `borderRadius` override, or an Apple button less prominent than Google's.
 15. Tapping the Apple button presents the system Apple sign-in sheet; completing it returns to the app
     signed in, with Settings → Account showing the Apple-provided (or private-relay) email address.
 16. **Apple cancel path:** dismiss the Apple sheet → back on `/auth`, no error shown, button tappable again

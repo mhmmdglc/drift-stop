@@ -12,8 +12,8 @@ The orchestrator writes an entry **when an agent is dispatched** and updates it 
 
 | Time | Agent | Task | Outcome | Evidence |
 |---|---|---|---|---|
+| 15:3x | ux-designer | T1 (#16) Social button placement/treatment + rewrite 3 untrue "sync" strings in 6 locales | **Done.** Full design spec delivered; 3 corrected strings landed in all 6 locales. Also found: `/auth` has no ScrollView (would clip in German at large font scale — the mechanism by which AC 13 fails), and two app-wide contrast failures now tracked as #25. Asked for AC 14 to be reworded ("Continue with Apple" is an approved Apple button type). | `3e89b75`; 60/60 tests incl. locale parity |
 | 15:0x | orchestrator | Fix 3 stale task descriptions PM could not amend (#18, #21, #22 still read "conditional") | Done | tasks #18/#21/#22 |
-| 15:0x | ux-designer | T1 (#16) Social button placement/treatment + rewrite 3 untrue "sync" strings in 6 locales | Dispatched | in progress |
 | 15:0x | project-manager | T2–T9 (#17–#24) created with owners + dependencies; spec updated with owner decisions (both platforms, Apple revoke IN, fix sync copy) | Done — flagged that it could not amend 3 task descriptions itself | [`specs/social-sign-in.md`](../specs/social-sign-in.md) |
 | 14:5x | project-manager | Intake social sign-in request → spec + 3 blocking questions + work split | Done — owner answered all 3; found 5 doc contradictions, now on T9's checklist | [`specs/social-sign-in.md`](../specs/social-sign-in.md) |
 | 14:24 | orchestrator | Close webhook fail-open found by the doc audit | Done — rejects with 503 when secret absent; redeployed | `0b70289`; verified live: no header → 401, wrong token → 401, valid token + TEST → `{ok,test}`, unauth grant attempt → 401 |
