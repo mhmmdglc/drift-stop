@@ -121,9 +121,9 @@
       "signOutConfirmTitle": "Çıkış yapmak istediğine emin misin?",
       "deleteAccount": "Hesabı sil",
       "deleteAccountConfirmTitle": "Hesabını kalıcı olarak sil?",
-      "deleteAccountConfirmMessage": "Favorilerin, yansımaların ve tüm ayarların dahil hesabınla ilişkili her şey silinecek. Bu işlem geri alınamaz.",
+      "deleteAccountConfirmMessage": "Hesabın silinecek ve premium paket erişimin sona erecek. Bu cihazdaki favorilerin ve ayarların olduğu gibi kalır; devam eden bir aboneliğin varsa mağazadan ayrıca iptal etmen gerekir. Bu işlem geri alınamaz.",
       "deleteAccountErrorTitle": "Hesap silinemedi",
-      "guestHint": "Misafir olarak kullanıyorsun. Favorilerini ve ayarlarını cihazlar arasında senkronlamak için hesap oluştur.",
+      "guestHint": "DriftStop'u misafir olarak kullanıyorsun. Hesap açarsan Pro erişimin ve premium paketler yeni telefonunda da senin olur.",
       "signInLink": "Giriş yap / Hesap oluştur"
     },
     "premium": {
@@ -190,7 +190,7 @@
   "auth": {
     "signInTitle": "Giriş yap",
     "signUpTitle": "Hesap oluştur",
-    "subtitle": "Favorilerini ve ayarlarını cihazlar arasında senkronla.",
+    "subtitle": "Pro erişimin ve premium paketler hesabına bağlı kalır. Favorilerin ve ayarların bu cihazda kalır.",
     "emailLabel": "E-posta",
     "emailPlaceholder": "ornek@eposta.com",
     "passwordLabel": "Şifre",

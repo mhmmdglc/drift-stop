@@ -121,9 +121,9 @@
       "signOutConfirmTitle": "Are you sure you want to sign out?",
       "deleteAccount": "Delete account",
       "deleteAccountConfirmTitle": "Permanently delete your account?",
-      "deleteAccountConfirmMessage": "Everything tied to your account — favorites, reflections, and settings — will be deleted. This cannot be undone.",
+      "deleteAccountConfirmMessage": "Your account will be deleted and premium pack access will stop. Favorites and settings on this device stay as they are, and an active subscription must be cancelled in the store separately. This cannot be undone.",
       "deleteAccountErrorTitle": "Couldn't delete account",
-      "guestHint": "You're using DriftStop as a guest. Create an account to sync favorites and settings across devices.",
+      "guestHint": "You're using DriftStop as a guest. With an account, your Pro access and premium packs stay yours on a new phone.",
       "signInLink": "Sign in / Create account"
     },
     "premium": {
@@ -190,7 +190,7 @@
   "auth": {
     "signInTitle": "Sign in",
     "signUpTitle": "Create account",
-    "subtitle": "Sync your favorites and settings across devices.",
+    "subtitle": "Pro access and premium packs follow your account. Favorites and settings stay on this device.",
     "emailLabel": "Email",
     "emailPlaceholder": "you@example.com",
     "passwordLabel": "Password",

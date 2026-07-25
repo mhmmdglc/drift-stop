@@ -121,9 +121,9 @@
       "signOutConfirmTitle": "¿Seguro que quieres cerrar sesión?",
       "deleteAccount": "Eliminar cuenta",
       "deleteAccountConfirmTitle": "¿Eliminar tu cuenta permanentemente?",
-      "deleteAccountConfirmMessage": "Se eliminará todo lo asociado a tu cuenta: favoritos, reflexiones y ajustes. Esta acción no se puede deshacer.",
+      "deleteAccountConfirmMessage": "Tu cuenta se eliminará y perderás el acceso a los packs premium. Los favoritos y ajustes de este dispositivo se mantienen, y una suscripción activa debe cancelarse aparte en la tienda. Esta acción no se puede deshacer.",
       "deleteAccountErrorTitle": "No se pudo eliminar la cuenta",
-      "guestHint": "Estás usando DriftStop como invitado. Crea una cuenta para sincronizar tus favoritos y ajustes entre dispositivos.",
+      "guestHint": "Estás usando DriftStop como invitado. Con una cuenta, tu acceso Pro y los packs premium siguen siendo tuyos en un móvil nuevo.",
       "signInLink": "Iniciar sesión / Crear cuenta"
     },
     "premium": {
@@ -190,7 +190,7 @@
   "auth": {
     "signInTitle": "Iniciar sesión",
     "signUpTitle": "Crear cuenta",
-    "subtitle": "Sincroniza tus favoritos y ajustes entre dispositivos.",
+    "subtitle": "Tu acceso Pro y los packs premium van con tu cuenta. Los favoritos y ajustes se quedan en este dispositivo.",
     "emailLabel": "Correo",
     "emailPlaceholder": "tu@correo.com",
     "passwordLabel": "Contraseña",
