@@ -109,6 +109,22 @@ export function getAllCachedPacks(): QuotePack[] {
   }));
 }
 
+/**
+ * Premium paketlerdeki toplam söz sayısı — yani premium cache'in TAM olması için
+ * kaç satır beklediğimiz. `quote_count` bilinçli olarak herkese açık metadata
+ * (bkz. migration 0003: kilitli paketler gerçek sayılarını gösterebilsin), bu yüzden
+ * hakkı olmayan kullanıcıda bile doğrudur ve premium içerik silinse de kalır —
+ * "cache eksik mi" sorusuna verilebilecek en ucuz cevap. Paket metadata'sı hiç
+ * senkronlanmadıysa 0 döner (çağıran taraf o zaman "0'dan büyük mü" kuralına düşer).
+ */
+export function getExpectedPremiumQuoteCount(): number {
+  const conn = getDb();
+  const row = conn.getFirstSync<{ total: number }>(
+    'select coalesce(sum(quote_count), 0) as total from packs where is_premium = 1'
+  );
+  return row?.total ?? 0;
+}
+
 /** Premium sözlerdeki tüm yazarlar + söz sayıları (herkese açık metadata — bkz. `authorsSync.ts`). */
 export function upsertPremiumAuthorCounts(rows: { author: string; quoteCount: number }[]): void {
   const conn = getDb();

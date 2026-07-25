@@ -40,6 +40,8 @@
   "quote": {
     "authorPrefix": "",
     "originSeparator": "",
+    "lockedTitle": "",
+    "lockedBody": "",
     "categories": {
       "resilience": "",
       "fire": "",
@@ -63,7 +65,8 @@
     "emptyBody": "",
     "removeConfirm": "",
     "removeYes": "",
-    "removeNo": ""
+    "removeNo": "",
+    "lockedPremium": ""
   },
   "settings": {
     "screenTitle": "",

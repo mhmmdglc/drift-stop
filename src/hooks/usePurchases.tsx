@@ -18,6 +18,24 @@ type PurchasesContextValue = {
   /** RevenueCat yapılandırılmamışsa (key yok/Expo Go) her zaman false. */
   configured: boolean;
   loading: boolean;
+  /**
+   * Entitlement durumu GERÇEKTEN öğrenildi mi (`customerInfo` elimizde mi).
+   *
+   * `!loading` ile AYNI ŞEY DEĞİL: `loading` bir `.finally()` içinde kapanır,
+   * yani `getCustomerInfo()` REDDEDİLDİĞİNDE de false olur — o durumda
+   * `customerInfo` null, `isPro` false kalır ama hiçbir şey öğrenilmemiştir
+   * (ilk açılış çevrimdışı, uygulama verisi silinmiş, bozuk RC cache'i...).
+   * Bu ayrım yıkıcı akışlar için kritik: `loading`e bakıp silmeye kalkan bir
+   * kod, ödeme YAPAN kullanıcının 3.325 satırlık premium cache'ini soğuk
+   * açılışta uçurur (bkz. `services/premiumCacheGuard.ts`). Kilit/açık gibi
+   * geri alınabilir UI kararları `loading` + `isPro` ile verilebilir; veri
+   * silen kararlar SADECE bu bayrak true iken verilir.
+   *
+   * ⚠️ iOS'ta `EXPO_PUBLIC_REVENUECAT_IOS_API_KEY` olmadığı için
+   * `configured` false ve bu bayrak hiç true olmaz (bkz. `lib/purchases.ts`,
+   * TODO #9) — bu yüzden yıkıcı akışlar `configured`'ı da kontrol eder.
+   */
+  entitlementKnown: boolean;
   isPro: boolean;
   isAdsRemoved: boolean;
   offering: PurchasesOffering | null;
@@ -109,6 +127,8 @@ export function PurchasesProvider({ children }: { children: ReactNode }) {
     () => ({
       configured: purchasesConfigured,
       loading,
+      // customerInfo null iken entitlement hakkında hiçbir şey bilmiyoruz.
+      entitlementKnown: customerInfo != null,
       isPro,
       isAdsRemoved,
       offering,
@@ -134,7 +154,7 @@ export function PurchasesProvider({ children }: { children: ReactNode }) {
         }
       },
     }),
-    [loading, isPro, isAdsRemoved, offering]
+    [loading, customerInfo, isPro, isAdsRemoved, offering]
   );
 
   return <PurchasesContext.Provider value={value}>{children}</PurchasesContext.Provider>;

@@ -40,6 +40,8 @@
   "quote": {
     "authorPrefix": "—",
     "originSeparator": "·",
+    "lockedTitle": "Dieser Satz ist gesperrt",
+    "lockedBody": "Dieser Premium-Satz gehört zu Pro. Mit Pro ist er wieder da.",
     "categories": {
       "resilience": "Widerstand",
       "fire": "Feuer",
@@ -63,7 +65,8 @@
     "emptyBody": "Speichere die Sätze, die dich treffen — hier bleiben sie.",
     "removeConfirm": "Willst du diesen Satz aus den Favoriten entfernen?",
     "removeYes": "Entfernen",
-    "removeNo": "Abbrechen"
+    "removeNo": "Abbrechen",
+    "lockedPremium": "Premium-Satz — mit Pro wieder da"
   },
   "settings": {
     "screenTitle": "Einstellungen",

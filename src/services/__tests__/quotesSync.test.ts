@@ -8,7 +8,7 @@ jest.mock('@/db/quotesCache', () => ({
 
 jest.mock('@/lib/supabase', () => ({ supabase: { from: jest.fn() } }));
 
-import { syncQuotes } from '../quotesSync';
+import { syncPremiumQuotes, syncQuotes } from '../quotesSync';
 import { seedIfEmpty, getLastSyncAt, setLastSyncAt, upsertQuotes } from '@/db/quotesCache';
 import { supabase } from '@/lib/supabase';
 
@@ -30,6 +30,21 @@ function mockRangeReturning(pages: Array<{ data: unknown[] | null; error: unknow
     }),
   }));
   return range;
+}
+
+/** `syncPremiumQuotes` zinciri farklı: select().eq().order().range() — `gt` YOK. */
+function mockPremiumChain(pages: ({ data: unknown[] | null; error: unknown } | Error)[]) {
+  const range = jest.fn();
+  for (const page of pages) {
+    if (page instanceof Error) range.mockRejectedValueOnce(page);
+    else range.mockResolvedValueOnce(page);
+  }
+  const gt = jest.fn();
+  const eq = jest.fn(() => ({ order: () => ({ range }) }));
+  mockFrom.mockImplementation(() => ({
+    select: () => ({ eq, gt }),
+  }));
+  return { range, eq, gt };
 }
 
 const row = (id: number, updatedAt: string) => ({
@@ -118,6 +133,99 @@ describe('syncQuotes', () => {
 
     expect(result.synced).toBe(0);
     expect(cache!.seedIfEmpty).toHaveBeenCalledTimes(1);
+    expect(cache!.upsertQuotes).not.toHaveBeenCalled();
+  });
+});
+
+describe('syncPremiumQuotes (re-subscribe recovery)', () => {
+  it('re-fetches every premium row regardless of the delta cursor', async () => {
+    // Kritik nokta: temizlikten sonra sunucudaki `updated_at` değişmediği için
+    // imleç zaten o satırların ötesinde. Bu yüzden burada `gt(updated_at)` YOK,
+    // sadece `eq(is_premium, true)` — aksi halde içerik bir daha asla geri gelmezdi.
+    const { range, eq, gt } = mockPremiumChain([
+      { data: [row(100001, '2024-01-01T00:00:00.000Z')], error: null },
+    ]);
+
+    const result = await syncPremiumQuotes();
+
+    expect(eq).toHaveBeenCalledWith('is_premium', true);
+    expect(gt).not.toHaveBeenCalled();
+    expect(range).toHaveBeenCalledTimes(1);
+    expect(result.synced).toBe(1);
+    expect(upsertQuotes).toHaveBeenCalledWith([expect.objectContaining({ id: 100001 })]);
+  });
+
+  it('writes nothing when the caller cancelled while the fetch was in flight', async () => {
+    // Senaryo: geri yükleme 2-5 sn sürerken kullanıcı çıkış yapar ve cache
+    // temizlenir. Gecikmiş satırlar temizliğin ÜSTÜNE yazılmamalı.
+    mockPremiumChain([{ data: [row(100001, '2024-01-01T00:00:00.000Z')], error: null }]);
+
+    const result = await syncPremiumQuotes({ isCancelled: () => true });
+
+    expect(result).toEqual({ synced: 0, cancelled: true });
+    expect(upsertQuotes).not.toHaveBeenCalled();
+  });
+
+  it('writes normally when the cancellation probe stays false', async () => {
+    mockPremiumChain([{ data: [row(100001, '2024-01-01T00:00:00.000Z')], error: null }]);
+
+    const result = await syncPremiumQuotes({ isCancelled: () => false });
+
+    expect(result).toEqual({ synced: 1, cancelled: false });
+    expect(upsertQuotes).toHaveBeenCalledTimes(1);
+  });
+
+  it('never advances the delta cursor (a backfill must not hide free-row updates)', async () => {
+    mockPremiumChain([{ data: [row(100001, '2024-01-01T00:00:00.000Z')], error: null }]);
+
+    await syncPremiumQuotes();
+
+    expect(setLastSyncAt).not.toHaveBeenCalled();
+  });
+
+  it('paginates through the whole premium set', async () => {
+    const fullPage = Array.from({ length: 500 }, (_, i) => row(100001 + i, '2024-01-01T00:00:00.000Z'));
+    const { range } = mockPremiumChain([
+      { data: fullPage, error: null },
+      { data: [row(100501, '2024-01-01T00:00:00.000Z')], error: null },
+    ]);
+
+    const result = await syncPremiumQuotes();
+
+    expect(range).toHaveBeenCalledTimes(2);
+    expect(result.synced).toBe(501);
+  });
+
+  it('swallows errors and writes nothing (caller retries)', async () => {
+    mockPremiumChain([new Error('rls denied')]);
+
+    const result = await syncPremiumQuotes();
+
+    expect(result.synced).toBe(0);
+    expect(upsertQuotes).not.toHaveBeenCalled();
+  });
+
+  it('does not seed or write when Supabase is not configured', async () => {
+    jest.resetModules();
+    jest.doMock('@/lib/supabase', () => ({ supabase: null }));
+    jest.doMock('@/db/quotesCache', () => ({
+      seedIfEmpty: jest.fn(),
+      getLastSyncAt: jest.fn(),
+      setLastSyncAt: jest.fn(),
+      upsertQuotes: jest.fn(),
+    }));
+
+    let restoreWithoutSupabase: typeof syncPremiumQuotes;
+    let cache: typeof import('@/db/quotesCache');
+    jest.isolateModules(() => {
+      restoreWithoutSupabase = require('../quotesSync').syncPremiumQuotes;
+      cache = require('@/db/quotesCache');
+    });
+
+    const result = await restoreWithoutSupabase!();
+
+    expect(result.synced).toBe(0);
+    expect(cache!.seedIfEmpty).not.toHaveBeenCalled();
     expect(cache!.upsertQuotes).not.toHaveBeenCalled();
   });
 });

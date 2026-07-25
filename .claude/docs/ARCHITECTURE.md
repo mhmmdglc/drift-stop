@@ -73,8 +73,8 @@ Build profiles in `eas.json`: `development` (APK, dev client), `preview` (APK, l
 | `index.js` | Custom entry point: registers the Android widget task handler, then `require('expo-router/entry')` | Anything that must run before the router mounts |
 | `src/app/` | expo-router routes. `_layout.tsx` = providers + boot gate; `(tabs)/` = Home/Favorites/Settings; `onboarding`, `auth`, `paywall`, `quote/[id]`, `packs/*` | New screens, navigation, boot order |
 | `src/components/` | Presentational components incl. the "sketch" family (`WobblyBorder`, `SketchButton`, `SketchToggle`, `SketchUnderline`, `SketchIcons`, `SketchOnboardingIcons`, `CornerBrackets`, `Doodle`, `PaperBackground`), plus `QuoteCard`, `ThemedText`, `TimePicker`, `FrequencySelector`, `ThemeChips`, `AdBanner`, `SplashOverlay`, `ErrorBoundary` | UI work |
-| `src/hooks/` | Providers + hooks: `useSettings`, `use-theme`, `useAuth`, `usePurchases`, `useHistory`, `usePacks`, `useFavorites`, `useNotifications`, `useEnforceFreeLimits`, `use-color-scheme(.web)` | State ownership, persistence |
-| `src/services/` | Supabase → SQLite sync: `quotesSync`, `packsSync`, `authorsSync` | Remote content refresh logic |
+| `src/hooks/` | Providers + hooks: `useSettings`, `use-theme`, `useAuth`, `usePurchases`, `useHistory`, `usePacks`, `useFavorites`, `useNotifications`, `useEnforceFreeLimits`, `usePremiumCacheGuard`, `usePremiumCacheVersion`, `use-color-scheme(.web)` | State ownership, persistence |
+| `src/services/` | Supabase → SQLite sync: `quotesSync`, `packsSync`, `authorsSync`; entitlement↔cache reconciliation: `premiumCacheGuard` | Remote content refresh logic |
 | `src/db/` | SQLite cache layer: `quotesCache`, `packsCache` (both open `driftstop.db`) | Cache schema, local queries |
 | `src/lib/` | Third-party client construction: `supabase.ts`, `purchases.ts` | SDK config / env keys |
 | `src/utils/` | `scheduler` (notifications), `storage` (AsyncStorage keys), `timeUtils`, `quoteSelector`, `quoteText`, `ads`, `share`, `sketch` (SVG path math), `runtime` (Expo Go detection), `crashReporting` | Pure logic, platform shims |
@@ -83,7 +83,7 @@ Build profiles in `eas.json`: `development` (APK, dev client), `preview` (APK, l
 | `src/data/` | `quotes.json` (1000 free quotes) + `quotes.ts` reader, `quotesAnySource.ts` (static ∪ SQLite), `gen/*.json` (regional build inputs), `tags/*.json` (tag assignments) | Content pipeline |
 | `src/i18n/` + `src/locales/` | `i18n-js` setup + language registry, `quoteLocalization.ts` (origin/author label maps), `useTranslation.ts`; 8 JSON locale files | Copy, new languages |
 | `src/widgets/` | `DriftStopWidget.tsx` (widget JSX), `widget-task-handler.tsx` (headless lifecycle), `updateWidget.tsx` (in-app push to widget) | Android home-screen widget |
-| `supabase/migrations/` | `0001_init_schema.sql`, `0002_quotes_extra_fields.sql`, `0003_pack_public_counts.sql` | Schema + RLS |
+| `supabase/migrations/` | `0001_init_schema.sql`, `0002_quotes_extra_fields.sql`, `0003_pack_public_counts.sql`, `0004_revoke_client_profile_writes.sql`, `0005_lock_down_migrations_table.sql`, `0006_revoke_client_content_writes.sql` | Schema + RLS + grants |
 | `supabase/functions/` | `delete-account/`, `revenuecat-webhook/` (Deno) | Server-side entitlement/account ops |
 | `scripts/` | Content build + DB seed/migrate scripts (see §6) | Content or schema ops |
 | `plugins/` | `withGradleVersion.js` config plugin | Native build breakage |
@@ -117,12 +117,12 @@ Importing `@/hooks/useNotifications` also runs its module-level
 `Notifications.setNotificationHandler(...)` (`src/hooks/useNotifications.ts:8-21`), guarded by
 `nativeFeaturesAvailable` so Expo Go doesn't crash.
 
-**Step 2 — `RootLayout` (`_layout.tsx:93`) loads fonts.**
-`useFonts` with Caveat 400/700, Kalam 400/700, ArchitectsDaughter 400 (`:94-100`).
-While `!loaded` it renders `null` (`:108-110`) — the native splash is still up.
-When `loaded` flips, `SplashScreen.hideAsync()` (`:102-106`).
+**Step 2 — `RootLayout` (`_layout.tsx:96`) loads fonts.**
+`useFonts` with Caveat 400/700, Kalam 400/700, ArchitectsDaughter 400 (`:97-103`).
+While `!loaded` it renders `null` (`:111-113`) — the native splash is still up.
+When `loaded` flips, `SplashScreen.hideAsync()` (`:105-109`).
 
-**Step 3 — provider nesting (`_layout.tsx:113-129`), outermost → innermost.**
+**Step 3 — provider nesting (`_layout.tsx:116-132`), outermost → innermost.**
 
 | # | Provider | Why at this depth |
 |---|---|---|
@@ -136,23 +136,24 @@ When `loaded` flips, `SplashScreen.hideAsync()` (`:102-106`).
 | 8 | `HistoryProvider` | Consumes `useSettings()` for the theme-filtered seed pool (`useHistory.tsx:41`) |
 | 9 | `AppShell` | Screens + boot effects |
 
-**Step 4 — `AppShell` (`_layout.tsx:34`) side effects.**
+**Step 4 — `AppShell` (`_layout.tsx:35`) side effects.**
 
 | Order | What | Line |
 |---|---|---|
-| a | `useNotificationObserver()` — deep-links notification taps to `/quote/[id]` | `:35` |
-| b | `useEnforceFreeLimits()` — downgrades Pro-only `frequency` for non-entitled users | `:36` |
-| c | mount effect: `setupAndroidChannel()`, `initAds()`, `syncQuotes()`, `syncPacks()`, `syncAuthorCounts()`, read `onboardingComplete` | `:45-52` |
-| d | foreground `addNotificationReceivedListener` → `record(quoteId)` into history | `:55-62` |
-| e | boot gate: waits for `splashDone && settingsLoaded && onboarded !== null`, runs **once** via `bootRan` ref | `:64-73` |
+| a | `useNotificationObserver()` — deep-links notification taps to `/quote/[id]` | `:36` |
+| b | `useEnforceFreeLimits()` — downgrades Pro-only `frequency` for non-entitled users | `:37` |
+| b2 | `usePremiumCacheGuard()` — purges locally cached premium quotes when entitlement is gone, re-downloads them when it returns | `:39` |
+| c | mount effect: `setupAndroidChannel()`, `initAds()`, `syncQuotes()`, `syncPacks()`, `syncAuthorCounts()`, read `onboardingComplete` | `:48-55` |
+| d | foreground `addNotificationReceivedListener` → `record(quoteId)` into history | `:58-65` |
+| e | boot gate: waits for `splashDone && settingsLoaded && onboarded !== null`, runs **once** via `bootRan` ref | `:67-76` |
 
-The gate (`:68-72`) either `router.replace('/onboarding')` or
+The gate (`:71-75`) either `router.replace('/onboarding')` or
 `ensurePermissions().then(() => rescheduleIfNeeded(settings))`.
 Note: **notification permission is only requested on the onboarded path here**; the onboarding
 screen calls `ensurePermissions()` itself at `src/app/onboarding.tsx:44` before finishing.
 
 **Step 5 — first paint.** `Stack` with `headerShown: false` and 8 registered screens
-(`_layout.tsx:78-87`); `SplashOverlay` renders on top until its 2200 ms animation finishes
+(`_layout.tsx:81-90`); `SplashOverlay` renders on top until its 2200 ms animation finishes
 (`src/components/SplashOverlay.tsx:19`, `:41-46` → `onDone` → `splashDone = true`).
 
 ---
@@ -166,12 +167,14 @@ screen calls `ensurePermissions()` itself at `src/app/onboarding.tsx:44` before 
 | `useSettings` (`src/hooks/useSettings.tsx:48`) | Provider | The whole `Settings` object; keeps `i18n.locale` in sync; triggers rescheduling | AsyncStorage `driftstop:settings` | `{ settings, loaded, update(patch), setThemeMode(mode), setLanguage(lang) }` |
 | `useTheme` (`src/hooks/use-theme.tsx:18`) | Provider | Resolves `themeMode` + OS scheme → palette | none (derives from Settings) | `{ colors, themeName, mode, setMode }` |
 | `useAuth` (`src/hooks/useAuth.tsx:33`) | Provider | Supabase session | Supabase client's own storage (SQLite-backed `localStorage`, `src/lib/supabase.ts:1,16`) | `{ configured, session, user, loading, signUpWithEmail, signInWithEmail, signOut, deleteAccount }` |
-| `usePurchases` (`src/hooks/usePurchases.tsx:37`) | Provider | RevenueCat `CustomerInfo`, current offering, entitlement flags | RevenueCat SDK | `{ configured, loading, isPro, isAdsRemoved, offering, purchasePackage, restorePurchases }` |
+| `usePurchases` (`src/hooks/usePurchases.tsx:37`) | Provider | RevenueCat `CustomerInfo`, current offering, entitlement flags | RevenueCat SDK | `{ configured, loading, entitlementKnown, isPro, isAdsRemoved, offering, purchasePackage, restorePurchases }` |
 | `useHistory` (`src/hooks/useHistory.tsx:40`) | Provider | Ordered list of *seen* quote ids + a read pointer | AsyncStorage `driftstop:seenHistory` (cap 200, `:19`) | `{ quote, count, loaded, record, goOlder, goNewer, randomFromHistory, canOlder, canNewer }` |
 | `useFavorites` (`src/hooks/useFavorites.ts:6`) | Hook (per-consumer state!) | Favourite quote ids | AsyncStorage `driftstop:favorites` | `{ ids, isFavorite, toggle, remove, loaded }` |
 | `usePacks` (`src/hooks/usePacks.tsx:28`) | Hook | Premium pack + author lists with `locked` flags | reads SQLite synchronously; refreshes from Supabase on mount | `{ packs, authors, loading, refresh }` |
 | `useNotificationObserver` (`src/hooks/useNotifications.ts:35`) | Hook | Notification-tap routing | none | `void` |
 | `useEnforceFreeLimits` (`src/hooks/useEnforceFreeLimits.ts:13`) | Hook | Clamps `frequency` to `FREE_FREQUENCY_MAX` | writes through `useSettings.update` | `void` |
+| `usePremiumCacheGuard` (`src/hooks/usePremiumCacheGuard.ts:37`) | Hook | Keeps the local premium cache aligned with entitlement | writes SQLite via `services/premiumCacheGuard` | `void` |
+| `usePremiumCacheVersion` (`src/hooks/usePremiumCacheVersion.ts:18`) | Hook (`useSyncExternalStore`) | Re-render signal for screens that read the premium cache; the counter lives in `services/premiumCacheGuard` and bumps on purge/restore | none | `number` |
 | `useColorScheme` (`src/hooks/use-color-scheme.ts`) | Re-export | — | — | RN's `useColorScheme` (`.web.ts` variant exists) |
 
 Details worth knowing:
@@ -191,6 +194,13 @@ Details worth knowing:
   reads `entitlements.active['pro'|'no_ads']`; `getOfferings()` failure is deliberately isolated
   from `getCustomerInfo()` (`:66-73`) so a missing dashboard offering can't hide an active
   subscription.
+- **`entitlementKnown` ≠ `!loading`.** `loading` is cleared in a `.finally()`, so it also flips
+  false when `getCustomerInfo()` *rejects* — leaving `customerInfo === null`, `isPro === false`
+  and nothing actually learned. `entitlementKnown` is `customerInfo != null`. Reversible UI
+  decisions (lock/unlock, spinners) may key off `loading`; **anything that deletes data must key
+  off `entitlementKnown`** — see `usePremiumCacheGuard`, and the three-state
+  `PremiumEntitlementState` (`'entitled' | 'none' | 'unknown'`) that makes "unknown" impossible to
+  confuse with "not entitled" at the type level.
 
 ### AsyncStorage keys
 
@@ -214,7 +224,8 @@ both of which swallow errors (`:16-32`).
 | Table | Created in | Columns |
 |---|---|---|
 | `quotes` | `src/db/quotesCache.ts:34-48` | `id` PK, `text`, `text_tr`, `author`, `origin`, `origin_emoji`, `category`, `era`, `tags` (JSON string), `is_premium` (0/1), `pack_id`, `updated_at` |
-| `meta` | `src/db/quotesCache.ts:49-52` | `key` PK, `value` — holds `last_sync_at` cursor |
+| `meta` | `src/db/quotesCache.ts:49-52` | `key` PK, `value` — holds the `last_sync_at` delta cursor and `premium_backfill_count` (how many rows the last *complete* premium backfill returned; the convergence watermark used by `premiumCacheGuard`) |
+| `purged_premium_quotes` | `src/db/quotesCache.ts:57-59` | `id` PK — **ids only, never content**: tombstones for premium quotes deleted when entitlement ended, so favourites can render a deliberate "locked" row instead of a blank/vanished card |
 | `packs` | `src/db/packsCache.ts:28-36` | `id` PK, `name` (JSON), `description` (JSON), `cover_image_url`, `is_premium`, `sort_order`, `quote_count` |
 | `premium_authors` | `src/db/packsCache.ts:45-48` | `author` PK, `quote_count` |
 
@@ -246,7 +257,7 @@ src/data/tags/*.json ──merge-tags.js───┴─> src/data/quotes.json  (
 | Reader | Source | Used by |
 |---|---|---|
 | `src/data/quotes.ts` — `QUOTES`, `getQuoteById`, `getQuotesByThemes` | **static bundled array only** (`quotes.ts:5,9,19`) | `utils/scheduler.ts:4` (notification pool), `hooks/useHistory.tsx:12` (Home card), `widgets/widget-task-handler.tsx:3`, `widgets/updateWidget.tsx:4`, `db/quotesCache.ts:3` (seed source) |
-| `src/data/quotesAnySource.ts` — `getQuoteByIdAnySource`, `getPackQuotes`, `getAuthorQuotes` | static **first**, then SQLite cache (`quotesAnySource.ts:13-17`) | `app/quote/[id].tsx:12`, `app/(tabs)/favorites.tsx:13`, `app/packs/[id].tsx:13`, `app/packs/author/[name].tsx:13` |
+| `src/data/quotesAnySource.ts` — `lookupQuoteAnySource`, `getPackQuotes`, `getAuthorQuotes` — **every one takes a mandatory `{ entitled }`** and refuses premium content without it (second line of defence behind RLS) | static **first**, then SQLite cache, then purge tombstones (`quotesAnySource.ts:34-51`) | `app/quote/[id].tsx:12`, `app/(tabs)/favorites.tsx:13`, `app/packs/[id].tsx:13`, `app/packs/author/[name].tsx:13` |
 
 This split is deliberate and documented at `quotesAnySource.ts:5-12`: the **core loops (Home,
 widget, notifications) never touch SQLite**, so they stay synchronous, offline and independent of
@@ -259,6 +270,7 @@ entitlement. Only screens that must be able to show premium pack content fall th
 | Service | Query | Cursor / strategy |
 |---|---|---|
 | `syncQuotes` (`src/services/quotesSync.ts:65`) | `quotes` where `updated_at > since`, ordered `updated_at, id`, paged 500 (`:4,38-58`) | **Delta by `updated_at`**. Cursor read from `meta.last_sync_at` (`quotesCache.ts:207`) defaulting to epoch; after upsert the cursor advances to `max(updated_at)` of the fetched rows (`quotesSync.ts:76-77`). Always calls `seedIfEmpty()` **first** (`:66`) so an offline first launch still has a populated cache. All errors swallowed → `{synced: 0}` (`:79-83`) |
+| `syncPremiumQuotes` (`src/services/quotesSync.ts:105`) | `quotes` where `is_premium = true`, ordered by `id`, paged 500 | **No cursor at all, by design.** Used only to restore premium content after a purge: the server-side `updated_at` of those rows never changed, so the delta cursor is already past them and `syncQuotes` would never re-fetch them. Deliberately does **not** advance `meta.last_sync_at` (that would skip free rows updated meanwhile). RLS returns `[]` unless the caller is a signed-in user with `profiles.is_premium`. All pages are accumulated **before** a single `upsertQuotes` transaction, so an interrupted run writes nothing; an optional `isCancelled` probe is checked between the fetch and that write so a sign-out during the 2–5 s restore can't land rows on top of the purge |
 | `syncPacks` (`src/services/packsSync.ts:32`) | full `quote_packs` select ordered by `sort_order` | **Full upsert every time** — table is tiny (`packsSync.ts:26-31`) |
 | `syncAuthorCounts` (`src/services/authorsSync.ts:14`) | RPC `get_premium_author_counts()` | Full replace of `premium_authors`. Uses a `SECURITY DEFINER` RPC so free/guest users can see author names + counts (public metadata) without RLS letting them read quote text |
 
@@ -288,13 +300,13 @@ uses `expo-sqlite/localStorage/install` (`:1,16`), not AsyncStorage.
 
 | Table | Columns | RLS policy | Intent |
 |---|---|---|---|
-| `profiles` (`0001:9-17`) | `id` → `auth.users` (cascade), `display_name`, `is_premium`, `premium_since`, `streak_count`, `streak_last_date`, `created_at` | `profiles_select_own`, `profiles_update_own` — both `auth.uid() = id` (`0001:21-27`) | Server-side entitlement record. **Only the RevenueCat webhook writes `is_premium`** (service role bypasses RLS). Auto-created by trigger `on_auth_user_created` → `handle_new_user()` (`0001:30-44`) |
-| `quote_packs` (`0001:47-54`, `+quote_count` `0003:8`) | `id` PK text, `name` jsonb, `description` jsonb, `cover_image_url`, `is_premium`, `sort_order`, `quote_count` | `quote_packs_public_read` — `using (true)` (`0001:58-60`) | Pack *metadata* is public marketing surface; the content is protected in `quotes` |
-| `quotes` (`0001:63-74`, `+origin_emoji/category` `0002`) | `id` PK bigint, `text`, `text_tr`, `author`, `origin`, `origin_emoji`, `category`, `era`, `tags text[]`, `pack_id` → `quote_packs`, `is_premium`, `updated_at`; indexes on `pack_id`, `is_premium`, `updated_at` (`0001:76-78`) | Two SELECT policies: `quotes_public_read_free` (`is_premium = false`) and `quotes_premium_read_entitled` (`is_premium = true AND EXISTS(profiles where id = auth.uid() and is_premium)`) (`0001:82-94`) | The entitlement gate. A non-entitled client physically cannot download premium rows |
+| `profiles` (`0001:9-17`) | `id` → `auth.users` (cascade), `display_name`, `is_premium`, `premium_since`, `streak_count`, `streak_last_date`, `created_at` | `profiles_select_own` (`auth.uid() = id`). **`profiles_update_own` was dropped in `0004`** together with the client roles' table-level INSERT/UPDATE grants | Server-side entitlement record. **Only the RevenueCat webhook writes `is_premium`** (service role bypasses RLS and grants) — this is now enforced by grants, not just intent. Postgres RLS cannot restrict *columns*, so the row-correct `profiles_update_own` policy plus a table-level UPDATE grant let any signed-in user set their own `is_premium = true` until `0004` (see that migration's header for the exploit and the column-grant recipe if a screen ever needs to write `display_name`). Rows are created by trigger `on_auth_user_created` → `handle_new_user()` (`0001:30-44`) |
+| `quote_packs` (`0001:47-54`, `+quote_count` `0003:8`) | `id` PK text, `name` jsonb, `description` jsonb, `cover_image_url`, `is_premium`, `sort_order`, `quote_count` | `quote_packs_public_read` — `using (true)` (`0001:58-60`); client INSERT/UPDATE/DELETE revoked in `0006` | Pack *metadata* is public marketing surface; the content is protected in `quotes`. `quote_count` is also what the client uses to tell a complete premium cache from a partial one |
+| `quotes` (`0001:63-74`, `+origin_emoji/category` `0002`) | `id` PK bigint, `text`, `text_tr`, `author`, `origin`, `origin_emoji`, `category`, `era`, `tags text[]`, `pack_id` → `quote_packs`, `is_premium`, `updated_at`; indexes on `pack_id`, `is_premium`, `updated_at` (`0001:76-78`) | Two SELECT policies: `quotes_public_read_free` (`is_premium = false`) and `quotes_premium_read_entitled` (`is_premium = true AND EXISTS(profiles where id = auth.uid() and is_premium)`) (`0001:82-94`); client INSERT/UPDATE/DELETE revoked in `0006` | The entitlement gate. A non-entitled client physically cannot download premium rows — and since `0004` it also cannot grant itself entitlement |
 | `favorites` (`0001:97-102`) | `(user_id, quote_id)` PK, `created_at` | `favorites_own_rows` FOR ALL, `auth.uid() = user_id` (`0001:108-110`) | Cloud favourites — **not yet used by the client** (`useFavorites` is AsyncStorage-only) |
 | `reflections` (`0001:113-119`) | `id` uuid, `user_id`, `quote_id`, `note`, `created_at` | `reflections_own_rows` FOR ALL (`0001:125-127`) | Planned ritual layer — no client code |
 | `user_settings` (`0001:130-136`) | `user_id` PK, `theme`, `language`, `notification_prefs` jsonb, `updated_at` | `user_settings_own_rows` FOR ALL (`0001:140-142`) | Planned settings sync — no client code |
-| `_migrations` | `name` PK, `applied_at` | — (created by the runner, not a migration) | Applied-migration ledger (`db-migrate.js:31-37`) |
+| `_migrations` | `name` PK, `applied_at` | RLS **enabled with no policy** and all client grants revoked (`0005`) — server-side only | Applied-migration ledger (`db-migrate.js:31-37`). The runner connects as `postgres` through the pooler, not PostgREST, so it is unaffected |
 
 **RPC `public.get_premium_author_counts()`** (`0003:12-25`): `SECURITY DEFINER`, `search_path = public`,
 returns `(author, quote_count)` for `is_premium = true` only, granted to `anon, authenticated`. It
@@ -404,7 +416,7 @@ Pure time math lives in `src/utils/timeUtils.ts` with injectable `rng` for deter
 `useNotificationObserver` (`:35`) handles both cold start
 (`getLastNotificationResponseAsync`, `:50`) and warm taps
 (`addNotificationResponseReceivedListener`, `:57`), routing to `/quote/${quoteId}`.
-Separately, `_layout.tsx:57-61` listens for *foreground receipt* and records the quote into history
+Separately, `_layout.tsx:60-64` listens for *foreground receipt* and records the quote into history
 without navigating. `quote/[id].tsx:33-35` records the opened quote — but **only if
 `!quote.isPremium`**, because Home's history resolves ids through the static array only.
 
@@ -469,7 +481,7 @@ reads a jsonb map with fallback chain `lang → tr → en → first value`.
 
 ```bash
 npx tsc --noEmit     # type check (strict)
-npm test             # jest — 12 suites, 60 tests, ~2.4 s
+npm test             # jest — 17 suites, 132 tests, ~1.5 s
 npm run lint         # expo lint (eslint flat config, eslint-config-expo)
 ```
 
@@ -483,17 +495,22 @@ the workflow explains that the React Compiler rules misfire on Reanimated's `.va
 and on the async-effect setState pattern used throughout the repo (see the several
 `eslint-disable-next-line` markers in `usePacks.tsx:41,53,64,66`, `useHistory.tsx:68`).
 
-### What the 60 tests actually cover
+### What the 132 tests actually cover
 
 | Suite | Covers |
 |---|---|
 | `src/data/__tests__/quotes.test.ts` (8) | Dataset integrity: 1000 rows, sequential unique ids, valid non-empty fields, no unknown attributions, unique TR texts, 1–4 valid tags, `getQuoteById`, `getQuotesByThemes` filter + fallback |
-| `src/data/__tests__/quotesAnySource.test.ts` (4) | Static-first lookup, SQLite fallback, miss case, `getPackQuotes` delegation (cache module mocked) |
+| `src/data/__tests__/quotesAnySource.test.ts` (10) | Static-first lookup, SQLite fallback, miss case, and the entitlement gate: free quotes always resolve, cached premium → `locked` without entitlement, purged premium id → `locked`, `getPackQuotes` drops premium rows, `getAuthorQuotes` returns `[]` (cache module mocked) |
 | `src/utils/__tests__/timeUtils.test.ts` (10) | `formatHM`, `toMinutes`/`windowOf`, `isValidWindow`, `isWeekend`, `dateKey`, `generateRandomTimes` (count/sort/uniqueness/tight-window) |
 | `src/utils/__tests__/quoteSelector.test.ts` (7) | `randomIndex` bounds + exclusion, `pickUnseenQuoteId` incl. exhausted-pool reset |
 | `src/utils/__tests__/share.test.ts` (3) | Template interpolation (no `[missing …]`), TR text selection, cancelled-share swallow |
 | `src/utils/__tests__/crashReporting.test.ts` (4) | Sentry init/report gated on DSN presence |
-| `src/services/__tests__/quotesSync.test.ts` (5) | Always seeds first, upsert + cursor advance, pagination, error swallow, unconfigured no-op |
+| `src/services/__tests__/quotesSync.test.ts` (12) | Always seeds first, upsert + cursor advance, pagination, error swallow, unconfigured no-op; `syncPremiumQuotes` filters on `is_premium` with **no** `updated_at` cursor, never advances the cursor, paginates, swallows errors, no-ops unconfigured, and writes nothing when the caller cancels mid-fetch |
+| `src/services/__tests__/premiumCacheGuard.test.ts` (25) | `'unknown'` never purges (the paying-user-with-a-failed-fetch case), purge on entitlement loss, no download while purging, cheap no-op for free users, cache-sufficiency rules (partial cache re-downloads, backfill watermark stops the re-download loop, missing pack metadata falls back to "not empty"), re-subscribe restore + tombstone clearing, `restore-pending`, cancellation, errors swallowed on both destructive paths, and the version counter bumping/notifying only on real changes |
+| `src/db/__tests__/quotesCache.test.ts` (13) | Purge SQL is scoped to `is_premium = 1` (free rows untouched), tombstones written before the delete, no writes when nothing is cached, tombstone lookup/clear, the `premium_backfill_count` watermark round-trip, and that no ungated "read every cached quote" helper exists (`expo-sqlite` mocked) |
+| `src/db/__tests__/packsCache.test.ts` (3) | `getExpectedPremiumQuoteCount` sums `quote_count` over premium packs only; 0 when metadata never synced |
+| `src/hooks/__tests__/usePremiumCacheGuard.test.tsx` (11) | Acts **only** once entitlement is known: no action while loading, none when `loading` finished but `customerInfo` never arrived, none when unconfigured; purge when not Pro, restore when Pro + signed in, skip restore without a session, act after the state becomes known, cancellation probe flips on teardown, retry on `restore-pending`, no retry after `cancelled` |
+| `src/__tests__/favoritesPremiumInvalidation.test.tsx` (6) | Favorites screen: locked row for a lapsed subscriber, **re-reads the cache when the restore lands after the purchase** (nothing else changes — this is the memo-dependency regression test), re-reads after a purge, loading row instead of a lock while entitlement resolves, lock once it resolves, free favourites never delayed |
 | `src/services/__tests__/packsSync.test.ts` (4) | camelCase mapping, empty, error, unconfigured |
 | `src/services/__tests__/authorsSync.test.ts` (4) | same four shapes for the RPC |
 | `src/i18n/__tests__/locales.test.ts` (3) | Locale key parity / non-empty / placeholder retention (6 active locales) |
@@ -505,11 +522,11 @@ and on the async-effect setState pattern used throughout the repo (see the sever
 | Area | Files |
 |---|---|
 | **Notification scheduling — the app's core feature** | `src/utils/scheduler.ts` (all 6 exports; only its `timeUtils` helpers are tested) |
-| SQLite cache layer | `src/db/quotesCache.ts`, `src/db/packsCache.ts` — every SQL statement, the seed transaction, the blind `alter table` |
-| Most state | `useHistory`, `usePurchases`, `useAuth`, `usePacks`, `useFavorites`, `useEnforceFreeLimits`, `useNotifications`, `use-theme` |
+| SQLite cache layer | `src/db/quotesCache.ts` (only the purge/tombstone/watermark SQL is tested), `src/db/packsCache.ts` (only `getExpectedPremiumQuoteCount`) — the seed transaction, the upserts, the read queries, the blind `alter table` |
+| Most state | `useHistory`, `usePurchases` (incl. the `entitlementKnown`/`loading` split — only its *consumers* are tested), `useAuth`, `usePacks`, `useFavorites`, `useEnforceFreeLimits`, `useNotifications`, `use-theme` (`usePremiumCacheGuard` **is** covered) |
 | Ads | `src/utils/ads.ts` (suppression, gap capping), `src/constants/adUnits.ts` id selection, `AdBanner` |
 | Widget | `src/widgets/*` — the headless handler, its fallbacks, the deep-link URI |
-| Screens | All 10 routes + both layouts under `src/app/` (only `ErrorBoundary` has a component test) |
+| Screens | All 10 routes + both layouts under `src/app/` — except Favorites' premium locked/loading/invalidation paths (`src/__tests__/favoritesPremiumInvalidation.test.tsx`). `quote/[id]`, `packs/[id]` and `packs/author/[name]` carry the same invalidation wiring with **no** test |
 | Pure helpers | `src/utils/sketch.ts`, `src/utils/quoteText.ts` (indirect only), `src/i18n/quoteLocalization.ts`, `src/types/quotePack.ts:localizedPackField` |
 | Backend | Both edge functions (no Deno test runner configured), all SQL/RLS policies, every script in `scripts/` |
 | Config | `plugins/withGradleVersion.js` |
@@ -580,11 +597,20 @@ Ordered roughly by blast radius.
    tests**. Every regression here is silent: the user simply stops getting notifications, and
    nothing logs. `syncDeliveredToHistory` (`:145-186`) is the most intricate untested function in
    the repo (two data sources, mutation of persisted state, cap logic).
-2. **Entitlement leak after Pro lapses.** Premium quote rows stay in local SQLite forever — nothing
-   deletes them when `is_premium` flips false. `usePacks` re-locks the *pack/author list* UI
-   (`usePacks.tsx:38,51`), but `getQuoteByIdAnySource` (`quotesAnySource.ts:13-17`) and
-   `getAuthorQuotes`/`getPackQuotes` read the cache with **no entitlement check**, so a lapsed
-   subscriber keeps full access to previously synced premium text via Favorites and `/quote/[id]`.
+2. **Entitlement leak after Pro lapses — fixed (2026-07-25), on-device behaviour still unverified.**
+   Premium rows are purged from SQLite whenever entitlement is **known** to be absent
+   (`usePremiumCacheGuard` → `reconcilePremiumCache`, every launch, plus an explicit purge in
+   `useAuth.signOut`/`deleteAccount`), and every any-source reader requires `{ entitled }`
+   (`quotesAnySource.ts`). Recovery uses `syncPremiumQuotes`, which ignores the delta cursor.
+   The destructive branch is gated on `entitlementKnown` (not `!loading`) and on the three-state
+   `PremiumEntitlementState`, so a failed `getCustomerInfo()` can no longer be read as "no
+   entitlement". Completeness is measured against `packs.quote_count` plus a
+   `premium_backfill_count` watermark, so a partial cache converges instead of sticking.
+   Remaining caveats: **the purge/restore path has never been exercised on a device**; the restore
+   depends on the RevenueCat webhook having written `profiles.is_premium`, so it retries at
+   3/8/20 s and otherwise waits for the next launch; and screens are refreshed through a single
+   module-level counter (`usePremiumCacheVersion`) — a new screen that reads the cache without
+   depending on it will show stale locks (only Favorites has a test for this).
 3. **No delete/tombstone propagation in sync.** `syncQuotes` only fetches
    `updated_at > cursor` (`quotesSync.ts:46`). A quote deleted or unpublished server-side lives on
    in every client's SQLite indefinitely. There is also no cursor reset path: if the local `meta`
@@ -594,6 +620,12 @@ Ordered roughly by blast radius.
      `.env.example`** → `purchasesConfigured` is false on iOS → paywall shows
      `paywall.errors.notConfigured` and no Pro gating applies at all
      (`useEnforceFreeLimits.ts:18` bails when `!configured`, so free iOS users get frequency 10).
+   - Knock-on for premium content: with `configured` false, `getCustomerInfo()` is never called, so
+     `entitlementKnown` stays false and `isPro` stays false. Any premium favourite renders as a
+     **locked row with no unlock CTA** on iOS (the CTA itself is gated on `configured`). No data is
+     lost — `usePremiumCacheGuard` also does nothing when unconfigured — but the lock has no exit.
+     The rationale sits at the origin, `src/lib/purchases.ts` (`purchasesConfigured`); tracked as
+     TODO #9 and resolved by shipping the iOS key, not by faking entitlement client-side.
    - iOS ad unit ids are empty strings (`constants/adUnits.ts:10,12`) → iOS **always** serves
      `TestIds`, in release builds too; and `app.json:62` uses Google's sample publisher app id
      `ca-app-pub-3940256099942544~…`. Shipping to the App Store in this state means zero ad revenue

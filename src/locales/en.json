@@ -40,6 +40,8 @@
   "quote": {
     "authorPrefix": "—",
     "originSeparator": "·",
+    "lockedTitle": "This quote is locked",
+    "lockedBody": "This premium quote is part of Pro. Go Pro and it comes back.",
     "categories": {
       "resilience": "Resilience",
       "fire": "Fire",
@@ -63,7 +65,8 @@
     "emptyBody": "Save the words that hit. Keep them here.",
     "removeConfirm": "Remove this quote from favorites?",
     "removeYes": "Remove",
-    "removeNo": "Cancel"
+    "removeNo": "Cancel",
+    "lockedPremium": "Premium quote — comes back with Pro"
   },
   "settings": {
     "screenTitle": "Settings",

@@ -40,6 +40,8 @@
   "quote": {
     "authorPrefix": "—",
     "originSeparator": "·",
+    "lockedTitle": "Questa frase è bloccata",
+    "lockedBody": "Questa frase premium fa parte di Pro. Passa a Pro e torna.",
     "categories": {
       "resilience": "Resilienza",
       "fire": "Fuoco",
@@ -63,7 +65,8 @@
     "emptyBody": "Salva le frasi che ti colpiscono, restano qui.",
     "removeConfirm": "Vuoi rimuovere questa frase dai preferiti?",
     "removeYes": "Rimuovi",
-    "removeNo": "Annulla"
+    "removeNo": "Annulla",
+    "lockedPremium": "Frase premium — torna con Pro"
   },
   "settings": {
     "screenTitle": "Impostazioni",

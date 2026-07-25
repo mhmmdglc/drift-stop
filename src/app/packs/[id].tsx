@@ -12,6 +12,8 @@ import { WobblyBorder } from '@/components/WobblyBorder';
 import { Spacing } from '@/constants/layout';
 import { getPackQuotes } from '@/data/quotesAnySource';
 import { usePacks } from '@/hooks/usePacks';
+import { usePremiumCacheVersion } from '@/hooks/usePremiumCacheVersion';
+import { usePurchases } from '@/hooks/usePurchases';
 import { useTheme } from '@/hooks/use-theme';
 import { localizeAuthor } from '@/i18n/quoteLocalization';
 import { useTranslation } from '@/i18n/useTranslation';
@@ -25,11 +27,18 @@ export default function PackDetailScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ id: string }>();
   const { packs, loading } = usePacks();
+  const { isPro } = usePurchases();
+  // Satın alma anında `isPro` açılır ama içerik saniyeler sonra iniyor: bu sayaç
+  // olmadan paket, boş listeyle donmuş kalırdı (bkz. usePremiumCacheVersion).
+  const premiumCacheVersion = usePremiumCacheVersion();
 
   const pack = packs.find((p) => p.id === params.id);
+  // `pack.locked` UI kilidi; `entitled` ise okuma katmanının kendi kontrolü
+  // (bkz. data/quotesAnySource.ts) — biri atlanırsa diğeri hâlâ tutar.
   const quotes = useMemo<Quote[]>(
-    () => (pack && !pack.locked ? getPackQuotes(pack.id) : []),
-    [pack]
+    () => (pack && !pack.locked ? getPackQuotes(pack.id, { entitled: isPro }) : []),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [pack, isPro, premiumCacheVersion]
   );
 
   const goBack = () => (router.canGoBack() ? router.back() : router.replace('/packs'));

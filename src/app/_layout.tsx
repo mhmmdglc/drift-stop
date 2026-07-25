@@ -16,6 +16,7 @@ import { AuthProvider } from '@/hooks/useAuth';
 import { HistoryProvider, useHistory } from '@/hooks/useHistory';
 import { useNotificationObserver } from '@/hooks/useNotifications';
 import { useEnforceFreeLimits } from '@/hooks/useEnforceFreeLimits';
+import { usePremiumCacheGuard } from '@/hooks/usePremiumCacheGuard';
 import { PurchasesProvider } from '@/hooks/usePurchases';
 import { SettingsProvider, useSettings } from '@/hooks/useSettings';
 import { ThemeProvider, useTheme } from '@/hooks/use-theme';
@@ -34,6 +35,8 @@ initCrashReporting();
 function AppShell() {
   useNotificationObserver();
   useEnforceFreeLimits();
+  // Abonelik bitince yerel premium sözleri siler, geri gelince yeniden indirir.
+  usePremiumCacheGuard();
   const { settings, loaded: settingsLoaded } = useSettings();
   const { themeName } = useTheme();
   const { record } = useHistory();

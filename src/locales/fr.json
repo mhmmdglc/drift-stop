@@ -40,6 +40,8 @@
   "quote": {
     "authorPrefix": "—",
     "originSeparator": "·",
+    "lockedTitle": "Cette phrase est verrouillée",
+    "lockedBody": "Cette phrase premium fait partie de Pro. Passe à Pro et elle revient.",
     "categories": {
       "resilience": "Résilience",
       "fire": "Feu",
@@ -63,7 +65,8 @@
     "emptyBody": "Garde les mots qui te frappent, ils resteront ici.",
     "removeConfirm": "Tu veux retirer ce mot de tes favoris ?",
     "removeYes": "Retirer",
-    "removeNo": "Annuler"
+    "removeNo": "Annuler",
+    "lockedPremium": "Phrase premium — revient avec Pro"
   },
   "settings": {
     "screenTitle": "Réglages",

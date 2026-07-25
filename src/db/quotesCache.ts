@@ -50,6 +50,13 @@ function getDb(): SQLite.SQLiteDatabase {
         key text primary key,
         value text not null
       );
+      -- Entitlement bitince silinen premium sözlerin SADECE id'leri (içerik değil).
+      -- Favorilerde/söz detayında "bu söz artık kilitli" durumunu gösterebilmek için
+      -- id'nin premium olduğunu bilmemiz gerekiyor; satır silindiği için başka
+      -- kaynak yok. Bkz. purgePremiumQuotes() ve data/quotesAnySource.ts.
+      create table if not exists purged_premium_quotes (
+        id integer primary key
+      );
     `);
   }
   return db;
@@ -166,13 +173,10 @@ function rowToQuote(r: CachedQuoteRow): Quote {
 const CACHED_QUOTE_COLUMNS =
   'id, text, text_tr, author, origin, origin_emoji, category, era, tags, is_premium, pack_id';
 
-export function getAllCachedQuotes(): Quote[] {
-  const conn = getDb();
-  const rows = conn.getAllSync<CachedQuoteRow>(
-    `select ${CACHED_QUOTE_COLUMNS} from quotes order by id`
-  );
-  return rows.map(rowToQuote);
-}
+// NOT: burada bir `getAllCachedQuotes()` vardı; hiçbir yerden çağrılmıyordu ve
+// premium satırları da döndürdüğü için entitlement kontrolü olmayan hazır bir
+// sızıntı yolu oluşturuyordu. Silindi. Yeniden gerekirse `quotesAnySource.ts`
+// üzerinden ve ZORUNLU `{ entitled }` parametresiyle eklenmeli.
 
 /** Tek bir sözü id ile cache'ten okur (statik dizide olmayan premium paket sözleri için). */
 export function getCachedQuoteById(id: number): Quote | null {
@@ -202,6 +206,84 @@ export function getCachedQuotesByAuthor(author: string): Quote[] {
     [author]
   );
   return rows.map(rowToQuote);
+}
+
+/** Cache'te kaç premium söz var (entitlement geri geldiğinde geri yüklendi mi kontrolü). */
+export function countCachedPremiumQuotes(): number {
+  const conn = getDb();
+  const row = conn.getFirstSync<{ count: number }>(
+    'select count(*) as count from quotes where is_premium = 1'
+  );
+  return row?.count ?? 0;
+}
+
+/**
+ * Premium sözleri yerel cache'ten siler ve id'lerini mezar taşı tablosuna yazar.
+ * Abonelik bitince / çıkış yapınca / hesap silinince çağrılır: aksi halde bir kez
+ * senkronize edilmiş premium içerik cihazda sonsuza kadar okunabilir kalır
+ * (gelir kaçağı). `is_premium = 1` filtresi, sunucudaki RLS politikasının premium
+ * tanımıyla birebir aynı — ücretsiz 1000 söze (is_premium = 0) asla dokunmaz.
+ * Geri dönüş: silinen satır sayısı.
+ */
+export function purgePremiumQuotes(): number {
+  const conn = getDb();
+  const count = countCachedPremiumQuotes();
+  if (count === 0) return 0;
+
+  conn.withTransactionSync(() => {
+    conn.runSync(
+      'insert or ignore into purged_premium_quotes (id) select id from quotes where is_premium = 1'
+    );
+    conn.runSync('delete from quotes where is_premium = 1');
+  });
+  return count;
+}
+
+/** Bu id daha önce entitlement bitince silinmiş bir premium söz mü? */
+export function isPurgedPremiumQuoteId(id: number): boolean {
+  const conn = getDb();
+  const row = conn.getFirstSync<{ id: number }>(
+    'select id from purged_premium_quotes where id = ?',
+    [id]
+  );
+  return row != null;
+}
+
+/** Premium içerik geri yüklendiğinde mezar taşlarını temizler. */
+export function clearPurgedPremiumQuoteIds(): void {
+  const conn = getDb();
+  conn.runSync('delete from purged_premium_quotes');
+}
+
+/**
+ * Son BAŞARILI tam premium geri-doldurmanın getirdiği satır sayısı (yok → null).
+ *
+ * Neden gerekiyor: cache'in "yeterli" olup olmadığını ölçmek için beklenen sayıyı
+ * `packs.quote_count` toplamından okuyoruz (herkese açık metadata). Ama bu metadata
+ * ile sunucunun RLS altında gerçekten verdiği satır sayısı ayrışabilir (bir söz
+ * yayından kaldırılmışsa metadata daha büyük kalır). O durumda "cached < beklenen"
+ * kuralı her açılışta 3.325 satırı yeniden indirmeye yol açardı. Bu filigran,
+ * "tam çekim yapıldı ve bu kadarı geldi" bilgisini kalıcılaştırarak akışı
+ * yakınsatır. `meta` tablosunda durur; premium temizliği `meta`'ya dokunmaz,
+ * ama temizlikten sonra `cached = 0 < filigran` olduğu için geri yükleme yine tetiklenir.
+ */
+export function getPremiumBackfillCount(): number | null {
+  const conn = getDb();
+  const row = conn.getFirstSync<{ value: string }>('select value from meta where key = ?', [
+    'premium_backfill_count',
+  ]);
+  if (!row) return null;
+  const parsed = Number(row.value);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+export function setPremiumBackfillCount(count: number): void {
+  const conn = getDb();
+  conn.runSync(
+    'insert into meta (key, value) values (?, ?) on conflict (key) do update set value = excluded.value',
+    'premium_backfill_count',
+    String(count)
+  );
 }
 
 export function getLastSyncAt(): string | null {

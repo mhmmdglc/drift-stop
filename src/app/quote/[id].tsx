@@ -1,17 +1,20 @@
 import * as Haptics from 'expo-haptics';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ArrowLeft } from 'phosphor-react-native';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PaperBackground } from '@/components/PaperBackground';
 import { QuoteCard } from '@/components/QuoteCard';
+import { SketchButton } from '@/components/SketchButton';
 import { ThemedText } from '@/components/ThemedText';
 import { Spacing } from '@/constants/layout';
-import { getQuoteByIdAnySource } from '@/data/quotesAnySource';
+import { lookupQuoteAnySource, type QuoteLookup } from '@/data/quotesAnySource';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useHistory } from '@/hooks/useHistory';
+import { usePremiumCacheVersion } from '@/hooks/usePremiumCacheVersion';
+import { usePurchases } from '@/hooks/usePurchases';
 import { useTheme } from '@/hooks/use-theme';
 import { useTranslation } from '@/i18n/useTranslation';
 import { shareQuote } from '@/utils/share';
@@ -23,9 +26,22 @@ export default function QuoteDetailScreen() {
   const params = useLocalSearchParams<{ id: string }>();
   const favorites = useFavorites();
   const { record } = useHistory();
+  const { configured: purchasesConfigured, loading: entitlementLoading, isPro } = usePurchases();
+  // Satın alma sonrası premium satırlar SQLite'a saniyeler sonra düşüyor; bu sayaç
+  // olmadan bu ekran tekrar okumaz ve kilitli kalır (bkz. usePremiumCacheVersion).
+  const premiumCacheVersion = usePremiumCacheVersion();
 
   const id = Number(params.id);
-  const quote = Number.isFinite(id) ? getQuoteByIdAnySource(id) : undefined;
+  // Premium söz: hem cache'te duruyorsa hem hak bitince silinmişse 'locked' döner —
+  // kullanıcı boş kart yerine kilit + Pro çağrısı görür.
+  const lookup: QuoteLookup = useMemo(
+    () =>
+      Number.isFinite(id) ? lookupQuoteAnySource(id, { entitled: isPro }) : { status: 'missing' },
+    // `premiumCacheVersion` sadece yeniden-okuma tetiklemek için bağımlılık.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [id, isPro, premiumCacheVersion]
+  );
+  const quote = lookup.status === 'found' ? lookup.quote : undefined;
 
   // Bildirimden/widget'tan açılan sözü geçmişe ekle.
   // Premium paket sözleri hariç: Home'un geçmişi sadece statik 1000 sözden id çözebiliyor
@@ -60,6 +76,30 @@ export default function QuoteDetailScreen() {
               }}
               onShare={() => void shareQuote(quote)}
             />
+          ) : lookup.status === 'locked' ? (
+            // Entitlement henüz yükleniyorsa kilit gösterip Pro kullanıcıyı
+            // yanıltmak yerine bekleriz (birkaç yüz ms sonra 'found' olacak).
+            entitlementLoading ? (
+              <ThemedText variant="body" tone="textMuted" style={styles.notFound}>
+                {t('common.loading')}
+              </ThemedText>
+            ) : (
+              <View style={styles.locked}>
+                <ThemedText variant="quote" tone="textMuted" style={styles.lockedText}>
+                  🔒 {t('quote.lockedTitle')}
+                </ThemedText>
+                <ThemedText variant="body" tone="textMuted" style={styles.lockedText}>
+                  {t('quote.lockedBody')}
+                </ThemedText>
+                {purchasesConfigured && (
+                  <SketchButton
+                    label={t('packs.unlockCta')}
+                    onPress={() => router.push('/paywall')}
+                    style={styles.unlockBtn}
+                  />
+                )}
+              </View>
+            )
           ) : (
             <ThemedText variant="body" tone="textMuted" style={styles.notFound}>
               {t('errors.noQuotes')}
@@ -87,5 +127,16 @@ const styles = StyleSheet.create({
   },
   notFound: {
     textAlign: 'center',
+  },
+  locked: {
+    alignItems: 'center',
+    paddingHorizontal: Spacing.lg,
+    gap: Spacing.md,
+  },
+  lockedText: {
+    textAlign: 'center',
+  },
+  unlockBtn: {
+    marginTop: Spacing.md,
   },
 });

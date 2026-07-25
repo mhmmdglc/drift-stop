@@ -58,10 +58,10 @@ The three main screens live in a `(tabs)` group with a fully custom hand-drawn t
 | Route | File | What it does | How you reach it |
 |---|---|---|---|
 | `/` (tab: index) | `src/app/(tabs)/index.tsx` | Home. Renders the current history quote as a `QuoteCard`, favorite + share actions, "Previous"/"Random from history" buttons, horizontal swipe gestures (left = random, right = older), patience line, ad banner. Updates the Android widget on every quote change (`:51`). | Default screen after onboarding |
-| `/favorites` (tab) | `src/app/(tabs)/favorites.tsx` | Flat list of favorited quotes; tap → quote detail, long-press → remove (confirm dialog). Resolves IDs via `getQuoteByIdAnySource` so **premium pack quotes do appear here** (`:13,26`). | Tab bar |
+| `/favorites` (tab) | `src/app/(tabs)/favorites.tsx` | Flat list of favorited quotes; tap → quote detail, long-press → remove (confirm dialog). Resolves IDs via `lookupQuoteAnySource` so **premium pack quotes do appear here** while the user is entitled; once entitlement ends the premium row stays in the list as a **locked** row (`🔒 favorites.lockedPremium`) instead of vanishing, and free favourites are untouched. While entitlement is still resolving those rows show `common.loading` rather than a lock (a Pro user must never be shown a lock that is about to disappear), and the list re-reads itself when a restore lands seconds after a purchase. | Tab bar |
 | `/settings` (tab) | `src/app/(tabs)/settings.tsx` | Account section (top), Pro card, packs link, notification master toggle + frequency, schedule window + weekend toggle, theme mode, language, interest themes, about (version / rate / privacy). | Tab bar, or gear icon on Home (`index.tsx:112`) |
 | `/onboarding` | `src/app/onboarding.tsx` | 4 steps: 3 informational slides + interest-theme picker. "Start" requests notification permission, saves themes (which triggers scheduling), marks onboarding complete, replaces to `/` (`:43-48`). Skippable to the last step. | Auto-redirect on first launch when `driftstop:onboardingComplete` is false (`_layout.tsx:64-73`) |
-| `/quote/[id]` | `src/app/quote/[id].tsx` | Single-quote detail with favorite/share. Records the quote into history **unless it is premium** (`:33-35`). Falls back to `errors.noQuotes` when the ID resolves to nothing. | Notification tap, widget tap (`driftstop://quote/<id>`, `src/widgets/DriftStopWidget.tsx:41`), favorites row, pack/author row |
+| `/quote/[id]` | `src/app/quote/[id].tsx` | Single-quote detail with favorite/share. Records the quote into history **unless it is premium** (`:41-43`). A premium quote without entitlement shows a locked state (`quote.lockedTitle`/`lockedBody` + "Go Pro") — and `common.loading` while entitlement is still resolving; `errors.noQuotes` only when the ID resolves to nothing at all. | Notification tap, widget tap (`driftstop://quote/<id>`, `src/widgets/DriftStopWidget.tsx:41`), favorites row, pack/author row |
 | `/auth` | `src/app/auth.tsx` | Email + password sign-in / sign-up toggle, client-side validation (email regex, password ≥ 6), inline errors, always skippable. | Settings → Account → "Sign in / Create account" (`settings.tsx:127`) |
 | `/paywall` | `src/app/paywall.tsx` | Lists RevenueCat offering packages with real store prices; purchase + restore; graceful states for not-configured / loading / empty offering / already entitled. | 5 entry points — see [§7](#paywall-entry-points) |
 | `/packs` | `src/app/packs/index.tsx` | Premium catalog browser: "Collections" (packs) + "Authors" sections, each row with a 🔒 badge when locked and a public quote count. | Settings → "Explore content packs" (`settings.tsx:157`), only rendered when `purchasesConfigured` |
@@ -174,9 +174,9 @@ Two entirely separate content tiers with a deliberate boundary between them.
 | | Free catalog | Premium packs |
 |---|---|---|
 | Count | **1000 quotes**, ids 1–1000 | **3325 quotes across 18 packs** (`scripts/seed-packs.js`) |
-| Storage | Static `src/data/quotes.json`, bundled; exposed via `src/data/quotes.ts` | Supabase `quotes` table (`is_premium = true`, `pack_id` set) → local SQLite `driftstop.db` cache |
+| Storage | Static `src/data/quotes.json`, bundled; exposed via `src/data/quotes.ts` | Supabase `quotes` table (`is_premium = true`, `pack_id` set) → local SQLite `driftstop.db` cache, **purged when entitlement ends and re-downloaded when it returns** (`src/services/premiumCacheGuard.ts`) |
 | Read path | `getQuoteById` / `getQuotesByThemes` (`data/quotes.ts:11-24`) | `getCachedQuoteById` / `getCachedQuotesByPackId` / `getCachedQuotesByAuthor` (`src/db/quotesCache.ts:178-205`) |
-| Bridge helper | — | `getQuoteByIdAnySource`, `getPackQuotes`, `getAuthorQuotes` (`src/data/quotesAnySource.ts`) |
+| Bridge helper | — | `lookupQuoteAnySource`, `getPackQuotes`, `getAuthorQuotes` (`src/data/quotesAnySource.ts`) — each requires `{ entitled }` |
 | Works offline / with no backend | Yes, always | Only what has already synced; all sync no-ops when `supabase` is null (`src/lib/supabase.ts:12-22`) |
 | Requires entitlement | No | Yes — RLS `quotes_premium_read_entitled` checks `profiles.is_premium` (`supabase/migrations/0001_init_schema.sql:86-95`) |
 
@@ -202,8 +202,8 @@ Every one of these swallows errors silently; the free experience never depends o
 | Screen | Reads premium? | Mechanism |
 |---|---|---|
 | `/packs`, `/packs/[id]`, `/packs/author/[name]` | Yes (metadata always; bodies only when unlocked) | `usePacks` + `getPackQuotes` / `getAuthorQuotes` |
-| `/favorites` | Yes | `getQuoteByIdAnySource` (`favorites.tsx:26`) |
-| `/quote/[id]` | Yes (display), but does **not** record premium into history | `getQuoteByIdAnySource` (`quote/[id].tsx:28`), guard at `:34` |
+| `/favorites` | Yes, while entitled | `lookupQuoteAnySource`; locked row after entitlement ends, loading row while entitlement is unresolved |
+| `/quote/[id]` | Yes (display) while entitled, but does **not** record premium into history | `lookupQuoteAnySource` (`quote/[id].tsx:34`), history guard at `:42` |
 | Home `/` | **No** | `useHistory` → `getQuoteById` (static only) |
 | Notification scheduler | **No** | `getQuotesByThemes` (static only) |
 | Android widget | **No** | `getQuoteById` / `QUOTES` (`widget-task-handler.tsx:3`, `updateWidget.tsx:4`) |

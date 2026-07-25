@@ -2,6 +2,7 @@ import type { Session, User } from '@supabase/supabase-js';
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
 import { supabase } from '@/lib/supabase';
+import { purgePremiumCacheForSignOut } from '@/services/premiumCacheGuard';
 
 type AuthResult = { error: string | null };
 
@@ -74,12 +75,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signOut: async () => {
         if (!supabase) return;
         await supabase.auth.signOut();
+        // Premium erişim hesaba bağlı (webhook `profiles.is_premium`'u kullanıcı
+        // id'sine yazar): oturum kapanınca indirilmiş premium sözler de gitmeli.
+        // RevenueCat'in logOut dinleyicisini beklemeyiz — o başarısız olabilir.
+        purgePremiumCacheForSignOut();
       },
       deleteAccount: async () => {
         if (!supabase) return { error: 'auth.errors.notConfigured' };
         const { error } = await supabase.functions.invoke('delete-account', { method: 'POST' });
         if (error) return { error: 'auth.errors.generic' };
         await supabase.auth.signOut();
+        // Onay metni "premium paket erişimin sona erecek" diyor; yerel kopya
+        // silinmezse bu söz yalan olur.
+        purgePremiumCacheForSignOut();
         return { error: null };
       },
     }),

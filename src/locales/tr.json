@@ -40,6 +40,8 @@
   "quote": {
     "authorPrefix": "—",
     "originSeparator": "·",
+    "lockedTitle": "Bu söz kilitli",
+    "lockedBody": "Bu premium söz Pro üyeliğe dahil. Pro’ya geçtiğinde geri gelir.",
     "categories": {
       "resilience": "Dayanıklılık",
       "fire": "Ateş",
@@ -63,7 +65,8 @@
     "emptyBody": "Beğendiğin sözleri kaydet, burada dursunlar.",
     "removeConfirm": "Bu sözü favorilerden çıkarmak istiyor musun?",
     "removeYes": "Çıkar",
-    "removeNo": "Vazgeç"
+    "removeNo": "Vazgeç",
+    "lockedPremium": "Premium söz — Pro üyelikle geri gelir"
   },
   "settings": {
     "screenTitle": "Ayarlar",
