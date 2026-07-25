@@ -160,6 +160,88 @@ signed in and must click anything that creates a credential or grants a permissi
 | 12 | A Google account added to the Android emulator (`Medium_Phone_API_36.1`, image `google_apis_playstore`, Play Services present) | emulator Settings → Passwords & accounts | **Owner action** — needs a real Google password. Without it QA can reach the sheet but cannot complete a success path |
 | 13 | An Apple ID signed into the iOS Simulator | Simulator Settings → Sign in to your iPhone | **Owner action** — needs a real Apple ID password |
 
+### 1.7 Design delivered by T1 (ux-designer, complete 2026-07-25)
+
+T1 (#16) is closed. The three corrected sync strings shipped in commit `3e89b75` across all six active
+locales — verified: `auth.subtitle`, `settings.account.guestHint` and
+`settings.account.deleteAccountConfirmMessage` in `tr/en/es/de/fr/it`, 60/60 tests green, parity unaffected
+(ar/ja carry no `auth` or `settings.account` objects). `frontend-dev` implements the rest of T1's design as
+described here; this section is the single source for T4.
+
+**New components** (all in `src/components/`, following the house rules: `StyleSheet.create` at file bottom,
+colours from `useTheme()`, spacing from `@/constants/layout`, accessibility props on every touchable):
+
+| Component | Responsibility | Hard constraints |
+|---|---|---|
+| `GoogleGlyph` | The Google "G" mark as `react-native-svg` paths | Google's four brand colours, fixed proportions. **Never apply `opacity` to it** — not on press, not on disabled, not on loading. Google's branding rules forbid altering the mark, and a faded G is the most likely way this ships non-compliant. Dim the surrounding button surface and label instead |
+| `GoogleSignInButton` | Google's button per their branding guidelines: glyph + label, correct minimum height and padding | Label comes from i18n, never hardcoded. Press/disabled/loading states affect the container and text only (see the glyph rule above) |
+| `AppleSignInButton` | Thin wrapper over `expo-apple-authentication`'s `AppleAuthenticationButton` | Renders `null` unless `appleAuthAvailable`. Only `buttonType`, `buttonStyle` and `cornerRadius` may be set — **no `backgroundColor`, no `borderRadius`**, and `height`/`width` must be supplied via `style` or the native button does not appear at all. `buttonType` = `CONTINUE` |
+| `SketchDivider` | The "or" separator between the social buttons and the email form, in the hand-drawn vocabulary | Deterministic geometry via `src/utils/sketch.ts` (`wavyLinePath`) — no randomness, so it does not jitter on re-render. Label from i18n |
+
+**`/auth` structural changes.** The screen currently renders a `KeyboardAvoidingView` wrapping a single
+`View` with `justifyContent: 'center'` and **no `ScrollView`** (`src/app/auth.tsx:57-68`, styles at `:171`).
+ux-designer identified this as the mechanism by which AC 13 fails: adding two buttons plus a divider to a
+fixed-height centred column overflows in German at large system font scale, and the submit button becomes
+unreachable. T4 must introduce a `ScrollView` inside the `KeyboardAvoidingView` with
+`contentContainerStyle` carrying the existing padding and gap, replacing `justifyContent: 'center'` with
+`flexGrow: 1` + centring so short content still centres while long content scrolls. This is a required part
+of the work, not an optional polish item — AC 13 tests it directly.
+
+**State table.** Every row is observable and several map to acceptance criteria:
+
+| State | Google button | Apple button | Rest of screen |
+|---|---|---|---|
+| Idle | Full colour, enabled | Native idle | Email form enabled |
+| Pressed | Container darkens; **glyph unchanged** | Native press handling (do not intercept) | — |
+| In flight | Container dimmed, label → loading text, disabled; **glyph unchanged** | Disabled | Email submit disabled, other provider disabled — only one auth attempt at a time |
+| Provider unavailable (`googleAuthAvailable` / `appleAuthAvailable` false) | Not rendered at all | Not rendered at all | Divider also hidden when **no** social button renders, so there is no orphan "or" and no empty gap (AC 8) |
+| **User cancelled** | Returns to idle. **Completely silent** — no error text, no toast, no notice line, no layout shift | Same (`ERR_REQUEST_CANCELED` must never reach the user) | Unchanged (AC 5, AC 16) |
+| Provider/network error | Returns to idle | Returns to idle | One localized line in the existing error slot, styled like the current email errors (AC 7) |
+
+**i18n keys — supplied by ux-designer, transcribed verbatim by the orchestrator 2026-07-25.** These are
+ux-designer's own strings, not invented. `frontend-dev` adds all eight keys to all six active locale files
+(tr/en/es/de/fr/it) exactly as written; `ar.json`/`ja.json` have no `auth` object and are left alone. The
+parity test compares against `tr`, so `tr` is the structural source of truth.
+
+| Key | en | tr |
+|---|---|---|
+| `auth.social.googleButton` | Continue with Google | Google ile devam et |
+| `auth.social.appleButton` | Continue with Apple | Apple ile devam et |
+| `auth.social.orEmail` | or use email | ya da e-posta ile |
+| `auth.social.connecting` | Signing you in… | Giriş yapılıyor… |
+| `auth.social.emailMatchHint` | Signing in with the same email address keeps you in the same account. | Aynı e-posta adresiyle giriş yaparsan aynı hesapta kalırsın. |
+| `auth.social.appleRelayHint` | If you hide your email, Apple gives us a different address — that creates a separate account. | E-postanı gizlersen Apple bize farklı bir adres verir; bu ayrı bir hesap oluşturur. |
+| `auth.errors.socialFailed` | Couldn't finish signing in. Please try again. | Giriş tamamlanamadı. Tekrar dene. |
+| `auth.errors.playServices` | Google Play services needs an update on this device. | Bu cihazdaki Google Play Hizmetleri güncellenmeli. |
+
+| Key | es | de | fr | it |
+|---|---|---|---|---|
+| `auth.social.googleButton` | Continuar con Google | Weiter mit Google | Continuer avec Google | Continua con Google |
+| `auth.social.appleButton` | Continuar con Apple | Weiter mit Apple | Continuer avec Apple | Continua con Apple |
+| `auth.social.orEmail` | o con tu correo | oder mit E-Mail | ou par e-mail | o con l'email |
+| `auth.social.connecting` | Iniciando sesión… | Anmeldung läuft… | Connexion en cours… | Accesso in corso… |
+| `auth.social.emailMatchHint` | Si inicias sesión con la misma dirección de correo, sigues en la misma cuenta. | Mit derselben E-Mail-Adresse bleibst du im selben Konto. | En te connectant avec la même adresse e-mail, tu restes dans le même compte. | Accedendo con lo stesso indirizzo email resti nello stesso account. |
+| `auth.social.appleRelayHint` | Si ocultas tu correo, Apple nos da otra dirección y se crea una cuenta aparte. | Wenn du deine E-Mail verbirgst, erhalten wir von Apple eine andere Adresse — das erzeugt ein separates Konto. | Si tu masques ton e-mail, Apple nous transmet une autre adresse : cela crée un compte distinct. | Se nascondi la tua email, Apple ci fornisce un altro indirizzo e viene creato un account separato. |
+| `auth.errors.socialFailed` | No se pudo completar el inicio de sesión. Inténtalo de nuevo. | Anmeldung konnte nicht abgeschlossen werden. Bitte erneut versuchen. | Impossible de terminer la connexion. Réessaie. | Non è stato possibile completare l'accesso. Riprova. |
+| `auth.errors.playServices` | Los servicios de Google Play necesitan actualizarse en este dispositivo. | Die Google Play-Dienste müssen auf diesem Gerät aktualisiert werden. | Les services Google Play doivent être mis à jour sur cet appareil. | I servizi Google Play devono essere aggiornati su questo dispositivo. |
+
+Constraints that come with these strings:
+- `orEmail` is ≤ 18 characters in all six so the divider stays on one line and the flex rules never collapse.
+- `connecting` replaces the Google button label in place, so it must stay ≤ ~22 characters — the longest is `fr` at 20.
+- The two social error keys live under `auth.errors.*` so `mapAuthError` keeps its existing "returns an i18n
+  key" contract. `auth.errors.network` and `auth.errors.notConfigured` are **reused, not duplicated**.
+- **There is no key for the cancelled case, by design** — cancelling renders nothing at all.
+
+**`frontend-dev`: do not invent or "improve" any of these strings.** Fabricated es/de/fr/it copy passes the
+parity test (it only checks structure and non-emptiness) and would ship as if professionally translated.
+
+**Known-failing contrast, inherited deliberately — tracked as task #25, not a QA miss.** ux-designer measured
+two existing palette entries below WCAG AA 4.5:1: `DarkColors.fire` at **3.77:1** and
+`LightColors.textMuted` at **4.14:1**. Both are app-wide, and the new social error line (`fire`) and the new
+hint line (`textMuted`) inherit them. Fixing them is a global palette change requiring visual QA on every
+screen, so it is **explicitly out of scope here** and tracked separately as **#25**. QA should not raise the
+new lines as a contrast defect, and **T9 must not close #25 or let it disappear** — it survives this feature.
+
 ---
 
 ## 2. Scope
@@ -176,7 +258,9 @@ signed in and must click anything that creates a credential or grants a permissi
   not rendered at all, no error, no dead button.
 - Render both buttons on `/auth`, and in Settings → Account's guest state if ux-designer decides they belong
   there.
-- New i18n keys in all 6 active locale files (tr/en/es/de/fr/it), plus the ar/ja files left as they are.
+- The four new components, the `/auth` `ScrollView` restructure and the state table from §1.7.
+- New i18n keys in all 6 active locale files (tr/en/es/de/fr/it), plus the ar/ja files left as they are —
+  **using ux-designer's supplied strings, which must be in §1.7 before T4 starts.**
 - Console + Supabase + EAS configuration per §1.6, including the Apple Services ID and `.p8` signing key.
 - **Truthful rewrite of the three sync strings** in all 6 locales: `auth.subtitle`,
   `settings.account.guestHint`, `settings.account.deleteAccountConfirmMessage` (owner decision 3).
@@ -195,6 +279,9 @@ signed in and must click anything that creates a credential or grants a permissi
   (Apple's identity token carries no full name, and the name arrives only on first sign-in; capturing it via
   `updateUser` is a follow-up, not this release.)
 - Android Credential Manager migration.
+- **Fixing `DarkColors.fire` (3.77:1) and `LightColors.textMuted` (4.14:1)** to WCAG AA. App-wide palette
+  change, needs visual QA on every screen. Tracked as **#25**; the new error and hint lines knowingly inherit
+  the failing contrast (§1.7).
 - An iOS widget, iOS AdMob ids, `EXPO_PUBLIC_REVENUECAT_IOS_API_KEY`, or the App Store Connect app record —
   all still open (TODO #1, #9) and all unrelated to auth.
 - Uploading anything to Play Console or App Store Connect.
@@ -406,13 +493,16 @@ Observed gates:
 - `npx eas env:list` output pasted for all three environments showing both new vars (T2).
 - AC 21: EAS `preview` build log line quoted, and a Google sign-in completed on a physical device from that
   APK.
-- `delete-account` exercised for real against a Google-created and (if in scope) an Apple-created user, with
-  the `auth.users` row confirmed gone.
+- `delete-account` exercised for real against a Google-created **and** an Apple-created user, with the
+  `auth.users` row confirmed gone and the Apple revocation confirmed via AC 19.
+- ux-designer's eight i18n keys present in §1.7 and implemented verbatim — **not invented by frontend-dev**
+  (§1.7 note; the parity test cannot catch fabricated copy).
 
 ### Documentation checklist for T9 (every item is a known defect, do not lose any)
 
-Items 1–5 are the doc contradictions found while writing this spec (§7); items 6–11 are new facts this
-feature creates.
+Items 1–5 (with 3b/3c) are the doc contradictions found while writing this spec and during T1 (§7); items
+6–12 are new facts this feature creates. **Nothing here may be closed silently** — in particular #25 (item
+3c) and finding 6 in §7 survive this feature.
 
 1. **`PRODUCT.md` §6** accounts table: the "Google / Apple sign-in — **No.** Not implemented anywhere" row and
    the capability table above it. Accurate today, wrong on merge.
@@ -420,7 +510,17 @@ feature creates.
    backend-roadmap Phase 2 … deliberately not stubbed" rationale; also the Apple-requires-Apple-Sign-In
    sentence that currently says "currently moot".
 3. **`PRODUCT.md` §9 discrepancy #2 and `TODO.md` finding #2** (the three false sync strings): close as
-   "copy corrected in all 6 locales; cross-device sync still not built" — do **not** mark sync as done.
+   "copy corrected in all 6 locales (commit `3e89b75`); cross-device sync still not built" — do **not** mark
+   sync as done.
+3b. **`PRODUCT.md` §6 "Sync: claimed but NOT implemented" quotes all three old strings verbatim** (the
+   `guestHint` "sync favorites and settings across devices" line, `auth.subtitle`, and
+   `deleteAccountConfirmMessage` with its "reflections" mention), as does §9 discrepancy #2. Those quotations
+   are now **stale as of `3e89b75`** and will mislead the next reader into "fixing" copy that is already
+   fixed. Replace the quotes with the new strings and keep the section's real point: the `favorites`,
+   `user_settings` and `reflections` tables still have no client code.
+3c. **Task #25 must be carried forward, not closed:** `DarkColors.fire` 3.77:1 and `LightColors.textMuted`
+   4.14:1 are below AA 4.5:1 app-wide. Add them to `TODO.md` as an open accessibility finding with the
+   measured ratios, and state that the social error/hint lines inherit them by decision.
 4. **`ARCHITECTURE.md` §6 env-var list is already stale, independent of this work.** It lists
    `EXPO_PUBLIC_SENTRY_DSN` among the `.env` vars, but the actual `.env` on this machine contains only
    `SUPABASE_PASSWORD`, `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY` and
@@ -478,7 +578,18 @@ Raised per the AGENTS.md rule; none are introduced by this spec. **All five are 
    `__DEV__` runtime assertion that fails when the two diverge. Converting `app.json` → `app.config.js`
    removes the duplication entirely and is acceptable if frontend-dev judges the native-config churn safe;
    doing nothing is not.
-5. **OPERATIONS §3's AVD note can be sharpened.** The AVD in use (`Medium_Phone_API_36.1`, path
+6. **⚠️ The brand-new `deleteAccountConfirmMessage` may already be untrue, in the other direction.** Commit
+   `3e89b75` now tells the user "premium pack access will stop" on account deletion. But `isPro` is derived
+   client-side from RevenueCat `CustomerInfo` (`usePurchases.tsx:30-35`), not from `profiles`, and
+   TODO.md finding **#8** records that premium quote rows already synced into local SQLite are **never
+   purged** and that `getQuoteByIdAnySource` / `getPackQuotes` / `getAuthorQuotes` read that cache with **no
+   entitlement check**. So after deletion a user may well keep reading previously-synced premium text via
+   Favorites and `/quote/[id]`. I have **not** verified this on a device — it is an inference from the code
+   and from finding #8. Action: `qa-tester` should observe what actually happens to premium pack access
+   immediately after deletion (piggyback on AC 11), and if the copy is wrong, either soften the string or
+   treat it as further evidence for fixing #8. Flagging rather than quietly shipping a second false claim in
+   the same string we just corrected.
+7. **OPERATIONS §3's AVD note can be sharpened.** The AVD in use (`Medium_Phone_API_36.1`, path
    `~/.android/avd/Medium_Phone.avd`) is `google_apis_playstore` with `PlayStore.enabled=true`, so it *does*
    have Play Services and Google sign-in is testable there — unlike Play **Billing**, which genuinely is not.
    Worth stating explicitly so nobody assumes "emulator can't do Google either".
