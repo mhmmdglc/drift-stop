@@ -2,6 +2,19 @@
 
 Single place to check what's actually outstanding, instead of hunting through scattered notes in other docs. Update this file (don't just append to old docs) whenever a pending item is resolved or a new one comes up.
 
+## Open bugs found during the 2026-07-25 documentation audit
+
+Found by reading the code against the shipped copy while writing `PRODUCT.md`. None of these are fixed yet; none were introduced by the docs work.
+
+| # | Severity | Issue |
+|---|---|---|
+| 1 | **Major** | **iOS currently has no monetization at all.** Every gate keys off `purchasesConfigured`, which is false on iOS until an iOS RevenueCat key exists — so on iOS the 10-reminders/day Pro feature is free, no Pro card and no paywall render. Shipping iOS before the key exists means giving Pro away. |
+| 2 | **Major** | **Three UI strings promise cross-device sync that does not exist.** `settings.account.guestHint`, `auth.subtitle` and `deleteAccountConfirmMessage` all say favorites/settings sync across devices; no client code syncs them (the paywall correctly hedges "Sync (soon)"). This is a truthfulness problem in a paid app — fix the copy or build the sync. |
+| 3 | Major | **`paywall.purchaseSuccess` says "Ads are now off" after *any* purchase**, including a Pro subscription — wrong confirmation for the more expensive product. |
+| 4 | Minor | **Pack titles fall back to Turkish for es/de/fr/it users.** `localizedPackField` resolves `locale → tr → en`, so those users see Turkish pack titles beside English quote bodies. The fallback should be `locale → en`. |
+| 5 | Minor | Interstitial ads are effectively gated by a ~4-minute timer rather than the intended 12-swipe count. |
+| 6 | Info | The Pro/unlocked pack view has still never been verified on a device (the QA grant expired). |
+
 ## Needs your action (blocking)
 
 - **On your real phone once v11 reaches the Alpha track:** verify the paywall lists all 3 products with real prices and that a purchase completes. This is the ONLY thing never verified anywhere — the Android emulator has no Play Billing (`BILLING_UNAVAILABLE`), so product listing/purchase can only be checked on a real device with a Play account on the closed-testing list.
@@ -57,7 +70,7 @@ From the build plan:
 - `usePurchases.tsx`: `getOfferings()` failing used to silently block `getCustomerInfo()` from ever updating `isPro`/`isAdsRemoved` (both were awaited in one `Promise.all`). Now independent calls.
 - `quote/[id].tsx`: viewing a premium pack quote used to record its ID into the Home screen's own history, which only resolves static-quote IDs — this left the Home quote card blank. Premium quotes are now excluded from that recording.
 - Free/guest users saw "0 söz" on locked packs and the entire "Yazarlar" (Authors) section was invisible, because pack quote counts and author counts were previously derived from RLS-restricted quote rows. Added `quote_packs.quote_count` (public column) and `get_premium_author_counts()` (public `SECURITY DEFINER` RPC) so counts are visible without exposing quote content — see migration `supabase/migrations/0003_pack_public_counts.sql`.
-- **Premium content expanded from 1 pack/24 quotes to 6 packs/451 quotes** across 31 real, publicly-sourced authors (Stoics extended to 56; new packs: Ancient Greek Philosophers 56, Eastern Wisdom 109, Enlightenment & Modern Thinkers 86, Literature & Poetry 64, Historical Trailblazers 80). Every quote is a real, verifiable line from a public-domain primary source (cited per-quote during research, not fabricated) — see `scripts/seed-packs.js`. Verified live via curl (public metadata) and on-device (locked/free view, all 6 packs + all 31 authors render with correct counts).
+- **Premium content expanded to 18 packs / 3,325 quotes** (this line previously said "6 packs/451 quotes", which described only the first expansion wave — `scripts/seed-packs.js` is authoritative). The first wave was 6 packs/451 quotes across 31 real, publicly-sourced authors (Stoics extended to 56; new packs: Ancient Greek Philosophers 56, Eastern Wisdom 109, Enlightenment & Modern Thinkers 86, Literature & Poetry 64, Historical Trailblazers 80). Every quote is a real, verifiable line from a public-domain primary source (cited per-quote during research, not fabricated) — see `scripts/seed-packs.js`. Verified live via curl (public metadata) and on-device (locked/free view, all 6 packs + all 31 authors render with correct counts).
 - Added a root `ErrorBoundary` (`src/components/ErrorBoundary.tsx`) so an unhandled render error shows a recoverable screen instead of a blank/black one; wired to optional Sentry crash reporting (`src/utils/crashReporting.ts`, no-ops until `EXPO_PUBLIC_SENTRY_DSN` is set in `.env`).
 - Added accessibility roles/labels/states to the tab bar, `SketchButton`, `SketchToggle`, `ThemeChips`, `FrequencySelector`, and `QuoteCard`'s favorite/share actions.
 - Added `.github/workflows/ci.yml` (type-check + tests on every push/PR; lint runs non-blocking due to pre-existing React Compiler false positives on Reanimated's `.value =` API).
