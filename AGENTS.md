@@ -16,6 +16,7 @@ These are the source of truth. Read the relevant one **before** exploring code, 
 | [`.claude/docs/ARCHITECTURE.md`](.claude/docs/ARCHITECTURE.md) | Code map, boot sequence, providers/hooks, data flow, backend shape, test coverage |
 | [`.claude/docs/OPERATIONS.md`](.claude/docs/OPERATIONS.md) | Accounts, env vars, local dev, quality gates, DB/edge-function ops, release process, gotchas |
 | [`.claude/docs/WORKFLOW.md`](.claude/docs/WORKFLOW.md) | The agent pipeline and the rules binding it |
+| [`.claude/docs/WORKLOG.md`](.claude/docs/WORKLOG.md) | Who did what, when, with what evidence — append-only history |
 | [`.claude/docs/TODO.md`](.claude/docs/TODO.md) | What is outstanding right now, and who it is blocked on |
 
 If a doc contradicts the code, raise it as a finding. Do not quietly trust one side.

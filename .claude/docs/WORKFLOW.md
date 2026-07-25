@@ -51,6 +51,25 @@ writes .claude/specs/<feature>.md (goal, scope, acceptance criteria, risks, DoD)
 
 The loop does not exit on "the code is written." It exits when `qa-tester` returns `RELEASE-READY: yes` with every acceptance criterion marked PASS, and anything untestable is explicitly recorded as unverified rather than assumed.
 
+## How to see who is doing what
+
+Three layers, because each covers a gap the others leave:
+
+| Layer | Where you look | Shows | Lifetime |
+|---|---|---|---|
+| **Live** | The task list in the UI, or `/tasks` | Every task with its **owner** (the agent name) and status: pending → in_progress → completed. Running background agents appear here too. | Current session |
+| **Durable** | [`WORKLOG.md`](WORKLOG.md) | One row per dispatch: date, agent, task, outcome, evidence. Written when an agent is dispatched, updated when it reports back. Append-only — corrections are new rows, never edits. | Forever, in git |
+| **Proof** | `git log` | The actual change, attributed, with the reasoning in the commit body | Forever |
+
+Conventions that make this work:
+
+- **Every task carries an owner.** When work is dispatched, the task's `owner` is set to the agent that owns it, so the live list reads as an assignment board rather than an anonymous checklist.
+- **Status is moved when it changes, not at the end.** `in_progress` goes on before the agent starts, `completed` only after its report is in.
+- **Every WORKLOG row needs evidence** — a commit hash, a build id, a screenshot path, or the literal words "not verified". A row with no evidence column filled in is an unfinished row.
+- **Specs are the written brief.** `.claude/specs/<feature>.md` holds what was asked and the acceptance criteria, so "was this in scope?" has an answer that does not depend on anyone's memory.
+
+If you ever want the current picture in one shot, ask for a status report: you get the open tasks by owner, what is blocked and on whom, and what shipped since a given date.
+
 ## Rules that bind every agent
 
 1. **Docs before code.** `PRODUCT.md`, `ARCHITECTURE.md`, `OPERATIONS.md`, `TODO.md` are the source of truth for questions of fact. If a doc disagrees with the code, that is a finding to raise — not a thing to quietly work around.
