@@ -55,12 +55,14 @@ function json(status: number, body: unknown): Response {
 Deno.serve(async (req) => {
   if (req.method !== 'POST') return json(405, { error: 'method not allowed' });
 
+  // Fonksiyon --no-verify-jwt ile deploy edildiği için tek koruma bu secret.
+  // Secret tanımsızsa İSTEĞİ REDDET (fail-closed): aksi halde URL'i bilen
+  // herkes herhangi bir kullanıcıya is_premium verebilirdi.
   const expectedAuth = Deno.env.get('REVENUECAT_WEBHOOK_AUTH_TOKEN');
-  if (expectedAuth) {
-    const auth = req.headers.get('authorization') ?? '';
-    const token = auth.replace(/^Bearer\s+/i, '');
-    if (token !== expectedAuth) return json(401, { error: 'unauthorized' });
-  }
+  if (!expectedAuth) return json(503, { error: 'webhook secret not configured' });
+  const auth = req.headers.get('authorization') ?? '';
+  const token = auth.replace(/^Bearer\s+/i, '');
+  if (token !== expectedAuth) return json(401, { error: 'unauthorized' });
 
   let payload: { event?: RevenueCatEvent };
   try {

@@ -14,6 +14,13 @@ Found by reading the code against the shipped copy while writing `PRODUCT.md`. N
 | 4 | Minor | **Pack titles fall back to Turkish for es/de/fr/it users.** `localizedPackField` resolves `locale → tr → en`, so those users see Turkish pack titles beside English quote bodies. The fallback should be `locale → en`. |
 | 5 | Minor | Interstitial ads are effectively gated by a ~4-minute timer rather than the intended 12-swipe count. |
 | 6 | Info | The Pro/unlocked pack view has still never been verified on a device (the QA grant expired). |
+| 7 | **Blocker (security)** | **The RevenueCat webhook fails OPEN.** `revenuecat-webhook/index.ts:59` only checks the shared secret *if* `REVENUECAT_WEBHOOK_AUTH_TOKEN` is set. The function is deployed `--no-verify-jwt`, so if that secret is ever unset or lost, anyone who knows the URL can grant `is_premium` to any user UUID. The secret *is* currently set, so this is not live — but the code must fail closed (reject when the env var is missing) rather than depend on configuration being right. |
+| 8 | **Major (revenue leak)** | **Premium content survives a lapsed subscription.** Premium quotes are cached in local SQLite and never purged, and `getQuoteByIdAnySource` / `getPackQuotes` / `getAuthorQuotes` read that cache with no entitlement check. A user who subscribes, syncs, then cancels keeps full premium text via Favorites and `/quote/[id]` indefinitely. |
+| 9 | **Major (iOS)** | **iOS ads are misconfigured.** iOS ad unit ids are empty (`src/constants/adUnits.ts:10,12`) so release builds would serve Google's `TestIds` — zero ad revenue — and `app.json:62` still carries Google's *sample* AdMob publisher app id. Must be fixed before any iOS submission. |
+| 10 | Major | **The core feature has no tests.** `src/utils/scheduler.ts` — permission handling, the 3-day scheduling loop, `syncDeliveredToHistory` — is entirely untested, and a regression there is silent: notifications simply stop arriving. Edge functions are also excluded from `tsc` (`tsconfig.json:22`) and untested. |
+| 11 | Minor | Blocking synchronous SQLite work runs at boot (1,000-row seed) and inside `usePacks`'s `useMemo` during render. |
+| 12 | Minor | Sync has no delete/tombstone propagation — a quote or pack removed server-side stays in the local cache forever. |
+| 13 | Info | Three AsyncStorage keys are dead (written or read by nothing). Safe to remove. |
 
 ## Needs your action (blocking)
 
