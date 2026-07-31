@@ -1,6 +1,5 @@
 import * as SQLite from 'expo-sqlite';
 
-import { QUOTES } from '@/data/quotes';
 import type { Quote } from '@/types/quote';
 
 /**
@@ -57,42 +56,14 @@ function getDb(): SQLite.SQLiteDatabase {
       create table if not exists purged_premium_quotes (
         id integer primary key
       );
+      -- Okuma yollarının üçü de bu üç sütundan filtreliyor ve tablo 3.325 premium
+      -- satıra kadar büyüyor; indekssiz her sorgu tam tarama demekti.
+      create index if not exists quotes_pack_id_idx on quotes (pack_id);
+      create index if not exists quotes_author_premium_idx on quotes (author, is_premium);
+      create index if not exists quotes_is_premium_idx on quotes (is_premium);
     `);
   }
   return db;
-}
-
-/** Fabrika kurulumu/ilk açılış: cache boşsa gömülü quotes.json ile doldurur. Ağ gerekmez. */
-export function seedIfEmpty(): void {
-  const conn = getDb();
-  const row = conn.getFirstSync<{ count: number }>('select count(*) as count from quotes');
-  if (row && row.count > 0) return;
-
-  conn.withTransactionSync(() => {
-    const stmt = conn.prepareSync(
-      `insert or replace into quotes
-        (id, text, text_tr, author, origin, origin_emoji, category, era, tags, is_premium, pack_id, updated_at)
-       values ($id, $text, $textTr, $author, $origin, $originEmoji, $category, $era, $tags, 0, null, $updatedAt)`
-    );
-    try {
-      for (const q of QUOTES) {
-        stmt.executeSync({
-          $id: q.id,
-          $text: q.text,
-          $textTr: q.textTr,
-          $author: q.author,
-          $origin: q.origin,
-          $originEmoji: q.originEmoji,
-          $category: q.category,
-          $era: q.era,
-          $tags: JSON.stringify(q.tags),
-          $updatedAt: new Date(0).toISOString(),
-        });
-      }
-    } finally {
-      stmt.finalizeSync();
-    }
-  });
 }
 
 /** Supabase'ten gelen satırları yerel cache'e yazar (id çakışmasında üzerine yazar). */

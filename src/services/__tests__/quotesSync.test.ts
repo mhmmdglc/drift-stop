@@ -1,6 +1,5 @@
 /// <reference types="jest" />
 jest.mock('@/db/quotesCache', () => ({
-  seedIfEmpty: jest.fn(),
   getLastSyncAt: jest.fn(),
   setLastSyncAt: jest.fn(),
   upsertQuotes: jest.fn(),
@@ -9,7 +8,7 @@ jest.mock('@/db/quotesCache', () => ({
 jest.mock('@/lib/supabase', () => ({ supabase: { from: jest.fn() } }));
 
 import { syncPremiumQuotes, syncQuotes } from '../quotesSync';
-import { seedIfEmpty, getLastSyncAt, setLastSyncAt, upsertQuotes } from '@/db/quotesCache';
+import { getLastSyncAt, setLastSyncAt, upsertQuotes } from '@/db/quotesCache';
 import { supabase } from '@/lib/supabase';
 
 const mockFrom = (supabase as unknown as { from: jest.Mock }).from;
@@ -68,10 +67,18 @@ beforeEach(() => {
 });
 
 describe('syncQuotes', () => {
-  it('always seeds the local cache first', async () => {
+  it('does no synchronous work before its first await', async () => {
+    // Buradaki 1000 satırlık senkron seed, `void syncQuotes()` ile çağrılmasına
+    // rağmen açılışta JS thread'ini 396 ms bloke ediyordu: bir async fonksiyonun
+    // gövdesi ilk `await`'e kadar çağıran yerde senkron çalışır. Seed kaldırıldı
+    // (yazdığı ücretsiz satırları hiçbir sorgu okuyamıyordu — okuyucuların hepsi
+    // premium filtreliyor, filtresiz olan tek okuyucuya da statik dizi yüzünden
+    // ücretsiz id ile hiç ulaşılmıyor). Bu test o senkron ön-ekin geri gelmesini
+    // yakalar: promise dönene kadar cache'e hiçbir yazma olmamalı.
     mockRangeReturning([{ data: [], error: null }]);
-    await syncQuotes();
-    expect(seedIfEmpty).toHaveBeenCalledTimes(1);
+    const pending = syncQuotes();
+    expect(upsertQuotes).not.toHaveBeenCalled();
+    await pending;
   });
 
   it('upserts fetched rows and advances the sync cursor to the newest updated_at', async () => {
@@ -112,12 +119,11 @@ describe('syncQuotes', () => {
     expect(setLastSyncAt).not.toHaveBeenCalled();
   });
 
-  it('is a no-op beyond seeding when Supabase is not configured', async () => {
+  it('is a no-op when Supabase is not configured', async () => {
     jest.resetModules();
     jest.doMock('@/lib/supabase', () => ({ supabase: null }));
     jest.doMock('@/db/quotesCache', () => ({
-      seedIfEmpty: jest.fn(),
-      getLastSyncAt: jest.fn(),
+          getLastSyncAt: jest.fn(),
       setLastSyncAt: jest.fn(),
       upsertQuotes: jest.fn(),
     }));
@@ -132,7 +138,6 @@ describe('syncQuotes', () => {
     const result = await syncWithoutSupabase!();
 
     expect(result.synced).toBe(0);
-    expect(cache!.seedIfEmpty).toHaveBeenCalledTimes(1);
     expect(cache!.upsertQuotes).not.toHaveBeenCalled();
   });
 });
@@ -205,12 +210,11 @@ describe('syncPremiumQuotes (re-subscribe recovery)', () => {
     expect(upsertQuotes).not.toHaveBeenCalled();
   });
 
-  it('does not seed or write when Supabase is not configured', async () => {
+  it('does not write when Supabase is not configured', async () => {
     jest.resetModules();
     jest.doMock('@/lib/supabase', () => ({ supabase: null }));
     jest.doMock('@/db/quotesCache', () => ({
-      seedIfEmpty: jest.fn(),
-      getLastSyncAt: jest.fn(),
+          getLastSyncAt: jest.fn(),
       setLastSyncAt: jest.fn(),
       upsertQuotes: jest.fn(),
     }));
@@ -225,7 +229,6 @@ describe('syncPremiumQuotes (re-subscribe recovery)', () => {
     const result = await restoreWithoutSupabase!();
 
     expect(result.synced).toBe(0);
-    expect(cache!.seedIfEmpty).not.toHaveBeenCalled();
     expect(cache!.upsertQuotes).not.toHaveBeenCalled();
   });
 });

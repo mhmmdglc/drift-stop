@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase';
-import { getLastSyncAt, seedIfEmpty, setLastSyncAt, upsertQuotes, type RemoteQuote } from '@/db/quotesCache';
+import { getLastSyncAt, setLastSyncAt, upsertQuotes, type RemoteQuote } from '@/db/quotesCache';
 
 const PAGE_SIZE = 500;
 
@@ -124,8 +124,6 @@ export async function syncPremiumQuotes(options?: {
  * hiçbir şey yapmaz — free/offline deneyim buna bağımlı değildir.
  */
 export async function syncQuotes(): Promise<{ synced: number }> {
-  seedIfEmpty();
-
   if (!supabase) return { synced: 0 };
 
   try {
