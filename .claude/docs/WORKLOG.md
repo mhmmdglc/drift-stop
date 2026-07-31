@@ -8,6 +8,16 @@ The orchestrator writes an entry **when an agent is dispatched** and updates it 
 
 ---
 
+## 2026-07-31
+
+| Time | Agent | Task | Outcome | Evidence |
+|---|---|---|---|---|
+| 15:2x | orchestrator | **Faz A** — ücretsiz bildirim tavanı 5 → 3 ([specs/monetization-v2.md](../specs/monetization-v2.md)) | **Done, iki platformda ekranda doğrulandı.** `FREE_FREQUENCY_MAX` ve `DEFAULT_SETTINGS.frequency` 3'e indi; ikisi de 5 olduğu için kullanıcı ücretsiz tavanda başlıyor, hiç sınıra çarpmıyordu. `useEnforceFreeLimits` ve Ayarlar ekranı sabitten okuduğu için kendiliğinden uyum sağladı. İpucu metni 6 dilde değişti — artık **5 de kilitli** olduğundan "7 ve 10 Pro'ya özel" yanlış olurdu; sayı saymak yerine eşik anlatan cümleye çevrildi. | `tsc` temiz · **140/140 test** (132'ydi), yeni `useEnforceFreeLimits.test.tsx` (8 test, biri sınır 5'ten 3'e inerken eski kurulumun düşürülmesini koruyor) · **Android emülatör:** 3 seçili, 5/7/10 kilit rozetli, kilitliye dokununca değer değişmiyor ve paywall açılıyor, yeni ipucu ekranda · **iOS simülatör:** temiz kurulumda varsayılan 3, reklam yok, ATT diyaloğu hiç çıkmıyor |
+| 15:0x | orchestrator | Play fiyatlarını API'den oku ve düzelt | **Kritik hata bulundu.** `pro_monthly` canlıda **299,99 $/ay** — ilk girişte ondalık kaymış, yıllığın 15 katı, kullanıcı olmadığı için kimse fark etmemiş. Sahibinin kararıyla `pro_monthly` **$3.99**, `pro_yearly` **$35.99** olarak 173 bölgeye yazıldı. | `pricing:convertRegionPrices` + `basePlans` PATCH, regionVersion 2025/03; okuma ile doğrulandı (TR ₺229,99 / ₺2.049,99) |
+| 14:5x | orchestrator | Play Developer API erişimi | Servis hesabı `driftstop-eas@driftstop.iam.gserviceaccount.com` yalnızca DriftStop'a bağlandı (üretim + test kanalı + mağaza yönetimi). **`eas submit` otomasyonu açıldı.** Google'ın "API erişimi" konsol sayfası kaldırılmış; yeni akış servis hesabını normal kullanıcı gibi davet etmek. | `GET /subscriptions` 200 · [STORE-AUTOMATION.md](STORE-AUTOMATION.md) |
+| 14:0x | orchestrator | iOS'ta reklamı kapat (AdMob hesabı kapatıldı) | AdMob yayıncı hesabı "dürüst olmayan beyanlar" gerekçesiyle kapatılmış → **her iki platformda reklam geliri sıfır**. iOS'ta reklam tamamen kapatıldı: birim ID'leri boş kalınca kod Google'ın `TestIds`'ine düşüyor ve release'de gerçek kullanıcıya test reklamı göstermek başlı başına ihlal. | `e6db845` sonrası; simülatörde banner yok, ATT istemi çıkmıyor |
+| 13:xx | orchestrator | iOS ATT + prebuild | ATT akışı kuruldu, izin SDK başlatılmadan önce çözülüyor ve sonuç `requestNonPersonalizedAdsOnly`'ye yansıyor (eskiden sabit `true`, yani izin verilse bile kişiselleştirilmiş reklam alınamıyordu). **Bayat `ios/` klasörü yüzünden uygulama açılışta çöküyordu** — `expo run:ios`, klasör varsa prebuild'i tekrar çalıştırmıyor; `tsc`/jest/`expo config` üçü de bunu yakalayamaz. | `prebuild --clean` sonrası Info.plist'te ATT anahtarı + 50 SKAdNetwork + 6 dilin `InfoPlist.strings` dosyaları |
+
 ## 2026-07-25
 
 | Time | Agent | Task | Outcome | Evidence |

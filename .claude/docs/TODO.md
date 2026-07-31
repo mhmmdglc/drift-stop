@@ -39,6 +39,26 @@ versionCode 11 (1.0.1) uploaded to Kapalı test → Alpha, release name "11 (1.0
 **Note on uploading:** the AAB drag-drop is the one step that can't be automated from here — the browser file-upload tool only accepts session-shared files and caps at 10 MB (the AAB is 86 MB), and `eas submit` needs a Google service-account JSON key (creating/downloading that key + granting it Play "Release manager" is a credential/permission op for the user). Everything after the upload (release name, notes, review submission) is automatable and was done here.
 - **iOS App Store prep** (user has an Apple dev account, wants iOS live): needs an iOS RevenueCat API key (`EXPO_PUBLIC_REVENUECAT_IOS_API_KEY`, both in `.env` and `eas env:create`) + App Store Connect app + IAP products mirroring Play's (`remove_ads`, `pro_monthly`, `pro_yearly`) + App Privacy form + screenshots. No 12-tester requirement on iOS; TestFlight optional; App Review is the only gate. Until the key exists, iOS builds run with purchases cleanly disabled (no paywall/Pro card/ads-removal UI shown).
 
+## iOS-first push (2026-07-29) — user decided to ship iOS before Android v12
+
+Android v12 deliberately deferred; note that the two security fixes `3e36793` (self-grantable premium entitlement) and `e6db845` (premium content survives a lapsed subscription) are **in HEAD but in no shipped build** — the Play build still on review is versionCode 11, cut before both.
+
+**Apple account setup: DONE and verified in App Store Connect this session.** Individual (not Organization) account under `muhammed.gulcu@gmail.com` — note this is a *different* account from the Play-side `evolaroa.app@gmail.com` that owns DriftStop on Android, so the App Store seller name will read "Muhammed Gülcü". Paid Apps Agreement **Active**, Free Apps Agreement Active, bank account (TEB, EUR, `…4889`) **Active**, U.S. Form W-8BEN + U.S. Certificate of Foreign Status both **Active** (treaty claim filed as Article 7(1) / 0% on "income from the sale of applications"), Digital Services Act trader declaration submitted for 27 EU countries and **In Review** on Apple's side. Nothing here blocks a build or a submission.
+
+**Done in code this session (`tsc` clean, 132/132 tests, verified via `expo config --type introspect`):**
+- `eas.json` production profile: iOS now uses `credentialsSource: "remote"` (was profile-level `"local"`, and `credentials.json` only carries an Android keystore — every iOS build would have failed instantly).
+- ATT wired for real: `expo-tracking-transparency` installed, permission resolved *before* `mobileAds().initialize()`, and the result now drives `requestNonPersonalizedAdsOnly` on both the banner and the interstitial (it was hardcoded `true`, so consent could never have been monetised). `AdBanner` subscribes via `useSyncExternalStore` so a late consent answer re-requests.
+- `NSUserTrackingUsageDescription` localized into all six available locales via `app.json` `locales` → `assets/locales/*.json`; 50 Google-published `skAdNetworkItems` added.
+
+**Still blocking an iOS submission — all need the owner:**
+1. **ASC API Key** (Users and Access → Integrations → Team Keys, App Manager role) + **Issuer ID** + **Team ID** — the critical path; nothing can be built or submitted without them.
+2. **AdMob iOS**: `app.json:62` still carries Google's *sample* publisher id `ca-app-pub-3940256099942544~1458002511`, and `src/constants/adUnits.ts` iOS unit ids are still empty. AdMob's "Add app" flow accepts "not listed on a store yet", so this can be done before launch.
+3. **RevenueCat iOS**: public SDK key (`appl_…`) into `.env` **and** `eas env:create`, plus an App Store Connect In-App Purchase key uploaded to RevenueCat for receipt validation.
+4. **IAP prices** — user must state them; mirror Play's. Products must be named exactly `remove_ads`, `pro_monthly`, `pro_yearly`, the two subscriptions in one group.
+5. **ASC app record** — needs a globally-unique app name; not yet created.
+
+Ads are **in scope** for iOS v1 (user chose "reklamlı çıkalım" over a faster ad-free first release).
+
 ## Monetization UX overhaul shipped (commit 715e69f, 2026-07-23)
 
 User demanded a real monetization funnel ("how will we sell subscriptions?"). Now: Account section at TOP of Settings, Pro benefits card under it (→ paywall), notification counts 7/10 are Pro-gated (lock badge → paywall; `useEnforceFreeLimits` downgrades stale >5 frequency when entitlement lapses), "Remove ads" link above the AdMob banner, paywall subtitle sells the actual catalog. All copy in 6 locales. **Android emulator verification done (2026-07-24):** fresh install → onboarding (interests, notification permission), Pro card + lock badges + hint render correctly, locked 7 → opens paywall and selection stays at 5, "Remove ads" link → paywall, paywall shows graceful empty state without Play services (BILLING_UNAVAILABLE is an emulator limitation, not a bug), widget provider still registered after the index.js platform guard. Also caught & fixed: app display name was the raw slug "drift-stop" in the launcher/permission dialogs → now "DriftStop" (commit `f97c442`).

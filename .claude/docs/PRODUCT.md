@@ -364,8 +364,17 @@ hard-codes a price, it renders `pkg.product.priceString` from the store (`paywal
 | Product id | Type | Price (as configured) | RevenueCat package type | Paywall label |
 |---|---|---|---|---|
 | `remove_ads` | One-time / non-consumable | $2.99 | `LIFETIME` | "Remove ads" + "One-time purchase" |
-| `pro_monthly` | Subscription | $2.99 / month | `MONTHLY` | "Pro — Monthly" |
-| `pro_yearly` | Subscription | $19.99 / year | `ANNUAL` | "Pro — Yearly" + "Best value" |
+| `pro_monthly` | Subscription | **$3.99 / month** (TR ₺229.99) | `MONTHLY` | "Pro — Monthly" |
+| `pro_yearly` | Subscription | **$35.99 / year** (TR ₺2,049.99) | `ANNUAL` | "Pro — Yearly" + "Best value" |
+
+**Prices corrected 2026-07-31.** The live Play configuration was read through the Play Developer API and
+`pro_monthly` turned out to be **$299.99/month** — a decimal-point slip when it was first entered, fifteen times
+the annual price and never caught because the app has no users yet. Both base plans were rewritten across all
+173 regions via `pricing:convertRegionPrices` + a `basePlans` PATCH (regionVersion 2025/03), preserving each
+region's existing availability flags. Annual is priced as $2.99/month-equivalent rounded to a store-conventional
+`.99`, i.e. a 25% discount over monthly — deliberately weaker than the 40–60% industry norm; the owner chose the
+per-month framing over a rounder headline number. Turkey is **not** priced separately, so Turkish users see
+₺229.99/month; this was raised as a conversion risk for the app's primary market and accepted.
 
 Offering: `default`, 3 packages. All 3 are Active in Play Console and the RevenueCat ↔ Play service-account
 link is verified (backend-roadmap Phase 3 notes). The label mapping is `packageLabel` in `paywall.tsx:16-27`;
