@@ -1,5 +1,6 @@
 /// <reference types="jest" />
 jest.mock('@/db/quotesCache', () => ({
+  deletePremiumQuotesNotIn: jest.fn(),
   getLastSyncAt: jest.fn(),
   setLastSyncAt: jest.fn(),
   upsertQuotes: jest.fn(),
@@ -8,7 +9,12 @@ jest.mock('@/db/quotesCache', () => ({
 jest.mock('@/lib/supabase', () => ({ supabase: { from: jest.fn() } }));
 
 import { syncPremiumQuotes, syncQuotes } from '../quotesSync';
-import { getLastSyncAt, setLastSyncAt, upsertQuotes } from '@/db/quotesCache';
+import {
+  deletePremiumQuotesNotIn,
+  getLastSyncAt,
+  setLastSyncAt,
+  upsertQuotes,
+} from '@/db/quotesCache';
 import { supabase } from '@/lib/supabase';
 
 const mockFrom = (supabase as unknown as { from: jest.Mock }).from;
@@ -208,6 +214,45 @@ describe('syncPremiumQuotes (re-subscribe recovery)', () => {
 
     expect(result.synced).toBe(0);
     expect(upsertQuotes).not.toHaveBeenCalled();
+  });
+
+  it('deletes local premium rows the server no longer returns', async () => {
+    // Delta senkronu `updated_at > imleç` ile çalışıyor: sunucudan bir satır
+    // SİLİNDİĞİNDE güncellenecek bir satır kalmadığı için delta onu hiç haber
+    // vermiyor ve söz cihazda sonsuza kadar yaşıyor. Yanlış atıf ya da telif
+    // şikâyeti geldiğinde bu, geri çekilemeyen içerik demek.
+    mockPremiumChain([{ data: [row(100001, '2024-01-01T00:00:00.000Z'), row(100002, '2024-01-01T00:00:00.000Z')], error: null }]);
+
+    await syncPremiumQuotes();
+
+    expect(deletePremiumQuotesNotIn).toHaveBeenCalledWith([100001, 100002]);
+  });
+
+  it('does NOT delete anything when the server returns nothing', async () => {
+    // EN KRİTİK KORUMA. Boş liste "içerik silindi" değil "hak yok" demek olabilir
+    // (RLS, hak sunucuda düşmüşse boş döner). Burada silmeye kalkarsak ödeme
+    // yapan bir kullanıcının cache'ini geçici bir RLS/ağ durumunda uçururuz.
+    mockPremiumChain([{ data: [], error: null }]);
+
+    await syncPremiumQuotes();
+
+    expect(deletePremiumQuotesNotIn).not.toHaveBeenCalled();
+  });
+
+  it('does NOT delete anything when the fetch fails', async () => {
+    mockPremiumChain([new Error('network')]);
+
+    await syncPremiumQuotes();
+
+    expect(deletePremiumQuotesNotIn).not.toHaveBeenCalled();
+  });
+
+  it('does NOT delete anything when the restore was cancelled mid-flight', async () => {
+    mockPremiumChain([{ data: [row(100001, '2024-01-01T00:00:00.000Z')], error: null }]);
+
+    await syncPremiumQuotes({ isCancelled: () => true });
+
+    expect(deletePremiumQuotesNotIn).not.toHaveBeenCalled();
   });
 
   it('does not write when Supabase is not configured', async () => {

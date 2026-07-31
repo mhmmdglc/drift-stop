@@ -1,5 +1,11 @@
 import { supabase } from '@/lib/supabase';
-import { getLastSyncAt, setLastSyncAt, upsertQuotes, type RemoteQuote } from '@/db/quotesCache';
+import {
+  deletePremiumQuotesNotIn,
+  getLastSyncAt,
+  setLastSyncAt,
+  upsertQuotes,
+  type RemoteQuote,
+} from '@/db/quotesCache';
 
 const PAGE_SIZE = 500;
 
@@ -111,6 +117,13 @@ export async function syncPremiumQuotes(options?: {
     if (options?.isCancelled?.()) return { synced: 0, cancelled: true };
     if (rows.length === 0) return { synced: 0, cancelled: false };
     upsertQuotes(rows.map(toRemoteQuote));
+    // `rows` bu kullanıcının hak ettiği premium satırların TAMAMI (imleçsiz, tüm
+    // sayfalar toplanmış). Dolayısıyla yerelde olup burada olmayan premium satır
+    // sunucudan silinmiş demektir — delta senkronu bunu asla haber veremez.
+    // Boş çekimde buraya hiç gelinmiyor (yukarıdaki erken dönüş), yani hak
+    // sunucuda kaybolduğunda yanlışlıkla toplu silme olmuyor; o durumu
+    // `purgePremiumQuotes` ayrıca ele alıyor.
+    deletePremiumQuotesNotIn(rows.map((r) => r.id));
     return { synced: rows.length, cancelled: false };
   } catch {
     // Ağ/RLS hatası — sessizce vazgeç; çağıran taraf (premiumCacheGuard) yeniden dener.

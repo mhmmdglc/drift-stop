@@ -210,6 +210,38 @@ export function purgePremiumQuotes(): number {
   return count;
 }
 
+/**
+ * Sunucuda artık var olmayan premium sözleri yerelden siler.
+ *
+ * `ids`, `syncPremiumQuotes`'un TAM ve BAŞARILI bir çekiminden gelmek zorunda —
+ * yani kullanıcının hak ettiği premium satırların tamamı. Yarım bir liste burada
+ * silme demektir, o yüzden çağıran taraf boş/başarısız çekimde bu fonksiyonu
+ * çağırmıyor.
+ *
+ * Neden gerekli: senkron `updated_at > imleç` deltasıyla çalışıyor. Sunucudan bir
+ * satır SİLİNDİĞİNDE ortada güncellenecek bir satır kalmıyor, dolayısıyla delta
+ * onu hiç haber vermiyor ve söz cihazda sonsuza kadar yaşıyor. Yanlış atıf ya da
+ * telif şikâyeti yüzünden bir sözü geri çekmek gerektiğinde bu, geri çekilemeyen
+ * içerik demek.
+ *
+ * Mezar taşı tablosuna YAZMIYOR: burada silinen satır "hakkın bitti, kilitli"
+ * değil "artık yok" anlamına geliyor; favorilerde kilit değil kayıp göstermeli.
+ * Geri dönüş: silinen satır sayısı.
+ */
+export function deletePremiumQuotesNotIn(ids: number[]): number {
+  if (ids.length === 0) return 0;
+  const conn = getDb();
+  const placeholders = ids.map(() => '?').join(',');
+  const row = conn.getFirstSync<{ count: number }>(
+    `select count(*) as count from quotes where is_premium = 1 and id not in (${placeholders})`,
+    ids
+  );
+  const count = row?.count ?? 0;
+  if (count === 0) return 0;
+  conn.runSync(`delete from quotes where is_premium = 1 and id not in (${placeholders})`, ids);
+  return count;
+}
+
 /** Bu id daha önce entitlement bitince silinmiş bir premium söz mü? */
 export function isPurgedPremiumQuoteId(id: number): boolean {
   const conn = getDb();
