@@ -90,7 +90,7 @@
         "10": "10 / day"
       },
       "lockedOption": "Pro only",
-      "lockedHint": "7 and 10 daily reminders are a Pro feature."
+      "lockedHint": "More than 3 reminders a day is a Pro feature."
     },
     "schedule": {
       "startTime": "Start time",

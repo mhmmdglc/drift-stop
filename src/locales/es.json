@@ -90,7 +90,7 @@
         "10": "10 / día"
       },
       "lockedOption": "Solo Pro",
-      "lockedHint": "7 y 10 recordatorios diarios son una función Pro."
+      "lockedHint": "Más de 3 recordatorios al día es una función Pro."
     },
     "schedule": {
       "startTime": "Hora de inicio",

@@ -90,7 +90,7 @@
         "10": "10 / Tag"
       },
       "lockedOption": "Nur Pro",
-      "lockedHint": "7 und 10 tägliche Erinnerungen sind eine Pro-Funktion."
+      "lockedHint": "Mehr als 3 Erinnerungen pro Tag ist eine Pro-Funktion."
     },
     "schedule": {
       "startTime": "Startzeit",

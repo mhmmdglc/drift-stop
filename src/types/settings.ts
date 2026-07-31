@@ -7,11 +7,17 @@ export const FREQUENCY_OPTIONS = [3, 5, 7, 10] as const;
 export type Frequency = (typeof FREQUENCY_OPTIONS)[number];
 
 /**
- * Ücretsiz kullanıcı için günlük bildirim üst sınırı — 7 ve 10 Pro'ya özel.
+ * Ücretsiz kullanıcı için günlük bildirim üst sınırı — 5, 7 ve 10 Pro'ya özel.
  * (Satın almalar bu platformda yapılandırılmamışsa gate uygulanmaz; bkz.
  * useEnforceFreeLimits ve settings ekranındaki lockedValues.)
+ *
+ * Neden 3: eskiden 5'ti ve DEFAULT_SETTINGS.frequency de 5'ti — yani kullanıcı
+ * ücretsiz paketin tam tavanında başlıyor, hiçbir zaman sınıra çarpmıyordu.
+ * Kıtlık hissi oluşmayınca Pro'nun bir cevabı olduğu soru da oluşmuyordu.
+ * 3'ün altına inilmedi: ürünün vaadi "beklenmedik anda gelen hatırlatma" ve
+ * günde iki bildirim bu vaadi taşımıyor.
  */
-export const FREE_FREQUENCY_MAX: Frequency = 5;
+export const FREE_FREQUENCY_MAX: Frequency = 3;
 
 export type Settings = {
   notificationsEnabled: boolean;
@@ -29,7 +35,7 @@ export type Settings = {
 
 export const DEFAULT_SETTINGS: Settings = {
   notificationsEnabled: true,
-  frequency: 5,
+  frequency: 3,
   startHour: 9,
   startMinute: 0,
   endHour: 21,

@@ -90,7 +90,7 @@
         "10": "10 / jour"
       },
       "lockedOption": "Réservé à Pro",
-      "lockedHint": "7 et 10 rappels quotidiens sont une fonctionnalité Pro."
+      "lockedHint": "Plus de 3 rappels par jour est une fonctionnalité Pro."
     },
     "schedule": {
       "startTime": "Heure de début",

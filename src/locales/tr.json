@@ -90,7 +90,7 @@
         "10": "10 / gün"
       },
       "lockedOption": "Sadece Pro",
-      "lockedHint": "Günde 7 ve 10 hatırlatma Pro’ya özel."
+      "lockedHint": "Günde 3'ten fazla hatırlatma Pro'ya özel."
     },
     "schedule": {
       "startTime": "Başlangıç saati",

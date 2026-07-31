@@ -90,7 +90,7 @@
         "10": "10 / giorno"
       },
       "lockedOption": "Solo Pro",
-      "lockedHint": "7 e 10 promemoria giornalieri sono una funzione Pro."
+      "lockedHint": "Più di 3 promemoria al giorno è una funzione Pro."
     },
     "schedule": {
       "startTime": "Ora di inizio",

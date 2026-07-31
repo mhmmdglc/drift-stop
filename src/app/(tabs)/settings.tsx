@@ -36,7 +36,7 @@ export default function SettingsScreen() {
   const [timeError, setTimeError] = useState<string | null>(null);
   const [deletingAccount, setDeletingAccount] = useState(false);
 
-  // 7/10 bildirim Pro'ya özel — satın almalar bu platformda kapalıysa gate yok.
+  // Günde 3'ten fazla bildirim Pro'ya özel — satın almalar bu platformda kapalıysa gate yok.
   const proOnlyFrequencies: Frequency[] =
     purchasesConfigured && !isPro ? FREQUENCY_OPTIONS.filter((f) => f > FREE_FREQUENCY_MAX) : [];
 
