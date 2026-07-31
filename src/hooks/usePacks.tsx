@@ -28,37 +28,45 @@ export type AuthorWithState = {
 export function usePacks() {
   const { isPro } = usePurchases();
   const [loading, setLoading] = useState(true);
-  // syncPacks() her tamamlandığında artırılır → aşağıdaki useMemo cache'i yeniden okur.
-  const [version, setVersion] = useState(0);
 
-  const packs = useMemo<PackWithState[]>(() => {
-    const rawPacks = getAllCachedPacks();
-    return rawPacks.map((p) => ({
-      ...p,
-      locked: p.isPremium && !isPro,
-    }));
-    // `version` sadece yeniden-okuma tetiklemek için bağımlılık; değeri kullanılmıyor.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPro, version]);
+  // Ham cache satırları. Okuma RENDER SIRASINDA yapılmıyor: bu iki sorgu
+  // `useMemo` içinde senkron SQLite I/O'suydu ve her render'ı bloke ediyordu.
+  // Sorgular küçük (18 paket, ~104 yazar) ama render yolunda senkron I/O yapmanın
+  // doğru olduğu bir boyut yok — ucuz cihazda kare düşürür.
+  const [rawPacks, setRawPacks] = useState<QuotePack[]>([]);
+  const [rawAuthors, setRawAuthors] = useState<{ author: string; quoteCount: number }[]>([]);
 
-  const authors = useMemo<AuthorWithState[]>(() => {
-    // Herkese açık RPC'den senkronize edilen sayılar (bkz. authorsSync.ts) —
-    // free/guest kullanıcı da bu bölümü (kilitli haliyle) görebilsin diye
-    // gerçek söz içeriğinin senkronize olup olmamasına bağlı DEĞİL.
-    return getCachedPremiumAuthorCounts().map((a) => ({
-      author: a.author,
-      quoteCount: a.quoteCount,
-      locked: !isPro,
-    }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPro, version]);
+  // Kilit durumu türetilmiş veri — entitlement değişince cache'i yeniden
+  // okumaya gerek yok, sadece bayrağı yeniden hesaplamak yeter.
+  const packs = useMemo<PackWithState[]>(
+    () => rawPacks.map((p) => ({ ...p, locked: p.isPremium && !isPro })),
+    [rawPacks, isPro]
+  );
+
+  const authors = useMemo<AuthorWithState[]>(
+    () =>
+      // Herkese açık RPC'den senkronize edilen sayılar (bkz. authorsSync.ts) —
+      // free/guest kullanıcı da bu bölümü (kilitli haliyle) görebilsin diye
+      // gerçek söz içeriğinin senkronize olup olmamasına bağlı DEĞİL.
+      rawAuthors.map((a) => ({ author: a.author, quoteCount: a.quoteCount, locked: !isPro })),
+    [rawAuthors, isPro]
+  );
+
+  const readCache = useCallback(() => {
+    setRawPacks(getAllCachedPacks());
+    setRawAuthors(getCachedPremiumAuthorCounts());
+  }, []);
 
   const refresh = useCallback(async () => {
     setLoading(true);
+    // Önce commit'ten çık, sonra cache'i oku: aksi halde SQLite yine render/commit
+    // fazında çalışır ve bu değişikliğin amacı boşa gider.
+    await Promise.resolve();
+    readCache(); // offline-first: ağdan önce elimizdekini göster
     await Promise.all([syncPacks(), syncAuthorCounts()]);
-    setVersion((v) => v + 1);
+    readCache(); // senkron sonrası tazelenmiş hali
     setLoading(false);
-  }, []);
+  }, [readCache]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- async senkron, `useHistory`/`usePurchases`'taki mevcut kalıp

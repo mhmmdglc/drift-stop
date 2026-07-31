@@ -7,8 +7,8 @@ export const StorageKeys = {
   onboardingComplete: 'driftstop:onboardingComplete',
   lastScheduledDate: 'driftstop:lastScheduledDate',
   scheduledQuoteIds: 'driftstop:scheduledQuoteIds',
-  seenToday: 'driftstop:seenToday',
-  themeMode: 'driftstop:themeMode',
+  // NOT: burada `seenToday` ve `themeMode` vardı; ikisi de hiçbir yerden
+  // okunmuyor/yazılmıyordu. Tema tercihi `settings` içinde tutuluyor.
   widgetQuoteId: 'driftstop:widgetQuoteId',
   seenHistory: 'driftstop:seenHistory',
 } as const;

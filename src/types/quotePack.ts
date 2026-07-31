@@ -18,5 +18,9 @@ export function localizedPackField(
 ): string {
   if (!field) return '';
   const lang = locale.split('-')[0];
-  return field[lang] ?? field.tr ?? field.en ?? Object.values(field)[0] ?? '';
+  // Yedek sırası locale → EN → TR. Eskiden TR, EN'den önceydi: Türk kullanıcı
+  // zaten ilk adımda eşleştiği için o yedek yalnızca Türkçe BİLMEYEN kullanıcıda
+  // devreye giriyordu — es/de/fr/it kullanıcıları paket başlıklarını Türkçe
+  // görüyor, söz gövdelerini İngilizce görüyordu. İngilizce evrensel yedek.
+  return field[lang] ?? field.en ?? field.tr ?? Object.values(field)[0] ?? '';
 }
