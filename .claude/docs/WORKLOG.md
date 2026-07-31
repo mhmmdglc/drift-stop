@@ -35,6 +35,15 @@ The orchestrator writes an entry **when an agent is dispatched** and updates it 
 | ~14:10 | doc agent (product) | Write `PRODUCT.md` | Done — 503 lines; found 7 discrepancies incl. sync promised in UI copy but never built | `8994a5e`, findings → `TODO.md` |
 | 14:04 | orchestrator | Record v11 submission state | Done | `97d27ad` |
 
+## 2026-07-31 (akşam oturumu)
+
+| Time | Agent | Task | Outcome | Evidence |
+|---|---|---|---|---|
+| 20:20 | orchestrator | **Faz B — kartsız 7 günlük deneme** | Shipped. `useEntitlement` tek yetki kaynağı; `usePremiumCacheGuard`, `useEnforceFreeLimits`, `AdBanner`/reklam bastırma, paketler, favoriler, söz detayı, paywall, ayarlar hepsi ona geçti. Deneme bitiş sırası (frekans → yeniden planlama → cache temizliği → ekran bir kez), 6./7. gün uyarıları ayrı kanalda, 8 dilde metin. **Android emülatöründe ekranda doğrulandı**; iOS'ta doğrulanmadı | `48dae60`; `tsc` temiz, 166/166 test (144'tü), lint 11 hata tabanında |
+| 19:45 | orchestrator | Android worklets uyuşmazlığı — kök neden ve çözüm | Çözüldü. Bayat `libworklets.so` (`node_modules/react-native-worklets/android/{build,.cxx}` + Gradle build-cache) ve bayat Metro transform cache. `prebuild --clean` gerekli DEĞİLDİ. Uygulama emülatörde tam çalışıyor | `HANDOFF.md`; Metro logunda `Mismatch` sayısı 0, APK içindeki `.so` = 0.8.3 |
+| 18:10 | orchestrator | Play ürünlerinin fiyat/durum doğrulaması (API) | `pro_monthly` ACTIVE 173 bölge $3.99/₺229,99 · `pro_yearly` ACTIVE 173 bölge $35.99/₺2.049,99. `remove_ads` **okunamadı** (eski `inappproducts` endpoint'i 403) | Play Developer API, servis hesabı `driftstop-eas@` |
+| — | orchestrator | Paywall ekran doğrulaması | **Yapılamadı.** `BILLING_UNAVAILABLE` — emülatörde hiç Google hesabı yok; Android'de RevenueCat ürünleri Play Billing üzerinden çekiyor. Sahibin Play Store'a lisanslı hesapla girmesi ya da gerçek cihaz gerekiyor | `dumpsys account` → 0 hesap |
+
 ## 2026-07-24
 
 | Time | Agent | Task | Outcome | Evidence |

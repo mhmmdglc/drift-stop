@@ -76,32 +76,61 @@ gibi davet etmek. Ayrıntı [`STORE-AUTOMATION.md`](STORE-AUTOMATION.md)'de.
 
 ---
 
-## Yarım kalan tek iş
+## Çözüldü — Android worklets uyuşmazlığı (2026-07-31, akşam)
 
-**Android emülatöründe APK ile Metro'nun JS'i uyuşmuyor:**
-`[Worklets] Mismatch between C++ code version and JavaScript code version (0.8.3 vs 0.10.1)` → siyah ekran.
-Sebep: oturum başında `expo-tracking-transparency` kurulurken `node_modules` değişti, APK ondan önce
-derlenmişti. **Kod hatası değil** (`tsc` temiz, 144/144 test).
+`[Worklets] Mismatch ... (0.8.3 vs 0.10.1)` → siyah ekran. **Kod hatası değildi.**
 
-**Denendi, YETMEDİ:** Metro'yu kapatıp `npx expo run:android` çalıştırmak APK'yı yeniden üretmiyor —
-Gradle kendini güncel sanıyor, APK zaman damgası değişmeden kalıyor. `android/` klasörü de tıpkı oturumun
-başında iOS'ta yaşandığı gibi bayat: prebuild, klasör varsa yeniden çalışmıyor. Aynı sınıf hata.
+Kök neden ölçüldü ve `prebuild --clean` DEĞİLDİ. `android/` bayat değildi; bayat olan iki ayrı cache'ti:
 
-Doğru çözüm — `android/`'i temiz üretmek:
+1. **Native taraf:** `node_modules/react-native-worklets/android/build` ve `.cxx` içinde 0.10.1'den kalma
+   derlenmiş `libworklets.so` duruyordu. CMake bunu güncel sayıyor, üstelik Gradle'ın
+   `~/.gradle/caches/build-cache-1`'i her seferinde geri servis ediyordu — bu yüzden `android/app/build`'i
+   silmek bile yetmiyor, `assembleDebug` "BUILD SUCCESSFUL in 14s" deyip eski `.so`'yu paketliyordu.
+2. **JS taraf:** Metro'nun transform cache'i (`$TMPDIR/metro-*`) 0.10.1 dönemi modülünü tutuyordu.
+   Cache temizlenmeden başlatılan Metro, native düzeldikten SONRA bile uyuşmazlığı geri getiriyor.
+
+Çözüm — ikisini birlikte temizlemek:
 ```bash
-lsof -ti:8081 | xargs kill -9
+rm -rf node_modules/react-native-worklets/android/build node_modules/react-native-worklets/android/.cxx \
+       node_modules/react-native-reanimated/android/build node_modules/react-native-reanimated/android/.cxx \
+       android/app/build android/build ~/.gradle/caches/build-cache-1
 export LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
 export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
 export ANDROID_HOME="$HOME/Library/Android/sdk"
-npx expo prebuild -p android --clean   # ← kritik adım
-npx expo run:android                    # --device VERME, adb serisini tanımıyor
+npx expo run:android          # --device VERME, adb serisini tanımıyor
+npx expo start --clear        # JS tarafı için ŞART
 ```
-Doğrulama: `android/app/build/outputs/apk/debug/app-debug.apk` zaman damgası **değişmiş olmalı**;
-değişmediyse derleme yine olmamıştır.
-Sonra **paywall'ın gerçekten dolduğunu** ekranda doğrula (RevenueCat düzeltmesinin son kanıtı bu).
-Emülatörde satın alma tamamlanamaz (`BILLING_UNAVAILABLE`) ama **ürünler ve fiyatlar listelenmeli**.
+Doğrulama: APK'nın içindeki gerçek sürümü oku, zaman damgasına güvenme —
+`unzip -p .../app-debug.apk lib/arm64-v8a/libworklets.so | strings | grep -E '^0\.[0-9]+\.[0-9]+$'`
+→ `0.8.3` çıkmalı. Metro logunda `Mismatch` ve `Cannot find native module` sayısı **0** olmalı
+(ikinci hata birincisinin sonucu: worklets JSI kurulumunda patlayınca expo-modules-core'un modül kaydı
+hiç yüklenmiyor, o yüzden `ExpoLocalization` bile "bulunamıyor").
 
----
+### Bu makinede tekrar edecek iki tuzak
+
+- **`lsof -ti:8081 | xargs kill -9` emülatörü de öldürüyor.** Emülatör süreci Metro'ya bağlı olduğu için
+  o listede çıkıyor. Metro'yu pid'iyle değil, port taramasıyla öldürmek AVD'yi düşürüyor.
+- Emülatörü `nohup ... &` ile başlatmak yetmiyor; araç çağrısı bitince süreç toplanıyor. Uzun ömürlü bir
+  arka plan görevi olarak başlatılmalı.
+- Emülatörün `/data` diski dolabiliyor: 95 MB'lık debug APK `INSTALL_FAILED_INSUFFICIENT_STORAGE` veriyor.
+  Önce `adb uninstall com.driftstop.app`.
+- Soğuk JS başlangıcı bu AVD'de **~1,5-2 dakika**. Bu süre içinde alınan ekran görüntüsü siyah çıkar ve
+  hataya benzer; bekle.
+
+## Paywall — hâlâ ekranda doğrulanmadı, sebebi config değil
+
+Paywall açılıyor ama boş durum metnini gösteriyor:
+`BILLING_UNAVAILABLE — Billing service unavailable on device`. Emülatörde **hiç Google hesabı yok**
+(`adb shell dumpsys account` → 0 hesap). Android'de RevenueCat ürün metadata'sını Play Billing üzerinden
+çekiyor, yani Billing yoksa hiç ürün gelmiyor. **Devir notunun eski hâlindeki "emülatörde ürünler ve
+fiyatlar yine listelenmeli" beklentisi yanlıştı.**
+
+Sunucu tarafı Play API'den doğrulandı: `pro_monthly` ACTIVE / 173 bölge / $3.99 / ₺229,99 ·
+`pro_yearly` ACTIVE / 173 bölge / $35.99 / ₺2.049,99. `remove_ads` okunamadı — eski `inappproducts`
+endpoint'i artık `403 "Please migrate to the new publishing API"` veriyor.
+
+Ekran kanıtı için gereken: emülatörün Play Store'una kapalı testte lisanslı bir Google hesabıyla giriş
+yapmak (sahibin yapması gerekiyor) ya da internal testing build'ini gerçek cihaza kurmak.
 
 ## Sıradaki işler (spec sırası)
 
