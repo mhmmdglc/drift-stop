@@ -241,6 +241,29 @@
       "noOffering": "No hay nada que mostrar ahora. Inténtalo más tarde."
     }
   },
+  "trial": {
+    "notice": {
+      "day6": {
+        "title": "Pasado mañana cambia el ritmo.",
+        "body": "Llevas una semana entre 4.325 frases. En dos días el conjunto se hace más pequeño. Ese día te cuento los detalles — por ahora, sigue leyendo."
+      },
+      "day7": {
+        "title": "Hoy es el último día.",
+        "body": "Mañana te espera una pantalla. No es nada malo."
+      }
+    },
+    "ended": {
+      "title": "Se cumplieron los siete días.",
+      "changes": "A partir de hoy recibirás como máximo 3 frases al día.\nY entre nosotros aparecerán pequeños anuncios. Los mantenemos tan pocos que no te molesten — te lo prometo, no se pondrán delante del momento en que lees.",
+      "invite": "Durante una semana pasaste entre las palabras de Marco Aurelio, Confucio y Séneca. Algunas llegaron justo cuando las necesitabas. Sabes cuáles.",
+      "inviteEmphasis": "No renuncies a las palabras que cambiarán tu vida. Esta es tu vida — vívela en su plenitud.",
+      "reassure": "Pero tranquilo, no nos vamos a ningún lado.\nTus favoritos siguen ahí. Tu historial sigue ahí. Las frases seguirán llegando — solo menos, de un conjunto más pequeño.\nLas frases premium que guardaste esta semana no se borran; quedan bloqueadas y te esperan. Puedes volver cualquier día.",
+      "primaryCta": "Seguir en Pro",
+      "secondaryCta": "Continuar gratis"
+    },
+    "activeBadge": "Prueba activa — quedan %{count} días",
+    "lastDay": "La prueba termina hoy"
+  },
   "packs": {
     "screenTitle": "Paquetes de contenido",
     "subtitle": "Colecciones de frases seleccionadas. Pro las desbloquea todas.",

@@ -13,7 +13,7 @@ import { quoteDisplayText } from '@/utils/quoteText';
 import { lookupQuoteAnySource } from '@/data/quotesAnySource';
 import { useFavorites } from '@/hooks/useFavorites';
 import { usePremiumCacheVersion } from '@/hooks/usePremiumCacheVersion';
-import { usePurchases } from '@/hooks/usePurchases';
+import { useEntitlement } from '@/hooks/useEntitlement';
 import { useTheme } from '@/hooks/use-theme';
 import { useTranslation } from '@/i18n/useTranslation';
 import type { Quote } from '@/types/quote';
@@ -30,7 +30,7 @@ export default function FavoritesScreen() {
   const { t, locale } = useTranslation();
   const router = useRouter();
   const { ids, remove } = useFavorites();
-  const { loading: entitlementLoading, isPro } = usePurchases();
+  const { entitled, entitlementKnown } = useEntitlement();
   // Cache mutasyonu (temizlik/geri yükleme) React ağacının dışında oluyor; bu sayaç
   // olmadan satın alma sonrası satırlar geldiğinde aşağıdaki memo bir daha
   // hesaplanmaz ve ödeme yapan kullanıcı kilidi görmeye devam eder. Favoriler
@@ -45,20 +45,20 @@ export default function FavoritesScreen() {
   const entries = useMemo<FavoriteEntry[]>(
     () =>
       ids.reduce<FavoriteEntry[]>((acc, id) => {
-        const result = lookupQuoteAnySource(id, { entitled: isPro });
+        const result = lookupQuoteAnySource(id, { entitled });
         if (result.status === 'found') acc.push({ id, quote: result.quote, pending: false });
-        // Entitlement hâlâ yükleniyorsa `isPro` false görünür: bu satır gerçekten
-        // kilitli mi, yoksa Pro kullanıcının hakkı henüz gelmedi mi bilinmiyor →
-        // kilit yerine "yükleniyor" göster (quote/[id] ile aynı davranış).
+        // Yetki henüz BİLİNMİYORSA (`entitlementKnown` false) bu satır gerçekten
+        // kilitli mi, yoksa hak henüz gelmedi mi ayırt edilemez → kilit yerine
+        // "yükleniyor" göster (quote/[id] ile aynı davranış).
         else if (result.status === 'locked')
-          acc.push({ id, quote: null, pending: entitlementLoading });
+          acc.push({ id, quote: null, pending: !entitlementKnown });
         // 'missing' → hiçbir kaynakta yok; gösterilecek bir şey yok.
         return acc;
       }, []),
     // `premiumCacheVersion` sadece yeniden-okuma tetiklemek için bağımlılık;
     // değeri kullanılmıyor (aynı kalıp: usePacks.tsx:42).
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [ids, isPro, entitlementLoading, premiumCacheVersion]
+    [ids, entitled, entitlementKnown, premiumCacheVersion]
   );
 
   const confirmRemove = (id: number) => {

@@ -18,6 +18,9 @@ import { useNotificationObserver } from '@/hooks/useNotifications';
 import { useEnforceFreeLimits } from '@/hooks/useEnforceFreeLimits';
 import { usePremiumCacheGuard } from '@/hooks/usePremiumCacheGuard';
 import { PurchasesProvider } from '@/hooks/usePurchases';
+import { TrialProvider } from '@/hooks/useTrial';
+import { useAdSuppression } from '@/hooks/useAdSuppression';
+import { useTrialLifecycle } from '@/hooks/useTrialLifecycle';
 import { SettingsProvider, useSettings } from '@/hooks/useSettings';
 import { ThemeProvider, useTheme } from '@/hooks/use-theme';
 import { initAds } from '@/utils/ads';
@@ -35,6 +38,10 @@ initCrashReporting();
 function AppShell() {
   useNotificationObserver();
   useEnforceFreeLimits();
+  // Reklam bastırma yetkiden türer — deneme de reklamı kaldırır.
+  useAdSuppression();
+  // Deneme uyarıları + bitişte frekans/plan sırası. Yönlendirme aşağıda, splash bitince.
+  const { noticePending } = useTrialLifecycle();
   // Abonelik bitince yerel premium sözleri siler, geri gelince yeniden indirir.
   usePremiumCacheGuard();
   const { settings, loaded: settingsLoaded } = useSettings();
@@ -44,6 +51,7 @@ function AppShell() {
   const [onboarded, setOnboarded] = useState<boolean | null>(null);
   const [splashDone, setSplashDone] = useState(false);
   const bootRan = useRef(false);
+  const noticePushed = useRef(false);
 
   useEffect(() => {
     void setupAndroidChannel();
@@ -63,6 +71,19 @@ function AppShell() {
     });
     return () => sub.remove();
   }, [record]);
+
+  // Deneme bitiş ekranı: SPLASH BİTTİKTEN SONRA. Açılış sırasında yapılan `push`
+  // sessizce düşüyordu (emülatörde görüldü) ve ekran bir daha hiç açılmıyordu.
+  //
+  // `ref` ile TEK SEFER: `noticePending` true olarak kalıyor (ekran gerçekten mount
+  // olana kadar bilinçli olarak sıfırlanmıyor) ve `useRouter()` her render'da yeni
+  // bir nesne döndürebiliyor — refsiz sürüm ekranı üst üste push edip navigasyonu
+  // kilitliyordu, ekran siyah kalıyordu. Ekranda görüldü.
+  useEffect(() => {
+    if (!splashDone || !noticePending || noticePushed.current) return;
+    noticePushed.current = true;
+    router.push('/trial-ended');
+  }, [splashDone, noticePending, router]);
 
   useEffect(() => {
     if (bootRan.current) return;
@@ -87,6 +108,7 @@ function AppShell() {
         <Stack.Screen name="packs/author/[name]" />
         <Stack.Screen name="auth" />
         <Stack.Screen name="paywall" />
+        <Stack.Screen name="trial-ended" options={{ gestureEnabled: false }} />
       </Stack>
       {!splashDone && <SplashOverlay onDone={() => setSplashDone(true)} />}
     </>
@@ -120,9 +142,14 @@ export default function RootLayout() {
             <ThemeProvider>
               <AuthProvider>
                 <PurchasesProvider>
-                  <HistoryProvider>
-                    <AppShell />
-                  </HistoryProvider>
+                  {/* TrialProvider, PurchasesProvider'ın İÇİNDE: `useEntitlement`
+                      ikisini birleştiriyor ve deneme durumu satın alma durumundan
+                      bağımsız okunuyor. */}
+                  <TrialProvider>
+                    <HistoryProvider>
+                      <AppShell />
+                    </HistoryProvider>
+                  </TrialProvider>
                 </PurchasesProvider>
               </AuthProvider>
             </ThemeProvider>

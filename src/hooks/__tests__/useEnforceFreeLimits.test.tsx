@@ -2,7 +2,21 @@
 const mockPurchases = {
   configured: true,
   loading: false,
+  entitlementKnown: true,
   isPro: false,
+  isAdsRemoved: false,
+};
+
+// `useEntitlement` mocklanmıyor: bu hook'un asıl riski "abonelik + deneme"nin
+// birleşimi, o yüzden gerçek birleştirici çalışsın.
+const mockTrial = {
+  loaded: true,
+  active: false,
+  daysLeft: 0,
+  dayIndex: -1,
+  startedAt: null as number | null,
+  endedNeedsNotice: false,
+  acknowledgeEnded: () => {},
 };
 
 const mockSettings: { settings: { frequency: number }; update: jest.Mock } = {
@@ -12,6 +26,9 @@ const mockSettings: { settings: { frequency: number }; update: jest.Mock } = {
 
 jest.mock('@/hooks/usePurchases', () => ({
   usePurchases: () => mockPurchases,
+}));
+jest.mock('@/hooks/useTrial', () => ({
+  useTrial: () => mockTrial,
 }));
 jest.mock('@/hooks/useSettings', () => ({
   useSettings: () => mockSettings,
@@ -26,7 +43,10 @@ beforeEach(() => {
   jest.clearAllMocks();
   mockPurchases.configured = true;
   mockPurchases.loading = false;
+  mockPurchases.entitlementKnown = true;
   mockPurchases.isPro = false;
+  mockTrial.loaded = true;
+  mockTrial.active = false;
   mockSettings.settings = { frequency: 3 };
 });
 
@@ -81,8 +101,39 @@ describe('useEnforceFreeLimits', () => {
     expect(mockSettings.update).not.toHaveBeenCalled();
   });
 
+  it('DENEMEDEKİ kullanıcıyı düşürmez — deneme "tam Pro" demek', async () => {
+    // `isPro`ya bakan sürüm, denemedeki kullanıcının 10'a çektiği frekansı her
+    // açılışta 3'e indirirdi: kullanıcı ayarı değiştirir, uygulama geri alır.
+    mockTrial.active = true;
+    mockTrial.daysLeft = 5;
+    mockSettings.settings = { frequency: 10 };
+
+    await renderHook(() => useEnforceFreeLimits());
+
+    expect(mockSettings.update).not.toHaveBeenCalled();
+  });
+
+  it('deneme damgası daha okunmadıysa dokunmaz', async () => {
+    mockTrial.loaded = false;
+    mockSettings.settings = { frequency: 10 };
+
+    await renderHook(() => useEnforceFreeLimits());
+
+    expect(mockSettings.update).not.toHaveBeenCalled();
+  });
+
+  it('deneme bitince düşürür', async () => {
+    mockTrial.loaded = true;
+    mockTrial.active = false;
+    mockSettings.settings = { frequency: 10 };
+
+    await renderHook(() => useEnforceFreeLimits());
+
+    expect(mockSettings.update).toHaveBeenCalledWith({ frequency: 3 });
+  });
+
   it('hak bilgisi yüklenirken dokunmaz — gerçek Pro kullanıcı açılışta düşürülmemeli', async () => {
-    mockPurchases.loading = true;
+    mockPurchases.entitlementKnown = false;
     mockSettings.settings = { frequency: 10 };
 
     await renderHook(() => useEnforceFreeLimits());

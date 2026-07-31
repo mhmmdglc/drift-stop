@@ -1,23 +1,26 @@
 import { useEffect } from 'react';
 
-import { usePurchases } from '@/hooks/usePurchases';
+import { useEntitlement } from '@/hooks/useEntitlement';
 import { useSettings } from '@/hooks/useSettings';
 import { FREE_FREQUENCY_MAX } from '@/types/settings';
 
 /**
- * Pro'ya özel ayarları ücretsiz kullanıcıda geri çeker (ör. abonelik bitince
- * frequency 10'da kalmasın). Satın almalar bu platformda yapılandırılmamışsa
- * hiçbir şey yapmaz; entitlement bilgisi yüklenmeden (loading) da dokunmaz ki
- * gerçek Pro kullanıcı açılışta yanlışlıkla düşürülmesin.
+ * Pro'ya özel ayarları hakkı olmayan kullanıcıda geri çeker (ör. abonelik ya da
+ * deneme bitince frequency 10'da kalmasın).
+ *
+ * Yetki `useEntitlement`ten okunuyor: `isPro`ya bakan sürüm, DENEMEDEKİ
+ * kullanıcının 10'a çektiği frekansı her açılışta 3'e düşürürdü — deneme "tam Pro"
+ * demek, bildirim sayısı da onun parçası. `entitlementKnown` beklenmeden hareket
+ * edilmez ki gerçek Pro kullanıcı soğuk açılışta yanlışlıkla düşürülmesin.
  */
 export function useEnforceFreeLimits(): void {
-  const { configured, loading, isPro } = usePurchases();
+  const { entitled, entitlementKnown } = useEntitlement();
   const { settings, update } = useSettings();
 
   useEffect(() => {
-    if (!configured || loading || isPro) return;
+    if (!entitlementKnown || entitled) return;
     if (settings.frequency > FREE_FREQUENCY_MAX) {
       update({ frequency: FREE_FREQUENCY_MAX });
     }
-  }, [configured, loading, isPro, settings.frequency, update]);
+  }, [entitlementKnown, entitled, settings.frequency, update]);
 }

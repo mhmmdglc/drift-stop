@@ -11,6 +11,10 @@ export const StorageKeys = {
   // okunmuyor/yazılmıyordu. Tema tercihi `settings` içinde tutuluyor.
   widgetQuoteId: 'driftstop:widgetQuoteId',
   seenHistory: 'driftstop:seenHistory',
+  /** Kartsız 7 günlük denemenin başlangıç damgası (epoch ms). Bkz. services/trial.ts */
+  trialStartedAt: 'driftstop:trialStartedAt',
+  /** `/trial-ended` ekranı bir kez gösterildi mi. */
+  trialEndedShown: 'driftstop:trialEndedShown',
 } as const;
 
 export async function getJSON<T>(key: string, fallback: T): Promise<T> {

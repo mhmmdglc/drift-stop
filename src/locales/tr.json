@@ -241,6 +241,29 @@
       "noOffering": "Şu an gösterilecek bir şey yok. Daha sonra tekrar dene."
     }
   },
+  "trial": {
+    "notice": {
+      "day6": {
+        "title": "Yarından sonra ritim değişiyor.",
+        "body": "Bir haftadır 4.325 sözün arasındasın. İki gün sonra havuz küçülüyor. Detayları o gün anlatacağım — şimdilik okumaya devam et."
+      },
+      "day7": {
+        "title": "Bugün son gün.",
+        "body": "Yarın seni bekleyen bir ekran var. Kötü bir şey değil."
+      }
+    },
+    "ended": {
+      "title": "Yedi gün doldu.",
+      "changes": "Bugünden itibaren günde en fazla 3 söz alacaksın.\nVe aramıza küçük reklamlar girecek. Seni rahatsız etmeyecek kadar az tutuyoruz — söz veriyorum, okuduğun anın önüne geçmeyecek.",
+      "invite": "Bu bir hafta boyunca Marcus Aurelius'un, Konfüçyüs'ün, Seneca'nın sözlerinin arasından geçtin. Bazıları tam ihtiyacın olduğu anda geldi. Hangisi olduğunu biliyorsun.",
+      "inviteEmphasis": "Hayatını değiştirecek kelimelerden vazgeçme. Bu senin hayatın — en dolu halinle yaşa.",
+      "reassure": "Ama korkma, bir yere gitmiyoruz.\nFavorilerin duruyor. Geçmişin duruyor. Sözler gelmeye devam edecek — sadece daha az, daha sığ bir havuzdan.\nBu hafta favorilerine eklediğin premium sözler silinmiyor; kilitli duruyor ve seni bekliyor. İstediğin gün geri dönebilirsin.",
+      "primaryCta": "Pro'ya devam et",
+      "secondaryCta": "Ücretsiz devam et"
+    },
+    "activeBadge": "Deneme sürüyor — %{count} gün kaldı",
+    "lastDay": "Deneme bugün bitiyor"
+  },
   "packs": {
     "screenTitle": "İçerik Paketleri",
     "subtitle": "Küratörlü söz koleksiyonları. Pro üyelik hepsinin kilidini açar.",

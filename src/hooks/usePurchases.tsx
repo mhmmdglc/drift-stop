@@ -7,7 +7,6 @@ import Purchases, {
 
 import { configurePurchases, purchasesConfigured } from '@/lib/purchases';
 import { useAuth } from '@/hooks/useAuth';
-import { setAdsSuppressed } from '@/utils/ads';
 
 const PRO_ENTITLEMENT = 'pro';
 const NO_ADS_ENTITLEMENT = 'no_ads';
@@ -119,9 +118,9 @@ export function PurchasesProvider({ children }: { children: ReactNode }) {
 
   const { isPro, isAdsRemoved } = useMemo(() => deriveFlags(customerInfo), [customerInfo]);
 
-  useEffect(() => {
-    setAdsSuppressed(isAdsRemoved);
-  }, [isAdsRemoved]);
+  // NOT: `setAdsSuppressed` çağrısı burada DEĞİL, `useAdSuppression`'da.
+  // Buradan yazılan sürüm denemeyi göremiyordu (deneme yerel, RevenueCat'te karşılığı
+  // yok) ve denemedeki kullanıcıya reklam göstermeye devam ediyordu.
 
   const value = useMemo<PurchasesContextValue>(
     () => ({

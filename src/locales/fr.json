@@ -241,6 +241,29 @@
       "noOffering": "Rien à afficher pour le moment. Réessaie plus tard."
     }
   },
+  "trial": {
+    "notice": {
+      "day6": {
+        "title": "Après-demain, le rythme change.",
+        "body": "Tu passes une semaine parmi 4 325 citations. Dans deux jours, le réservoir se réduit. Je t'expliquerai ce jour-là — pour l'instant, continue à lire."
+      },
+      "day7": {
+        "title": "Aujourd'hui est le dernier jour.",
+        "body": "Un écran t'attend demain. Rien de grave."
+      }
+    },
+    "ended": {
+      "title": "Les sept jours sont écoulés.",
+      "changes": "À partir d'aujourd'hui, tu recevras au maximum 3 citations par jour.\nEt de petites publicités s'installeront entre nous. Nous les gardons assez rares pour ne pas te gêner — je te le promets, elles ne passeront pas devant l'instant où tu lis.",
+      "invite": "Pendant une semaine, tu as traversé les mots de Marc Aurèle, de Confucius, de Sénèque. Certains sont arrivés au moment exact où tu en avais besoin. Tu sais lesquels.",
+      "inviteEmphasis": "N'abandonne pas les mots qui changeront ta vie. C'est ta vie — vis-la pleinement.",
+      "reassure": "Mais n'aie crainte, nous n'allons nulle part.\nTes favoris restent. Ton historique reste. Les citations continueront d'arriver — simplement moins nombreuses, d'un réservoir plus mince.\nLes citations premium que tu as mises en favoris cette semaine ne sont pas supprimées ; elles restent verrouillées et t'attendent. Tu peux revenir n'importe quand.",
+      "primaryCta": "Rester en Pro",
+      "secondaryCta": "Continuer gratuitement"
+    },
+    "activeBadge": "Essai en cours — %{count} jours restants",
+    "lastDay": "L'essai se termine aujourd'hui"
+  },
   "packs": {
     "screenTitle": "Packs de contenu",
     "subtitle": "Collections de citations sélectionnées. Pro les débloque toutes.",

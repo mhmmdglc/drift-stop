@@ -241,6 +241,29 @@
       "noOffering": "Niente da mostrare ora. Riprova più tardi."
     }
   },
+  "trial": {
+    "notice": {
+      "day6": {
+        "title": "Dopodomani il ritmo cambia.",
+        "body": "Da una settimana sei tra 4.325 citazioni. Fra due giorni la raccolta si restringe. Ti spiegherò quel giorno — per ora continua a leggere."
+      },
+      "day7": {
+        "title": "Oggi è l'ultimo giorno.",
+        "body": "Domani ti aspetta una schermata. Non è una cosa brutta."
+      }
+    },
+    "ended": {
+      "title": "I sette giorni sono finiti.",
+      "changes": "Da oggi riceverai al massimo 3 citazioni al giorno.\nE tra noi entreranno piccoli annunci. Li teniamo così pochi da non disturbarti — te lo prometto, non si metteranno davanti al momento in cui leggi.",
+      "invite": "Per una settimana hai camminato tra le parole di Marco Aurelio, Confucio, Seneca. Alcune sono arrivate esattamente quando ne avevi bisogno. Sai quali.",
+      "inviteEmphasis": "Non rinunciare alle parole che cambieranno la tua vita. Questa è la tua vita — vivila nella sua pienezza.",
+      "reassure": "Ma non temere, non andiamo da nessuna parte.\nI tuoi preferiti restano. La tua cronologia resta. Le citazioni continueranno ad arrivare — solo meno, da una raccolta più sottile.\nLe citazioni premium che hai salvato questa settimana non vengono cancellate; restano bloccate e ti aspettano. Puoi tornare quando vuoi.",
+      "primaryCta": "Resta su Pro",
+      "secondaryCta": "Continua gratis"
+    },
+    "activeBadge": "Prova attiva — %{count} giorni rimasti",
+    "lastDay": "La prova finisce oggi"
+  },
   "packs": {
     "screenTitle": "Pacchetti di contenuti",
     "subtitle": "Collezioni curate di citazioni. Pro le sblocca tutte.",

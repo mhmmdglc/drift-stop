@@ -13,7 +13,23 @@
  *    görüp sonra metnin yerine oturmasını izler.
  */
 
-const mockPurchases = { configured: true, loading: false, entitlementKnown: true, isPro: false };
+const mockPurchases = {
+  configured: true,
+  loading: false,
+  entitlementKnown: true,
+  isPro: false,
+  isAdsRemoved: false,
+};
+// Deneme durumu: ekran artık `useEntitlement` üzerinden okuyor (abonelik + deneme).
+const mockTrial = {
+  loaded: true,
+  active: false,
+  daysLeft: 0,
+  dayIndex: -1,
+  startedAt: null as number | null,
+  endedNeedsNotice: false,
+  acknowledgeEnded: () => {},
+};
 const mockFavorites: { ids: number[]; remove: jest.Mock } = { ids: [], remove: jest.fn() };
 
 // Sürüm sayacının test içi ikizi: gerçek servis `expo-sqlite` + Supabase'e
@@ -34,6 +50,7 @@ jest.mock('@/services/premiumCacheGuard', () => ({
 }));
 
 jest.mock('@/hooks/usePurchases', () => ({ usePurchases: () => mockPurchases }));
+jest.mock('@/hooks/useTrial', () => ({ useTrial: () => mockTrial }));
 jest.mock('@/hooks/useFavorites', () => ({ useFavorites: () => mockFavorites }));
 jest.mock('@/i18n/useTranslation', () => ({
   useTranslation: () => ({ t: (key: string) => key, locale: 'en' }),
@@ -79,6 +96,9 @@ beforeEach(() => {
   mockVersionStore.listeners.clear();
   mockPurchases.configured = true;
   mockPurchases.loading = false;
+  mockPurchases.entitlementKnown = true;
+  mockTrial.loaded = true;
+  mockTrial.active = false;
   mockPurchases.entitlementKnown = true;
   mockPurchases.isPro = false;
   mockFavorites.ids = [PREMIUM_ID];
@@ -138,7 +158,7 @@ describe('Favorites — loading treatment while entitlement resolves', () => {
   it('shows a loading row instead of a lock while customerInfo is still in flight', async () => {
     // Pro kullanıcı sekmeye `getCustomerInfo()` dönmeden giriyor: `isPro` henüz
     // false olduğu için satır 'locked' çözülür — kilit göstermek yanıltıcı olur.
-    mockPurchases.loading = true;
+    mockPurchases.entitlementKnown = false;
     mockPurchases.entitlementKnown = false;
 
     await render(<FavoritesScreen />);
@@ -148,12 +168,12 @@ describe('Favorites — loading treatment while entitlement resolves', () => {
   });
 
   it('falls back to the lock once loading finishes and the user really has no entitlement', async () => {
-    mockPurchases.loading = true;
+    mockPurchases.entitlementKnown = false;
     mockPurchases.entitlementKnown = false;
     const { rerender } = await render(<FavoritesScreen />);
     expect(screen.getByText('common.loading')).toBeTruthy();
 
-    mockPurchases.loading = false;
+    mockPurchases.entitlementKnown = true;
     mockPurchases.entitlementKnown = true;
     await act(async () => {
       rerender(<FavoritesScreen />);
@@ -164,7 +184,7 @@ describe('Favorites — loading treatment while entitlement resolves', () => {
   });
 
   it('never delays a free favorite behind entitlement loading', async () => {
-    mockPurchases.loading = true;
+    mockPurchases.entitlementKnown = false;
     mockPurchases.entitlementKnown = false;
     mockFavorites.ids = [1];
     const freeQuote = { id: 1, text: 'free body', textTr: 'ücretsiz', author: 'Marcus' };

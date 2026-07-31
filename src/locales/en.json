@@ -241,6 +241,29 @@
       "noOffering": "Nothing to show right now. Try again later."
     }
   },
+  "trial": {
+    "notice": {
+      "day6": {
+        "title": "The rhythm changes the day after tomorrow.",
+        "body": "You've spent a week among 4,325 quotes. In two days the pool gets smaller. I'll explain then — for now, keep reading."
+      },
+      "day7": {
+        "title": "Today is the last day.",
+        "body": "There's a screen waiting for you tomorrow. It isn't a bad one."
+      }
+    },
+    "ended": {
+      "title": "Seven days are up.",
+      "changes": "From today you'll get at most 3 quotes a day.\nAnd small ads will come between us. We're keeping them few enough not to bother you — I promise, they won't get in front of the moment you're reading.",
+      "invite": "For a week you walked among the words of Marcus Aurelius, Confucius, Seneca. Some arrived exactly when you needed them. You know which ones.",
+      "inviteEmphasis": "Don't give up the words that will change your life. This is your life — live it at its fullest.",
+      "reassure": "But don't worry, we're not going anywhere.\nYour favorites stay. Your history stays. Quotes will keep coming — just fewer, from a shallower pool.\nThe premium quotes you saved this week are not deleted; they stay locked and wait for you. You can come back any day.",
+      "primaryCta": "Stay on Pro",
+      "secondaryCta": "Continue for free"
+    },
+    "activeBadge": "Trial active — %{count} days left",
+    "lastDay": "Trial ends today"
+  },
   "packs": {
     "screenTitle": "Content Packs",
     "subtitle": "Curated quote collections. A Pro subscription unlocks all of them.",

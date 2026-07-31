@@ -19,6 +19,19 @@ import {
 } from '@/utils/timeUtils';
 
 export const NOTIFICATION_CHANNEL_ID = 'driftstop_motivation';
+/**
+ * Deneme bildirimleri (6. ve 7. gün uyarıları) ayrı kanalda: kullanıcı günlük söz
+ * bildirimlerini kapatsa bile denemenin bittiğini duymalı, ve tersi de geçerli —
+ * bu iki uyarıyı susturmak günlük akışı susturmasın.
+ */
+export const TRIAL_CHANNEL_ID = 'driftstop_trial';
+/**
+ * Bildirim türü işareti (`content.data.kind`). `cancelAll()` bunu okuyup deneme
+ * uyarılarını KORUR; yoksa her günlük yeniden planlama (`applySchedule` → `cancelAll`)
+ * 6./7. gün uyarılarını sessizce siler ve kullanıcı denemenin bittiğini haber almaz.
+ * İşaretsiz eski bildirimler günlük sayılır (geriye dönük uyumluluk).
+ */
+export const TRIAL_NOTICE_KIND = 'trial-notice';
 const DAYS_AHEAD = 3; // tampon: birkaç gün önceden zamanla
 const MIN_GAP = 90; // dakika
 const HISTORY_CAP = 200; // useHistory ile aynı
@@ -29,6 +42,12 @@ type ScheduledQuote = { id: number; at: number };
 /** Android bildirim kanalını oluştur (HIGH önem, titreşim, badge). */
 export async function setupAndroidChannel(): Promise<void> {
   if (!nativeFeaturesAvailable || Platform.OS !== 'android') return;
+  await Notifications.setNotificationChannelAsync(TRIAL_CHANNEL_ID, {
+    name: 'Trial Updates',
+    importance: Notifications.AndroidImportance.DEFAULT,
+    showBadge: true,
+    lightColor: '#C8923A',
+  });
   await Notifications.setNotificationChannelAsync(NOTIFICATION_CHANNEL_ID, {
     name: 'Motivation Reminders',
     importance: Notifications.AndroidImportance.HIGH,
@@ -70,9 +89,32 @@ function pickQuoteId(pool: Quote[], prevId: number | null): number {
   return pool[i].id;
 }
 
+/**
+ * Günlük söz bildirimlerini iptal eder — deneme uyarılarına DOKUNMAZ.
+ *
+ * `cancelAllScheduledNotificationsAsync()` kullanan sürüm, her yeni günde
+ * (`rescheduleIfNeeded` → `applySchedule` → burası) 6./7. gün deneme uyarılarını da
+ * siliyordu; uyarılar deneme başında bir kez kurulduğu için bir daha geri gelmiyor
+ * ve kullanıcı "sürpriz olmasın" sözüne rağmen habersiz kalıyordu.
+ */
 export async function cancelAll(): Promise<void> {
   if (!nativeFeaturesAvailable) return;
-  await Notifications.cancelAllScheduledNotificationsAsync();
+  try {
+    const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+    const daily = scheduled.filter(
+      (n) => (n.content.data as { kind?: string } | undefined)?.kind !== TRIAL_NOTICE_KIND
+    );
+    // Hepsi günlükse tek çağrı daha ucuz (tipik durum: deneme yok/bitti).
+    if (daily.length === scheduled.length) {
+      await Notifications.cancelAllScheduledNotificationsAsync();
+      return;
+    }
+    await Promise.all(daily.map((n) => Notifications.cancelScheduledNotificationAsync(n.identifier)));
+  } catch {
+    // Listeyi okuyamadıysak yine de günlük planı temizlemek gerekiyor: alternatif
+    // "hiçbir şey iptal etmemek" ve bildirimlerin katlanarak birikmesi olurdu.
+    await Notifications.cancelAllScheduledNotificationsAsync();
+  }
 }
 
 /**

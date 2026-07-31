@@ -9,6 +9,7 @@ import { SketchButton } from '@/components/SketchButton';
 import { ThemedText } from '@/components/ThemedText';
 import { WobblyBorder } from '@/components/WobblyBorder';
 import { Spacing } from '@/constants/layout';
+import { useEntitlement } from '@/hooks/useEntitlement';
 import { usePurchases } from '@/hooks/usePurchases';
 import { useTheme } from '@/hooks/use-theme';
 import { useTranslation } from '@/i18n/useTranslation';
@@ -30,7 +31,10 @@ export default function PaywallScreen() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const router = useRouter();
-  const { configured, loading, isPro, isAdsRemoved, offering, purchasePackage, restorePurchases } = usePurchases();
+  // Satın alma eylemleri `usePurchases`ten; "hakkı var mı" sorusu `useEntitlement`ten.
+  // Denemedeki kullanıcıya paketler GÖSTERİLMELİ — dönüştürmek istediğimiz kişi o.
+  const { configured, loading, offering, purchasePackage, restorePurchases } = usePurchases();
+  const { source, trialDaysLeft, isSubscribed, isAdsRemoved } = useEntitlement();
 
   const [busyId, setBusyId] = useState<string | null>(null);
   const [restoring, setRestoring] = useState(false);
@@ -83,7 +87,15 @@ export default function PaywallScreen() {
             {t('paywall.packages.proFeatures')}
           </ThemedText>
 
-          {isPro ? (
+          {source === 'trial' && (
+            <ThemedText variant="label" tone="accent">
+              {trialDaysLeft <= 1
+                ? t('trial.lastDay')
+                : t('trial.activeBadge', { count: trialDaysLeft })}
+            </ThemedText>
+          )}
+
+          {isSubscribed ? (
             <ThemedText variant="body" tone="accent" style={styles.stateMsg}>
               {t('paywall.alreadyPro')}
             </ThemedText>

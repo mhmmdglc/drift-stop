@@ -13,7 +13,7 @@ import { Spacing } from '@/constants/layout';
 import { getAuthorQuotes } from '@/data/quotesAnySource';
 import { usePacks } from '@/hooks/usePacks';
 import { usePremiumCacheVersion } from '@/hooks/usePremiumCacheVersion';
-import { usePurchases } from '@/hooks/usePurchases';
+import { useEntitlement } from '@/hooks/useEntitlement';
 import { useTheme } from '@/hooks/use-theme';
 import { localizeAuthor } from '@/i18n/quoteLocalization';
 import { useTranslation } from '@/i18n/useTranslation';
@@ -27,16 +27,16 @@ export default function AuthorPackScreen() {
   const params = useLocalSearchParams<{ name: string }>();
   const author = decodeURIComponent(params.name ?? '');
   const { authors, loading } = usePacks();
-  const { isPro } = usePurchases();
+  const { entitled } = useEntitlement();
   // Geri yükleme/temizlik sonrası cache'i yeniden oku (bkz. usePremiumCacheVersion).
   const premiumCacheVersion = usePremiumCacheVersion();
 
   const entry = authors.find((a) => a.author === author);
   // `entry.locked` UI kilidi; `entitled` okuma katmanının kendi kontrolü.
   const quotes = useMemo<Quote[]>(
-    () => (entry && !entry.locked ? getAuthorQuotes(author, { entitled: isPro }) : []),
+    () => (entry && !entry.locked ? getAuthorQuotes(author, { entitled }) : []),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [entry, author, isPro, premiumCacheVersion]
+    [entry, author, entitled, premiumCacheVersion]
   );
 
   const goBack = () => (router.canGoBack() ? router.back() : router.replace('/packs'));

@@ -17,7 +17,7 @@ import { Spacing } from '@/constants/layout';
 import { SUPPORTED_LANGUAGES } from '@/i18n';
 import { useTranslation } from '@/i18n/useTranslation';
 import { useAuth } from '@/hooks/useAuth';
-import { usePurchases } from '@/hooks/usePurchases';
+import { useEntitlement } from '@/hooks/useEntitlement';
 import { useSettings } from '@/hooks/useSettings';
 import { useTheme } from '@/hooks/use-theme';
 import type { QuoteTag } from '@/types/quote';
@@ -32,13 +32,16 @@ export default function SettingsScreen() {
   const router = useRouter();
   const { settings, update, setThemeMode, setLanguage } = useSettings();
   const { user, configured: authConfigured, signOut, deleteAccount } = useAuth();
-  const { configured: purchasesConfigured, isPro, isAdsRemoved } = usePurchases();
+  const { entitled, source, trialDaysLeft, purchasesConfigured, isSubscribed, isAdsRemoved } =
+    useEntitlement();
   const [timeError, setTimeError] = useState<string | null>(null);
   const [deletingAccount, setDeletingAccount] = useState(false);
 
-  // Günde 3'ten fazla bildirim Pro'ya özel — satın almalar bu platformda kapalıysa gate yok.
+  // Günde 3'ten fazla bildirim Pro'ya özel. Aktif deneme de kilidi açar; satın almalar
+  // bu platformda kapalıysa (iOS anahtarı yok) ve deneme de bittiyse gate uygulanmaz —
+  // aksi halde kullanıcıya kaldıramayacağı bir kilit gösterilirdi.
   const proOnlyFrequencies: Frequency[] =
-    purchasesConfigured && !isPro ? FREQUENCY_OPTIONS.filter((f) => f > FREE_FREQUENCY_MAX) : [];
+    purchasesConfigured && !entitled ? FREQUENCY_OPTIONS.filter((f) => f > FREE_FREQUENCY_MAX) : [];
 
   const confirmSignOut = () => {
     Alert.alert(t('settings.account.signOutConfirmTitle'), undefined, [
@@ -103,9 +106,11 @@ export default function SettingsScreen() {
                       {user.email}
                     </ThemedText>
                   </Row>
-                  {(isPro || isAdsRemoved) && (
+                  {(isSubscribed || isAdsRemoved) && (
                     <ThemedText variant="label" tone="accent">
-                      {isPro ? t('settings.premium.proActive') : t('settings.premium.adsRemovedActive')}
+                      {isSubscribed
+                        ? t('settings.premium.proActive')
+                        : t('settings.premium.adsRemovedActive')}
                     </ThemedText>
                   )}
                   <Pressable onPress={confirmSignOut}>
@@ -134,8 +139,17 @@ export default function SettingsScreen() {
             </Section>
           )}
 
-          {/* Pro kartı — ücretsiz kullanıcıya değer önerisi her zaman görünür */}
-          {purchasesConfigured && !isPro && (
+          {/* Deneme sürerken kalan gün her açılışta görünür: kıtlığın tek görünür
+              işareti bu, yoksa kullanıcı 8. günde habersiz yakalanır. */}
+          {source === 'trial' && (
+            <ThemedText variant="label" tone="accent">
+              {trialDaysLeft <= 1 ? t('trial.lastDay') : t('trial.activeBadge', { count: trialDaysLeft })}
+            </ThemedText>
+          )}
+
+          {/* Pro kartı — abonesi olmayana değer önerisi her zaman görünür (deneme dahil:
+              denemedeki kullanıcı zaten dönüştürmek istediğimiz kişi). */}
+          {purchasesConfigured && !isSubscribed && (
             <Pressable
               onPress={() => router.push('/paywall')}
               style={styles.proCard}

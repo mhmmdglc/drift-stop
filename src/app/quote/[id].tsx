@@ -14,7 +14,7 @@ import { lookupQuoteAnySource, type QuoteLookup } from '@/data/quotesAnySource';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useHistory } from '@/hooks/useHistory';
 import { usePremiumCacheVersion } from '@/hooks/usePremiumCacheVersion';
-import { usePurchases } from '@/hooks/usePurchases';
+import { useEntitlement } from '@/hooks/useEntitlement';
 import { useTheme } from '@/hooks/use-theme';
 import { useTranslation } from '@/i18n/useTranslation';
 import { shareQuote } from '@/utils/share';
@@ -26,7 +26,7 @@ export default function QuoteDetailScreen() {
   const params = useLocalSearchParams<{ id: string }>();
   const favorites = useFavorites();
   const { record } = useHistory();
-  const { configured: purchasesConfigured, loading: entitlementLoading, isPro } = usePurchases();
+  const { entitled, entitlementKnown, purchasesConfigured } = useEntitlement();
   // Satın alma sonrası premium satırlar SQLite'a saniyeler sonra düşüyor; bu sayaç
   // olmadan bu ekran tekrar okumaz ve kilitli kalır (bkz. usePremiumCacheVersion).
   const premiumCacheVersion = usePremiumCacheVersion();
@@ -36,10 +36,10 @@ export default function QuoteDetailScreen() {
   // kullanıcı boş kart yerine kilit + Pro çağrısı görür.
   const lookup: QuoteLookup = useMemo(
     () =>
-      Number.isFinite(id) ? lookupQuoteAnySource(id, { entitled: isPro }) : { status: 'missing' },
+      Number.isFinite(id) ? lookupQuoteAnySource(id, { entitled }) : { status: 'missing' },
     // `premiumCacheVersion` sadece yeniden-okuma tetiklemek için bağımlılık.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [id, isPro, premiumCacheVersion]
+    [id, entitled, premiumCacheVersion]
   );
   const quote = lookup.status === 'found' ? lookup.quote : undefined;
 
@@ -79,7 +79,7 @@ export default function QuoteDetailScreen() {
           ) : lookup.status === 'locked' ? (
             // Entitlement henüz yükleniyorsa kilit gösterip Pro kullanıcıyı
             // yanıltmak yerine bekleriz (birkaç yüz ms sonra 'found' olacak).
-            entitlementLoading ? (
+            !entitlementKnown ? (
               <ThemedText variant="body" tone="textMuted" style={styles.notFound}>
                 {t('common.loading')}
               </ThemedText>

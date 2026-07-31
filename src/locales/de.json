@@ -241,6 +241,29 @@
       "noOffering": "Gerade nichts anzuzeigen. Versuch es später erneut."
     }
   },
+  "trial": {
+    "notice": {
+      "day6": {
+        "title": "Übermorgen ändert sich der Rhythmus.",
+        "body": "Eine Woche lang warst du unter 4.325 Zitaten. In zwei Tagen wird der Vorrat kleiner. Die Details erzähle ich dir dann — lies erst mal weiter."
+      },
+      "day7": {
+        "title": "Heute ist der letzte Tag.",
+        "body": "Morgen wartet ein Bildschirm auf dich. Kein schlimmer."
+      }
+    },
+    "ended": {
+      "title": "Sieben Tage sind vorbei.",
+      "changes": "Ab heute bekommst du höchstens 3 Zitate pro Tag.\nUnd kleine Werbung kommt zwischen uns. Wir halten sie so gering, dass sie dich nicht stört — versprochen, sie stellt sich nicht vor den Moment, in dem du liest.",
+      "invite": "Eine Woche lang bist du durch die Worte von Marcus Aurelius, Konfuzius und Seneca gegangen. Manche kamen genau im richtigen Moment. Du weißt, welche.",
+      "inviteEmphasis": "Gib die Worte nicht auf, die dein Leben verändern. Das ist dein Leben — lebe es in seiner ganzen Fülle.",
+      "reassure": "Aber keine Sorge, wir gehen nicht weg.\nDeine Favoriten bleiben. Dein Verlauf bleibt. Zitate kommen weiter — nur weniger, aus einem flacheren Vorrat.\nDie Premium-Zitate, die du diese Woche gespeichert hast, werden nicht gelöscht; sie bleiben gesperrt und warten auf dich. Du kannst jeden Tag zurückkommen.",
+      "primaryCta": "Bei Pro bleiben",
+      "secondaryCta": "Kostenlos weiter"
+    },
+    "activeBadge": "Test läuft — %{count} Tage übrig",
+    "lastDay": "Test endet heute"
+  },
   "packs": {
     "screenTitle": "Inhaltspakete",
     "subtitle": "Kuratierte Zitatsammlungen. Ein Pro-Abo schaltet alle frei.",

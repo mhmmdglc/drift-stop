@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getAllCachedPacks, getCachedPremiumAuthorCounts } from '@/db/packsCache';
 import { syncAuthorCounts } from '@/services/authorsSync';
 import { syncPacks } from '@/services/packsSync';
-import { usePurchases } from '@/hooks/usePurchases';
+import { useEntitlement } from '@/hooks/useEntitlement';
 import type { QuotePack } from '@/types/quotePack';
 
 export type PackWithState = QuotePack & {
@@ -26,7 +26,8 @@ export type AuthorWithState = {
  * sessizce vazgeçer).
  */
 export function usePacks() {
-  const { isPro } = usePurchases();
+  // Deneme de kilidi açar — bkz. useEntitlement.
+  const { entitled } = useEntitlement();
   const [loading, setLoading] = useState(true);
 
   // Ham cache satırları. Okuma RENDER SIRASINDA yapılmıyor: bu iki sorgu
@@ -39,8 +40,8 @@ export function usePacks() {
   // Kilit durumu türetilmiş veri — entitlement değişince cache'i yeniden
   // okumaya gerek yok, sadece bayrağı yeniden hesaplamak yeter.
   const packs = useMemo<PackWithState[]>(
-    () => rawPacks.map((p) => ({ ...p, locked: p.isPremium && !isPro })),
-    [rawPacks, isPro]
+    () => rawPacks.map((p) => ({ ...p, locked: p.isPremium && !entitled })),
+    [rawPacks, entitled]
   );
 
   const authors = useMemo<AuthorWithState[]>(
@@ -48,8 +49,8 @@ export function usePacks() {
       // Herkese açık RPC'den senkronize edilen sayılar (bkz. authorsSync.ts) —
       // free/guest kullanıcı da bu bölümü (kilitli haliyle) görebilsin diye
       // gerçek söz içeriğinin senkronize olup olmamasına bağlı DEĞİL.
-      rawAuthors.map((a) => ({ author: a.author, quoteCount: a.quoteCount, locked: !isPro })),
-    [rawAuthors, isPro]
+      rawAuthors.map((a) => ({ author: a.author, quoteCount: a.quoteCount, locked: !entitled })),
+    [rawAuthors, entitled]
   );
 
   const readCache = useCallback(() => {
