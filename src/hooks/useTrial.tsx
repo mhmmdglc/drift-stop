@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { AppState } from 'react-native';
 
+import { useAuth } from '@/hooks/useAuth';
 import {
   computeTrialState,
   loadTrialEndedShown,
@@ -9,6 +10,7 @@ import {
   TRIAL_DAYS,
   type TrialState,
 } from '@/services/trial';
+import { reconcileTrialWithServer } from '@/services/trialSync';
 
 type TrialContextValue = TrialState & {
   /**
@@ -42,6 +44,8 @@ export function TrialProvider({ children }: { children: ReactNode }) {
    * `loaded` false olduğu için bu değer hiçbir karara girmez.
    */
   const [now, setNow] = useState(0);
+  const { user } = useAuth();
+  const userId = user?.id ?? null;
 
   useEffect(() => {
     let active = true;
@@ -58,6 +62,26 @@ export function TrialProvider({ children }: { children: ReactNode }) {
       active = false;
     };
   }, []);
+
+  /**
+   * Oturum açıldığında denemeyi sunucuyla uzlaştır (bkz. `services/trialSync.ts`).
+   * İki işi var: premium sözlerin RLS altında inebilmesi için `trials` satırını
+   * yazmak, ve sunucuda satır varsa cihazı ona hizalamak (yeniden kurulumla
+   * denemenin uzatılmasını engeller).
+   */
+  useEffect(() => {
+    if (!loaded || !userId || startedAt == null) return;
+    let active = true;
+    void (async () => {
+      const { startedAt: reconciled } = await reconcileTrialWithServer(userId, startedAt);
+      if (!active || reconciled === startedAt) return;
+      setStartedAt(reconciled);
+      setNow(Date.now());
+    })();
+    return () => {
+      active = false;
+    };
+  }, [loaded, userId, startedAt]);
 
   // Gün sınırı iki yolla geçilebilir: uygulama arka plandayken (foreground'a
   // dönüşte yeniden hesapla) ve uygulama açıkken gece yarısı (zamanlayıcı).
