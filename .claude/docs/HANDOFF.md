@@ -83,14 +83,21 @@ gibi davet etmek. Ayrıntı [`STORE-AUTOMATION.md`](STORE-AUTOMATION.md)'de.
 Sebep: oturum başında `expo-tracking-transparency` kurulurken `node_modules` değişti, APK ondan önce
 derlenmişti. **Kod hatası değil** (`tsc` temiz, 144/144 test).
 
-Çözüm: Metro'yu kapat, yeniden derle.
+**Denendi, YETMEDİ:** Metro'yu kapatıp `npx expo run:android` çalıştırmak APK'yı yeniden üretmiyor —
+Gradle kendini güncel sanıyor, APK zaman damgası değişmeden kalıyor. `android/` klasörü de tıpkı oturumun
+başında iOS'ta yaşandığı gibi bayat: prebuild, klasör varsa yeniden çalışmıyor. Aynı sınıf hata.
+
+Doğru çözüm — `android/`'i temiz üretmek:
 ```bash
 lsof -ti:8081 | xargs kill -9
 export LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
 export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
 export ANDROID_HOME="$HOME/Library/Android/sdk"
-npx expo run:android
+npx expo prebuild -p android --clean   # ← kritik adım
+npx expo run:android                    # --device VERME, adb serisini tanımıyor
 ```
+Doğrulama: `android/app/build/outputs/apk/debug/app-debug.apk` zaman damgası **değişmiş olmalı**;
+değişmediyse derleme yine olmamıştır.
 Sonra **paywall'ın gerçekten dolduğunu** ekranda doğrula (RevenueCat düzeltmesinin son kanıtı bu).
 Emülatörde satın alma tamamlanamaz (`BILLING_UNAVAILABLE`) ama **ürünler ve fiyatlar listelenmeli**.
 
