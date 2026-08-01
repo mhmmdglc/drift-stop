@@ -14,7 +14,7 @@ Found by reading the code against the shipped copy while writing `PRODUCT.md`. N
 | 4 | Minor | **Pack titles fall back to Turkish for es/de/fr/it users.** `localizedPackField` resolves `locale → tr → en`, so those users see Turkish pack titles beside English quote bodies. The fallback should be `locale → en`. |
 | 5 | Minor | Interstitial ads are effectively gated by a ~4-minute timer rather than the intended 12-swipe count. |
 | 6 | Info | The Pro/unlocked pack view has still never been verified on a device (the QA grant expired). |
-| 7 | **Blocker (security)** | **The RevenueCat webhook fails OPEN.** `revenuecat-webhook/index.ts:59` only checks the shared secret *if* `REVENUECAT_WEBHOOK_AUTH_TOKEN` is set. The function is deployed `--no-verify-jwt`, so if that secret is ever unset or lost, anyone who knows the URL can grant `is_premium` to any user UUID. The secret *is* currently set, so this is not live — but the code must fail closed (reject when the env var is missing) rather than depend on configuration being right. |
+| 7 | ~~**Blocker (security)**~~ **Already fixed in HEAD — verify the deployment.** `revenuecat-webhook/index.ts` now rejects with `503` when `REVENUECAT_WEBHOOK_AUTH_TOKEN` is unset, so it fails closed. **Unverified:** whether the *deployed* copy is this version — the function was last deployed before this change and there is no way to read the live code from here. Redeploy before relying on it. |
 | 8 | ~~**Major (revenue leak)**~~ **Code fixed 2026-07-25 — needs device QA.** Premium quotes are now purged from local SQLite whenever entitlement is known to be absent (`usePremiumCacheGuard`, every launch) and explicitly on sign-out / account deletion; the any-source readers all require `{ entitled }`; recovery re-downloads via `syncPremiumQuotes`, which ignores the delta cursor. Code review follow-up (same day) closed the gaps that made the first version unsafe: the purge is gated on `usePurchases.entitlementKnown` rather than `!loading` (a rejected `getCustomerInfo()` used to look like "no entitlement" and would wipe a paying user's cache), screens are invalidated after a restore through a version counter, completeness is measured against `packs.quote_count` + a backfill watermark instead of `count > 0`, both destructive entry points swallow errors, and the ungated `getAllCachedQuotes()` reader was deleted. Proven by unit tests + live RLS curl; **the purge/restore path has never run on a device** (needs a real Pro grant → lapse → re-grant). |
 | 9 | **Major (iOS)** | **iOS ads are misconfigured.** iOS ad unit ids are empty (`src/constants/adUnits.ts:10,12`) so release builds would serve Google's `TestIds` — zero ad revenue — and `app.json:62` still carries Google's *sample* AdMob publisher app id. Must be fixed before any iOS submission. |
 | 10 | Major | **The core feature has no tests.** `src/utils/scheduler.ts` — permission handling, the 3-day scheduling loop, `syncDeliveredToHistory` — is entirely untested, and a regression there is silent: notifications simply stop arriving. Edge functions are also excluded from `tsc` (`tsconfig.json:22`) and untested. |
@@ -22,6 +22,38 @@ Found by reading the code against the shipped copy while writing `PRODUCT.md`. N
 | 14 | **Blocker (revenue)** | **RevenueCat's offering may have no Play Store products attached.** Surfaced by RevenueCat's own diagnostic on the emulator: *"You have configured the SDK with a Play Store API key, but there are no Play Store products registered in the RevenueCat dashboard for your offerings."* This is a **separate error** from the emulator's `BILLING_UNAVAILABLE`, and it would not be fixed by running on a real device. It matches `backend-roadmap.md:113`, which records the three products as configured **in the Test Store** — the offering was verified against RevenueCat's test store during Phase 3 and may never have been re-pointed at the real Play products. If so the paywall renders its empty state in production too, and nothing can be bought on either platform. Needs checking in the RevenueCat dashboard: Offerings → `default` → each package must map to a **Play Store** product (`remove_ads`, `pro_monthly`, `pro_yearly`), not a test-store one. |
 | 12 | ~~Minor~~ **Fixed for premium 2026-07-31** | Premium deletions now propagate. `syncPremiumQuotes` already fetches **every** premium row the user is entitled to (no cursor, all pages collected), so that response is authoritative — anything local and premium that is missing from it has been removed server-side. `deletePremiumQuotesNotIn` drops those rows, at zero extra network cost. Guarded so it cannot mass-delete: an empty response means "no entitlement", not "content gone", and a failed or cancelled fetch never reaches the deletion. Four tests cover exactly those refusals. Free quotes deliberately excluded — they are bundled in the app, nothing reads cached free rows, and pulling one needs an app update anyway. **Packs still have no delete propagation** (`packsSync`), so a retired collection keeps showing in the list. |
 | 13 | Info | Three AsyncStorage keys are dead (written or read by nothing). Safe to remove. |
+
+## QA sweep 2026-08-01 — what was driven on screen, and what broke
+
+Full pass on the Android emulator from a wiped install. **Verified working:** all four onboarding pages,
+notification scheduling (11 records in the OS store — 9 daily at 3/day×3 days plus the 2 trial notices, both
+channels registered, trial notices do not consume the daily quota), trial active state (badge, 10 selectable
+unlocked, no ad banner), trial end (frequency 10→3, locks and Pro hint back, ads back, end screen shown
+exactly once and not again after relaunch), pack list, premium pack detail with real content, sign-up,
+sign-in including the wrong-password error, and account deletion.
+
+**Premium content for a signed-in trial user works end to end** — 3,325 premium rows downloaded (4,325
+total), `trials` row written with exactly a 7-day span. This is the first on-device proof of migration 0007.
+
+**Account deletion cascades correctly:** `auth.users`, `profiles` and `trials` all gone, local premium cache
+purged 3,325 → 0 while the 1,000 free quotes stayed.
+
+### Found and fixed this pass (`40ffd94`)
+- The sign-in submit button sat behind the keyboard on Android with no way to reach it —
+  `KeyboardAvoidingView` had `behavior: undefined` on Android (a no-op) over a fixed, non-scrolling View.
+- Neither input had `returnKeyType`/`onSubmitEditing`, so the keyboard's action key did nothing.
+- A signed-up user was stranded: confirmation is required, but there was no resend and no path back.
+
+### Not covered by this pass (say so rather than imply coverage)
+Favorites add/remove, the six locales on screen, schedule-time validation, the widget, interstitial ads,
+deep link from a notification, offline behaviour. And **no purchase has ever been exercised anywhere** —
+the emulator has no Play Billing.
+
+### Social sign-in is still absent
+`social-sign-in.md` was approved 2026-07-25 and **not a line of it exists**. `useAuth` has only
+email/password + sign-out + delete. There is also **no password reset**. Google needs owner-produced OAuth
+clients (web + iOS + Android with three SHA-1s) and Supabase provider config; Apple needs a Services ID and
+a `.p8`. See §1.6 of the spec for who produces each value.
 
 ## Needs device QA (not blocked on you)
 
