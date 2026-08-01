@@ -213,10 +213,13 @@
       "rateLimited": "Trop de tentatives, réessaie dans un instant.",
       "network": "Erreur de connexion. Vérifie ta connexion internet.",
       "generic": "Une erreur s'est produite. Réessaie.",
-      "notConfigured": "Les comptes ne sont pas disponibles pour le moment."
+      "notConfigured": "Les comptes ne sont pas disponibles pour le moment.",
+      "emailRequiredForReset": "Saisis d'abord ton adresse e-mail."
     },
     "resendConfirmation": "L'e-mail de confirmation n'est pas arrivé ? Renvoyer",
-    "resendSuccess": "E-mail de confirmation renvoyé."
+    "resendSuccess": "E-mail de confirmation renvoyé.",
+    "forgotPassword": "Mot de passe oublié ?",
+    "resetSent": "Un lien de réinitialisation part vers ta boîte mail."
   },
   "paywall": {
     "title": "Passer en Pro",
@@ -225,7 +228,6 @@
     "restorePurchases": "Restaurer les achats",
     "restoreSuccess": "Achats restaurés.",
     "restoreNothingFound": "Aucun achat précédent trouvé.",
-    "purchaseSuccess": "Merci ! Les publicités sont désormais désactivées.",
     "buyButton": "Continuer",
     "alreadyPro": "Tu es déjà Pro. Merci pour ton soutien !",
     "alreadyAdsRemoved": "Les publicités sont déjà supprimées sur ce compte.",
@@ -235,13 +237,15 @@
       "annualLabel": "Pro — Annuel",
       "annualHint": "Meilleure offre",
       "monthlyLabel": "Pro — Mensuel",
-      "proFeatures": "Sans pub · Packs premium · Synchronisation (bientôt)"
+      "proFeatures": "Sans publicité · Collections premium · 10 rappels par jour"
     },
     "errors": {
       "generic": "Une erreur s'est produite. Réessaie.",
       "notConfigured": "Les achats ne sont pas disponibles pour le moment.",
       "noOffering": "Rien à afficher pour le moment. Réessaie plus tard."
-    }
+    },
+    "purchaseSuccessPro": "Merci ! Pro est activé — toutes les collections, sans publicité, jusqu'à 10 rappels par jour.",
+    "purchaseSuccessAdsRemoved": "Merci ! Les publicités sont désormais désactivées."
   },
   "trial": {
     "notice": {

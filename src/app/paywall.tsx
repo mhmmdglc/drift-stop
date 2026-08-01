@@ -50,7 +50,15 @@ export default function PaywallScreen() {
       setMessage({ text: t('paywall.errors.generic'), tone: 'fire' });
       return;
     }
-    setMessage({ text: t('paywall.purchaseSuccess'), tone: 'accent' });
+    // Tek bir "reklamlar kapandı" mesajı HER satın almada gösteriliyordu — Pro
+    // abone olan kullanıcıya daha ucuz ürünün onayını vermek yanlış bilgi.
+    setMessage({
+      text:
+        pkg.packageType === PACKAGE_TYPE.LIFETIME
+          ? t('paywall.purchaseSuccessAdsRemoved')
+          : t('paywall.purchaseSuccessPro'),
+      tone: 'accent',
+    });
   };
 
   const restore = async () => {

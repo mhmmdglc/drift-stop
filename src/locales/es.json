@@ -213,10 +213,13 @@
       "rateLimited": "Demasiados intentos, prueba de nuevo en un momento.",
       "network": "Error de conexión. Revisa tu internet.",
       "generic": "Algo salió mal. Inténtalo de nuevo.",
-      "notConfigured": "Las cuentas no están disponibles ahora mismo."
+      "notConfigured": "Las cuentas no están disponibles ahora mismo.",
+      "emailRequiredForReset": "Primero escribe tu correo electrónico."
     },
     "resendConfirmation": "¿No llegó el correo de confirmación? Enviarlo de nuevo",
-    "resendSuccess": "Correo de confirmación enviado de nuevo."
+    "resendSuccess": "Correo de confirmación enviado de nuevo.",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "resetSent": "Te enviamos un enlace para restablecerla."
   },
   "paywall": {
     "title": "Hazte Pro",
@@ -225,7 +228,6 @@
     "restorePurchases": "Restaurar compras",
     "restoreSuccess": "Compras restauradas.",
     "restoreNothingFound": "No se encontró ninguna compra anterior.",
-    "purchaseSuccess": "¡Gracias! Los anuncios ya están desactivados.",
     "buyButton": "Continuar",
     "alreadyPro": "Ya eres Pro. ¡Gracias por tu apoyo!",
     "alreadyAdsRemoved": "Los anuncios ya están eliminados en esta cuenta.",
@@ -235,13 +237,15 @@
       "annualLabel": "Pro — Anual",
       "annualHint": "Mejor precio",
       "monthlyLabel": "Pro — Mensual",
-      "proFeatures": "Sin anuncios · Paquetes premium · Sincronización (pronto)"
+      "proFeatures": "Sin anuncios · Colecciones premium · 10 recordatorios al día"
     },
     "errors": {
       "generic": "Algo salió mal. Inténtalo de nuevo.",
       "notConfigured": "Las compras no están disponibles ahora mismo.",
       "noOffering": "No hay nada que mostrar ahora. Inténtalo más tarde."
-    }
+    },
+    "purchaseSuccessPro": "¡Gracias! Pro está activo: todas las colecciones, sin anuncios, hasta 10 recordatorios al día.",
+    "purchaseSuccessAdsRemoved": "¡Gracias! Los anuncios ya están desactivados."
   },
   "trial": {
     "notice": {

@@ -213,10 +213,13 @@
       "rateLimited": "Too many attempts, try again shortly.",
       "network": "Connection error. Check your internet.",
       "generic": "Something went wrong. Please try again.",
-      "notConfigured": "Accounts aren't available right now."
+      "notConfigured": "Accounts aren't available right now.",
+      "emailRequiredForReset": "Enter your email address first."
     },
     "resendConfirmation": "Confirmation email didn't arrive? Send it again",
-    "resendSuccess": "Confirmation email sent again."
+    "resendSuccess": "Confirmation email sent again.",
+    "forgotPassword": "Forgot your password?",
+    "resetSent": "A password reset link is on its way to your inbox."
   },
   "paywall": {
     "title": "Go Pro",
@@ -225,7 +228,6 @@
     "restorePurchases": "Restore purchases",
     "restoreSuccess": "Purchases restored.",
     "restoreNothingFound": "No previous purchase found.",
-    "purchaseSuccess": "Thank you! Ads are now off.",
     "buyButton": "Continue",
     "alreadyPro": "You're already Pro. Thank you for your support!",
     "alreadyAdsRemoved": "Ads are already removed on this account.",
@@ -235,13 +237,15 @@
       "annualLabel": "Pro — Yearly",
       "annualHint": "Best value",
       "monthlyLabel": "Pro — Monthly",
-      "proFeatures": "No ads · Premium packs · Sync (soon)"
+      "proFeatures": "No ads · Premium packs · 10 reminders a day"
     },
     "errors": {
       "generic": "Something went wrong. Please try again.",
       "notConfigured": "Purchases aren't available right now.",
       "noOffering": "Nothing to show right now. Try again later."
-    }
+    },
+    "purchaseSuccessPro": "Thank you! Pro is on — every pack, no ads, up to 10 reminders a day.",
+    "purchaseSuccessAdsRemoved": "Thank you! Ads are now off."
   },
   "trial": {
     "notice": {

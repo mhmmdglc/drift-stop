@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { ArrowLeft } from 'phosphor-react-native';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Doodle } from '@/components/Doodle';
@@ -15,6 +15,21 @@ import { localizeAuthor } from '@/i18n/quoteLocalization';
 import { useTranslation } from '@/i18n/useTranslation';
 import { localizedPackField } from '@/types/quotePack';
 
+/**
+ * Listedeki tek bir satır. Paketler ve yazarlar TEK bir sanallaştırılmış listede
+ * birleştiriliyor; bölüm başlıkları da satır olarak akıyor.
+ *
+ * Neden: eskiden bu ekran düz bir `ScrollView` içinde `packs.map` + `authors.map`
+ * yapıyordu — canlı veriyle **122 satır (18 paket + 104 yazar)**, her biri kendi
+ * `WobblyBorder` SVG'siyle, hepsi aynı anda mount ediliyordu. Ucuz cihazda açılış
+ * jankının doğrudan kaynağı; spec'in Faz F "uzun listelerde sanallaştırma" maddesi
+ * tam olarak bunu kastediyordu.
+ */
+type Row =
+  | { kind: 'sectionTitle'; key: string; title: string }
+  | { kind: 'pack'; key: string; pack: PackWithState }
+  | { kind: 'author'; key: string; entry: AuthorWithState };
+
 export default function PacksScreen() {
   const { colors } = useTheme();
   const { t, locale } = useTranslation();
@@ -22,6 +37,16 @@ export default function PacksScreen() {
   const { packs, authors, loading } = usePacks();
 
   const isEmpty = !loading && packs.length === 0 && authors.length === 0;
+
+  const rows: Row[] = [];
+  if (packs.length > 0) {
+    rows.push({ kind: 'sectionTitle', key: 's:packs', title: t('packs.collectionsSectionTitle') });
+    for (const pack of packs) rows.push({ kind: 'pack', key: `p:${pack.id}`, pack });
+  }
+  if (authors.length > 0) {
+    rows.push({ kind: 'sectionTitle', key: 's:authors', title: t('packs.authorsSectionTitle') });
+    for (const a of authors) rows.push({ kind: 'author', key: `a:${a.author}`, entry: a });
+  }
 
   return (
     <PaperBackground>
@@ -50,33 +75,29 @@ export default function PacksScreen() {
             </ThemedText>
           </View>
         ) : (
-          <ScrollView contentContainerStyle={styles.scroll}>
-            {packs.length > 0 && (
-              <View style={styles.section}>
+          <FlatList
+            data={rows}
+            keyExtractor={(row) => row.key}
+            contentContainerStyle={styles.scroll}
+            initialNumToRender={12}
+            windowSize={7}
+            removeClippedSubviews
+            renderItem={({ item }) =>
+              item.kind === 'sectionTitle' ? (
                 <ThemedText variant="label" tone="accent" style={styles.sectionTitle}>
-                  {t('packs.collectionsSectionTitle')}
+                  {item.title}
                 </ThemedText>
-                <View style={styles.rows}>
-                  {packs.map((pack) => (
-                    <PackRow key={pack.id} pack={pack} locale={locale} t={t} />
-                  ))}
+              ) : item.kind === 'pack' ? (
+                <View style={styles.rowSpacing}>
+                  <PackRow pack={item.pack} locale={locale} t={t} />
                 </View>
-              </View>
-            )}
-
-            {authors.length > 0 && (
-              <View style={styles.section}>
-                <ThemedText variant="label" tone="accent" style={styles.sectionTitle}>
-                  {t('packs.authorsSectionTitle')}
-                </ThemedText>
-                <View style={styles.rows}>
-                  {authors.map((a) => (
-                    <AuthorRow key={a.author} entry={a} locale={locale} t={t} />
-                  ))}
+              ) : (
+                <View style={styles.rowSpacing}>
+                  <AuthorRow entry={item.entry} locale={locale} t={t} />
                 </View>
-              </View>
-            )}
-          </ScrollView>
+              )
+            }
+          />
         )}
       </SafeAreaView>
     </PaperBackground>
@@ -190,20 +211,21 @@ const styles = StyleSheet.create({
   emptyTitle: {
     textAlign: 'center',
   },
+  rowSpacing: {
+    marginBottom: Spacing.md,
+  },
   scroll: {
     padding: Spacing.md,
     paddingBottom: Spacing.xxl,
     gap: Spacing.lg,
   },
-  section: {
-    gap: Spacing.sm,
-  },
   sectionTitle: {
     letterSpacing: 1,
     marginLeft: Spacing.sm,
-  },
-  rows: {
-    gap: Spacing.md,
+    // Bölüm başlıkları artık listenin içinde birer satır; boşluğu eskiden saran
+    // `section` View'i veriyordu.
+    marginTop: Spacing.md,
+    marginBottom: Spacing.sm,
   },
   row: {
     padding: Spacing.lg,

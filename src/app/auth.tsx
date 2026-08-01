@@ -26,7 +26,7 @@ export default function AuthScreen() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const router = useRouter();
-  const { signInWithEmail, signUpWithEmail, resendConfirmation } = useAuth();
+  const { signInWithEmail, signUpWithEmail, resendConfirmation, sendPasswordReset } = useAuth();
 
   const [mode, setMode] = useState<Mode>('signIn');
   const [email, setEmail] = useState('');
@@ -70,6 +70,21 @@ export default function AuthScreen() {
       return;
     }
     router.back();
+  };
+
+  const forgotPassword = async () => {
+    // Şifre alanı boş olabilir; sıfırlama yalnızca e-posta ister.
+    if (!emailValid) {
+      setError(t('auth.errors.emailRequiredForReset'));
+      return;
+    }
+    setResending(true);
+    setError(null);
+    setNotice(null);
+    const result = await sendPasswordReset(email);
+    setResending(false);
+    if (result.error) setError(t(result.error));
+    else setNotice(t('auth.resetSent'));
   };
 
   const resend = async () => {
@@ -183,6 +198,17 @@ export default function AuthScreen() {
               disabled={!canSubmit}
               style={styles.submitBtn}
             />
+
+            {mode === 'signIn' && (
+              <Pressable
+                onPress={() => void forgotPassword()}
+                disabled={resending}
+                style={styles.switchMode}>
+                <ThemedText variant="label" tone="textMuted">
+                  {resending ? t('common.loading') : t('auth.forgotPassword')}
+                </ThemedText>
+              </Pressable>
+            )}
 
             {awaitingConfirmation && (
               <Pressable onPress={() => void resend()} disabled={resending} style={styles.switchMode}>

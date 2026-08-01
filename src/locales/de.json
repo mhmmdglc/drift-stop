@@ -213,10 +213,13 @@
       "rateLimited": "Zu viele Versuche, versuch es gleich noch mal.",
       "network": "Verbindungsfehler. Prüfe deine Internetverbindung.",
       "generic": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
-      "notConfigured": "Konten sind derzeit nicht verfügbar."
+      "notConfigured": "Konten sind derzeit nicht verfügbar.",
+      "emailRequiredForReset": "Gib zuerst deine E-Mail-Adresse ein."
     },
     "resendConfirmation": "Bestätigungs-E-Mail nicht angekommen? Erneut senden",
-    "resendSuccess": "Bestätigungs-E-Mail erneut gesendet."
+    "resendSuccess": "Bestätigungs-E-Mail erneut gesendet.",
+    "forgotPassword": "Passwort vergessen?",
+    "resetSent": "Ein Link zum Zurücksetzen ist unterwegs zu deinem Postfach."
   },
   "paywall": {
     "title": "Pro werden",
@@ -225,7 +228,6 @@
     "restorePurchases": "Käufe wiederherstellen",
     "restoreSuccess": "Käufe wiederhergestellt.",
     "restoreNothingFound": "Kein früherer Kauf gefunden.",
-    "purchaseSuccess": "Danke! Werbung ist jetzt aus.",
     "buyButton": "Weiter",
     "alreadyPro": "Du bist bereits Pro. Danke für deine Unterstützung!",
     "alreadyAdsRemoved": "Werbung ist auf diesem Konto bereits entfernt.",
@@ -235,13 +237,15 @@
       "annualLabel": "Pro — Jährlich",
       "annualHint": "Bester Preis",
       "monthlyLabel": "Pro — Monatlich",
-      "proFeatures": "Keine Werbung · Premium-Pakete · Synchronisierung (bald)"
+      "proFeatures": "Keine Werbung · Premium-Pakete · 10 Erinnerungen am Tag"
     },
     "errors": {
       "generic": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
       "notConfigured": "Käufe sind derzeit nicht verfügbar.",
       "noOffering": "Gerade nichts anzuzeigen. Versuch es später erneut."
-    }
+    },
+    "purchaseSuccessPro": "Danke! Pro ist aktiv — alle Pakete, keine Werbung, bis zu 10 Erinnerungen am Tag.",
+    "purchaseSuccessAdsRemoved": "Danke! Werbung ist jetzt aus."
   },
   "trial": {
     "notice": {

@@ -21,6 +21,12 @@ type AuthContextValue = {
    * yapılabilecek hiçbir şey kalmıyordu.
    */
   resendConfirmation: (email: string) => Promise<AuthResult>;
+  /**
+   * Şifre sıfırlama e-postası gönderir. Bu ekran hiç yoktu: şifresini unutan
+   * kullanıcının hesabına dönmesinin HİÇBİR yolu yoktu — Pro erişimi de,
+   * premium paketleri de hesaba bağlı olduğu için bu doğrudan gelir kaybı.
+   */
+  sendPasswordReset: (email: string) => Promise<AuthResult>;
   signOut: () => Promise<void>;
   deleteAccount: () => Promise<AuthResult>;
 };
@@ -76,6 +82,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signInWithEmail: async (email, password) => {
         if (!supabase) return { error: 'auth.errors.notConfigured' };
         const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+        return { error: error ? mapAuthError(error.message) : null };
+      },
+      sendPasswordReset: async (email) => {
+        if (!supabase) return { error: 'auth.errors.notConfigured' };
+        // `redirectTo` uygulamanın kendi şemasına dönüyor; Supabase'in varsayılan
+        // site URL'i bir web sayfası ve mobilde kullanıcıyı hiçbir yere götürmez.
+        const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+          redirectTo: 'driftstop://auth',
+        });
         return { error: error ? mapAuthError(error.message) : null };
       },
       resendConfirmation: async (email) => {

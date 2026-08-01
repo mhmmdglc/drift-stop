@@ -213,10 +213,13 @@
       "rateLimited": "Çok fazla deneme yapıldı, biraz sonra tekrar dene.",
       "network": "Bağlantı hatası. İnterneti kontrol et.",
       "generic": "Bir şeyler ters gitti. Tekrar dene.",
-      "notConfigured": "Hesap sistemi şu an kullanılamıyor."
+      "notConfigured": "Hesap sistemi şu an kullanılamıyor.",
+      "emailRequiredForReset": "Sıfırlama için önce e-posta adresini gir."
     },
     "resendConfirmation": "Onay e-postası gelmedi mi? Tekrar gönder",
-    "resendSuccess": "Onay e-postası tekrar gönderildi."
+    "resendSuccess": "Onay e-postası tekrar gönderildi.",
+    "forgotPassword": "Şifreni mi unuttun?",
+    "resetSent": "Şifre sıfırlama bağlantısı e-postana gönderildi."
   },
   "paywall": {
     "title": "Pro'ya geç",
@@ -225,7 +228,6 @@
     "restorePurchases": "Satın alımları geri yükle",
     "restoreSuccess": "Satın alımlar geri yüklendi.",
     "restoreNothingFound": "Önceki bir satın alım bulunamadı.",
-    "purchaseSuccess": "Teşekkürler! Reklamlar artık kapalı.",
     "buyButton": "Devam et",
     "alreadyPro": "Zaten Pro'sun. Desteğin için teşekkürler!",
     "alreadyAdsRemoved": "Bu hesapta reklamlar zaten kaldırılmış.",
@@ -235,13 +237,15 @@
       "annualLabel": "Pro — Yıllık",
       "annualHint": "En avantajlı",
       "monthlyLabel": "Pro — Aylık",
-      "proFeatures": "Reklamsız · Premium paketler · Senkron (yakında)"
+      "proFeatures": "Reklamsız · Premium paketler · Günde 10 hatırlatma"
     },
     "errors": {
       "generic": "Bir şeyler ters gitti. Tekrar dene.",
       "notConfigured": "Satın alımlar şu an kullanılamıyor.",
       "noOffering": "Şu an gösterilecek bir şey yok. Daha sonra tekrar dene."
-    }
+    },
+    "purchaseSuccessPro": "Teşekkürler! Pro açıldı — tüm paketler, reklamsız, günde 10'a kadar hatırlatma.",
+    "purchaseSuccessAdsRemoved": "Teşekkürler! Reklamlar artık kapalı."
   },
   "trial": {
     "notice": {

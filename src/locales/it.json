@@ -213,10 +213,13 @@
       "rateLimited": "Troppi tentativi, riprova tra poco.",
       "network": "Errore di connessione. Controlla la tua connessione internet.",
       "generic": "Qualcosa è andato storto. Riprova.",
-      "notConfigured": "Gli account non sono disponibili al momento."
+      "notConfigured": "Gli account non sono disponibili al momento.",
+      "emailRequiredForReset": "Inserisci prima il tuo indirizzo email."
     },
     "resendConfirmation": "L'email di conferma non è arrivata? Invia di nuovo",
-    "resendSuccess": "Email di conferma inviata di nuovo."
+    "resendSuccess": "Email di conferma inviata di nuovo.",
+    "forgotPassword": "Password dimenticata?",
+    "resetSent": "Ti abbiamo inviato un link per reimpostarla."
   },
   "paywall": {
     "title": "Passa a Pro",
@@ -225,7 +228,6 @@
     "restorePurchases": "Ripristina acquisti",
     "restoreSuccess": "Acquisti ripristinati.",
     "restoreNothingFound": "Nessun acquisto precedente trovato.",
-    "purchaseSuccess": "Grazie! Gli annunci ora sono disattivati.",
     "buyButton": "Continua",
     "alreadyPro": "Sei già Pro. Grazie per il tuo supporto!",
     "alreadyAdsRemoved": "Gli annunci sono già stati rimossi su questo account.",
@@ -235,13 +237,15 @@
       "annualLabel": "Pro — Annuale",
       "annualHint": "Il migliore",
       "monthlyLabel": "Pro — Mensile",
-      "proFeatures": "Senza annunci · Pacchetti premium · Sincronizzazione (presto)"
+      "proFeatures": "Niente pubblicità · Raccolte premium · 10 promemoria al giorno"
     },
     "errors": {
       "generic": "Qualcosa è andato storto. Riprova.",
       "notConfigured": "Gli acquisti non sono disponibili al momento.",
       "noOffering": "Niente da mostrare ora. Riprova più tardi."
-    }
+    },
+    "purchaseSuccessPro": "Grazie! Pro è attivo — tutte le raccolte, niente pubblicità, fino a 10 promemoria al giorno.",
+    "purchaseSuccessAdsRemoved": "Grazie! La pubblicità è disattivata."
   },
   "trial": {
     "notice": {
