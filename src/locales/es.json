@@ -214,7 +214,9 @@
       "network": "Error de conexión. Revisa tu internet.",
       "generic": "Algo salió mal. Inténtalo de nuevo.",
       "notConfigured": "Las cuentas no están disponibles ahora mismo."
-    }
+    },
+    "resendConfirmation": "¿No llegó el correo de confirmación? Enviarlo de nuevo",
+    "resendSuccess": "Correo de confirmación enviado de nuevo."
   },
   "paywall": {
     "title": "Hazte Pro",

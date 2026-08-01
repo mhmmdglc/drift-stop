@@ -214,7 +214,9 @@
       "network": "Verbindungsfehler. Prüfe deine Internetverbindung.",
       "generic": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
       "notConfigured": "Konten sind derzeit nicht verfügbar."
-    }
+    },
+    "resendConfirmation": "Bestätigungs-E-Mail nicht angekommen? Erneut senden",
+    "resendSuccess": "Bestätigungs-E-Mail erneut gesendet."
   },
   "paywall": {
     "title": "Pro werden",

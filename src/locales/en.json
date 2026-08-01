@@ -214,7 +214,9 @@
       "network": "Connection error. Check your internet.",
       "generic": "Something went wrong. Please try again.",
       "notConfigured": "Accounts aren't available right now."
-    }
+    },
+    "resendConfirmation": "Confirmation email didn't arrive? Send it again",
+    "resendSuccess": "Confirmation email sent again."
   },
   "paywall": {
     "title": "Go Pro",

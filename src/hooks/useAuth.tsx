@@ -15,6 +15,12 @@ type AuthContextValue = {
   loading: boolean;
   signUpWithEmail: (email: string, password: string) => Promise<AuthResult>;
   signInWithEmail: (email: string, password: string) => Promise<AuthResult>;
+  /**
+   * Onay e-postasını yeniden gönderir. Kayıt olan ama maili hiç almayan kullanıcı
+   * için tek çıkış yolu buydu — yoksa hesap var, giriş yapılamıyor ve ekranda
+   * yapılabilecek hiçbir şey kalmıyordu.
+   */
+  resendConfirmation: (email: string) => Promise<AuthResult>;
   signOut: () => Promise<void>;
   deleteAccount: () => Promise<AuthResult>;
 };
@@ -70,6 +76,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signInWithEmail: async (email, password) => {
         if (!supabase) return { error: 'auth.errors.notConfigured' };
         const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+        return { error: error ? mapAuthError(error.message) : null };
+      },
+      resendConfirmation: async (email) => {
+        if (!supabase) return { error: 'auth.errors.notConfigured' };
+        const { error } = await supabase.auth.resend({ type: 'signup', email: email.trim() });
         return { error: error ? mapAuthError(error.message) : null };
       },
       signOut: async () => {

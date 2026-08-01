@@ -1,6 +1,14 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, TextInput, View } from 'react-native';
+import { useRef, useState } from 'react';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  TextInput,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PaperBackground } from '@/components/PaperBackground';
@@ -18,7 +26,7 @@ export default function AuthScreen() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const router = useRouter();
-  const { signInWithEmail, signUpWithEmail } = useAuth();
+  const { signInWithEmail, signUpWithEmail, resendConfirmation } = useAuth();
 
   const [mode, setMode] = useState<Mode>('signIn');
   const [email, setEmail] = useState('');
@@ -26,6 +34,14 @@ export default function AuthScreen() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  /**
+   * Kayıt başarılı oldu, onay maili bekleniyor. Bu bayrak olmadan kullanıcı
+   * "maili kontrol et" yazısıyla baş başa kalıyordu: mail gelmezse ekranda
+   * yapabileceği hiçbir şey yoktu.
+   */
+  const [awaitingConfirmation, setAwaitingConfirmation] = useState(false);
+  const [resending, setResending] = useState(false);
+  const passwordRef = useRef<TextInput>(null);
 
   const emailValid = /\S+@\S+\.\S+/.test(email.trim());
   const passwordValid = password.length >= 6;
@@ -45,18 +61,36 @@ export default function AuthScreen() {
       return;
     }
     if (mode === 'signUp') {
+      // Girişe geçir ve şifreyi temizle: hesap var ama oturum YOK (onay bekliyor),
+      // ve kullanıcı aynı formda takılı kalmasın.
       setNotice(t('auth.signUpSuccess'));
+      setAwaitingConfirmation(true);
+      setMode('signIn');
+      setPassword('');
       return;
     }
     router.back();
   };
 
+  const resend = async () => {
+    setResending(true);
+    setError(null);
+    const result = await resendConfirmation(email);
+    setResending(false);
+    setError(result.error ? t(result.error) : null);
+    if (!result.error) setNotice(t('auth.resendSuccess'));
+  };
+
   return (
     <PaperBackground>
       <SafeAreaView style={styles.safe}>
+        {/* Android'de `behavior` undefined bırakılmıştı, yani bu sarmalayıcı hiçbir
+            şey yapmıyordu: klavye açılınca gönder butonu klavyenin ARKASINDA kalıyor
+            ve forma basmanın hiçbir yolu olmuyordu (ekranda görüldü). `height`
+            Android'in doğru davranışı; ayrıca içerik artık kaydırılabilir. */}
         <KeyboardAvoidingView
           style={styles.flex}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
           <View style={styles.header}>
             <Pressable onPress={() => router.back()} hitSlop={12}>
               <ThemedText variant="label" tone="textMuted">
@@ -65,7 +99,10 @@ export default function AuthScreen() {
             </Pressable>
           </View>
 
-          <View style={styles.content}>
+          <ScrollView
+            contentContainerStyle={styles.content}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag">
             <ThemedText variant="heading">
               {mode === 'signIn' ? t('auth.signInTitle') : t('auth.signUpTitle')}
             </ThemedText>
@@ -88,6 +125,9 @@ export default function AuthScreen() {
                   autoCorrect={false}
                   keyboardType="email-address"
                   textContentType="emailAddress"
+                  returnKeyType="next"
+                  onSubmitEditing={() => passwordRef.current?.focus()}
+                  submitBehavior="submit"
                   style={[styles.input, { color: colors.text }]}
                 />
               </View>
@@ -107,6 +147,9 @@ export default function AuthScreen() {
                   secureTextEntry
                   autoCapitalize="none"
                   textContentType={mode === 'signIn' ? 'password' : 'newPassword'}
+                  returnKeyType="go"
+                  onSubmitEditing={() => void submit()}
+                  ref={passwordRef}
                   style={[styles.input, { color: colors.text }]}
                 />
               </View>
@@ -141,6 +184,14 @@ export default function AuthScreen() {
               style={styles.submitBtn}
             />
 
+            {awaitingConfirmation && (
+              <Pressable onPress={() => void resend()} disabled={resending} style={styles.switchMode}>
+                <ThemedText variant="label" tone="textMuted">
+                  {resending ? t('common.loading') : t('auth.resendConfirmation')}
+                </ThemedText>
+              </Pressable>
+            )}
+
             <Pressable
               onPress={() => {
                 setMode((m) => (m === 'signIn' ? 'signUp' : 'signIn'));
@@ -152,7 +203,7 @@ export default function AuthScreen() {
                 {mode === 'signIn' ? t('auth.switchToSignUp') : t('auth.switchToSignIn')}
               </ThemedText>
             </Pressable>
-          </View>
+          </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
     </PaperBackground>
@@ -169,7 +220,7 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.sm,
   },
   content: {
-    flex: 1,
+    flexGrow: 1,
     padding: Spacing.lg,
     gap: Spacing.md,
     justifyContent: 'center',

@@ -214,7 +214,9 @@
       "network": "Errore di connessione. Controlla la tua connessione internet.",
       "generic": "Qualcosa è andato storto. Riprova.",
       "notConfigured": "Gli account non sono disponibili al momento."
-    }
+    },
+    "resendConfirmation": "L'email di conferma non è arrivata? Invia di nuovo",
+    "resendSuccess": "Email di conferma inviata di nuovo."
   },
   "paywall": {
     "title": "Passa a Pro",
