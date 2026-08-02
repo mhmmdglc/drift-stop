@@ -1,3 +1,5 @@
 {
-  "NSUserTrackingUsageDescription": "En acceptant, vous nous permettez de vous proposer des publicités plus pertinentes. Vos citations, favoris et rappels fonctionnent de la même façon dans tous les cas."
+  "ios": {
+    "NSUserTrackingUsageDescription": "En acceptant, vous nous permettez de vous proposer des publicités plus pertinentes. Vos citations, favoris et rappels fonctionnent de la même façon dans tous les cas."
+  }
 }

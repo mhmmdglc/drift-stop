@@ -1,3 +1,5 @@
 {
-  "NSUserTrackingUsageDescription": "Wenn du zustimmst, können wir dir relevantere Werbung zeigen. Deine Zitate, Favoriten und Erinnerungen funktionieren so oder so genau gleich."
+  "ios": {
+    "NSUserTrackingUsageDescription": "Wenn du zustimmst, können wir dir relevantere Werbung zeigen. Deine Zitate, Favoriten und Erinnerungen funktionieren so oder so genau gleich."
+  }
 }

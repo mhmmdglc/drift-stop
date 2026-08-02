@@ -1,3 +1,5 @@
 {
-  "NSUserTrackingUsageDescription": "İzin verirsen sana daha alakalı reklamlar gösteririz. Sözlerin, favorilerin ve hatırlatmaların her iki durumda da aynı şekilde çalışır."
+  "ios": {
+    "NSUserTrackingUsageDescription": "İzin verirsen sana daha alakalı reklamlar gösteririz. Sözlerin, favorilerin ve hatırlatmaların her iki durumda da aynı şekilde çalışır."
+  }
 }

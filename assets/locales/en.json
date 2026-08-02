@@ -1,3 +1,5 @@
 {
-  "NSUserTrackingUsageDescription": "Allowing this lets us show you more relevant ads. Your quotes, favourites and reminders work exactly the same either way."
+  "ios": {
+    "NSUserTrackingUsageDescription": "Allowing this lets us show you more relevant ads. Your quotes, favourites and reminders work exactly the same either way."
+  }
 }
