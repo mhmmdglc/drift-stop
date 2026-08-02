@@ -55,6 +55,30 @@ email/password + sign-out + delete. There is also **no password reset**. Google 
 clients (web + iOS + Android with three SHA-1s) and Supabase provider config; Apple needs a Services ID and
 a `.p8`. See §1.6 of the spec for who produces each value.
 
+### Fixed 2026-08-01/02 (this sweep's second pass)
+- `scheduler.ts` now has **27 tests** — permissions, both channels, the 3-day loop, the reschedule guard,
+  delivered-to-history, and the `cancelAll` rule that must not delete trial notices. Finding #10 half closed.
+- **Password reset shipped.** It did not exist at all: a user who forgot their password had no way back into
+  the account, and Pro entitlement lives on the account.
+- Finding #3 closed: the paywall no longer confirms "ads are off" after a **Pro** purchase.
+- Paywall no longer promises **"Sync (soon)"** — sync is not built and is out of scope.
+- Phase F's virtualization item closed: the packs screen rendered **122 rows** (18 packs + 104 authors), each
+  with its own SVG border, in a plain ScrollView. Now one FlatList.
+- Finding #5 closed and it was worse than recorded: the interstitial's 4-minute gap was seeded at app launch,
+  so combined with the 12-swipe threshold a normal session showed **no interstitial at all**. Startup grace
+  and inter-ad gap are now separate; the threshold retries every swipe instead of every twelfth.
+- Finding #12's remainder closed: retired packs are now deleted locally (`deletePacksNotIn`), guarded so an
+  empty or failed response can never wipe the catalogue.
+- Finding #10's other half closed: edge functions are still outside the app's tsconfig (Deno globals and
+  `jsr:` specifiers), but `npm run typecheck:functions` checks them with Deno. **Both pass.**
+
+### Device QA that is still open, and why
+Favorites add/remove, the six locales on screen, schedule-time validation, the widget, deep link from a
+notification, and offline behaviour were **not** exercised. The dev client is pinned to `10.0.2.2:8081` and
+that port is held by another project's Metro on this machine; pointing DriftStop at another port did not
+override the pinned URL. Nothing here indicates a DriftStop defect — the same client worked on 8081 earlier
+the same day. Re-run when 8081 is free.
+
 ## Needs device QA (not blocked on you)
 
 - **Cached-premium purge/restore (finding #8, fixed in code 2026-07-25).** Cannot be verified without a device and a real RevenueCat entitlement. Sequence for `qa-tester`: grant Pro → open a premium pack so content syncs → favorite one premium quote and one free quote → revoke Pro (or sign out) → relaunch → the premium favorite must show the locked row (not a blank card, not a vanished favorite), the free favorite must be untouched, pack detail must be locked again, and pack/author *counts* must still be visible → re-grant Pro → relaunch → premium content and the favorite must come back within a few seconds.
