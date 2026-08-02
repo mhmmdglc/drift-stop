@@ -64,9 +64,12 @@ export default function HomeScreen() {
   const navCount = useRef(0);
   const bumpAd = useCallback(() => {
     navCount.current += 1;
-    if (navCount.current % INTERSTITIAL_EVERY === 0) {
-      showInterstitialIfReady();
-    }
+    if (navCount.current < INTERSTITIAL_EVERY) return;
+    // Eşik `% INTERSTITIAL_EVERY` ile kontrol ediliyordu: zaman kapısı tam o
+    // kaydırmada bloklarsa bir sonraki şans 12 kaydırma sonraydı. Artık eşiğe
+    // gelindikten sonra HER kaydırmada denenir ve sayaç yalnızca reklam
+    // GÖSTERİLDİĞİNDE sıfırlanır.
+    if (showInterstitialIfReady()) navCount.current = 0;
   }, []);
 
   const onRandom = useCallback(() => {

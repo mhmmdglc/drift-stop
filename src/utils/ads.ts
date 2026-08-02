@@ -19,12 +19,22 @@ import { AdUnits } from '@/constants/adUnits';
  */
 export const adsEnabled = Constants.appOwnership !== 'expo' && Platform.OS !== 'ios';
 
-/** İki interstitial arasında en az bu kadar süre olsun (kullanıcıyı darlamamak için). */
+/** İki interstitial ARASINDA en az bu kadar süre olsun (kullanıcıyı darlamamak için). */
 const MIN_INTERSTITIAL_GAP_MS = 4 * 60 * 1000; // 4 dakika
+/**
+ * Açılıştan sonraki bu süre boyunca geçiş reklamı gösterilmez.
+ *
+ * Eskiden ayrı bir kavram DEĞİLDİ: `initAds` doğrudan `lastShownAt = Date.now()`
+ * yazıyordu, yani "iki reklam arası" 4 dakikalık aralık uygulama AÇILIŞINDAN
+ * itibaren işliyordu. 12 kaydırma eşiğiyle birleşince tipik bir oturumda geçiş
+ * reklamı hiç çıkmıyordu — doğrudan gelir kaybı. İkisi artık ayrı.
+ */
+const STARTUP_GRACE_MS = 60 * 1000;
 
 let interstitial: InterstitialAd | null = null;
 let isLoaded = false;
 let lastShownAt = 0;
+let startedAt = 0;
 
 /** "no_ads" entitlement'ı (remove_ads satın alımı ya da Pro abonelik) aktifse true. */
 let adsSuppressed = false;
@@ -102,7 +112,7 @@ export function preloadInterstitial(): void {
 /** Reklam SDK'sını başlat ve ilk interstitial'ı ön-yükle. */
 export function initAds(): void {
   if (!adsEnabled || adsSuppressed) return;
-  lastShownAt = Date.now(); // açılıştan sonra ilk birkaç dakika reklamsız (es geçme süresi)
+  startedAt = Date.now(); // açılıştan hemen sonra reklam yok (bkz. STARTUP_GRACE_MS)
   // ATT izni SDK başlatılmadan ÖNCE çözülmeli: aksi halde ilk reklam isteği
   // izin bilinmeden gider ve o gösterim kalıcı olarak kişiselleştirilmemiş sayılır.
   void resolveTrackingPermission()
@@ -112,12 +122,25 @@ export function initAds(): void {
 }
 
 /**
- * Hazırsa VE son interstitial'dan bu yana yeterli süre geçtiyse göster.
- * true = gösterildi. Sık göstermeyi engeller → kullanıcıyı darlamaz.
+ * Zaman kapılarının SAF kararı — native'e dokunmadan test edilebilsin diye ayrı.
+ *
+ * `lastShownAt === 0` "bu oturumda hiç reklam gösterilmedi" demek; o durumda
+ * yalnızca açılış payı geçerli. Aksi halde son reklamdan bu yana geçen süre.
+ */
+export function isInterstitialTimeAllowed(now: number, started: number, lastShown: number): boolean {
+  if (started > 0 && now - started < STARTUP_GRACE_MS) return false;
+  if (lastShown > 0 && now - lastShown < MIN_INTERSTITIAL_GAP_MS) return false;
+  return true;
+}
+
+/**
+ * Hazırsa VE zaman kapıları izin veriyorsa göster.
+ * true = gösterildi. Çağıran (`(tabs)/index.tsx`) false dönüşünde kaydırma
+ * sayacını SIFIRLAMAZ, böylece bir sonraki kaydırmada tekrar denenir.
  */
 export function showInterstitialIfReady(): boolean {
   if (!adsEnabled || adsSuppressed || !interstitial || !isLoaded) return false;
-  if (Date.now() - lastShownAt < MIN_INTERSTITIAL_GAP_MS) return false;
+  if (!isInterstitialTimeAllowed(Date.now(), startedAt, lastShownAt)) return false;
   try {
     interstitial.show();
     lastShownAt = Date.now();

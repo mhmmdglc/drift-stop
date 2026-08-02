@@ -1,12 +1,13 @@
 /// <reference types="jest" />
 jest.mock('@/db/packsCache', () => ({
   upsertPacks: jest.fn(),
+  deletePacksNotIn: jest.fn(() => 0),
 }));
 
 jest.mock('@/lib/supabase', () => ({ supabase: { from: jest.fn() } }));
 
 import { syncPacks } from '../packsSync';
-import { upsertPacks } from '@/db/packsCache';
+import { deletePacksNotIn, upsertPacks } from '@/db/packsCache';
 import { supabase } from '@/lib/supabase';
 
 const mockFrom = (supabase as unknown as { from: jest.Mock }).from;
@@ -85,5 +86,34 @@ describe('syncPacks', () => {
 
     expect(result.synced).toBe(0);
     expect(cache!.upsertPacks).not.toHaveBeenCalled();
+  });
+});
+
+describe('paket silme yayılımı', () => {
+  it('sunucudaki listede olmayan yerel paketleri siler', async () => {
+    // Bu çekim paketlerin TAMAMINI getiriyor (cursor yok), yani cevap otoriter:
+    // listede olmayan yerel paket yayından kaldırılmıştır. Bu olmadan emekli bir
+    // koleksiyon listede kalıyor ve açılınca boş çıkıyordu.
+    mockSelectReturning({ data: [packRow('stoics'), packRow('eastern')], error: null });
+
+    await syncPacks();
+
+    expect(deletePacksNotIn).toHaveBeenCalledWith(['stoics', 'eastern']);
+  });
+
+  it('boş cevapta HİÇBİR ŞEY silmez — "cevap gelmedi" ile "içerik gitti" aynı şey değil', async () => {
+    mockSelectReturning({ data: [], error: null });
+
+    await syncPacks();
+
+    expect(deletePacksNotIn).not.toHaveBeenCalled();
+  });
+
+  it('hata durumunda silmeye hiç ulaşmaz', async () => {
+    mockSelectReturning({ data: null, error: { message: 'boom' } });
+
+    await syncPacks();
+
+    expect(deletePacksNotIn).not.toHaveBeenCalled();
   });
 });

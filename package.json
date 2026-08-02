@@ -52,6 +52,7 @@
   "devDependencies": {
     "@testing-library/react-native": "^14.0.1",
     "@types/react": "~19.2.2",
+    "deno-bin": "^2.2.7",
     "dotenv": "^17.4.2",
     "eslint": "^9.0.0",
     "eslint-config-expo": "~56.0.4",
@@ -70,7 +71,8 @@
     "export:quotes": "node ./scripts/export-quotes.js",
     "db:migrate": "node ./scripts/db-migrate.js",
     "db:seed-quotes": "node ./scripts/seed-quotes.js",
-    "db:seed-packs": "node ./scripts/seed-packs.js"
+    "db:seed-packs": "node ./scripts/seed-packs.js",
+    "typecheck:functions": "deno-bin check --config supabase/functions/deno.json supabase/functions/delete-account/index.ts supabase/functions/revenuecat-webhook/index.ts"
   },
   "private": true
 }

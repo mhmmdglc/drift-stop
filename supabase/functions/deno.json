@@ -1,0 +1,15 @@
+{
+  "//": "Edge function'lar Deno'da çalışıyor ve uygulamanın tsconfig'i onları tip kontrol EDEMEZ: `jsr:`/`npm:` özel şemalarını çözemez, Deno global'lerini bilmez. Bu yüzden kök tsconfig'de `exclude` edilmişler. Kontrol buradan yapılır: `npm run typecheck:functions`.",
+  "nodeModulesDir": "auto",
+  "imports": {
+    "@supabase/supabase-js": "jsr:@supabase/supabase-js@2"
+  },
+  "tasks": {
+    "check": "deno check delete-account/index.ts revenuecat-webhook/index.ts"
+  },
+  "lint": {
+    "rules": {
+      "tags": ["recommended"]
+    }
+  }
+}

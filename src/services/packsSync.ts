@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase';
-import { upsertPacks, type RemotePack } from '@/db/packsCache';
+import { deletePacksNotIn, upsertPacks, type RemotePack } from '@/db/packsCache';
 
 type PackRow = {
   id: string;
@@ -29,7 +29,7 @@ function toRemotePack(row: PackRow): RemotePack {
  * Ağ yoksa / Supabase yapılandırılmamışsa sessizce hiçbir şey yapmaz —
  * paketler ekranı boş liste gösterir, uygulama çökmemeli.
  */
-export async function syncPacks(): Promise<{ synced: number }> {
+export async function syncPacks(): Promise<{ synced: number; removed?: number }> {
   if (!supabase) return { synced: 0 };
 
   try {
@@ -41,8 +41,13 @@ export async function syncPacks(): Promise<{ synced: number }> {
     if (error) throw error;
     if (!data || data.length === 0) return { synced: 0 };
 
-    upsertPacks((data as PackRow[]).map(toRemotePack));
-    return { synced: data.length };
+    const rows = (data as PackRow[]).map(toRemotePack);
+    upsertPacks(rows);
+    // Silme yayılımı: bu çekim paketlerin tamamını getiriyor, dolayısıyla listede
+    // olmayan yerel paket yayından kaldırılmıştır. Boş/hatalı cevap buraya hiç
+    // ulaşmıyor (yukarıda erken dönülüyor), yani toplu silme mümkün değil.
+    const removed = deletePacksNotIn(rows.map((r) => r.id));
+    return { synced: data.length, removed };
   } catch {
     return { synced: 0 };
   }

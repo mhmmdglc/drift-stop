@@ -84,6 +84,26 @@ export function upsertPacks(rows: RemotePack[]): void {
   });
 }
 
+/**
+ * Sunucudan gelen listede OLMAYAN paketleri siler.
+ *
+ * `syncPacks` her seferinde paketlerin TAMAMINI çekiyor (cursor yok), yani o
+ * cevap otoriter: yerelde durup listede olmayan bir paket yayından kaldırılmış
+ * demektir. Bu yayılım olmadan emekli bir koleksiyon listede sonsuza kadar
+ * kalıyor, açılınca da boş çıkıyordu.
+ *
+ * ⚠️ Boş listeyle ÇAĞRILMAMALI — çağıran (`packsSync`) boş/hatalı cevabı zaten
+ * "içerik gitti" değil "cevap gelmedi" olarak ele alıp buraya hiç gelmiyor.
+ * Yine de burada da korunuyor: boş liste = hiçbir şey silme.
+ */
+export function deletePacksNotIn(ids: string[]): number {
+  if (ids.length === 0) return 0;
+  const conn = getDb();
+  const placeholders = ids.map(() => '?').join(',');
+  const result = conn.runSync(`delete from packs where id not in (${placeholders})`, ids);
+  return result.changes ?? 0;
+}
+
 export function getAllCachedPacks(): QuotePack[] {
   const conn = getDb();
   const rows = conn.getAllSync<{

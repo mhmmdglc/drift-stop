@@ -19,6 +19,10 @@
   ],
   "exclude": [
     "node_modules",
+    // Edge function'lar Deno'da çalışıyor: `jsr:`/`npm:` şemalarını ve Deno
+    // global'lerini bu config çözemez. Dışlanmaları doğru, ama artık
+    // KONTROLSÜZ değiller — `npm run typecheck:functions` onları Deno ile
+    // tip kontrolünden geçiriyor (bkz. supabase/functions/deno.json).
     "supabase/functions/**"
   ]
 }
