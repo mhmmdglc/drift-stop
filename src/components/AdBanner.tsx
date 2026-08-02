@@ -4,7 +4,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 
 import { ThemedText } from '@/components/ThemedText';
-import { AdUnits } from '@/constants/adUnits';
+import { AdUnits, hasBannerUnit } from '@/constants/adUnits';
 import { Spacing } from '@/constants/layout';
 import { useEntitlement } from '@/hooks/useEntitlement';
 import { useTranslation } from '@/i18n/useTranslation';
@@ -23,7 +23,10 @@ export function AdBanner() {
     getPersonalizedAds,
     getPersonalizedAds
   );
-  if (!adsEnabled || entitled || isAdsRemoved) return null;
+  // `hasBannerUnit` false = yayın derlemesinde gerçek birim id'si yok. Eskiden bu
+  // durumda Google'ın test birimine düşülüyordu; gerçek kullanıcıya test reklamı
+  // göstermek AdMob politika ihlali. Artık hiç render edilmiyor.
+  if (!adsEnabled || entitled || isAdsRemoved || !hasBannerUnit || !AdUnits.banner) return null;
   return (
     <View style={styles.wrap}>
       {/* Reklamın dibinde kalıcı çıkış yolu — paywall'a en doğal giriş noktası */}

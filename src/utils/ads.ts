@@ -93,6 +93,9 @@ async function resolveTrackingPermission(): Promise<void> {
 
 export function preloadInterstitial(): void {
   if (!adsEnabled || adsSuppressed) return;
+  // Yayın derlemesinde gerçek birim id'si yoksa interstitial hiç kurulmaz
+  // (test reklamının canlıya sızmaması için — bkz. constants/adUnits.ts).
+  if (!AdUnits.interstitial) return;
   interstitial = InterstitialAd.createForAdRequest(AdUnits.interstitial, {
     requestNonPersonalizedAdsOnly: !personalizedAds,
   });
