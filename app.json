@@ -18,7 +18,7 @@
     },
     "android": {
       "package": "com.driftstop.app",
-      "versionCode": 12,
+      "versionCode": 13,
       "permissions": [
         "RECEIVE_BOOT_COMPLETED",
         "SCHEDULE_EXACT_ALARM"
