@@ -29,6 +29,13 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "./credentials/driftstop-891f4e9df260.json",
+        "track": "alpha",
+        "releaseStatus": "completed",
+        "changesNotSentForReview": false
+      }
+    }
   }
 }
