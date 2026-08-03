@@ -167,13 +167,18 @@ export default function SettingsScreen() {
               </ThemedText>
             </Pressable>
           )}
-          {purchasesConfigured && (
-            <Pressable onPress={() => router.push('/packs')}>
-              <ThemedText variant="body" tone="text" style={styles.link}>
-                {t('settings.premium.packsLink')}
-              </ThemedText>
-            </Pressable>
-          )}
+          {/* Paket tarayıcısı `purchasesConfigured`'a BAĞLI DEĞİL.
+              Bağlıyken iOS'ta (RevenueCat anahtarı yok → configured false) 18
+              koleksiyona ve 3.325 söze giden TEK kapı kayboluyordu — üstelik deneme
+              aktifken, yani denemenin verdiği içeriğe erişim yokken. "Satın alma
+              yapılabiliyor mu" ile "içerik var mı" ayrı sorular; paket listesi
+              herkese açık metadata ve ekran kilitli/açık durumunu kendisi
+              `useEntitlement` ile hesaplıyor. */}
+          <Pressable onPress={() => router.push('/packs')}>
+            <ThemedText variant="body" tone="text" style={styles.link}>
+              {t('settings.premium.packsLink')}
+            </ThemedText>
+          </Pressable>
 
           {/* Bildirimler */}
           <Section title={t('settings.sections.notifications')}>
