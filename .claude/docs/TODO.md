@@ -79,6 +79,30 @@ that port is held by another project's Metro on this machine; pointing DriftStop
 override the pinned URL. Nothing here indicates a DriftStop defect — the same client worked on 8081 earlier
 the same day. Re-run when 8081 is free.
 
+
+### `remove_ads` kaldırıldı — canlıda $299.99 ile duruyordu (2026-08-03)
+
+Sahibin ürün kararı: **reklamsızlık ayrı satılan bir ürün değil**, Pro aboneliği
+(aylık ya da yıllık) alındığında otomatik geliyor. Kontrol edilince `remove_ads`'in
+Play'de **ACTIVE** ve **$299.99 / ₺16.859,99** (173 bölge) olduğu görüldü — `pro_monthly`
+ile aynı ondalık kayması, ama bu ürüne hiç bakılmamıştı çünkü Play'in eski endpoint'i
+403 veriyor (bkz. STORE-AUTOMATION'daki `oneTimeProducts` notu). Kapalı testte olduğu
+için gerçek para gitmedi.
+
+Yapılanlar: Play'de satın alma seçeneği **INACTIVE** edildi · RevenueCat `default`
+offering'inden `$rc_lifetime` paketi çıkarıldı (artık yalnızca `$rc_annual` ve
+`$rc_monthly`) · App Store Connect'te bugün oluşturulan `remove_ads` ürünü silindi.
+
+**Kodda bilinçli olarak bırakılanlar:** `no_ads` entitlement'ı ve `isAdsRemoved`
+mantığı duruyor, çünkü Pro abonelikleri de `no_ads` veriyor ve reklam bastırma buna
+bakıyor. Paywall'ın LIFETIME etiketi ile `alreadyAdsRemoved`/`purchaseSuccessAdsRemoved`
+metinleri de duruyor: ürünü daha önce satın almış biri varsa onun deneyimi bozulmasın.
+Paywall offering'den ne gelirse onu basıyor, yani satış yolu kendiliğinden kapandı.
+
+**Fiyat bilerek düzeltilmedi.** Ürün satılmayacaksa doğru fiyat diye bir şey yok;
+$299.99 kaydı INACTIVE bir seçenekte duruyor. Bir gün gerçekten satılacaksa fiyat
+kasıtlı olarak belirlenmeli.
+
 ## Needs device QA (not blocked on you)
 
 - **Cached-premium purge/restore (finding #8, fixed in code 2026-07-25).** Cannot be verified without a device and a real RevenueCat entitlement. Sequence for `qa-tester`: grant Pro → open a premium pack so content syncs → favorite one premium quote and one free quote → revoke Pro (or sign out) → relaunch → the premium favorite must show the locked row (not a blank card, not a vanished favorite), the free favorite must be untouched, pack detail must be locked again, and pack/author *counts* must still be visible → re-grant Pro → relaunch → premium content and the favorite must come back within a few seconds.

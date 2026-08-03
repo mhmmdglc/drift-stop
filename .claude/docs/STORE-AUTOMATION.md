@@ -163,6 +163,43 @@ Kullanım: `Authorization: Bearer <token>` ile `https://api.appstoreconnect.appl
 **Ne yapabilirsin:** uygulamaları listele, bundle ID kaydet, sürüm/metadata oku-yaz, ekran görüntüsü yükle,
 yaş derecelendirmesi ayarla, TestFlight grupları yönet, incelemeye gönder.
 
+
+## ⚠️ Play tek seferlik ürünler: `inappproducts` ÖLDÜ, `oneTimeProducts` kullan
+
+Bu, canlıda **$299.99'luk bir "reklamları kaldır" ürününün** aylarca fark edilmeden
+durmasının doğrudan sebebi. Bir oturum abonelik fiyatlarını API'den okuyup düzeltti
+(`pro_monthly` de aynı ondalık kaymasıyla 299,99 $/ay çıkmıştı) ama tek seferlik ürüne
+bakamadı, çünkü:
+
+```
+GET /androidpublisher/v3/applications/{pkg}/inappproducts
+→ 403 "Please migrate to the new publishing API."
+
+GET /androidpublisher/v3/applications/{pkg}/onetimeproducts   (küçük harf)
+→ 404 HTML
+
+GET /androidpublisher/v3/applications/{pkg}/oneTimeProducts   ✅ camelCase
+→ 200
+```
+
+403 ve 404 alan bir ajan "erişim yok" diye devretmeye meyilli. **Doğru yol camelCase
+`oneTimeProducts`.** Fiyat `purchaseOptions[].regionalPricingAndAvailabilityConfigs[]`
+içinde, `price {currencyCode, units, nanos}` olarak; gerçek fiyat `units + nanos/1e9`.
+
+Satın alma seçeneğini deaktive etmek (payload şekli de tuzaklı — alanlar
+`deactivatePurchaseOption` nesnesinin İÇİNDE olmalı, kardeşi olarak değil):
+
+```
+POST /androidpublisher/v3/applications/{pkg}/oneTimeProducts/{productId}/purchaseOptions:batchUpdateStates
+{ "requests": [ { "deactivatePurchaseOptionRequest": {
+    "packageName": "...", "productId": "remove_ads", "purchaseOptionId": "default" } } ] }
+```
+
+**Kural:** her sürümden önce abonelikleri VE tek seferlik ürünleri API'den oku, gözle
+doğrula. İkisi ayrı endpoint; birini okuyup "fiyatlar tamam" demek bu hatanın tam
+kendisi.
+
+
 ## 2.2 Google Play Developer API — kimlik doğrulama
 
 RS256 JWT → OAuth token değişimi.
