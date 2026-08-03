@@ -112,13 +112,38 @@ export function preloadInterstitial(): void {
   interstitial.load();
 }
 
+/**
+ * Test cihazı kimlikleri (virgülle ayrılmış). Bu cihazlar GERÇEK birim id'leriyle
+ * ama TEST reklamı alır.
+ *
+ * Neden gerekli: kapalı testte 12 kişi uygulamayı gezerken gerçek birim id'leri
+ * gerçek gösterim ve tıklama üretir. Bu "geçersiz trafik" sayılır ve yayıncı
+ * hesabını kapatır — bu projenin ÖNCEKİ AdMob hesabı zaten kapatıldı, yenisinin
+ * hiç geçmişi yok. Kendi cihazlarını burada kaydetmek, kurulumu doğrularken
+ * hesabı riske atmamanın Google'ın önerdiği yolu.
+ *
+ * Cihaz kimliği uygulama ilk açıldığında logcat'e yazılır:
+ *   `Use RequestConfiguration.Builder.setTestDeviceIds(Arrays.asList("33BE..."))`
+ */
+const TEST_DEVICE_IDS = (process.env.EXPO_PUBLIC_ADMOB_TEST_DEVICE_IDS ?? '')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
+
 /** Reklam SDK'sını başlat ve ilk interstitial'ı ön-yükle. */
 export function initAds(): void {
   if (!adsEnabled || adsSuppressed) return;
   startedAt = Date.now(); // açılıştan hemen sonra reklam yok (bkz. STARTUP_GRACE_MS)
   // ATT izni SDK başlatılmadan ÖNCE çözülmeli: aksi halde ilk reklam isteği
   // izin bilinmeden gider ve o gösterim kalıcı olarak kişiselleştirilmemiş sayılır.
+  // Test cihazı listesi de initialize'dan ÖNCE yazılmalı — sonrasında yazılırsa
+  // ilk istek (ve preload edilen interstitial) gerçek reklam olarak gider.
   void resolveTrackingPermission()
+    .then(() =>
+      TEST_DEVICE_IDS.length > 0
+        ? mobileAds().setRequestConfiguration({ testDeviceIdentifiers: TEST_DEVICE_IDS })
+        : undefined
+    )
     .then(() => mobileAds().initialize())
     .then(() => preloadInterstitial())
     .catch(() => {});
