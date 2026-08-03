@@ -1,174 +1,160 @@
-# Devir notu — 2026-07-31
+# Devir notu — 2026-08-03
 
-Bir oturum burada bitti. Yeni oturum bu dosyayı okuyup kaldığı yerden devam edebilir.
-Plan [`specs/monetization-v2.md`](../specs/monetization-v2.md) içinde; bu dosya yalnızca **nerede kalındığı**.
+Yeni oturum bu dosyayı okuyup kaldığı yerden devam edebilir.
+Plan [`specs/monetization-v2.md`](../specs/monetization-v2.md)'de; bu dosya **nerede kalındığı**.
 
----
-
-## Durum: `monetization-v2` dalı, 6 commit, çalışma alanı temiz
-
-```
-e3d8fba  fix(sync): propagate premium quote deletions from the server
-e2dc7dd  fix(packs): correct locale fallback, move cache reads off the render path
-d555ba1  perf(db): drop the dead 1,000-row boot seed, add the missing indexes
-5d08c68  docs: monetization v2 spec, store automation playbook, price correction
-1d3b245  feat(monetization): free tier drops to 3 daily reminders
-897c070  feat(ios): make iOS buildable — ATT, credentials, ads held back
-```
-
-`main`'e dokunulmadı. Kalite kapıları: `tsc` temiz · **144/144 test** (başlangıç 132) · `expo lint` **11 hata** = değişmemiş taban.
+Bir önceki devir notu 2026-07-31'deydi ve artık bayat — bu onu değiştiriyor.
 
 ---
 
-## Bitenler
+## Tek satırlık durum
 
-### Faz A — ücretsiz katman ✅ iki platformda ekranda doğrulandı
-Ücretsiz tavan **5 → 3**, varsayılan da 3. İkisi de 5 olduğu için kullanıcı ücretsiz paketin tam tavanında
-başlıyordu ve hiç sınıra çarpmıyordu. Artık 5/7/10 Pro tarafında. İpucu metni 6 dilde değişti — **5 de
-kilitlendiği** için "7 ve 10 Pro'ya özel" yanlış olurdu; eşik anlatan cümleye çevrildi.
-Android'de görüldü: 3 seçili, 5/7/10 kilit rozetli, kilitliye dokununca değer değişmiyor ve paywall açılıyor.
+**Android canlı:** `1.1.0 (versionCode 14)` Play kapalı test → **alpha** kanalında.
+**iOS neredeyse hazır:** ürünler, fiyatlar, mağaza metinleri, reklam birimleri kurulu; RevenueCat'te
+**üç tıklama** kaldı, sonra build alınabilir.
 
-### Faz F — veri katmanı ✅ büyük kısmı
-- **Boot'taki 1.000 satırlık senkron seed silindi.** Önce ölçüldü: emülatörde **396 ms** JS thread bloke.
-  `void syncQuotes()` ertelenmiş görünüyor ama bir `async` gövde ilk `await`'e kadar senkron çalışır.
-  Ertelenmedi, **silindi** — yazdığı satırları hiçbir sorgu okuyamıyordu (okuyucuların hepsi premium
-  filtreliyor; filtresiz tek okuyucuya statik dizi yüzünden ücretsiz id ile ulaşılamıyor).
-- **İndeksler eklendi** (`pack_id`, `author+is_premium`, `is_premium`) — tabloda hiç indeks yoktu.
-- `usePacks` render sırasındaki iki senkron SQLite okuması effect'e taşındı, `version` sayacı kalktı.
-- **Paket başlıkları düzeltildi:** yedek sırası `locale → tr → en` idi; Türk kullanıcı zaten ilk adımda
-  eşleştiği için `tr` yedeği yalnızca Türk OLMAYAN kullanıcıda çalışıyordu. Artık `locale → en → tr`.
-- **Premium silme yayılımı eklendi.** Delta senkronu silmeyi haber veremiyor; `syncPremiumQuotes` zaten tüm
-  premium satırları çektiği için o liste otoriter. Boş/hatalı/iptal edilmiş çekimde silme YAPILMIYOR —
-  dört test bu reddetmeleri sabitliyor.
-- İki ölü AsyncStorage anahtarı silindi (`seenToday`, `themeMode`). TODO üç diyordu; `widgetQuoteId`
-  gerçekten kullanılıyor.
-- **Premium sözlerde tema tag'i VAR** — Faz C için şema değişikliği gerekmiyor (spec'teki bilinmez kapandı).
-
-### iOS'u derlenebilir hale getirme ✅
-`eas.json` profil seviyesinde `credentialsSource: "local"` idi ve `credentials.json`'da yalnızca Android
-keystore var — her iOS build'i ilk saniyede düşüyordu. Platform bazlı ayrıldı.
-ATT kuruldu: izin SDK başlatılmadan önce çözülüyor ve sonuç `requestNonPersonalizedAdsOnly`'ye yansıyor
-(eskiden sabit `true` idi, yani izin verilse bile kişiselleştirilmiş reklam alınamıyordu). İzin metni 6 dilde,
-50 SKAdNetwork ID'si eklendi.
-**iOS'ta reklam kapatıldı** — AdMob hesabı kapatıldığı için iOS birimleri yok; birim ID'si boş kalınca kod
-Google'ın `TestIds`'ine düşüyor ve release'de gerçek kullanıcıya test reklamı göstermek başlı başına ihlal.
-
-### Play fiyatları ✅ düzeltildi
-API'den okununca `pro_monthly` **299,99 $/ay** çıktı — ilk girişte ondalık kaymış, yıllığın 15 katı,
-kullanıcı olmadığı için kimse fark etmemiş. Sahibin kararıyla:
-**`pro_monthly` $3.99/ay · `pro_yearly` $35.99/yıl**, 173 bölgeye `convertRegionPrices` + `basePlans` PATCH ile
-yazıldı (regionVersion 2025/03). TR: ₺229,99 ve ₺2.049,99. Türkiye'ye ayrı fiyat konmadı — dönüşüm riski
-olarak belirtildi, kabul edildi.
-
-### RevenueCat zinciri ✅ tamir edildi — oturumun en büyük bulgusu
-Panelde şu çıktı: DriftStop'un **Play Store** kaydında `evolaroa_pro_*` ürünleri vardı (başka bir uygulamanın
-ID'leri, hepsi "Not found"), ve `default` offering yalnızca **Test Store** ürünlerine bağlıydı. Gerçek Play
-ürünleri RevenueCat'e hiç kaydedilmemişti. Yani paywall prodüksiyonda da boş kalacaktı.
-Yapılanlar: gerçek üç ürün Play Console'dan içe aktarıldı (üçü de Published) → entitlement'lar bağlandı
-(`remove_ads` → `no_ads`; iki abonelik → `pro` + `no_ads`) → offering'in üç paketine de Play ürünleri eklendi.
-Emülatörde doğrulandı: *"no Play Store products registered"* hatası **kalktı**.
-
-### Play Developer API erişimi ✅
-Servis hesabı `driftstop-eas@driftstop.iam.gserviceaccount.com`, yalnızca DriftStop'a bağlı, yetkiler:
-üretim sürümü + test kanalı + mağazadaki varlığı yönetme. **`eas submit` otomasyonu artık mümkün.**
-Not: Google, Play Console'daki "API erişimi" sayfasını kaldırmış; yeni akış servis hesabını normal kullanıcı
-gibi davet etmek. Ayrıntı [`STORE-AUTOMATION.md`](STORE-AUTOMATION.md)'de.
+Kapılar: `tsc` temiz · **214/214 test** (oturuma 132 ile başladı) · edge function'lar Deno ile temiz ·
+`expo lint` 11 hata = değişmemiş taban.
 
 ---
 
-## Çözüldü — Android worklets uyuşmazlığı (2026-07-31, akşam)
+## SIRADAKİ İŞ — RevenueCat, üç adım (sahibi "sen yap" dedi)
 
-`[Worklets] Mismatch ... (0.8.3 vs 0.10.1)` → siyah ekran. **Kod hatası değildi.**
+[Products](https://app.revenuecat.com/projects/9019ea60/product-catalog/products) → **DriftStop (App Store)**:
 
-Kök neden ölçüldü ve `prebuild --clean` DEĞİLDİ. `android/` bayat değildi; bayat olan iki ayrı cache'ti:
+1. `pro_monthly` (`prod3ca927c62c`) → *Associated Entitlements* → Attach `pro`, tekrar Attach `no_ads`
+2. `+ New` → Identifier `pro_yearly`, tip **Subscription** → aynı iki entitlement
+3. [Offerings](https://app.revenuecat.com/projects/9019ea60/product-catalog/offerings) → `default`
+   (`ofrng6ee7af37ec`) → **Edit** → `$rc_monthly` ve `$rc_annual` paketlerinde **DriftStop (App Store)**
+   satırına ürünleri seç → **Save**
 
-1. **Native taraf:** `node_modules/react-native-worklets/android/build` ve `.cxx` içinde 0.10.1'den kalma
-   derlenmiş `libworklets.so` duruyordu. CMake bunu güncel sayıyor, üstelik Gradle'ın
-   `~/.gradle/caches/build-cache-1`'i her seferinde geri servis ediyordu — bu yüzden `android/app/build`'i
-   silmek bile yetmiyor, `assembleDebug` "BUILD SUCCESSFUL in 14s" deyip eski `.so`'yu paketliyordu.
-2. **JS taraf:** Metro'nun transform cache'i (`$TMPDIR/metro-*`) 0.10.1 dönemi modülünü tutuyordu.
-   Cache temizlenmeden başlatılan Metro, native düzeldikten SONRA bile uyuşmazlığı geri getiriyor.
+⚠️ **Otomasyon burada takıldı:** entitlement açılır listesi native `<select>` DEĞİL (DIV),
+`form_input` reddediyor; tıklama kabul ediliyor ama değer kaydolmuyor — denendi, `pro_monthly`
+hâlâ "No associated entitlements". Bir dahaki denemede seçeneği tıkladıktan sonra **seçimin
+gerçekten yansıdığını ekran görüntüsüyle doğrula**, sonra Attach'a bas.
 
-Çözüm — ikisini birlikte temizlemek:
-```bash
-rm -rf node_modules/react-native-worklets/android/build node_modules/react-native-worklets/android/.cxx \
-       node_modules/react-native-reanimated/android/build node_modules/react-native-reanimated/android/.cxx \
-       android/app/build android/build ~/.gradle/caches/build-cache-1
-export LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8
-export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
-export ANDROID_HOME="$HOME/Library/Android/sdk"
-npx expo run:android          # --device VERME, adb serisini tanımıyor
-npx expo start --clear        # JS tarafı için ŞART
-```
-Doğrulama: APK'nın içindeki gerçek sürümü oku, zaman damgasına güvenme —
-`unzip -p .../app-debug.apk lib/arm64-v8a/libworklets.so | strings | grep -E '^0\.[0-9]+\.[0-9]+$'`
-→ `0.8.3` çıkmalı. Metro logunda `Mismatch` ve `Cannot find native module` sayısı **0** olmalı
-(ikinci hata birincisinin sonucu: worklets JSI kurulumunda patlayınca expo-modules-core'un modül kaydı
-hiç yüklenmiyor, o yüzden `ExpoLocalization` bile "bulunamıyor").
+Bu üçü bitince: iOS build → paywall dolar → abonelik grubu için **inceleme ekran görüntüsü**
+üretilebilir (Apple satın alma arayüzünün göründüğü bir kare istiyor; paywall boşken üretmek
+Apple'a yanlış bilgi vermek olur) → TestFlight.
 
-### Bu makinede tekrar edecek iki tuzak
+---
 
-- **`lsof -ti:8081 | xargs kill -9` emülatörü de öldürüyor.** Emülatör süreci Metro'ya bağlı olduğu için
-  o listede çıkıyor. Metro'yu pid'iyle değil, port taramasıyla öldürmek AVD'yi düşürüyor.
-- Emülatörü `nohup ... &` ile başlatmak yetmiyor; araç çağrısı bitince süreç toplanıyor. Uzun ömürlü bir
-  arka plan görevi olarak başlatılmalı.
-- Emülatörün `/data` diski dolabiliyor: 95 MB'lık debug APK `INSTALL_FAILED_INSUFFICIENT_STORAGE` veriyor.
-  Önce `adb uninstall com.driftstop.app`.
-- Soğuk JS başlangıcı bu AVD'de **~1,5-2 dakika**. Bu süre içinde alınan ekran görüntüsü siyah çıkar ve
-  hataya benzer; bekle.
+## Bu oturumda bitenler
 
-## Paywall — hâlâ ekranda doğrulanmadı, sebebi config değil
+### Play — yayınlandı
+- `1.1.0 (versionCode 14)` alpha'ya **yüklendi** (`eas submit`, Play API'den doğrulandı: alpha `completed:14`).
+  Mağazadaki önceki sürüm 11'di.
+- `eas submit` artık `eas.json`'da ayarlı — 86 MB'lık elle sürükle-bırak yükleme tarihe karıştı.
+- **İlk build hata verdi ve sebebi gerçek bir engeldi:** iOS ATT metni Expo'nun kök `locales`
+  ayarı üzerinden Android `strings.xml`'ine de yazılıyordu; varsayılan dilde karşılığı olmayınca
+  lint `ExtraTranslation` diyor ve `lintVitalRelease` release build'lerde ölümcül. **ATT
+  değişikliğinden bu yana hiçbir Android release build'i alınamıyordu.** SDK 56 dokümanı: platforma
+  özel metinler locale dosyasının İÇİNDE `ios`/`android` anahtarı altında olmalı. Düzeltildi,
+  iki native proje yeniden üretilip doğrulandı (Android dil dosyaları boş, iOS'un altı `.lproj`
+  dosyası metni taşıyor).
 
-Paywall açılıyor ama boş durum metnini gösteriyor:
-`BILLING_UNAVAILABLE — Billing service unavailable on device`. Emülatörde **hiç Google hesabı yok**
-(`adb shell dumpsys account` → 0 hesap). Android'de RevenueCat ürün metadata'sını Play Billing üzerinden
-çekiyor, yani Billing yoksa hiç ürün gelmiyor. **Devir notunun eski hâlindeki "emülatörde ürünler ve
-fiyatlar yine listelenmeli" beklentisi yanlıştı.**
+### Faz B — kartsız 7 günlük deneme (tamam)
+`services/trial.ts` (saf, zaman enjekte edilebilir) · `useTrial` provider · **`useEntitlement`
+tek yetki kaynağı** · `usePremiumCacheGuard` denemeyi tanıyor · `useAdSuppression` ·
+`useTrialLifecycle` (frekans → yeniden planlama → ekran sırası) · `/trial-ended` ekranı ·
+6./7. gün uyarıları **ayrı kanalda** ve günlük kotayı yemiyor · 8 dilde metin.
 
-Sunucu tarafı Play API'den doğrulandı: `pro_monthly` ACTIVE / 173 bölge / $3.99 / ₺229,99 ·
-`pro_yearly` ACTIVE / 173 bölge / $35.99 / ₺2.049,99. `remove_ads` okunamadı — eski `inappproducts`
-endpoint'i artık `403 "Please migrate to the new publishing API"` veriyor.
+Emülatörde uçtan uca doğrulandı: deneme aktifken 10 bildirim seçilebiliyor + reklam yok;
+bitince frekans 10→3 düşüyor, kilitler ve reklamlar dönüyor, bitiş ekranı **bir kez** açılıyor.
+**Giriş yapmış deneme kullanıcısı 3.325 premium sözü indirdi** (`trials` satırı tam 7 gün) —
+migration 0007'nin ilk cihaz kanıtı. Hesap silme `auth.users` + `profiles` + `trials`'ı
+cascade ile siliyor, yerel premium cache 3.325 → 0, ücretsiz 1.000 duruyor.
 
-Ekran kanıtı için gereken: emülatörün Play Store'una kapalı testte lisanslı bir Google hesabıyla giriş
-yapmak (sahibin yapması gerekiyor) ya da internal testing build'ini gerçek cihaza kurmak.
+### Bulunan ve düzeltilen hatalar
+- **`remove_ads` canlıda $299.99 / ₺16.859,99 idi** (173 bölge, ACTIVE). `pro_monthly`'deki ondalık
+  kaymasının aynısı, bu ürüne hiç bakılmamış. Sahibin kararı "reklamsızlık ayrı ürün değil, Pro
+  ile geliyor" → Play'de INACTIVE, RevenueCat offering'inden `$rc_lifetime` çıkarıldı, ASC'den silindi.
+  `no_ads` entitlement'ı ve `isAdsRemoved` mantığı **bilerek duruyor** (Pro da `no_ads` veriyor).
+- **Paket tarayıcısı iOS'ta erişilemezdi** — `/packs`'e giden tek link `purchasesConfigured`'a bağlıydı.
+- **Geçiş reklamı neredeyse hiç çıkmıyordu** — 4 dk aralık açılıştan işliyordu, 12 kaydırma eşiğiyle
+  birleşince tipik oturumda sıfır. Açılış payı ve reklam aralığı ayrıldı.
+- **Auth ekranı:** klavye gönder butonunu örtüyordu (`KeyboardAvoidingView` Android'de no-op),
+  klavyeden gönderilemiyordu, onay maili gelmezse çıkmaz vardı → ScrollView + `onSubmitEditing` +
+  `resendConfirmation`.
+- **Şifre sıfırlama yoktu** — eklendi. Pro hakkı hesaba bağlı olduğu için gelir kaybıydı.
+- Paywall her satın almada "reklamlar kapandı" diyordu · "Sync (soon)" kaldırıldı ·
+  paket ekranı 122 satırı düz ScrollView'da basıyordu → FlatList · emekli paketler silinmiyordu.
 
-## Sıradaki işler (spec sırası)
+### Test ve altyapı
+- **`scheduler.ts` için 27 test** — çekirdeğin sıfır testi vardı, regresyonu sessizdi.
+- Edge function'lar artık kontrolsüz değil: `npm run typecheck:functions` (Deno), ikisi de temiz.
+- `revenuecat-webhook` **yeniden deploy edildi**, canlıda doğrulandı (`GET`→405, yetkisiz `POST`→401).
+- AdMob test cihazı desteği (`EXPO_PUBLIC_ADMOB_TEST_DEVICE_IDS`, `initialize()`'dan ÖNCE uygulanıyor).
 
-| # | İş | Not |
-|---|---|---|
-| 1 | Faz F kalanı | Uzun listelerde sanallaştırma kontrolü (3.325 sözlük yazar listesi düz `map` ise ucuz cihaz kilitlenir); minSdk/deployment target belgeleme (iOS **16.4** doğrulandı, Android'inki Gradle `ext`'ten geliyor) |
-| ~~2~~ | ~~**Faz B — kartsız 7 günlük deneme**~~ **BİTTİ 2026-07-31** (`48dae60`, `326e401`). Kalan tek şey: oturum açmış deneme kullanıcısının premium sözleri gerçekten indirdiğini bir cihazda görmek | En riskli faz. `useEntitlement` tek kaynak olacak; ⚠️ `usePremiumCacheGuard` denemeyi TANIMAK ZORUNDA, yoksa deneme kullanıcısının 3.325 satırlık premium cache'ini her açılışta siler. Sunucu tarafı: misafir kullanıcı çoğunlukta olacağı için deneme cihazda başlar, kullanıcı giriş yaparsa Supabase ile uzlaştırılır (yeni tablo + RLS) |
-| 3 | Faz C — premium sözler bildirim havuzuna | Tag'ler hazır. `scheduler.ts` SQLite'tan okuyacak; yetki bitince planlı bildirimler yeniden kurulmalı. `scheduler.ts` için hâlâ **sıfır test** var |
-| 4 | Faz D — karşılama akışı | 3 soru + kişisel söz + "7 gün açık". Metinler onaylandı, 6 dile çevrilecek. ⚠️ Paywall alt satırında **"Sync (soon)"** duruyor — senkron yapılmadı ve kapsam dışı, bu metin düzeltilmeli |
-| 5 | Faz E — AppLovin MAX | `react-native-applovin-max` 9.6.0. **Resmî Expo config plugin'i yok**, `plugins/withAppLovin.js` yazılacak. Kullanıcıdan: hesap + SDK Key + 4 reklam birimi |
-| 6 | Faz H — yayın | iOS: RevenueCat `appl_` anahtarı, ASC uygulama kaydı, IAP ürünleri, App Privacy, 6.9" screenshot. Android: v12 (⚠️ `3e36793` ve `e6db845` güvenlik düzeltmeleri **hiçbir build'de yok**), 12 tester |
+### iOS kurulumu
+Bundle ID kaydı · ASC uygulama kaydı (sahibi oluşturdu) · abonelik grubu + iki abonelik +
+yerelleştirmeler · **fiyatlar $3.99 / $35.99, 175 ülke** · availability tüm ülkeler ·
+mağaza metinleri (açıklama/anahtar kelimeler/promo/alt başlık/URL'ler) API'den ·
+AdMob iOS uygulaması + iki birim · `adsEnabled` iOS'a açıldı · `appl_` anahtarı env'e yazıldı ·
+App Privacy cevapları [`APP-PRIVACY.md`](APP-PRIVACY.md)'de.
+
+**iOS Release build simülatörde çalıştı** ve ATT istemi ekranda göründü (değişiklikten önce
+`initAds` iOS'ta erken dönüyordu, istem hiç çıkmıyordu).
+
+---
+
+## Kimlik ve id tablosu
+
+| Ne | Değer |
+|---|---|
+| RevenueCat proje | `9019ea60` · App Store app `app7ff0fee28c` · offering `ofrng6ee7af37ec` |
+| RevenueCat iOS SDK anahtarı | `appl_UchWQUYfuwoHfUigBzkTRCntwVE` (`.env` + EAS production/preview) |
+| IAP anahtarı | `BVNHR2U7ST` — EvolaRoa için yüklenmişti, takım seviyesinde geçerli, RevenueCat'te seçildi |
+| ASC | app `6797533621` · grup `22283837` · `pro_monthly` `6797551481` · `pro_yearly` `6797551678` |
+| Bundle ID kaydı | `TCG8J4F9P8` (`com.driftstop.app`) |
+| AdMob yayıncı | `pub-6963122807813930` |
+| AdMob Android | app `~1493084605` · banner `/2682757204` · interstitial `/8223124425` |
+| AdMob iOS | app `~4613840458` · banner `/8083026183` · interstitial `/6023270839` |
+| ASC API anahtarı | `~/.driftstop-secrets/AuthKey_2B4CL4C8CB.p8` · Issuer `bc64b7a2-f7c3-45f5-b073-2c4083fa3b0c` |
 
 ---
 
 ## Sahipten bekleyenler
 
-1. **RevenueCat iOS anahtarı** (`appl_...`) → `.env` + `eas env:create`. Yoksa iOS'ta paywall/Pro kartı hiç
-   render edilmiyor, yani Pro bedavaya gidiyor.
-2. **ASC'de DriftStop uygulama kaydı** — API'ye soruldu, `pomoPet` ve `EvolaRoa` dışında bir şey yok.
-   İsim rezerve mi edildi, yoksa başka Apple hesabında mı, netleşmedi.
-3. **AppLovin hesabı** + SDK Key + 4 reklam birimi.
-4. **AdMob itirazı** — hesap "dürüst olmayan beyanlar" gerekçesiyle kapatıldı, **her iki platformda reklam
-   geliri sıfır**. İtiraz metni için gerekli iki bilgi hâlâ alınmadı: kapatılan hesabın hangi mülke ait olduğu
-   ve daha önce başka bir AdSense/AdMob hesabı olup olmadığı.
+1. **Gerçek cihazda satın alma testi** — alpha build'i telefona kur, paywall'da iki aboneliği gerçek
+   fiyatlarla gör, bir satın alma tamamla. **Gelir yolunun hâlâ hiçbir kanıtı yok**, emülatörde
+   Play Billing olmadığı için sadece gerçek cihaz gösterebilir.
+2. **12 testçi** — başladı, tamamlanmalı. 14 günlük sayaç onlarla işliyor; üretime çıkışın takvim engeli.
+3. **DSA tüccar beyanı** — ASC → Business → Digital Services Act. Active mi? API bu alanı vermiyor.
+4. **App Privacy / yaş derecelendirmesi / kategori / export compliance** — cevaplar hazır, tıklamak sahibin.
+5. **App Review'a gönder** düğmesi.
 
 ---
 
-## Kimlik bilgileri (yerinde, çalışıyor)
+## Bu makinede tekrar edecek tuzaklar
 
-| Ne | Nerede |
-|---|---|
-| ASC API Key | `~/.driftstop-secrets/AuthKey_2B4CL4C8CB.p8` · Issuer `bc64b7a2-f7c3-45f5-b073-2c4083fa3b0c` · Team `J8FX8G238M` |
-| Play servis hesabı | `credentials/driftstop-891f4e9df260.json` (gitignore'da) |
-| RevenueCat servis hesabı | `credentials/extreme-lattice-470518-d8-4a3d57098d76.json` |
+- **AdMob: her zaman `?authuser=1`.** Chrome'un birincil hesabı AdMob'un **kapattığı** eski hesap;
+  düz açılınca "Hesabınız kapatıldı" gelir ve yeni hesabın öldüğü sanılır. Ayrıntı `OPERATIONS.md`'de.
+- **Play tek seferlik ürünler:** `inappproducts` 403, `onetimeproducts` 404, **`oneTimeProducts`
+  (camelCase) 200.** $299.99'un aylarca fark edilmemesinin sebebi buydu. `STORE-AUTOMATION.md`'de.
+- **ASC fiyat API'si kullanılamıyor:** `POST /v1/subscriptionPrices` dört istek şeklinde de
+  `409 ENTITY_ERROR.RELATIONSHIP.INVALID`. Fiyatlar arayüzden girildi. Availability API'den sorunsuz.
+- **ASC arayüzünde `$35.99` fiyat listesinde YOK**, arama da "No Results" der —
+  **"See Additional Prices"** linkine basınca çıkıyor.
+- **Metro transform cache'i worklets sürümünü saklıyor.** Siyah ekran + "Mismatch between JavaScript
+  and native part of Worklets" görürsen `npx expo start --clear`. Ayrıca
+  `node_modules/react-native-worklets/android/build` ve `.cxx` eski `.so`'yu tutabiliyor;
+  Gradle build-cache'i de geri servis ediyor.
+- **Dev client `10.0.2.2:8081`'e sabit.** Sahibin diğer projeleri (milkteeth, stillflame) o portu
+  alabiliyor; o zaman DriftStop başka projenin bundle'ını çeker. Mağaza görselleri için zaten
+  **Release build** doğrusu — Metro'ya hiç ihtiyaç yok.
+- **`lsof -ti:8081 | xargs kill -9` YAPMA** — emülatör süreci de o portta listelenir, onu da öldürür.
 
-Apple hesabı tarafı tamamen hazır: Paid Apps ✅ · banka ✅ · W-8BEN ✅ · DSA 🕐 incelemede.
+---
 
-## Bu makinede tekrar edecek ortam sorunları
+## Temizlik notları
 
-Ajan kabuğu `LANG`, `JAVA_HOME` ve `ANDROID_HOME` olmadan başlıyor. Üçü de
-[`STORE-AUTOMATION.md`](STORE-AUTOMATION.md) Bölüm 3'teki tuzaklar tablosunda çözümleriyle yazılı.
+- `DriftStop (Play Store)` altında `evolaroa_pro_yearly/monthly/weekly` ürünleri **"Not found"**
+  olarak duruyor — ilk yanlış yapılandırmadan kalma çöp, silinebilir.
+- Mağaza ekran görüntüleri (6.9", 1320×2868: ana ekran, ayarlar, onboarding) oturumun geçici
+  dizininde üretildi ve **kaybolmuş olacak**. Release build `DerivedData`'da duruyorsa yeniden
+  üretmek dakikalar sürer.
+- Play'de uygulama herkese açık olduğunda **AdMob → Mağaza ekle** ile bağlanmalı; "sınırlı reklam
+  sunumu" limiti ancak o zaman kalkıyor. İlk günlerde reklam görünmemesi normal.
+- Kalan cihaz QA'sı: favoriler, altı dil ekranda, saat aralığı doğrulaması, widget, bildirimden
+  derin bağlantı, çevrimdışı. Hiçbiri sürülmedi.
