@@ -103,6 +103,32 @@ Paywall offering'den ne gelirse onu basıyor, yani satış yolu kendiliğinden k
 $299.99 kaydı INACTIVE bir seçenekte duruyor. Bir gün gerçekten satılacaksa fiyat
 kasıtlı olarak belirlenmeli.
 
+
+### iOS ürün kurulumu tamam (2026-08-03)
+
+App Store Connect tarafı bitti. `pro_monthly` **$3.99**, `pro_yearly` **$35.99**, ikisi de
+**175 ülkeye** türetilmiş fiyatlarla ve "All countries or regions" availability ile.
+Yerelleştirmeler (ad + açıklama) ve `DriftStop Pro` grup adı girildi.
+
+İkisi de `MISSING_METADATA` / "Prepare for Submission" durumunda ve **bu bir eksiklik
+değil**: Apple'ın kendi uyarısı diyor ki *"Your first auto-renewable subscription must be
+submitted with a new app version."* İlk abonelik ancak bir build ile birlikte incelemeye
+gider.
+
+**Fiyat API'si kullanılamadı, arayüzden yapıldı.** `POST /v1/subscriptionPrices` dört farklı
+istek şeklinde de `409 ENTITY_ERROR.RELATIONSHIP.INVALID` verdi (yerelleştirme eklendikten
+sonra bile). Fiyat noktası id'leri doğruydu — `$3.99` ve `$35.99` ikisi de API'de mevcut.
+Sebep bulunamadı; arayüz ürün başına birkaç tıklama, oradan girildi. Availability ise
+API'den sorunsuz kuruldu (`POST /v1/subscriptionAvailabilities`, 175 ülke).
+
+**Arayüzde bir tuzak:** `$35.99` fiyat dropdown'ında görünmüyor, arama da "No Results"
+diyor. **"See Additional Prices"** linkine basınca çıkıyor. Apple bazı fiyat noktalarını
+varsayılan listede saklıyor; Play ile fiyat eşitlemeye çalışan biri burada takılır.
+
+**Kalan iOS engelleri:** RevenueCat `appl_` anahtarı (özel `.p8` yüklemesi — sahibin işi),
+sonra bir build, sonra abonelik grubunun inceleme ekran görüntüsü (paywall'ın dolması
+`appl_`'a bağlı olduğu için ondan önce üretilemez).
+
 ## Needs device QA (not blocked on you)
 
 - **Cached-premium purge/restore (finding #8, fixed in code 2026-07-25).** Cannot be verified without a device and a real RevenueCat entitlement. Sequence for `qa-tester`: grant Pro → open a premium pack so content syncs → favorite one premium quote and one free quote → revoke Pro (or sign out) → relaunch → the premium favorite must show the locked row (not a blank card, not a vanished favorite), the free favorite must be untouched, pack detail must be locked again, and pack/author *counts* must still be visible → re-grant Pro → relaunch → premium content and the favorite must come back within a few seconds.
