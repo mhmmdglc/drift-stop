@@ -8,6 +8,25 @@ Scope: this is the *operational* doc. Product/architecture rationale lives in [b
 
 ---
 
+
+### ⚠️ AdMob: her zaman `?authuser=1` ile aç
+
+Bu Mac'teki Chrome'un **birincil** Google hesabı, AdMob'un **kapattığı eski hesap**.
+`admob.google.com` düz açıldığında "Hesabınız kapatıldı" ekranına düşüyor ve yeni hesabın
+öldüğü sanılıyor — bir oturum tam olarak buna zaman kaybetti.
+
+Yeni (çalışan) yayıncı hesabı `authuser=1`:
+
+```
+https://admob.google.com/v2/apps/list?authuser=1
+```
+
+Yeni hesabın yayıncı kimliği `pub-6963122807813930`. Android tarafı orada kurulu:
+uygulama `DriftStop` (`ca-app-pub-6963122807813930~1493084605`), banner ve geçiş
+birimleri aktif. Ayrıca AdMob oturumu sık düşüyor; düştüğünde tarayıcıdan Google
+girişi gerekiyor ve bunu ajan yapamaz (kimlik bilgisi girişi).
+
+
 ## Table of contents
 
 1. [Accounts & ownership](#1-accounts--ownership)
