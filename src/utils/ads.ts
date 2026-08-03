@@ -7,17 +7,20 @@ import { AdUnits } from '@/constants/adUnits';
 
 /**
  * Expo Go'da native reklam modülü yoktur → reklamlar devre dışı.
- * Development/production build'de aktif.
+ * Development/production build'de iki platformda da aktif.
  *
- * ⚠️ iOS v1'de reklam KAPALI. Sebebi: AdMob yayıncı hesabı
- * (ca-app-pub-3817081931651779) politika ihlali nedeniyle kapatıldı, dolayısıyla
- * iOS reklam birimleri hiç oluşturulamadı. Birim ID'si boş kalınca `AdUnits`
- * Google'ın TestIds'ine düşüyor — release'de gerçek kullanıcıya test reklamı
- * göstermek başlı başına politika ihlali, o yüzden platformu tamamen kapatıyoruz.
- * ATT istemi de buna bağlı: `initAds` erken döndüğü için iOS'ta izin sorulmuyor.
- * Hesap itirazı sonuçlanıp iOS birimleri açılınca burayı geri al.
+ * iOS artık DIŞLANMIYOR. Eskiden `Platform.OS !== 'ios'` vardı çünkü eski AdMob
+ * yayıncı hesabı (ca-app-pub-3817081931651779) kapatılmıştı ve iOS birimleri hiç
+ * oluşturulamıyordu; birim ID'si boşken kod Google'ın `TestIds`'ine düşüyordu, o da
+ * release'de gerçek kullanıcıya test reklamı göstermek demekti. İki şey değişti:
+ * yeni hesapta iOS birimleri açıldı, ve `constants/adUnits.ts` artık boş ID'de
+ * `null` dönüyor (test birimine düşmüyor). Yani platform kapısına gerek kalmadı.
+ *
+ * ATT istemi de buna bağlıydı: `initAds` iOS'ta erken döndüğü için izin hiç
+ * sorulmuyordu. Artık soruluyor ve sonucu `requestNonPersonalizedAdsOnly`'ye
+ * yansıyor (bkz. `resolveTrackingPermission`).
  */
-export const adsEnabled = Constants.appOwnership !== 'expo' && Platform.OS !== 'ios';
+export const adsEnabled = Constants.appOwnership !== 'expo';
 
 /** İki interstitial ARASINDA en az bu kadar süre olsun (kullanıcıyı darlamamak için). */
 const MIN_INTERSTITIAL_GAP_MS = 4 * 60 * 1000; // 4 dakika

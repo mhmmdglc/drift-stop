@@ -29,12 +29,12 @@ describe('AdMob app id yapılandırması', () => {
     expect(ads?.androidAppId ?? '').not.toContain(GOOGLE_SAMPLE_APP_ID);
   });
 
-  it.failing('iOS app id Google’ın ÖRNEK id’si değil', () => {
-    // BİLEREK `it.failing`: `app.json:iosAppId` şu an hâlâ Google'ın örnek
-    // yayıncı id'si. AdMob hesabı kapatıldığı için gerçek bir iOS id'si YOK ve
-    // uydurulamaz. Bu test, gerçek id girildiği gün kendiliğinden "beklenmedik
-    // şekilde geçti" diye patlar ve `it.failing` kaldırılır — yani yapılacak iş
-    // sessizce unutulamaz. iOS App Store'a gönderim öncesi kapatılması ZORUNLU.
+  it('iOS app id Google’ın ÖRNEK id’si değil', () => {
+    // Bu test bir dönem `it.failing` idi: iOS app id'si Google'ın örnek yayıncı
+    // id'siydi çünkü eski AdMob hesabı kapatılmıştı ve gerçek bir id yoktu.
+    // Tuzak işini yaptı — gerçek id girildiği gün "beklenmedik şekilde geçti"
+    // diye patladı ve iş sessizce unutulamadı. Artık normal bir korumaya döndü:
+    // örnek id'nin geri sızması build'i değil testi kırar.
     expect(ads?.iosAppId ?? '').not.toContain(GOOGLE_SAMPLE_APP_ID);
   });
 });
