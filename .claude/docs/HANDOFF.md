@@ -70,11 +70,33 @@ xcrun altool --upload-app -f app.ipa -t ios \
 Yükleme bittikten sonra Apple'ın işlemesi ~3 dakika; `GET /v1/builds?filter[app]=6797533621`
 ile `processingState` izlenebilir.
 
-### Sıradaki iş
+## Paywall iOS'ta doğrulandı (2026-08-04) — ama satın alma HÂLÂ denenmedi
 
-**Paywall dolu mu, TestFlight'ta gerçek cihazda bak** → abonelik grubu için **inceleme ekran
-görüntüsü** (Apple satın alma arayüzünün göründüğü bir kare istiyor; paywall boşken üretmek
-Apple'a yanlış bilgi vermek olur) → App Review formları → gönder.
+Sahibin iPhone'u yok (Samsung), o yüzden TestFlight yolu kapalı; doğrulama **simülatörde**
+yapıldı. Release build (`xcodebuild -sdk iphonesimulator`, `CODE_SIGNING_ALLOWED=NO`) kuruldu
+ve paywall açıldı:
+
+- **Pro — Yearly `$35.99`** ve **Pro — Monthly `$3.99`** ikisi de listelendi.
+- Fiyatlar **StoreKit'ten** geliyor: `paywall.tsx:147` → `pkg.product.priceString`.
+  Kaynakta `3.99`/`35.99` için **sıfır** eşleşme var, yani sabit yazılmış değil.
+- Ayarlar'da **Pro kartı iOS'ta artık görünüyor** — `purchasesConfigured` true, TODO'daki
+  1 numaralı "iOS'ta hiç para kazanma yok" maddesi kapandı.
+
+Bu **RevenueCat ↔ App Store bağının çalıştığını** kanıtlıyor. **Kanıtlamadığı şey: gerçek bir
+satın alma.** Simülatörde işlem yapılamıyor. Gelir yolunun tam kanıtı hâlâ yok; ödünç bir
+iPhone + TestFlight ya da App Review'ın kendi testi bunu gösterecek.
+
+### Abonelik inceleme görseli — yüklendi
+
+`MISSING_METADATA`'nın tek sebebi bu görselin olmamasıydı (fiyatlar 175 bölgede, `en-US`
+metinleri yerinde). Yukarıdaki paywall ekranı `simctl io ... screenshot` ile alınıp ASC API
+ile iki aboneliğe de yüklendi (rezervasyon → `PUT` → `PATCH uploaded:true` + md5 checksum).
+**İkisi de artık `READY_TO_SUBMIT`.**
+
+### Sıradaki iş — hepsi sahibin tıklaması
+
+App Privacy · yaş derecelendirmesi · kategori · DSA beyanı → sürüm sayfasında build `3`'ü
+seç → **Add for Review**.
 
 ### RevenueCat — bitti (2026-08-04)
 
