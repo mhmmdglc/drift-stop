@@ -93,10 +93,39 @@ metinleri yerinde). Yukarıdaki paywall ekranı `simctl io ... screenshot` ile a
 ile iki aboneliğe de yüklendi (rezervasyon → `PUT` → `PATCH uploaded:true` + md5 checksum).
 **İkisi de artık `READY_TO_SUBMIT`.**
 
-### Sıradaki iş — hepsi sahibin tıklaması
+## App Store gönderim formları — 2026-08-04'te dolduruldu
 
-App Privacy · yaş derecelendirmesi · kategori · DSA beyanı → sürüm sayfasında build `3`'ü
-seç → **Add for Review**.
+| Form | Durum | Nasıl |
+|---|---|---|
+| Kategori | Health & Fitness / Lifestyle | ASC API, `PATCH /v1/appInfos/{id}` |
+| Yaş derecelendirmesi | **4+** (Brezilya `SELF_RATED_L`) | `PATCH /v1/ageRatingDeclarations/{id}` |
+| App Privacy | 9 veri türü, **yayımlandı** | tarayıcı — **API'de yok** |
+| Gizlilik politikası URL'si | iki yerelde de girili | `PATCH /v1/appInfoLocalizations/{id}` |
+| Abonelik inceleme görseli | ikisi de `READY_TO_SUBMIT` | `POST /v1/subscriptionAppStoreReviewScreenshots` |
+| Mağaza ekran görüntüleri | 3 görsel × 2 yerel | `POST /v1/appScreenshotSets` + `/v1/appScreenshots` |
+| Sürüm → build | `1.1.0` ← build `3` | `PATCH /v1/appStoreVersions/{id}` |
+| DSA tüccar beyanı | **In Review** (sahibi 29 Tem'de girmiş) | ASC → Business |
+
+### Bu turda öğrenilen API tuzakları
+
+- **Yaş derecelendirmesi 2025'te değişti:** 22 zorunlu alan var, bir kısmı artık **boolean**
+  (`advertising`, `healthOrWellnessTopics`, `userGeneratedContent`, `messagingAndChat`,
+  `parentalControls`, `ageAssurance`), kalanı `NONE`/`INFREQUENT_OR_MILD`/... enum'u.
+  Boş `attributes:{}` ile PATCH atıp hata listesinden zorunlu alanları öğrenebilirsin.
+- **`APP_IPHONE_69` diye bir ekran görüntüsü tipi YOK.** 6.9" (1320×2868) görseller
+  **`APP_IPHONE_67`** yuvasına yükleniyor.
+- **App Privacy anketi API'de yok** — `appDataUsages`/`appPrivacyDetails` yolları 404,
+  uygulamanın ilişkileri arasında da geçmiyor. Tarayıcıdan doldurmak zorunlu.
+- ASC sürüm kaydı `1.0` iken build `1.1.0`'dı; **sürüm numarası eşleşmeden build seçilemiyor.**
+- Gizlilik URL'si `en-US`'de vardı, **`en-GB`'de yoktu** ve arayüz U.K. yerelini gösterdiği için
+  "boş" görünüyordu. Yerel başına ayrı alan.
+
+### Sıradaki iş
+
+1. **App Review iletişim bilgileri** — `appStoreReviewDetail` **boş** (`data: null`).
+   Ad, soyad, **telefon**, e-posta gerekiyor; telefon numarası sahibinden alınmalı,
+   uydurulamaz. Demo hesap gerekmiyor (uygulama misafir modunda tam çalışıyor).
+2. **Add for Review → Submit.**
 
 ### RevenueCat — bitti (2026-08-04)
 
