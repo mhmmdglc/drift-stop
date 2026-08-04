@@ -18,11 +18,36 @@ Kapılar: `tsc` temiz · **214/214 test** (oturuma 132 ile başladı) · edge fu
 
 ---
 
-## SIRADAKİ İŞ — iOS build
+## SIRADAKİ İŞ — iOS build, tek engel: Apple imza kimlikleri
 
-RevenueCat tarafı kapandı, önündeki engel kalktı. Sıra: **iOS build → paywall dolar → abonelik
-grubu için inceleme ekran görüntüsü** (Apple satın alma arayüzünün göründüğü bir kare istiyor;
-paywall boşken üretmek Apple'a yanlış bilgi vermek olur) **→ TestFlight**.
+RevenueCat tarafı kapandı. Build **denendi ve EAS'e ulaştı**; production env'i doğru yükledi
+(sekiz `EXPO_PUBLIC_*` değişkeni, `EXPO_PUBLIC_REVENUECAT_IOS_API_KEY` dahil — kural #1 tamam).
+Takıldığı tek yer:
+
+```
+✔ Using remote iOS credentials (Expo server)
+Distribution Certificate is not validated for non-interactive builds.
+Credentials are not set up. Run this command again in interactive mode.
+```
+
+Projenin **hiç iOS EAS build'i yok** (`eas build:list --platform ios` boş), yani dağıtım
+sertifikası ve provisioning profile henüz üretilmemiş. `eas.json` → `production.ios.credentialsSource`
+`"remote"`, yani bunları EAS üretecek — ama **Apple hesabına interaktif giriş** istiyor
+(şifre + 2FA). ASC API anahtarını `EXPO_ASC_API_KEY_PATH` / `EXPO_ASC_KEY_ID` / `EXPO_ASC_ISSUER_ID`
+olarak vermek **yetmedi**; `--non-interactive` yine reddetti.
+
+**Sahibin çalıştırması gereken, bir kerelik:**
+
+```
+npx eas build --platform ios --profile production
+```
+
+Apple girişini yapıp sertifika/profil üretilmesine izin verdikten sonra aynı komut (ve sonraki
+tüm build'ler) `--non-interactive` ile agent tarafından sürülebilir.
+
+Build çıkınca sıra: **paywall dolar → abonelik grubu için inceleme ekran görüntüsü**
+(Apple satın alma arayüzünün göründüğü bir kare istiyor; paywall boşken üretmek Apple'a
+yanlış bilgi vermek olur) **→ TestFlight**.
 
 ### RevenueCat — bitti (2026-08-04)
 
@@ -119,6 +144,8 @@ App Privacy cevapları [`APP-PRIVACY.md`](APP-PRIVACY.md)'de.
 
 ## Sahipten bekleyenler
 
+0. **`npx eas build --platform ios --profile production` — interaktif, bir kerelik.** Apple imza
+   kimlikleri üretilsin diye. iOS'un önündeki tek engel bu; ayrıntı yukarıda.
 1. **Gerçek cihazda satın alma testi** — alpha build'i telefona kur, paywall'da iki aboneliği gerçek
    fiyatlarla gör, bir satın alma tamamla. **Gelir yolunun hâlâ hiçbir kanıtı yok**, emülatörde
    Play Billing olmadığı için sadece gerçek cihaz gösterebilir.
