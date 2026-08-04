@@ -10,8 +10,10 @@ Bir önceki devir notu 2026-07-31'deydi ve artık bayat — bu onu değiştiriyo
 ## Tek satırlık durum
 
 **Android canlı:** `1.1.0 (versionCode 14)` Play kapalı test → **alpha** kanalında.
-**iOS ilk build'i alındı:** `1.1.0 (buildNumber 3)` EAS'te **başarılı**; imza kimlikleri kuruldu,
-RevenueCat tarafı bitti. TestFlight yüklemesi başlatıldı — sonucu aşağıda.
+**iOS App Store Connect'te:** `1.1.0 (buildNumber 3)` yüklendi ve **`processingState: VALID`**
+(build id `c8e21a7e-26e0-4995-9ce9-3c6a3c3cc656`, 2026-08-04). İmza kimlikleri kuruldu,
+RevenueCat tarafı bitti, export compliance takılmıyor. **iOS'ta kalan teknik iş yok** —
+sırada cihazda doğrulama ve inceleme formları var.
 
 Kapılar: `tsc` temiz · **214/214 test** (oturuma 132 ile başladı) · edge function'lar Deno ile temiz ·
 `expo lint` 11 hata = değişmemiş taban.
@@ -48,11 +50,31 @@ capability / aps-environment entitlement"*. `com.driftstop.app`'te push yetkisi 
 (`PUSH_NOTIFICATIONS`) ile açıldı, **sonra profil silinip yeniden üretildi** (yetki değişince
 eski profil geçersiz kalıyor, Apple yenilemeyi şart koşuyor). İkinci build geçti.
 
+## ⚠️ EAS Submit ücretsiz kuyrukta saatlerce bekliyor — `altool` ile bypass edin
+
+`eas submit --platform ios` işi **EAS'in Free Tier Queue'suna** giriyor ve orada
+**bir saatten fazla** `Queued` durumunda bekledi; bu sırada CLI hiçbir şey basmıyor ve
+App Store Connect'te iz olmuyor. **Takılmış gibi görünüyor ama takılmamış.** İlk deneme bu
+yüzden yanlışlıkla öldürüldü ve kuyruk sırası kaybedildi.
+
+Kuyruğu tamamen atlayıp Apple'a doğrudan yüklemek **36 saniye** sürdü:
+
+```
+curl -sSL -o app.ipa "<EAS build artifact URL>"
+cp ~/.driftstop-secrets/AuthKey_2B4CL4C8CB.p8 ~/.appstoreconnect/private_keys/
+xcrun altool --upload-app -f app.ipa -t ios \
+  --apiKey 2B4CL4C8CB --apiIssuer bc64b7a2-f7c3-45f5-b073-2c4083fa3b0c
+```
+
+`altool` anahtarı **`~/.appstoreconnect/private_keys/`** altında arıyor, başka yerden okumuyor.
+Yükleme bittikten sonra Apple'ın işlemesi ~3 dakika; `GET /v1/builds?filter[app]=6797533621`
+ile `processingState` izlenebilir.
+
 ### Sıradaki iş
 
-**Paywall dolu mu, gerçek cihazda bak** → abonelik grubu için **inceleme ekran görüntüsü**
-(Apple satın alma arayüzünün göründüğü bir kare istiyor; paywall boşken üretmek Apple'a
-yanlış bilgi vermek olur) → App Review formları → gönder.
+**Paywall dolu mu, TestFlight'ta gerçek cihazda bak** → abonelik grubu için **inceleme ekran
+görüntüsü** (Apple satın alma arayüzünün göründüğü bir kare istiyor; paywall boşken üretmek
+Apple'a yanlış bilgi vermek olur) → App Review formları → gönder.
 
 ### RevenueCat — bitti (2026-08-04)
 
