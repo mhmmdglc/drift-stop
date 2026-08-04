@@ -9,7 +9,7 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "bundleIdentifier": "com.driftstop.app",
-      "buildNumber": "1",
+      "buildNumber": "3",
       "supportsTablet": false,
       "icon": "./assets/expo.icon",
       "infoPlist": {

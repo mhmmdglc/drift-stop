@@ -24,7 +24,7 @@
         "credentialsSource": "local"
       },
       "ios": {
-        "credentialsSource": "remote"
+        "credentialsSource": "local"
       }
     }
   },
@@ -35,6 +35,13 @@
         "track": "alpha",
         "releaseStatus": "completed",
         "changesNotSentForReview": false
+      },
+      "ios": {
+        "appleTeamId": "J8FX8G238M",
+        "ascAppId": "6797533621",
+        "ascApiKeyPath": "./credentials/AuthKey_2B4CL4C8CB.p8",
+        "ascApiKeyId": "2B4CL4C8CB",
+        "ascApiKeyIssuerId": "bc64b7a2-f7c3-45f5-b073-2c4083fa3b0c"
       }
     }
   }

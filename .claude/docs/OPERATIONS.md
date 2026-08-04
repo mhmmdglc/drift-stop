@@ -68,7 +68,8 @@ The Google Play Console listing for DriftStop **and** the Expo/EAS project are b
 | Android package / iOS bundle id | `com.driftstop.app` |
 | Current app version | `1.1.0` (`app.json` → `expo.version`) |
 | Current Android versionCode | `14` (live in Play alpha) |
-| Current iOS buildNumber | `1` (no iOS build shipped yet) |
+| Current iOS buildNumber | `3` (first successful EAS build, 2026-08-04) |
+| iOS signing | cert `S583744M99` (expires 2027-08-04) · profile `568J8YR282` · files in `credentials/` (gitignored) |
 | IAP product ids | `pro_monthly`, `pro_yearly` — **`remove_ads` is retired**, see below |
 | RevenueCat entitlements | `pro`, `no_ads` — both subscriptions grant both |
 | RevenueCat offering | `default` (Annual / Monthly). The `$rc_lifetime` package was removed with `remove_ads`. |
@@ -76,7 +77,7 @@ The Google Play Console listing for DriftStop **and** the Expo/EAS project are b
 
 ### ⚠️ Gotcha: `credentials/` and `credentials.json` are gitignored, but production builds depend on them
 
-`eas.json` sets `"credentialsSource": "local"` for `preview` and for `production`'s **Android** block (iOS uses `"remote"` — EAS manages the Apple certificate and profile). That means for Android EAS does **not** manage the signing key — it reads `credentials.json`, which points at `credentials/driftstop-upload.keystore` and carries the keystore/key passwords. Both paths are in `.gitignore`, so **a fresh clone cannot produce a signed production build** until those files are restored from backup. `credentials.json` structure (values redacted):
+`eas.json` sets `"credentialsSource": "local"` for `preview` and for **both** platform blocks of `production`. iOS was moved from `"remote"` to `"local"` on 2026-08-04 — EAS's remote flow refuses to mint a distribution certificate without an interactive Apple sign-in, which an agent cannot do; the certificate and profile were instead created through the App Store Connect API (recipe in `HANDOFF.md`) and are now read from `credentials/driftstop-dist.p12` and `credentials/driftstop-appstore.mobileprovision`. That means EAS does **not** manage the signing key — it reads `credentials.json`, which points at `credentials/driftstop-upload.keystore` and carries the keystore/key passwords. Both paths are in `.gitignore`, so **a fresh clone cannot produce a signed production build** until those files are restored from backup. `credentials.json` structure (values redacted):
 
 ```
 { "android": { "keystore": { "keystorePath", "keystorePassword", "keyAlias", "keyPassword" } } }

@@ -10,44 +10,49 @@ Bir önceki devir notu 2026-07-31'deydi ve artık bayat — bu onu değiştiriyo
 ## Tek satırlık durum
 
 **Android canlı:** `1.1.0 (versionCode 14)` Play kapalı test → **alpha** kanalında.
-**iOS build alınabilir:** ürünler, fiyatlar, mağaza metinleri, reklam birimleri kurulu ve
-**RevenueCat tarafı bitti** (2026-08-04) — sıradaki iş iOS build'i.
+**iOS ilk build'i alındı:** `1.1.0 (buildNumber 3)` EAS'te **başarılı**; imza kimlikleri kuruldu,
+RevenueCat tarafı bitti. TestFlight yüklemesi başlatıldı — sonucu aşağıda.
 
 Kapılar: `tsc` temiz · **214/214 test** (oturuma 132 ile başladı) · edge function'lar Deno ile temiz ·
 `expo lint` 11 hata = değişmemiş taban.
 
 ---
 
-## SIRADAKİ İŞ — iOS build, tek engel: Apple imza kimlikleri
+## iOS imza kimlikleri — kuruldu (2026-08-04), yöntemi burada kalsın
 
-RevenueCat tarafı kapandı. Build **denendi ve EAS'e ulaştı**; production env'i doğru yükledi
-(sekiz `EXPO_PUBLIC_*` değişkeni, `EXPO_PUBLIC_REVENUECAT_IOS_API_KEY` dahil — kural #1 tamam).
-Takıldığı tek yer:
+**Bu bölüm sertifika yenilerken tekrar lazım olacak.** İlk denemede `credentialsSource: "remote"`
+ile build reddedildi: *"Distribution Certificate is not validated for non-interactive builds"*.
+EAS kimlikleri kendi üretebiliyor ama bunun için **Apple hesabına interaktif giriş** (şifre + 2FA)
+istiyor; `EXPO_ASC_API_KEY_PATH` / `EXPO_ASC_KEY_ID` / `EXPO_ASC_ISSUER_ID` vermek **yetmiyor**.
 
-```
-✔ Using remote iOS credentials (Expo server)
-Distribution Certificate is not validated for non-interactive builds.
-Credentials are not set up. Run this command again in interactive mode.
-```
+Hesaptaki mevcut sertifika (`WYUFC5YYM5`, Mart 2026, PomoPet döneminden) işe yaramıyordu:
+**özel anahtarı bu Mac'te yok** — `security find-identity -v -p codesigning` → *0 valid identities*.
+Sertifika özel anahtarsız imzalayamaz. `credentials/` içindeki `SubscriptionKey_C8L6M9WRV4.p8`
+de imzalama değil, **IAP/abonelik** anahtarı — karıştırmayın.
 
-Projenin **hiç iOS EAS build'i yok** (`eas build:list --platform ios` boş), yani dağıtım
-sertifikası ve provisioning profile henüz üretilmemiş. `eas.json` → `production.ios.credentialsSource`
-`"remote"`, yani bunları EAS üretecek — ama **Apple hesabına interaktif giriş** istiyor
-(şifre + 2FA). ASC API anahtarını `EXPO_ASC_API_KEY_PATH` / `EXPO_ASC_KEY_ID` / `EXPO_ASC_ISSUER_ID`
-olarak vermek **yetmedi**; `--non-interactive` yine reddetti.
+**Çözüm — şifresiz, tamamen ASC API ile.** Özel anahtar yerelde doğar, Apple'a asla gitmez:
 
-**Sahibin çalıştırması gereken, bir kerelik:**
+1. `openssl genrsa` + `openssl req` ile anahtar ve CSR üret.
+2. `POST /v1/certificates` (`certificateType: IOS_DISTRIBUTION`, `csrContent`) → sertifika.
+3. `openssl pkcs12 -export -legacy` ile `.p12`.
+4. `POST /v1/profiles` (`IOS_APP_STORE`, bundleId `TCG8J4F9P8`, yeni sertifika) → profil.
+5. `credentials.json`'a `ios` bloğu, `eas.json` → `production.ios.credentialsSource: "local"`.
 
-```
-npx eas build --platform ios --profile production
-```
+ASC API'ye ES256 JWT üreten yardımcı script'ler oturumun geçici dizinindeydi ve **kaybolacak**;
+tarif yukarıda, yeniden yazmak birkaç dakika. JWT: `{alg:ES256, kid:<KEY_ID>}` +
+`{iss:<ISSUER_ID>, aud:"appstoreconnect-v1", exp:iat+1200}`, imza `dsaEncoding:'ieee-p1363'`.
 
-Apple girişini yapıp sertifika/profil üretilmesine izin verdikten sonra aynı komut (ve sonraki
-tüm build'ler) `--non-interactive` ile agent tarafından sürülebilir.
+⚠️ **İlk build bunda patladı:** *"Provisioning profile doesn't include the Push Notifications
+capability / aps-environment entitlement"*. `com.driftstop.app`'te push yetkisi kapalıymış —
+`expo-notifications` `aps-environment` istiyor. `POST /v1/bundleIdCapabilities`
+(`PUSH_NOTIFICATIONS`) ile açıldı, **sonra profil silinip yeniden üretildi** (yetki değişince
+eski profil geçersiz kalıyor, Apple yenilemeyi şart koşuyor). İkinci build geçti.
 
-Build çıkınca sıra: **paywall dolar → abonelik grubu için inceleme ekran görüntüsü**
+### Sıradaki iş
+
+**Paywall dolu mu, gerçek cihazda bak** → abonelik grubu için **inceleme ekran görüntüsü**
 (Apple satın alma arayüzünün göründüğü bir kare istiyor; paywall boşken üretmek Apple'a
-yanlış bilgi vermek olur) **→ TestFlight**.
+yanlış bilgi vermek olur) → App Review formları → gönder.
 
 ### RevenueCat — bitti (2026-08-04)
 
@@ -133,6 +138,9 @@ App Privacy cevapları [`APP-PRIVACY.md`](APP-PRIVACY.md)'de.
 | RevenueCat iOS SDK anahtarı | `appl_UchWQUYfuwoHfUigBzkTRCntwVE` (`.env` + EAS production/preview) |
 | IAP anahtarı | `BVNHR2U7ST` — EvolaRoa için yüklenmişti, takım seviyesinde geçerli, RevenueCat'te seçildi |
 | RevenueCat App Store ürünleri | `pro_monthly` `prod3ca927c62c` · `pro_yearly` `prodf4074b7112` |
+| iOS imza (2026-08-04 üretildi) | sertifika `S583744M99` (bitiş 2027-08-04) · profil `568J8YR282` "DriftStop App Store" |
+| iOS imza dosyaları | `credentials/driftstop-dist.p12` + `credentials/driftstop-appstore.mobileprovision` — **gitignore'lu, yedeklenmezse kayıp** |
+| Kullanılmayan eski sertifika | `WYUFC5YYM5` — özel anahtarı yok, hiçbir işe yaramıyor |
 | ASC | app `6797533621` · grup `22283837` · `pro_monthly` `6797551481` · `pro_yearly` `6797551678` |
 | Bundle ID kaydı | `TCG8J4F9P8` (`com.driftstop.app`) |
 | AdMob yayıncı | `pub-6963122807813930` |
@@ -144,8 +152,9 @@ App Privacy cevapları [`APP-PRIVACY.md`](APP-PRIVACY.md)'de.
 
 ## Sahipten bekleyenler
 
-0. **`npx eas build --platform ios --profile production` — interaktif, bir kerelik.** Apple imza
-   kimlikleri üretilsin diye. iOS'un önündeki tek engel bu; ayrıntı yukarıda.
+0. **`credentials/` dizinini yedekle.** iOS `.p12` + `.mobileprovision` ve Android keystore orada,
+   hepsi gitignore'lu. Bu Mac giderse **imzalı sürüm üretilemez**; Android keystore'un kaybı
+   uygulamayı Play'de güncelleyememek demek.
 1. **Gerçek cihazda satın alma testi** — alpha build'i telefona kur, paywall'da iki aboneliği gerçek
    fiyatlarla gör, bir satın alma tamamla. **Gelir yolunun hâlâ hiçbir kanıtı yok**, emülatörde
    Play Billing olmadığı için sadece gerçek cihaz gösterebilir.
