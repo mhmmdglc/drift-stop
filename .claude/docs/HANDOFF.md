@@ -1,4 +1,4 @@
-# Devir notu — 2026-08-03
+# Devir notu — 2026-08-03 (RevenueCat bölümü 2026-08-04'te güncellendi)
 
 Yeni oturum bu dosyayı okuyup kaldığı yerden devam edebilir.
 Plan [`specs/monetization-v2.md`](../specs/monetization-v2.md)'de; bu dosya **nerede kalındığı**.
@@ -10,32 +10,34 @@ Bir önceki devir notu 2026-07-31'deydi ve artık bayat — bu onu değiştiriyo
 ## Tek satırlık durum
 
 **Android canlı:** `1.1.0 (versionCode 14)` Play kapalı test → **alpha** kanalında.
-**iOS neredeyse hazır:** ürünler, fiyatlar, mağaza metinleri, reklam birimleri kurulu; RevenueCat'te
-**üç tıklama** kaldı, sonra build alınabilir.
+**iOS build alınabilir:** ürünler, fiyatlar, mağaza metinleri, reklam birimleri kurulu ve
+**RevenueCat tarafı bitti** (2026-08-04) — sıradaki iş iOS build'i.
 
 Kapılar: `tsc` temiz · **214/214 test** (oturuma 132 ile başladı) · edge function'lar Deno ile temiz ·
 `expo lint` 11 hata = değişmemiş taban.
 
 ---
 
-## SIRADAKİ İŞ — RevenueCat, üç adım (sahibi "sen yap" dedi)
+## SIRADAKİ İŞ — iOS build
 
-[Products](https://app.revenuecat.com/projects/9019ea60/product-catalog/products) → **DriftStop (App Store)**:
+RevenueCat tarafı kapandı, önündeki engel kalktı. Sıra: **iOS build → paywall dolar → abonelik
+grubu için inceleme ekran görüntüsü** (Apple satın alma arayüzünün göründüğü bir kare istiyor;
+paywall boşken üretmek Apple'a yanlış bilgi vermek olur) **→ TestFlight**.
 
-1. `pro_monthly` (`prod3ca927c62c`) → *Associated Entitlements* → Attach `pro`, tekrar Attach `no_ads`
-2. `+ New` → Identifier `pro_yearly`, tip **Subscription** → aynı iki entitlement
-3. [Offerings](https://app.revenuecat.com/projects/9019ea60/product-catalog/offerings) → `default`
-   (`ofrng6ee7af37ec`) → **Edit** → `$rc_monthly` ve `$rc_annual` paketlerinde **DriftStop (App Store)**
-   satırına ürünleri seç → **Save**
+### RevenueCat — bitti (2026-08-04)
 
-⚠️ **Otomasyon burada takıldı:** entitlement açılır listesi native `<select>` DEĞİL (DIV),
-`form_input` reddediyor; tıklama kabul ediliyor ama değer kaydolmuyor — denendi, `pro_monthly`
-hâlâ "No associated entitlements". Bir dahaki denemede seçeneği tıkladıktan sonra **seçimin
-gerçekten yansıdığını ekran görüntüsüyle doğrula**, sonra Attach'a bas.
+App Store tarafındaki üç adım da yapıldı ve **temiz sayfa yüklemesinde doğrulandı**:
 
-Bu üçü bitince: iOS build → paywall dolar → abonelik grubu için **inceleme ekran görüntüsü**
-üretilebilir (Apple satın alma arayüzünün göründüğü bir kare istiyor; paywall boşken üretmek
-Apple'a yanlış bilgi vermek olur) → TestFlight.
+1. `pro_monthly` (`prod3ca927c62c`) → `pro` + `no_ads`. (`pro` bir önceki oturumda zaten
+   bağlanmıştı; devir notundaki "hiç bağlanmadı" kaydı yanlıştı.)
+2. `pro_yearly` (`prodf4074b7112`) oluşturuldu, tip Subscription → `pro` + `no_ads`.
+3. `default` offering (`ofrng6ee7af37ec`) → `$rc_annual` → `pro_yearly`,
+   `$rc_monthly` → `pro_monthly`, **DriftStop (App Store)** satırında. Kaydedildi.
+
+⚠️ **Arayüzün iki tuzağı, bir dahakine:** entitlement açılır listesi native `<select>` DEĞİL (DIV),
+`form_input` "Element type DIV is not a supported form input" der — tıklamak gerekiyor. Ve Attach
+sonrası **"Entitlement attached successfully" toast'ı çıkarken tablo eski hâlini gösteriyor**;
+başarısızlık sanılabilir, oysa yalnızca bayat. Sayfayı yeniden yükleyip doğrula.
 
 ---
 
@@ -105,6 +107,7 @@ App Privacy cevapları [`APP-PRIVACY.md`](APP-PRIVACY.md)'de.
 | RevenueCat proje | `9019ea60` · App Store app `app7ff0fee28c` · offering `ofrng6ee7af37ec` |
 | RevenueCat iOS SDK anahtarı | `appl_UchWQUYfuwoHfUigBzkTRCntwVE` (`.env` + EAS production/preview) |
 | IAP anahtarı | `BVNHR2U7ST` — EvolaRoa için yüklenmişti, takım seviyesinde geçerli, RevenueCat'te seçildi |
+| RevenueCat App Store ürünleri | `pro_monthly` `prod3ca927c62c` · `pro_yearly` `prodf4074b7112` |
 | ASC | app `6797533621` · grup `22283837` · `pro_monthly` `6797551481` · `pro_yearly` `6797551678` |
 | Bundle ID kaydı | `TCG8J4F9P8` (`com.driftstop.app`) |
 | AdMob yayıncı | `pub-6963122807813930` |
