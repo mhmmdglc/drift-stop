@@ -120,12 +120,49 @@ ile iki aboneliğe de yüklendi (rezervasyon → `PUT` → `PATCH uploaded:true`
 - Gizlilik URL'si `en-US`'de vardı, **`en-GB`'de yoktu** ve arayüz U.K. yerelini gösterdiği için
   "boş" görünüyordu. Yerel başına ayrı alan.
 
-### Sıradaki iş
+### Gönderildi — 2026-08-04 16:50 UTC
 
-1. **App Review iletişim bilgileri** — `appStoreReviewDetail` **boş** (`data: null`).
-   Ad, soyad, **telefon**, e-posta gerekiyor; telefon numarası sahibinden alınmalı,
-   uydurulamaz. Demo hesap gerekmiyor (uygulama misafir modunda tam çalışıyor).
-2. **Add for Review → Submit.**
+`1.1.0 (build 3)` → `WAITING_FOR_REVIEW`. Gönderim kaydı `5ef86ee3-bce6-4959-9302-af4eeaed475d`.
+
+Gönderme anında çıkan ve tek tek kapatılan engeller (hepsi `POST /v1/reviewSubmissionItems`
+hata listesinden okundu — bu çağrı, eksikleri tek seferde sayan en iyi teşhis aracı):
+
+- `en-GB` yereli **tamamen boştu** (açıklama, anahtar kelimeler, destek URL'si). `en-US`'ten
+  kopyalandı. ⚠️ `whatsNew` "cannot be edited at this time" diyor, onu çıkarmak gerekti.
+- `copyright` girilmemişti · `contentRightsDeclaration` girilmemişti.
+- **Uygulama fiyatlandırması hiç ayarlanmamıştı** — tek başına gönderimi engelliyordu.
+  `POST /v1/appPriceSchedules`, ücretsiz fiyat noktası, `baseTerritory: USA`.
+  ⚠️ Satır içi oluşturmada `included` id'si **`${local-id}`** formatında olmalı.
+- `appStoreReviewDetail` boştu; `contactPhone` **zorunlu** ve `+ülke kodu` formatında.
+
+**İçerik hakları beyanı `USES_THIRD_PARTY_CONTENT`.** Önce "kullanmıyor" girilmişti, sonra
+katalog kontrol edildi: Kobe Bryant, Nelson Mandela, Viktor Frankl, Pablo Neruda gibi yakın
+dönem isimler var. Apple sorarsa: kısa alıntılar, kaynak gösteriliyor.
+
+---
+
+## 1.2.0 çalışması — duvar kağıdı özelliği (2026-08-05, devam ediyor)
+
+Sözü telefon arka planına dönüştürüp galeriye kaydetme. Yeni dosyalar:
+
+- `src/constants/wallpapers.ts` — 5 zemin (`ember`/`dawn`/`parchment`/`midnight`/`kindling`).
+  **Stok fotoğraf değil, kodla çiziliyor:** paket şişmiyor, lisans derdi yok, el çizimi diline
+  oturuyor ve Apple'a verilen üçüncü-taraf-içerik beyanını karıştırmıyor.
+- `src/components/WallpaperCanvas.tsx` — önizleme ve dışa aktarımın **tek** kaynağı; ölçüler
+  `width` üzerinden oransal, böylece 260px önizleme ile 1080×2340 çıktı birebir aynı.
+  Yıldız serpintisi sabit desenden (rastgele olsaydı önizleme ile kayıt farklı olurdu).
+- `src/utils/wallpaper.ts` · `src/app/wallpaper/[id].tsx` · `SketchWallpaper` ikonu.
+- Giriş: `QuoteCard`'daki üçüncü ikon → Home ve söz detayından.
+
+⚠️ **API notları:** `MediaLibrary.saveToLibraryAsync` artık *legacy*; güncel yol
+**`MediaLibrary.Asset.create(uri)`**. İzin `requestPermissionsAsync(true)` ile yalnızca yazma.
+
+⚠️ **Yeni rota eklerken:** `typedRoutes` açık, `.expo/types/router.d.ts` yeniden üretilmeden
+`tsc` yeni yolu tanımıyor. Üretmek için dev server'ı bir kez çalıştırmak yeterli —
+**8081 başka projede meşgul**, `npx expo start --port 8097` kullan.
+
+Kapılar: `tsc` temiz · **228/228 test** (14 yeni) · lint **11 hata = değişmemiş taban**.
+Simülatör doğrulaması sürüyor.
 
 ### RevenueCat — bitti (2026-08-04)
 

@@ -285,5 +285,26 @@
   },
   "ads": {
     "removeAds": "Rimuovi annunci"
+  },
+  "wallpaper": {
+    "action": "Crea sfondo",
+    "title": "Sfondo",
+    "subtitle": "Trasforma questa citazione in uno sfondo per il telefono.",
+    "pickStyle": "Scegli uno sfondo",
+    "save": "Salva nelle foto",
+    "share": "Condividi",
+    "saved": "Salvato nelle tue foto.",
+    "hint": "Dopo averlo salvato, impostalo come sfondo dalle impostazioni del telefono.",
+    "styles": {
+      "ember": "Brace",
+      "dawn": "Alba",
+      "parchment": "Pergamena",
+      "midnight": "Mezzanotte",
+      "kindling": "Scintilla"
+    },
+    "errors": {
+      "permission": "Per salvare serve l’accesso alle foto. Puoi concederlo nelle Impostazioni.",
+      "generic": "Qualcosa è andato storto. Riprovi?"
+    }
   }
 }

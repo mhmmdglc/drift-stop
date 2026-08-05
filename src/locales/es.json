@@ -285,5 +285,26 @@
   },
   "ads": {
     "removeAds": "Quitar anuncios"
+  },
+  "wallpaper": {
+    "action": "Crear fondo",
+    "title": "Fondo de pantalla",
+    "subtitle": "Convierte esta cita en un fondo para tu teléfono.",
+    "pickStyle": "Elige un fondo",
+    "save": "Guardar en fotos",
+    "share": "Compartir",
+    "saved": "Guardado en tus fotos.",
+    "hint": "Una vez guardado, ponlo como fondo desde los ajustes de tu teléfono.",
+    "styles": {
+      "ember": "Brasa",
+      "dawn": "Alba",
+      "parchment": "Pergamino",
+      "midnight": "Medianoche",
+      "kindling": "Chispa"
+    },
+    "errors": {
+      "permission": "Para guardar se necesita acceso a la galería. Puedes darlo en Ajustes.",
+      "generic": "Algo salió mal. ¿Intentas de nuevo?"
+    }
   }
 }

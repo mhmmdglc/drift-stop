@@ -127,6 +127,7 @@ export default function HomeScreen() {
                 isFavorite={favorites.isFavorite(quote.id)}
                 onToggleFavorite={toggleFavorite}
                 onShare={onShare}
+                onMakeWallpaper={() => router.push(`/wallpaper/${quote.id}`)}
               />
             )}
           </Animated.View>

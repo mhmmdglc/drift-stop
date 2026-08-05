@@ -25,6 +25,24 @@ export function SketchHeart({ size = 26, color, filled = false }: IconProps & { 
   );
 }
 
+/** El-çizimi duvar kağıdı (telefon çerçevesi + içinde satırlar). */
+export function SketchWallpaper({ size = 26, color }: IconProps) {
+  const { colors } = useTheme();
+  const c = color ?? colors.textMuted;
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24">
+      <Path
+        d="M7.2,2.6 Q12,2.2 16.8,2.6 Q17.3,12 16.8,21.4 Q12,21.8 7.2,21.4 Q6.7,12 7.2,2.6 Z M9.6,8.4 Q12,8.2 14.4,8.4 M9.6,11.6 Q12,11.4 14.4,11.6 M9.6,14.8 Q11.2,14.6 12.8,14.8"
+        stroke={c}
+        strokeWidth={1.5}
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </Svg>
+  );
+}
+
 /** El-çizimi paylaş (yukarı ok + kutu). */
 export function SketchShare({ size = 26, color }: IconProps) {
   const { colors } = useTheme();

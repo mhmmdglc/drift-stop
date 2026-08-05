@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { CategoryBadge } from '@/components/CategoryBadge';
 import { CornerBrackets } from '@/components/CornerBrackets';
 import { Doodle } from '@/components/Doodle';
-import { SketchHeart, SketchShare } from '@/components/SketchIcons';
+import { SketchHeart, SketchShare, SketchWallpaper } from '@/components/SketchIcons';
 import { SketchUnderline } from '@/components/SketchUnderline';
 import { ThemedText } from '@/components/ThemedText';
 import { WobblyBorder } from '@/components/WobblyBorder';
@@ -19,6 +19,7 @@ type Props = {
   isFavorite?: boolean;
   onToggleFavorite?: () => void;
   onShare?: () => void;
+  onMakeWallpaper?: () => void;
   showActions?: boolean;
 };
 
@@ -27,6 +28,7 @@ export function QuoteCard({
   isFavorite = false,
   onToggleFavorite,
   onShare,
+  onMakeWallpaper,
   showActions = true,
 }: Props) {
   const { colors } = useTheme();
@@ -78,6 +80,15 @@ export function QuoteCard({
             accessibilityState={{ selected: isFavorite }}>
             <SketchHeart size={26} filled={isFavorite} />
           </Pressable>
+          {onMakeWallpaper && (
+            <Pressable
+              onPress={onMakeWallpaper}
+              hitSlop={12}
+              accessibilityRole="button"
+              accessibilityLabel={t('wallpaper.action')}>
+              <SketchWallpaper size={26} />
+            </Pressable>
+          )}
           <Pressable
             onPress={onShare}
             hitSlop={12}

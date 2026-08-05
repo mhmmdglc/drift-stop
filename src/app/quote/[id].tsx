@@ -75,6 +75,7 @@ export default function QuoteDetailScreen() {
                 favorites.toggle(quote.id);
               }}
               onShare={() => void shareQuote(quote)}
+              onMakeWallpaper={() => router.push(`/wallpaper/${quote.id}`)}
             />
           ) : lookup.status === 'locked' ? (
             // Entitlement henüz yükleniyorsa kilit gösterip Pro kullanıcıyı

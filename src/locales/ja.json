@@ -188,5 +188,26 @@
     },
     "activeBadge": "トライアル中 — 残り%{count}日",
     "lastDay": "トライアルは今日で終了します"
+  },
+  "wallpaper": {
+    "action": "壁紙にする",
+    "title": "壁紙",
+    "subtitle": "この言葉をスマホの背景にしましょう。",
+    "pickStyle": "背景を選ぶ",
+    "save": "写真に保存",
+    "share": "共有",
+    "saved": "写真に保存しました。",
+    "hint": "保存したら、端末の設定から壁紙に設定できます。",
+    "styles": {
+      "ember": "熾火",
+      "dawn": "暁",
+      "parchment": "羊皮紙",
+      "midnight": "真夜中",
+      "kindling": "焚きつけ"
+    },
+    "errors": {
+      "permission": "保存には写真へのアクセス許可が必要です。設定から許可できます。",
+      "generic": "問題が発生しました。もう一度お試しください。"
+    }
   }
 }

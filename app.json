@@ -136,6 +136,14 @@
       "./plugins/withGradleVersion",
       "expo-sqlite",
       [
+        "expo-media-library",
+        {
+          "savePhotosPermission": "DriftStop saves the wallpaper you create to your photo library.",
+          "photosPermission": "DriftStop saves the wallpaper you create to your photo library.",
+          "isAccessMediaLocationEnabled": false
+        }
+      ],
+      [
         "expo-tracking-transparency",
         {
           "userTrackingPermission": "Allowing this lets us show you more relevant ads. Your quotes, favourites and reminders work exactly the same either way."

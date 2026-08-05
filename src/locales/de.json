@@ -285,5 +285,26 @@
   },
   "ads": {
     "removeAds": "Werbung entfernen"
+  },
+  "wallpaper": {
+    "action": "Hintergrund erstellen",
+    "title": "Hintergrundbild",
+    "subtitle": "Mach aus diesem Zitat einen Handy-Hintergrund.",
+    "pickStyle": "Untergrund wählen",
+    "save": "In Fotos sichern",
+    "share": "Teilen",
+    "saved": "In deinen Fotos gesichert.",
+    "hint": "Nach dem Sichern kannst du es in den Telefoneinstellungen als Hintergrund festlegen.",
+    "styles": {
+      "ember": "Glut",
+      "dawn": "Morgenrot",
+      "parchment": "Pergament",
+      "midnight": "Mitternacht",
+      "kindling": "Zündfunke"
+    },
+    "errors": {
+      "permission": "Zum Sichern wird Zugriff auf die Fotos benötigt. Du kannst ihn in den Einstellungen geben.",
+      "generic": "Etwas ist schiefgelaufen. Nochmal versuchen?"
+    }
   }
 }

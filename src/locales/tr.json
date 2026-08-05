@@ -285,5 +285,26 @@
   },
   "ads": {
     "removeAds": "Reklamları kaldır"
+  },
+  "wallpaper": {
+    "action": "Duvar kağıdı yap",
+    "title": "Duvar kağıdı",
+    "subtitle": "Bu sözü telefon arka planına dönüştür.",
+    "pickStyle": "Bir zemin seç",
+    "save": "Galeriye kaydet",
+    "share": "Paylaş",
+    "saved": "Galerine kaydedildi.",
+    "hint": "Kaydettikten sonra telefonunun ayarlarından duvar kağıdı olarak seçebilirsin.",
+    "styles": {
+      "ember": "Kor ışığı",
+      "dawn": "Şafak",
+      "parchment": "Parşömen",
+      "midnight": "Gece yarısı",
+      "kindling": "Tutuşma"
+    },
+    "errors": {
+      "permission": "Kaydetmek için galeri izni gerekiyor. Ayarlardan verebilirsin.",
+      "generic": "Bir şeyler ters gitti. Tekrar dener misin?"
+    }
   }
 }

@@ -285,5 +285,26 @@
   },
   "ads": {
     "removeAds": "Remove ads"
+  },
+  "wallpaper": {
+    "action": "Make wallpaper",
+    "title": "Wallpaper",
+    "subtitle": "Turn this quote into a phone background.",
+    "pickStyle": "Pick a backdrop",
+    "save": "Save to photos",
+    "share": "Share",
+    "saved": "Saved to your photos.",
+    "hint": "Once saved, set it as your wallpaper from your phone’s settings.",
+    "styles": {
+      "ember": "Emberlight",
+      "dawn": "Dawn",
+      "parchment": "Parchment",
+      "midnight": "Midnight",
+      "kindling": "Kindling"
+    },
+    "errors": {
+      "permission": "Saving needs photo library access. You can grant it in Settings.",
+      "generic": "Something went wrong. Try again?"
+    }
   }
 }

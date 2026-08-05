@@ -285,5 +285,26 @@
   },
   "ads": {
     "removeAds": "Supprimer les pubs"
+  },
+  "wallpaper": {
+    "action": "Créer un fond d’écran",
+    "title": "Fond d’écran",
+    "subtitle": "Transforme cette citation en fond d’écran.",
+    "pickStyle": "Choisis un fond",
+    "save": "Enregistrer dans Photos",
+    "share": "Partager",
+    "saved": "Enregistré dans tes photos.",
+    "hint": "Une fois enregistré, définis-le comme fond d’écran depuis les réglages de ton téléphone.",
+    "styles": {
+      "ember": "Braise",
+      "dawn": "Aube",
+      "parchment": "Parchemin",
+      "midnight": "Minuit",
+      "kindling": "Étincelle"
+    },
+    "errors": {
+      "permission": "L’enregistrement nécessite l’accès aux photos. Tu peux l’autoriser dans les Réglages.",
+      "generic": "Une erreur est survenue. Réessayer ?"
+    }
   }
 }
