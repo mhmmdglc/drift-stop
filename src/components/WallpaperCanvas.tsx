@@ -32,9 +32,9 @@ export const WallpaperCanvas = forwardRef<View, Props>(function WallpaperCanvas(
   // dağılsaydı önizleme ile kaydedilen görsel farklı olurdu.
   const speckles = useMemo(() => SPECKLE_SEED.map(([x, y, r]) => ({ x, y, r })), []);
 
-  const quoteSize = Math.max(13, Math.round(58 * s));
-  const authorSize = Math.max(9, Math.round(30 * s));
-  const markSize = Math.max(7, Math.round(22 * s));
+  const quoteSize = Math.max(15, Math.round(78 * s));
+  const authorSize = Math.max(10, Math.round(36 * s));
+  const markSize = Math.max(7, Math.round(24 * s));
 
   const [from, to] = style.gradient;
   const rad = (style.angle * Math.PI) / 180;
@@ -96,7 +96,13 @@ export const WallpaperCanvas = forwardRef<View, Props>(function WallpaperCanvas(
           ))}
       </Svg>
 
-      <View style={[styles.content, { paddingHorizontal: width * 0.13 }]}>
+      {/* Metin bloğu ortanın hafif üstünde: telefonun alt üçtebiri uygulama
+          simgelerine ait, oraya yazı koymak okunmaz hale getiriyor. */}
+      <View
+        style={[
+          styles.content,
+          { paddingHorizontal: width * 0.13, paddingTop: height * 0.3 },
+        ]}>
         <Text
           style={{
             fontFamily: Fonts.quote,
@@ -150,10 +156,9 @@ const SPECKLE_SEED: readonly [number, number, number][] = [
 const styles = StyleSheet.create({
   root: {
     overflow: 'hidden',
-    justifyContent: 'center',
   },
   content: {
-    justifyContent: 'center',
+    flex: 1,
   },
   mark: {
     position: 'absolute',

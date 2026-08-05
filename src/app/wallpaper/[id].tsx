@@ -47,8 +47,9 @@ export default function WallpaperScreen() {
 
   const selected = WALLPAPER_STYLES.find((s) => s.id === styleId) ?? WALLPAPER_STYLES[0];
 
-  // Önizleme ekranın yarısı kadar; yanında stil seçici için yer kalıyor.
-  const previewWidth = Math.min(screenWidth * 0.56, 260);
+  // Önizleme kasten küçük: 9:19.5 oranı çok uzun, büyük tutunca kaydetme
+  // butonları ekranın altına düşüyor ve kullanıcı onları hiç görmüyor.
+  const previewWidth = Math.min(screenWidth * 0.42, 190);
 
   const run = useCallback(
     async (kind: Exclude<Busy, null>) => {
@@ -109,7 +110,10 @@ export default function WallpaperScreen() {
               {t('wallpaper.subtitle')}
             </ThemedText>
 
+            {/* Koyu zeminler sayfanın arka planıyla neredeyse aynı; çerçeve olmadan
+                duvar kağıdının nerede başlayıp bittiği görünmüyor. */}
             <View style={styles.previewWrap}>
+              <View style={[styles.previewFrame, { borderColor: colors.faintLine }]}>
               <WallpaperCanvas
                 ref={canvasRef}
                 width={previewWidth}
@@ -117,6 +121,7 @@ export default function WallpaperScreen() {
                 text={quoteDisplayText(quote, locale)}
                 author={localizeAuthor(quote.author, locale)}
               />
+              </View>
             </View>
 
             <ThemedText variant="label" tone="textMuted" style={styles.pickerLabel}>
@@ -210,6 +215,10 @@ const styles = StyleSheet.create({
   previewWrap: {
     alignItems: 'center',
     marginTop: Spacing.sm,
+  },
+  previewFrame: {
+    borderWidth: 1,
+    padding: 3,
   },
   pickerLabel: { marginTop: Spacing.sm },
   picker: {

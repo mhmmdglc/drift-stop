@@ -1,7 +1,7 @@
 import * as MediaLibrary from 'expo-media-library';
 import * as Sharing from 'expo-sharing';
 import type { RefObject } from 'react';
-import type { View } from 'react-native';
+import { PixelRatio, type View } from 'react-native';
 import { captureRef } from 'react-native-view-shot';
 
 import { WALLPAPER_EXPORT_HEIGHT, WALLPAPER_EXPORT_WIDTH } from '@/constants/wallpapers';
@@ -13,15 +13,18 @@ export type WallpaperResult =
 /**
  * Önizleme görünümünü duvar kağıdı çözünürlüğünde bir PNG'ye çevirir.
  *
- * `width`/`height` fiziksel piksel cinsinden veriliyor; captureRef ölçeklemeyi
- * kendi yapıyor, böylece 360px'lik önizleme 1080×2340 çıkıyor.
+ * ⚠️ `captureRef`'in `width`/`height` değerleri **nokta** cinsinden ve çıktı
+ * cihazın piksel oranıyla çarpılıyor. Doğrudan 1080×2340 vermek 3x'lik bir
+ * telefonda 3240×7020'lik 11 MB'lık bir dosya üretiyordu; hedef pikseli
+ * orana bölmek gerekiyor.
  */
 export async function captureWallpaper(ref: RefObject<View | null>): Promise<string> {
+  const ratio = PixelRatio.get();
   return captureRef(ref, {
     format: 'png',
     quality: 1,
-    width: WALLPAPER_EXPORT_WIDTH,
-    height: WALLPAPER_EXPORT_HEIGHT,
+    width: WALLPAPER_EXPORT_WIDTH / ratio,
+    height: WALLPAPER_EXPORT_HEIGHT / ratio,
     result: 'tmpfile',
   });
 }

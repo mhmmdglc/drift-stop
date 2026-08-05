@@ -157,12 +157,24 @@ Sözü telefon arka planına dönüştürüp galeriye kaydetme. Yeni dosyalar:
 ⚠️ **API notları:** `MediaLibrary.saveToLibraryAsync` artık *legacy*; güncel yol
 **`MediaLibrary.Asset.create(uri)`**. İzin `requestPermissionsAsync(true)` ile yalnızca yazma.
 
+⚠️ **`captureRef` nokta alır, piksel değil.** `width: 1080` vermek 3x'lik bir telefonda
+**3240×7020 / 11 MB** üretiyordu. Hedef pikseli `PixelRatio.get()`'e bölmek şart —
+düzeltilince 1080×2340 / 2 MB oldu. Bu davranış teste bağlandı (1x/2x/3x).
+
 ⚠️ **Yeni rota eklerken:** `typedRoutes` açık, `.expo/types/router.d.ts` yeniden üretilmeden
 `tsc` yeni yolu tanımıyor. Üretmek için dev server'ı bir kez çalıştırmak yeterli —
 **8081 başka projede meşgul**, `npx expo start --port 8097` kullan.
 
-Kapılar: `tsc` temiz · **228/228 test** (14 yeni) · lint **11 hata = değişmemiş taban**.
-Simülatör doğrulaması sürüyor.
+### Simülatörde doğrulandı (iPhone 17 Pro Max, Release)
+
+Akışın tamamı sürüldü: karttaki ikon → ekran → zemin değiştirme → izin istemi →
+**kaydetme**. Dosya galeride: `IMG_0008.PNG`, **1080×2340, 2 MB**.
+
+İlk turda görülen ve düzeltilen üç görsel sorun: metin çok küçüktü · kompozisyon aşağı
+kaymıştı (üstte kocaman boşluk) · önizleme o kadar uzundu ki kaydetme butonları ekranın
+altına düşüyordu. Metin artık ortanın üstünde — telefonun alt üçtebiri simgelere ait.
+
+Kapılar: `tsc` temiz · **232/232 test** (18 yeni) · lint **11 hata = değişmemiş taban**.
 
 ### RevenueCat — bitti (2026-08-04)
 
