@@ -75,6 +75,23 @@ The Google Play Console listing for DriftStop **and** the Expo/EAS project are b
 | RevenueCat offering | `default` (Annual / Monthly). The `$rc_lifetime` package was removed with `remove_ads`. |
 | Closed-testing opt-in link | https://play.google.com/apps/testing/com.driftstop.app |
 
+### ⚠️ Gotcha: AdMob lives in a *third* Google account, and ads cannot serve yet
+
+There are three Google accounts in play, which is easy to get wrong:
+
+| Account | Publisher | What it holds |
+|---|---|---|
+| `muhammed.gulcu.x@gmail.com` | `pub-6963122807813930` | **The account the app actually uses** — DriftStop Android (`~1493084605`) and DriftStop iOS (`~4613840458`), 2 ad units each. Matches `app.json` and the `EXPO_PUBLIC_ADMOB_*` vars. |
+| `muhammed.gulcu@gmail.com` | `pub-3817081931651779` | A *separate, unused* DriftStop Android entry. Not referenced by any build — a decoy; consider deleting it. |
+| `evolaroa.app@gmail.com` | — | AdMob account is **closed**. Unrelated to DriftStop; don't be alarmed by it. |
+
+**Ads serve nowhere today, for two reasons that are not code:**
+
+1. The `…x@gmail.com` account is still **pending verification** ("Hesabınız henüz onaylanmadı").
+2. Both apps show **"İnceleme gerekli · Sınırlı reklam sunumu — limiti kaldırmak için mağaza ekleyin."**
+
+**The store link cannot be added yet, and testing does not change that.** AdMob's store search only finds apps that are *publicly listed*; a closed-testing app is not. Verified on 2026-08-05 by searching `com.driftstop.app` in the "Mağaza ekle" flow — zero results. So: Android can be linked once it reaches production, iOS once it is live on the App Store. Each platform is a separate AdMob app and must be linked separately.
+
 ### ⚠️ Gotcha: `credentials/` and `credentials.json` are gitignored, but production builds depend on them
 
 `eas.json` sets `"credentialsSource": "local"` for `preview` and for **both** platform blocks of `production`. iOS was moved from `"remote"` to `"local"` on 2026-08-04 — EAS's remote flow refuses to mint a distribution certificate without an interactive Apple sign-in, which an agent cannot do; the certificate and profile were instead created through the App Store Connect API (recipe in `HANDOFF.md`) and are now read from `credentials/driftstop-dist.p12` and `credentials/driftstop-appstore.mobileprovision`. That means EAS does **not** manage the signing key — it reads `credentials.json`, which points at `credentials/driftstop-upload.keystore` and carries the keystore/key passwords. Both paths are in `.gitignore`, so **a fresh clone cannot produce a signed production build** until those files are restored from backup. `credentials.json` structure (values redacted):
@@ -526,7 +543,7 @@ Only review warning on v11 was a missing R8/proguard mapping file — informatio
 
 **Google Play, personal developer account (ours):** before production can be unlocked, the app must run a **closed test with at least 12 testers who stay opted in for 14 continuous days**. Only then does **"Üretime başvur"** (Apply for production) unlock, and Google then reviews the application.
 
-**Current state: only 1 tester registered.** Roughly 12 more email addresses need adding to the Alpha track's tester list.
+**Current state (2026-08-05, from the owner): 16 testers, testing daily, 4 days elapsed.** The tester-count requirement is met; what remains is the 14-day clock, so production unlocks around **2026-08-15** if nobody opts out. The 14 days must be *continuous* — a tester leaving the track resets progress, so don't prune the list while the counter runs.
 
 | Account type | Path to production |
 |---|---|
@@ -606,7 +623,7 @@ Pro can be granted manually to a test customer from the RevenueCat dashboard. �
 | Play Console: misleading "fix the errors to save" | Session silently dropped | Refresh, sign in again, retry — the form answers were fine |
 | Play Console: no DriftStop app / suspended-account banner | Signed into `muhammed.gulcu@gmail.com` (closed personal developer account) | Switch to `evolaroa.app@gmail.com` via the account-picker pill (§1) |
 | Tester's opt-in link says "app not available" | Review not yet approved, or the email is not on the tester list | Wait for approval / add the address to the Alpha tester list |
-| "Apply for production" locked | Personal-account rule: 12 testers × 14 continuous days not satisfied | Recruit testers; currently 1 registered (§8) |
+| "Apply for production" locked | Personal-account rule: 12 testers × 14 continuous days not satisfied | Tester count met (16 as of 2026-08-05); waiting out the 14-day clock (§8) |
 | Hand-edited native file reverted | CNG regenerates `/android` and `/ios` on prebuild | Move the change into an `app.json` config plugin (see `plugins/withGradleVersion`) |
 | Production build fails on missing keystore | `credentials/` + `credentials.json` are gitignored, and both `preview` and `production` use `credentialsSource: local` | Restore both from backup before building (§1) |
 | Supabase confirmation link reports an invalid token | Quoted-printable-mangled token copied verbatim | Decode the body first; the real param is `token=<hex>` (§9) |

@@ -137,7 +137,7 @@ sonra bir build, sonra abonelik grubunun inceleme ekran görüntüsü (paywall'�
 ## Needs your action (blocking)
 
 - **On your real phone once v11 reaches the Alpha track:** verify the paywall lists all 3 products with real prices and that a purchase completes. This is the ONLY thing never verified anywhere — the Android emulator has no Play Billing (`BILLING_UNAVAILABLE`), so product listing/purchase can only be checked on a real device with a Play account on the closed-testing list.
-- **Play Console needs 12 testers + 14 days** on closed testing before production is unlockable (personal developer account rule). Currently 1 tester registered — send the ~12 emails when ready and they get added to the Alpha track's tester list.
+- **Play Console needs 12 testers + 14 days** on closed testing before production is unlockable (personal developer account rule). **Resolved on the tester side: 16 testers, testing daily, day 4 as of 2026-08-05** — production should unlock around **2026-08-15**. The 14 days must be continuous, so nobody should be removed from the Alpha track until then.
 
 ## v11 submitted for review (2026-07-24)
 

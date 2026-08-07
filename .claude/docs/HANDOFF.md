@@ -280,7 +280,9 @@ App Privacy cevapları [`APP-PRIVACY.md`](APP-PRIVACY.md)'de.
 1. **Gerçek cihazda satın alma testi** — alpha build'i telefona kur, paywall'da iki aboneliği gerçek
    fiyatlarla gör, bir satın alma tamamla. **Gelir yolunun hâlâ hiçbir kanıtı yok**, emülatörde
    Play Billing olmadığı için sadece gerçek cihaz gösterebilir.
-2. **12 testçi** — başladı, tamamlanmalı. 14 günlük sayaç onlarla işliyor; üretime çıkışın takvim engeli.
+2. ~~**12 testçi**~~ **Testçi tarafı tamam (2026-08-05): 16 testçi, her gün test ediyor, 4. gün.**
+   Kalan tek şey 14 günlük sayaç → üretim ~**2026-08-15**'te açılır. Süre **kesintisiz** olmalı,
+   o yüzden sayaç dolmadan Alpha kanalından kimse çıkarılmamalı.
 3. **DSA tüccar beyanı** — ASC → Business → Digital Services Act. Active mi? API bu alanı vermiyor.
 4. **App Privacy / yaş derecelendirmesi / kategori / export compliance** — cevaplar hazır, tıklamak sahibin.
 5. **App Review'a gönder** düğmesi.
