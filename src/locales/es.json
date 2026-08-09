@@ -214,12 +214,16 @@
       "network": "Error de conexión. Revisa tu internet.",
       "generic": "Algo salió mal. Inténtalo de nuevo.",
       "notConfigured": "Las cuentas no están disponibles ahora mismo.",
-      "emailRequiredForReset": "Primero escribe tu correo electrónico."
+      "emailRequiredForReset": "Primero escribe tu correo electrónico.",
+      "providerUnavailable": "Este método de acceso no está disponible ahora."
     },
     "resendConfirmation": "¿No llegó el correo de confirmación? Enviarlo de nuevo",
     "resendSuccess": "Correo de confirmación enviado de nuevo.",
     "forgotPassword": "¿Olvidaste tu contraseña?",
-    "resetSent": "Te enviamos un enlace para restablecerla."
+    "resetSent": "Te enviamos un enlace para restablecerla.",
+    "continueWithGoogle": "Continuar con Google",
+    "continueWithApple": "Continuar con Apple",
+    "orEmail": "o usa el correo"
   },
   "paywall": {
     "title": "Hazte Pro",

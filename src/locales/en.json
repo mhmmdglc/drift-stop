@@ -214,12 +214,16 @@
       "network": "Connection error. Check your internet.",
       "generic": "Something went wrong. Please try again.",
       "notConfigured": "Accounts aren't available right now.",
-      "emailRequiredForReset": "Enter your email address first."
+      "emailRequiredForReset": "Enter your email address first.",
+      "providerUnavailable": "This sign-in method is unavailable right now."
     },
     "resendConfirmation": "Confirmation email didn't arrive? Send it again",
     "resendSuccess": "Confirmation email sent again.",
     "forgotPassword": "Forgot your password?",
-    "resetSent": "A password reset link is on its way to your inbox."
+    "resetSent": "A password reset link is on its way to your inbox.",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithApple": "Continue with Apple",
+    "orEmail": "or use email"
   },
   "paywall": {
     "title": "Go Pro",

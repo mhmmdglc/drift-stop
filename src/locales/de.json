@@ -214,12 +214,16 @@
       "network": "Verbindungsfehler. Prüfe deine Internetverbindung.",
       "generic": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
       "notConfigured": "Konten sind derzeit nicht verfügbar.",
-      "emailRequiredForReset": "Gib zuerst deine E-Mail-Adresse ein."
+      "emailRequiredForReset": "Gib zuerst deine E-Mail-Adresse ein.",
+      "providerUnavailable": "Diese Anmeldemethode ist gerade nicht verfügbar."
     },
     "resendConfirmation": "Bestätigungs-E-Mail nicht angekommen? Erneut senden",
     "resendSuccess": "Bestätigungs-E-Mail erneut gesendet.",
     "forgotPassword": "Passwort vergessen?",
-    "resetSent": "Ein Link zum Zurücksetzen ist unterwegs zu deinem Postfach."
+    "resetSent": "Ein Link zum Zurücksetzen ist unterwegs zu deinem Postfach.",
+    "continueWithGoogle": "Mit Google fortfahren",
+    "continueWithApple": "Mit Apple fortfahren",
+    "orEmail": "oder per E-Mail"
   },
   "paywall": {
     "title": "Pro werden",

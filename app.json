@@ -148,7 +148,9 @@
         {
           "userTrackingPermission": "Allowing this lets us show you more relevant ads. Your quotes, favourites and reminders work exactly the same either way."
         }
-      ]
+      ],
+      "@react-native-google-signin/google-signin",
+      "expo-apple-authentication"
     ],
     "locales": {
       "tr": "./assets/locales/tr.json",

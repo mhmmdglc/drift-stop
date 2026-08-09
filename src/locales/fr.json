@@ -214,12 +214,16 @@
       "network": "Erreur de connexion. Vérifie ta connexion internet.",
       "generic": "Une erreur s'est produite. Réessaie.",
       "notConfigured": "Les comptes ne sont pas disponibles pour le moment.",
-      "emailRequiredForReset": "Saisis d'abord ton adresse e-mail."
+      "emailRequiredForReset": "Saisis d'abord ton adresse e-mail.",
+      "providerUnavailable": "Cette méthode de connexion est indisponible pour le moment."
     },
     "resendConfirmation": "L'e-mail de confirmation n'est pas arrivé ? Renvoyer",
     "resendSuccess": "E-mail de confirmation renvoyé.",
     "forgotPassword": "Mot de passe oublié ?",
-    "resetSent": "Un lien de réinitialisation part vers ta boîte mail."
+    "resetSent": "Un lien de réinitialisation part vers ta boîte mail.",
+    "continueWithGoogle": "Continuer avec Google",
+    "continueWithApple": "Continuer avec Apple",
+    "orEmail": "ou par e-mail"
   },
   "paywall": {
     "title": "Passer en Pro",

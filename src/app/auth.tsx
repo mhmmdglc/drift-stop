@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -19,6 +19,7 @@ import { Spacing } from '@/constants/layout';
 import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from '@/hooks/use-theme';
 import { useTranslation } from '@/i18n/useTranslation';
+import { appleSignInAvailable, googleSignInAvailable } from '@/lib/socialAuth';
 
 type Mode = 'signIn' | 'signUp';
 
@@ -26,7 +27,8 @@ export default function AuthScreen() {
   const { colors } = useTheme();
   const { t } = useTranslation();
   const router = useRouter();
-  const { signInWithEmail, signUpWithEmail, resendConfirmation, sendPasswordReset } = useAuth();
+  const { signInWithEmail, signUpWithEmail, resendConfirmation, sendPasswordReset, signInWithProvider } =
+    useAuth();
 
   const [mode, setMode] = useState<Mode>('signIn');
   const [email, setEmail] = useState('');
@@ -41,7 +43,31 @@ export default function AuthScreen() {
    */
   const [awaitingConfirmation, setAwaitingConfirmation] = useState(false);
   const [resending, setResending] = useState(false);
+  const [socialBusy, setSocialBusy] = useState<'google' | 'apple' | null>(null);
+  /** Apple düğmesi: yalnızca iOS'ta ve cihaz destekliyorsa. Async olduğu için state. */
+  const [appleReady, setAppleReady] = useState(false);
   const passwordRef = useRef<TextInput>(null);
+
+  useEffect(() => {
+    let active = true;
+    void appleSignInAvailable().then((ok) => {
+      if (active) setAppleReady(ok);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const social = async (provider: 'google' | 'apple') => {
+    setSocialBusy(provider);
+    setError(null);
+    setNotice(null);
+    const result = await signInWithProvider(provider);
+    setSocialBusy(null);
+    // Vazgeçmek de `error: null` döner; ekranda hiçbir şey değişmez, doğrusu bu.
+    if (result.error) setError(t(result.error));
+    else if (router.canGoBack()) router.back();
+  };
 
   const emailValid = /\S+@\S+\.\S+/.test(email.trim());
   const passwordValid = password.length >= 6;
@@ -124,6 +150,31 @@ export default function AuthScreen() {
             <ThemedText variant="body" tone="textMuted" style={styles.subtitle}>
               {t('auth.subtitle')}
             </ThemedText>
+
+            {/* Sosyal giriş formun ÜSTÜNDE: tek dokunuşluk yol bu, e-posta
+                doğrulaması beklemeden hesap açılıyor. Hiçbir sağlayıcı
+                yapılandırılmamışsa blok tamamen gizleniyor. */}
+            {(googleSignInAvailable || appleReady) && (
+              <View style={styles.social}>
+                {googleSignInAvailable && (
+                  <SketchButton
+                    label={socialBusy === 'google' ? t('common.loading') : t('auth.continueWithGoogle')}
+                    onPress={() => void social('google')}
+                    disabled={socialBusy !== null || submitting}
+                  />
+                )}
+                {appleReady && (
+                  <SketchButton
+                    label={socialBusy === 'apple' ? t('common.loading') : t('auth.continueWithApple')}
+                    onPress={() => void social('apple')}
+                    disabled={socialBusy !== null || submitting}
+                  />
+                )}
+                <ThemedText variant="label" tone="textMuted" style={styles.socialDivider}>
+                  {t('auth.orEmail')}
+                </ThemedText>
+              </View>
+            )}
 
             <View style={styles.field}>
               <ThemedText variant="label" tone="textMuted">
@@ -253,6 +304,14 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     marginBottom: Spacing.md,
+  },
+  social: {
+    gap: Spacing.sm,
+    marginBottom: Spacing.sm,
+  },
+  socialDivider: {
+    textAlign: 'center',
+    marginTop: Spacing.sm,
   },
   field: {
     gap: Spacing.xs,

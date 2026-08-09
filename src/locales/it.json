@@ -214,12 +214,16 @@
       "network": "Errore di connessione. Controlla la tua connessione internet.",
       "generic": "Qualcosa è andato storto. Riprova.",
       "notConfigured": "Gli account non sono disponibili al momento.",
-      "emailRequiredForReset": "Inserisci prima il tuo indirizzo email."
+      "emailRequiredForReset": "Inserisci prima il tuo indirizzo email.",
+      "providerUnavailable": "Questo metodo di accesso non è disponibile ora."
     },
     "resendConfirmation": "L'email di conferma non è arrivata? Invia di nuovo",
     "resendSuccess": "Email di conferma inviata di nuovo.",
     "forgotPassword": "Password dimenticata?",
-    "resetSent": "Ti abbiamo inviato un link per reimpostarla."
+    "resetSent": "Ti abbiamo inviato un link per reimpostarla.",
+    "continueWithGoogle": "Continua con Google",
+    "continueWithApple": "Continua con Apple",
+    "orEmail": "oppure via e-mail"
   },
   "paywall": {
     "title": "Passa a Pro",

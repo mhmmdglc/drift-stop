@@ -209,5 +209,13 @@
       "permission": "الحفظ يحتاج إذن الوصول إلى الصور. يمكنك منحه من الإعدادات.",
       "generic": "حدث خطأ ما. أتحاول مرة أخرى؟"
     }
+  },
+  "auth": {
+    "errors": {
+      "providerUnavailable": "طريقة تسجيل الدخول هذه غير متاحة حالياً."
+    },
+    "continueWithGoogle": "المتابعة عبر Google",
+    "continueWithApple": "المتابعة عبر Apple",
+    "orEmail": "أو عبر البريد الإلكتروني"
   }
 }

@@ -1,6 +1,7 @@
 import type { Session, User } from '@supabase/supabase-js';
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
+import { isSocialError, signInWithApple, signInWithGoogle } from '@/lib/socialAuth';
 import { supabase } from '@/lib/supabase';
 import { purgePremiumCacheForSignOut } from '@/services/premiumCacheGuard';
 
@@ -27,6 +28,12 @@ type AuthContextValue = {
    * premium paketleri de hesaba bağlı olduğu için bu doğrudan gelir kaybı.
    */
   sendPasswordReset: (email: string) => Promise<AuthResult>;
+  /**
+   * Google / Apple ile giriş. Tek adımda hem kayıt hem giriş: e-posta doğrulama
+   * beklemek yok, şifre yok. Kullanıcı vazgeçerse `error: null` döner —
+   * vazgeçmek hata değil, ekranda kırmızı yazı çıkmamalı.
+   */
+  signInWithProvider: (provider: 'google' | 'apple') => Promise<AuthResult>;
   signOut: () => Promise<void>;
   deleteAccount: () => Promise<AuthResult>;
 };
@@ -92,6 +99,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           redirectTo: 'driftstop://auth',
         });
         return { error: error ? mapAuthError(error.message) : null };
+      },
+      signInWithProvider: async (provider) => {
+        if (!supabase) return { error: 'auth.errors.notConfigured' };
+
+        const result =
+          provider === 'google' ? await signInWithGoogle() : await signInWithApple();
+
+        if (isSocialError(result)) {
+          if (result.cancelled) return { error: null };
+          return {
+            error:
+              result.reason === 'unavailable'
+                ? 'auth.errors.providerUnavailable'
+                : 'auth.errors.generic',
+          };
+        }
+
+        const { error } = await supabase.auth.signInWithIdToken({
+          provider: result.provider,
+          token: result.idToken,
+        });
+        if (error) return { error: mapAuthError(error.message) };
+
+        // Apple adı YALNIZCA ilk girişte veriyor. Kaçırırsak bir daha hiç
+        // gelmiyor, o yüzden hemen profile yazıyoruz.
+        if (result.fullName) {
+          await supabase.auth.updateUser({ data: { full_name: result.fullName } });
+        }
+        return { error: null };
       },
       resendConfirmation: async (email) => {
         if (!supabase) return { error: 'auth.errors.notConfigured' };

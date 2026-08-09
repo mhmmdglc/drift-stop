@@ -209,5 +209,13 @@
       "permission": "保存には写真へのアクセス許可が必要です。設定から許可できます。",
       "generic": "問題が発生しました。もう一度お試しください。"
     }
+  },
+  "auth": {
+    "errors": {
+      "providerUnavailable": "このログイン方法は現在利用できません。"
+    },
+    "continueWithGoogle": "Google で続ける",
+    "continueWithApple": "Apple で続ける",
+    "orEmail": "またはメールで"
   }
 }

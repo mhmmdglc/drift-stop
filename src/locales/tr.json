@@ -214,12 +214,16 @@
       "network": "Bağlantı hatası. İnterneti kontrol et.",
       "generic": "Bir şeyler ters gitti. Tekrar dene.",
       "notConfigured": "Hesap sistemi şu an kullanılamıyor.",
-      "emailRequiredForReset": "Sıfırlama için önce e-posta adresini gir."
+      "emailRequiredForReset": "Sıfırlama için önce e-posta adresini gir.",
+      "providerUnavailable": "Bu giriş yöntemi şu an kullanılamıyor."
     },
     "resendConfirmation": "Onay e-postası gelmedi mi? Tekrar gönder",
     "resendSuccess": "Onay e-postası tekrar gönderildi.",
     "forgotPassword": "Şifreni mi unuttun?",
-    "resetSent": "Şifre sıfırlama bağlantısı e-postana gönderildi."
+    "resetSent": "Şifre sıfırlama bağlantısı e-postana gönderildi.",
+    "continueWithGoogle": "Google ile devam et",
+    "continueWithApple": "Apple ile devam et",
+    "orEmail": "ya da e-posta ile"
   },
   "paywall": {
     "title": "Pro'ya geç",
