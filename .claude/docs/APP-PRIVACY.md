@@ -21,6 +21,7 @@ bana sor, kodda birlikte bakalım.
 | Cihaz kimliği / kullanım verisi | **Evet** | Google AdMob, Sentry |
 | Çökme verisi | **Evet** | Sentry |
 | Favoriler, geçmiş, ayarlar | **Hayır** — cihazda kalıyor | AsyncStorage / SQLite |
+| Fotoğraf kitaplığı | **Hayır** — yalnızca *yazıyoruz*, hiç okumuyoruz | Cihazın galerisi |
 | İsim, telefon, adres, kişiler, fotoğraf, sağlık, finans | **Hayır** | — |
 
 Favorilerin ve ayarların cihazda kalması önemli bir nokta: `useFavorites`,
@@ -87,10 +88,33 @@ Sunucuya giden tek kullanıcı içeriği hesap e-postası.
 - **İzleme için mi:** Hayır
 - *Neden:* Sentry (`utils/crashReporting.ts`). Yalnızca hata teşhisi için.
 
+### User Content → Photos or Videos
+- **Toplanıyor:** **Hayır**
+- *Neden:* `/wallpaper/[id]` ekranı sözü bir telefon duvar kağıdına çevirip
+  **galeriye kaydediyor** (`src/utils/wallpaper.ts` → `MediaLibrary.Asset.create`).
+  Bu bir *yazma* işlemi: dosya cihazdan hiç çıkmıyor, hiçbir sunucuya gitmiyor ve
+  uygulama kullanıcının mevcut fotoğraflarını **okumuyor**. Apple yalnızca cihazdan
+  ayrılan veriyi "toplama" saydığı için burada beyan edilecek bir şey yok — ama
+  izin istemi kullanıcıya görünüyor, o yüzden bu satır burada duruyor.
+- **İzin metinleri:** `app.json` → `expo-media-library` eklentisi;
+  `savePhotosPermission` → `NSPhotoLibraryAddUsageDescription` (istediğimiz izin bu,
+  `requestPermissionsAsync(true)` yalnızca yazma izni istiyor).
+  `photosPermission` → `NSPhotoLibraryUsageDescription` de dolu; okuma yapmadığımız
+  için gereksiz duruyor ama kaldırmak, kaydetme akışında okumaya dayanan gizli bir
+  yol kalmışsa uygulamayı iOS'ta çökertme riski taşıdığı için cihazda doğrulanmadan
+  ellenmedi.
+- **Android tarafı:** manifestte artık `READ_MEDIA_IMAGES/VIDEO/AUDIO` ve
+  `READ_MEDIA_VISUAL_USER_SELECTED` yok (`granularPermissions: []` +
+  `android.blockedPermissions`). Bir söz uygulamasının ses okuma izni istemesi Play
+  politika incelemesini davet ediyordu ve hiçbiri kullanılmıyordu. Geriye yalnızca
+  `READ_EXTERNAL_STORAGE`/`WRITE_EXTERNAL_STORAGE` (`maxSdkVersion=32`) kalıyor;
+  Android 13+ cihazlarda kaydetmek için hiçbir izin istenmiyor.
+
 ### Beyan EDİLMEYECEKLER
 İsim, telefon, fiziksel adres, diğer iletişim bilgileri, sağlık, fitness, finansal
 bilgi, hassas bilgi, kişiler, kullanıcı içeriği (fotoğraf/video/ses), arama geçmişi,
-tarama geçmişi. Hiçbiri toplanmıyor.
+tarama geçmişi. Hiçbiri toplanmıyor — duvar kağıdı dosyası dahil (yukarıdaki
+"User Content" başlığına bak: yazılıyor ama toplanmıyor).
 
 Favoriler ve ayarlar da beyan edilmez — cihazdan hiç çıkmıyorlar. Apple yalnızca
 cihazdan **ayrılan** veriyi "toplama" sayıyor.

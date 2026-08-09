@@ -82,6 +82,14 @@ export default function WallpaperScreen() {
     [busy, t]
   );
 
+  // Zemin değişince ekrandaki "kaydedildi" mesajı artık kaydedilmemiş bir
+  // duvar kağıdını anlatıyor olurdu; seçimle birlikte temizleniyor.
+  const selectStyle = useCallback((nextStyleId: string) => {
+    void Haptics.selectionAsync();
+    setStyleId(nextStyleId);
+    setMessage(null);
+  }, []);
+
   const goBack = useCallback(() => {
     if (router.canGoBack()) router.back();
     else router.replace('/');
@@ -134,10 +142,7 @@ export default function WallpaperScreen() {
                 return (
                   <Pressable
                     key={s.id}
-                    onPress={() => {
-                      void Haptics.selectionAsync();
-                      setStyleId(s.id);
-                    }}
+                    onPress={() => selectStyle(s.id)}
                     accessibilityRole="button"
                     accessibilityState={{ selected: active }}
                     accessibilityLabel={t(`wallpaper.styles.${s.id}`)}
@@ -229,7 +234,7 @@ const styles = StyleSheet.create({
   swatchWrap: {
     alignItems: 'center',
     gap: Spacing.xs,
-    padding: Spacing.xs,
+    padding: Spacing.sm,
     position: 'relative',
   },
   swatch: {
@@ -242,7 +247,16 @@ const styles = StyleSheet.create({
   swatchActive: { borderWidth: 2 },
   swatchInk: { height: '45%', opacity: 0.9 },
   swatchLabel: { textAlign: 'center' },
-  swatchRing: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
+  // WobblyBorder yolu kenardan 5px içeride başlıyor ve ±2.4px titriyor; hizayı
+  // 0'da bırakınca alt kenar etiketin alt uzantılarını, sağ kenar son harfi
+  // kesiyordu. Halka dışarı taşınıyor, içerik de Spacing.sm ile uzak tutuluyor.
+  swatchRing: {
+    position: 'absolute',
+    top: -Spacing.xs,
+    left: -Spacing.xs,
+    right: -Spacing.xs,
+    bottom: -Spacing.xs,
+  },
   actions: {
     marginTop: Spacing.md,
     gap: Spacing.md,

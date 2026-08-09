@@ -2,7 +2,7 @@
   "expo": {
     "name": "DriftStop",
     "slug": "drift-stop",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "driftstop",
@@ -18,10 +18,13 @@
     },
     "android": {
       "package": "com.driftstop.app",
-      "versionCode": 14,
+      "versionCode": 15,
       "permissions": [
         "RECEIVE_BOOT_COMPLETED",
         "SCHEDULE_EXACT_ALARM"
+      ],
+      "blockedPermissions": [
+        "android.permission.READ_MEDIA_VISUAL_USER_SELECTED"
       ],
       "adaptiveIcon": {
         "backgroundColor": "#1C1A16",
@@ -140,7 +143,8 @@
         {
           "savePhotosPermission": "DriftStop saves the wallpaper you create to your photo library.",
           "photosPermission": "DriftStop saves the wallpaper you create to your photo library.",
-          "isAccessMediaLocationEnabled": false
+          "isAccessMediaLocationEnabled": false,
+          "granularPermissions": []
         }
       ],
       [

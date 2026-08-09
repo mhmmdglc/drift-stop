@@ -94,3 +94,25 @@ export function getWallpaperStyle(id: string | undefined): WallpaperStyle {
 export const WALLPAPER_ASPECT = 2340 / 1080;
 export const WALLPAPER_EXPORT_WIDTH = 1080;
 export const WALLPAPER_EXPORT_HEIGHT = 2340;
+
+/**
+ * Söz gövdesinin puntosu, 1080 piksellik dışa aktarım genişliği referansıyla.
+ *
+ * Sabit 78'de 203 karakterlik söz (Herakleitos, id 892) 11 satıra çıkıp yazarı
+ * ve köşe imzasını üst üste bindiriyordu. Eşikler ölçüme değil karakter
+ * sayısına bakıyor: metni ölçmek asenkron olurdu ve ilk kare yanlış düzenle
+ * çizilirdi — dışa aktarım da o kareyi yakalayabilir.
+ */
+const QUOTE_SIZE_RAMP: readonly { maxLength: number; size: number }[] = [
+  { maxLength: 90, size: 78 },
+  { maxLength: 140, size: 68 },
+  { maxLength: 190, size: 58 },
+  { maxLength: 260, size: 50 },
+];
+
+/** Rampanın dışında kalan çok uzun sözler (premium paketler) için taban. */
+const QUOTE_SIZE_FLOOR = 44;
+
+export function wallpaperQuoteFontSize(length: number): number {
+  return QUOTE_SIZE_RAMP.find((step) => length <= step.maxLength)?.size ?? QUOTE_SIZE_FLOOR;
+}

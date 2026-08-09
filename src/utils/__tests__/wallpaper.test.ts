@@ -5,6 +5,7 @@ import {
   WALLPAPER_EXPORT_WIDTH,
   WALLPAPER_STYLES,
   getWallpaperStyle,
+  wallpaperQuoteFontSize,
 } from '@/constants/wallpapers';
 
 jest.mock('expo-media-library', () => ({
@@ -20,7 +21,7 @@ jest.mock('react-native-view-shot', () => ({ captureRef: jest.fn() }));
 import * as MediaLibrary from 'expo-media-library';
 import * as Sharing from 'expo-sharing';
 
-import { PixelRatio } from 'react-native';
+import { PixelRatio, Platform } from 'react-native';
 import { captureRef } from 'react-native-view-shot';
 
 import { captureWallpaper, saveWallpaperToLibrary, shareWallpaper } from '@/utils/wallpaper';
@@ -35,6 +36,17 @@ const createAsset = MediaLibrary.Asset.create as unknown as jest.Mock;
 beforeEach(() => {
   jest.clearAllMocks();
 });
+
+afterEach(() => {
+  // `Platform.OS` ve `PixelRatio.get` yerine konuyor; sızdırırsa sonraki
+  // testler yanlış platformda çalışır.
+  jest.restoreAllMocks();
+});
+
+/** captureRef'e giden seçenekler — her testte aynı daraltma tekrarlanmasın. */
+function captureOptions() {
+  return mockedCapture.mock.calls[0][1] as { width: number; height: number; fileName?: string };
+}
 
 describe('wallpaper styles', () => {
   it('every style has a unique id', () => {
@@ -76,21 +88,51 @@ describe('wallpaper styles', () => {
     expect(WALLPAPER_EXPORT_WIDTH).toBe(1080);
     expect(WALLPAPER_EXPORT_HEIGHT).toBeGreaterThan(WALLPAPER_EXPORT_WIDTH);
   });
+
+  it('shrinks the quote body as the quote gets longer', () => {
+    const sizes = [40, 120, 170, 220, 400].map(wallpaperQuoteFontSize);
+    for (let i = 1; i < sizes.length; i++) {
+      expect(sizes[i]).toBeLessThan(sizes[i - 1]);
+    }
+  });
+
+  it('shrinks the longest bundled quote (203 chars) well below the base size', () => {
+    // Herakleitos (id 892) sabit 78 puntoda 11 satıra çıkıp imzayla çakışıyordu.
+    expect(wallpaperQuoteFontSize(203)).toBeLessThan(wallpaperQuoteFontSize(40) * 0.75);
+  });
 });
 
 describe('captureWallpaper', () => {
-  // Bu bölünme atlandığında 3x'lik bir telefonda 3240×7020, 11 MB'lık dosya
-  // çıkıyordu — captureRef nokta alıp piksel oranıyla çarpıyor.
-  it.each([1, 2, 3])('asks for points, not pixels, at a %sx pixel ratio', async (ratio) => {
+  // iOS `rendererFormat.scale = 0` ile çiziyor: verilen sayılar NOKTA, çıktı
+  // piksel oranıyla çarpılıyor. Bölmeyi atlayınca 3x'lik bir telefonda
+  // 3240×7020, 11 MB'lık dosya çıkıyordu.
+  it.each([1, 2, 3])('asks iOS for points at a %sx pixel ratio', async (ratio) => {
+    jest.replaceProperty(Platform, 'OS', 'ios');
     jest.spyOn(PixelRatio, 'get').mockReturnValue(ratio);
     mockedCapture.mockResolvedValue('file:///tmp/a.png');
 
     await captureWallpaper({ current: null });
 
-    const opts = mockedCapture.mock.calls[0][1] as { width: number; height: number };
-    expect(opts.width * ratio).toBe(WALLPAPER_EXPORT_WIDTH);
-    expect(opts.height * ratio).toBe(WALLPAPER_EXPORT_HEIGHT);
+    expect(captureOptions().width * ratio).toBe(WALLPAPER_EXPORT_WIDTH);
+    expect(captureOptions().height * ratio).toBe(WALLPAPER_EXPORT_HEIGHT);
   });
+
+  // Android aynı sayıyı doğrudan Bitmap.createScaledBitmap'e veriyor: birim
+  // PİKSEL. iOS'un bölmesini burada da uygulamak 2.625 yoğunluklu emülatörde
+  // 411×891'lik (85 KB) bir duvar kağıdı üretiyordu.
+  it.each([1, 2, 2.625, 3])(
+    'asks Android for raw pixels at a %sx pixel ratio',
+    async (ratio) => {
+      jest.replaceProperty(Platform, 'OS', 'android');
+      jest.spyOn(PixelRatio, 'get').mockReturnValue(ratio);
+      mockedCapture.mockResolvedValue('file:///tmp/a.png');
+
+      await captureWallpaper({ current: null });
+
+      expect(captureOptions().width).toBe(WALLPAPER_EXPORT_WIDTH);
+      expect(captureOptions().height).toBe(WALLPAPER_EXPORT_HEIGHT);
+    }
+  );
 
   it('writes a png to a temp file', async () => {
     jest.spyOn(PixelRatio, 'get').mockReturnValue(3);
@@ -101,6 +143,18 @@ describe('captureWallpaper', () => {
     expect(mockedCapture.mock.calls[0][1]).toEqual(
       expect.objectContaining({ format: 'png', result: 'tmpfile' })
     );
+  });
+
+  // Ad verilmezse galeriye "ReactNative-snapshot-image21813707…png" olarak düşüyor.
+  it('names the temp file after the app, not after the capture library', async () => {
+    jest.spyOn(PixelRatio, 'get').mockReturnValue(3);
+    mockedCapture.mockResolvedValue('file:///tmp/a.png');
+
+    await captureWallpaper({ current: null });
+
+    expect(captureOptions().fileName).toMatch(/^DriftStop/);
+    // Android tarafı File.createTempFile ile kullanıyor; ön ek en az 3 karakter olmalı.
+    expect(captureOptions().fileName!.length).toBeGreaterThanOrEqual(3);
   });
 });
 

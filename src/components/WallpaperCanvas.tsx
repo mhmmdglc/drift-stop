@@ -3,7 +3,12 @@ import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, Defs, Line, LinearGradient, Rect, Stop } from 'react-native-svg';
 
 import { Fonts } from '@/constants/fonts';
-import { WALLPAPER_ASPECT, type WallpaperStyle } from '@/constants/wallpapers';
+import {
+  WALLPAPER_ASPECT,
+  WALLPAPER_EXPORT_WIDTH,
+  wallpaperQuoteFontSize,
+  type WallpaperStyle,
+} from '@/constants/wallpapers';
 
 type Props = {
   text: string;
@@ -18,23 +23,27 @@ type Props = {
  * bu bileşenden çıkıyor. Böylece "önizlemede başka, kayıtta başka" sınıfı
  * hatalar mümkün olmuyor.
  *
- * Ölçüler `width` üzerinden oransal — 360px önizleme ile 1080px dışa aktarım
- * arasında düzen birebir aynı kalıyor.
+ * Ölçüler `width` üzerinden oransal — 190px önizleme ile 1080px dışa aktarım
+ * arasında düzen birebir aynı kalıyor. Punto tabanları da dahil **hiçbir ölçüye
+ * alt sınır konmuyor**: `captureRef` ekrandaki görünümü olduğu gibi ölçekleyerek
+ * dışa aktardığı için, önizlemede okunaklılık adına büyütülen bir punto
+ * kaydedilen dosyada da orantısız kalıyordu (yazarı ve imzayı üst üste bindiren
+ * hatanın kaynağı buydu).
  */
 export const WallpaperCanvas = forwardRef<View, Props>(function WallpaperCanvas(
   { text, author, style, width },
   ref
 ) {
   const height = Math.round(width * WALLPAPER_ASPECT);
-  const s = width / 1080; // dışa aktarım genişliğine göre ölçek
+  const s = width / WALLPAPER_EXPORT_WIDTH; // dışa aktarım genişliğine göre ölçek
 
   // Yıldız serpintisi sabit bir desenden geliyor: her render'da yeniden
   // dağılsaydı önizleme ile kaydedilen görsel farklı olurdu.
   const speckles = useMemo(() => SPECKLE_SEED.map(([x, y, r]) => ({ x, y, r })), []);
 
-  const quoteSize = Math.max(15, Math.round(78 * s));
-  const authorSize = Math.max(10, Math.round(36 * s));
-  const markSize = Math.max(7, Math.round(24 * s));
+  const quoteSize = wallpaperQuoteFontSize(text.length) * s;
+  const authorSize = 36 * s;
+  const markSize = 24 * s;
 
   const [from, to] = style.gradient;
   const rad = (style.angle * Math.PI) / 180;
@@ -96,47 +105,60 @@ export const WallpaperCanvas = forwardRef<View, Props>(function WallpaperCanvas(
           ))}
       </Svg>
 
-      {/* Metin bloğu ortanın hafif üstünde: telefonun alt üçtebiri uygulama
-          simgelerine ait, oraya yazı koymak okunmaz hale getiriyor. */}
+      {/* Söz → yazar → imza tek bir akışta duruyor. İmza eskiden `position:
+          absolute` ile alta çakılıydı ve uzun sözlerde yazarın üstüne biniyordu;
+          akışta olunca çakışma dizgesel olarak imkansız.
+
+          Boşluklar 3:7 oranında esniyor: kısa sözde blok ekranın üst üçte
+          birinde kalıyor (telefonun alt üçtebiri uygulama simgelerine ait),
+          uzun sözde iki boşluk da büzülerek metne yer açıyor. */}
       <View
         style={[
           styles.content,
-          { paddingHorizontal: width * 0.13, paddingTop: height * 0.3 },
+          {
+            paddingHorizontal: width * 0.13,
+            paddingTop: height * 0.12,
+            paddingBottom: height * 0.045,
+          },
         ]}>
+        <View style={styles.spacerTop} />
+
+        {/* Sistem yazı tipi ölçeği kapalı: bu bir görsel, cihaz ayarı büyütünce
+            dışa aktarılan duvar kağıdının düzeni bozuluyordu. */}
         <Text
-          style={{
-            fontFamily: Fonts.quote,
-            fontSize: quoteSize,
-            lineHeight: quoteSize * 1.42,
-            color: style.text,
-            letterSpacing: 0.5,
-          }}>
+          allowFontScaling={false}
+          style={[
+            styles.quote,
+            {
+              fontSize: quoteSize,
+              lineHeight: quoteSize * 1.42,
+              color: style.text,
+              letterSpacing: quoteSize * 0.006,
+            },
+          ]}>
           {text}
         </Text>
 
-        <View style={{ marginTop: height * 0.035, alignItems: 'flex-end' }}>
+        <View style={[styles.authorRow, { marginTop: height * 0.035 }]}>
           <Text
-            style={{
-              fontFamily: Fonts.body,
-              fontSize: authorSize,
-              color: style.muted,
-              letterSpacing: 0.5,
-            }}>
+            allowFontScaling={false}
+            style={[
+              styles.author,
+              { fontSize: authorSize, color: style.muted, letterSpacing: authorSize * 0.014 },
+            ]}>
             — {author}
           </Text>
         </View>
-      </View>
 
-      {/* köşe imzası: paylaşıldığında uygulamayı hatırlatır, okumayı bozmaz */}
-      <View style={[styles.mark, { bottom: height * 0.055 }]}>
+        <View style={styles.spacerBottom} />
+
+        {/* köşe imzası: paylaşıldığında uygulamayı hatırlatır, okumayı bozmaz */}
         <Text
-          style={{
-            fontFamily: Fonts.body,
-            fontSize: markSize,
-            color: style.muted,
-            opacity: 0.65,
-            letterSpacing: 1.2,
-          }}>
+          allowFontScaling={false}
+          style={[
+            styles.mark,
+            { fontSize: markSize, color: style.muted, letterSpacing: markSize * 0.05 },
+          ]}>
           DriftStop
         </Text>
       </View>
@@ -160,8 +182,15 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
+  // Esneyen boşluklar: 3/10 üstte, 7/10 altta → blok ortanın üstünde duruyor.
+  spacerTop: { flex: 3 },
+  spacerBottom: { flex: 7 },
+  quote: { fontFamily: Fonts.quote },
+  authorRow: { alignItems: 'flex-end' },
+  author: { fontFamily: Fonts.body },
   mark: {
-    position: 'absolute',
+    fontFamily: Fonts.body,
     alignSelf: 'center',
+    opacity: 0.65,
   },
 });

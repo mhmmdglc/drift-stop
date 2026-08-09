@@ -161,6 +161,14 @@ Sözü telefon arka planına dönüştürüp galeriye kaydetme. Yeni dosyalar:
 **3240×7020 / 11 MB** üretiyordu. Hedef pikseli `PixelRatio.get()`'e bölmek şart —
 düzeltilince 1080×2340 / 2 MB oldu. Bu davranış teste bağlandı (1x/2x/3x).
 
+> **Düzeltme (2026-08-09, Android QA turu):** yukarıdaki cümle **yalnızca iOS için** doğru.
+> Android `width`/`height` değerlerini olduğu gibi `Bitmap.createScaledBitmap`'e veriyor
+> (`RNViewShotModule.java` → `ViewShot.java`), yani birim **piksel**. Aynı bölmeyi orada da
+> uygulamak 2.625 yoğunluklu emülatörde **411×891 / 85 KB** duvar kağıdı üretiyordu; gerçek
+> cihazda (3.0x) 360×780'e düşüyor. `wallpaperCaptureSize()` artık platforma göre ayrılıyor
+> ve test de platform başına ayrı — eski test iOS varsayımını evrensel yazdığı için
+> 242/242 yeşilken Android bozuktu.
+
 ⚠️ **Yeni rota eklerken:** `typedRoutes` açık, `.expo/types/router.d.ts` yeniden üretilmeden
 `tsc` yeni yolu tanımıyor. Üretmek için dev server'ı bir kez çalıştırmak yeterli —
 **8081 başka projede meşgul**, `npx expo start --port 8097` kullan.
