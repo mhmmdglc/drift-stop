@@ -7,6 +7,16 @@ import { purgePremiumCacheForSignOut } from '@/services/premiumCacheGuard';
 
 type AuthResult = { error: string | null };
 
+/**
+ * Sosyal girişin sonucu üç durumlu: başarı / vazgeçme / hata.
+ *
+ * `cancelled` olmadan vazgeçmek ile başarı çağıran taraf için AYNI görünüyordu
+ * (ikisi de `error: null`), o yüzden `/auth` iptalde de kapanıyor ve kullanıcı
+ * hiçbir açıklama olmadan misafir olarak Ayarlar'a düşüyordu. Satın almadaki
+ * `PurchaseResult` ile aynı biçim (`usePurchases.tsx`).
+ */
+type SocialAuthResult = AuthResult & { cancelled?: boolean };
+
 type AuthContextValue = {
   /** Supabase yapılandırılmamışsa (anon key eksik) her zaman false — ekranlar guest gibi davranır. */
   configured: boolean;
@@ -30,10 +40,11 @@ type AuthContextValue = {
   sendPasswordReset: (email: string) => Promise<AuthResult>;
   /**
    * Google / Apple ile giriş. Tek adımda hem kayıt hem giriş: e-posta doğrulama
-   * beklemek yok, şifre yok. Kullanıcı vazgeçerse `error: null` döner —
-   * vazgeçmek hata değil, ekranda kırmızı yazı çıkmamalı.
+   * beklemek yok, şifre yok. Kullanıcı vazgeçerse `{ error: null, cancelled: true }`
+   * döner — vazgeçmek hata değil (kırmızı yazı çıkmamalı) ama başarı da değil
+   * (ekran kapanmamalı).
    */
-  signInWithProvider: (provider: 'google' | 'apple') => Promise<AuthResult>;
+  signInWithProvider: (provider: 'google' | 'apple') => Promise<SocialAuthResult>;
   signOut: () => Promise<void>;
   deleteAccount: () => Promise<AuthResult>;
 };
@@ -107,7 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           provider === 'google' ? await signInWithGoogle() : await signInWithApple();
 
         if (isSocialError(result)) {
-          if (result.cancelled) return { error: null };
+          if (result.cancelled) return { error: null, cancelled: true };
           if (result.reason === 'unavailable') return { error: 'auth.errors.providerUnavailable' };
           // Play Services eksik/eskiyse kullanıcının yapabileceği bir şey var:
           // genel "bir şeyler ters gitti" satırı bunu gizliyordu.

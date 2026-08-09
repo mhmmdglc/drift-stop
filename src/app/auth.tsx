@@ -69,9 +69,16 @@ export default function AuthScreen() {
     setNotice(null);
     const result = await signInWithProvider(provider);
     setSocialBusy(null);
-    // Vazgeçmek de `error: null` döner; ekranda hiçbir şey değişmez, doğrusu bu.
-    if (result.error) setError(t(result.error));
-    else if (router.canGoBack()) router.back();
+    // Vazgeçme ÖNCE ayıklanıyor: `error` iptalde de null olduğu için bu satır
+    // olmadan iptal "başarı" sayılıyor ve ekran kapanıyordu — kullanıcı hiçbir
+    // açıklama olmadan misafir olarak Ayarlar'a düşüyordu. Doğrusu: hiçbir şey
+    // olmasın, düğme yeniden basılabilir kalsın.
+    if (result.cancelled) return;
+    if (result.error) {
+      setError(t(result.error));
+      return;
+    }
+    if (router.canGoBack()) router.back();
   };
 
   const emailValid = /\S+@\S+\.\S+/.test(email.trim());

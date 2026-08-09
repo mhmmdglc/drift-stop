@@ -166,7 +166,7 @@ screen calls `ensurePermissions()` itself at `src/app/onboarding.tsx:44` before 
 |---|---|---|---|---|
 | `useSettings` (`src/hooks/useSettings.tsx:48`) | Provider | The whole `Settings` object; keeps `i18n.locale` in sync; triggers rescheduling | AsyncStorage `driftstop:settings` | `{ settings, loaded, update(patch), setThemeMode(mode), setLanguage(lang) }` |
 | `useTheme` (`src/hooks/use-theme.tsx:18`) | Provider | Resolves `themeMode` + OS scheme → palette | none (derives from Settings) | `{ colors, themeName, mode, setMode }` |
-| `useAuth` (`src/hooks/useAuth.tsx:33`) | Provider | Supabase session | Supabase client's own storage (SQLite-backed `localStorage`, `src/lib/supabase.ts:1,16`) | `{ configured, session, user, loading, signUpWithEmail, signInWithEmail, signOut, deleteAccount }` |
+| `useAuth` (`src/hooks/useAuth.tsx:33`) | Provider | Supabase session | Supabase client's own storage (SQLite-backed `localStorage`, `src/lib/supabase.ts:1,16`) | `{ configured, session, user, loading, signUpWithEmail, signInWithEmail, resendConfirmation, sendPasswordReset, signInWithProvider, signOut, deleteAccount }` |
 | `usePurchases` (`src/hooks/usePurchases.tsx:37`) | Provider | RevenueCat `CustomerInfo`, current offering, entitlement flags | RevenueCat SDK | `{ configured, loading, entitlementKnown, isPro, isAdsRemoved, offering, purchasePackage, restorePurchases }` |
 | `useHistory` (`src/hooks/useHistory.tsx:40`) | Provider | Ordered list of *seen* quote ids + a read pointer | AsyncStorage `driftstop:seenHistory` (cap 200, `:19`) | `{ quote, count, loaded, record, goOlder, goNewer, randomFromHistory, canOlder, canNewer }` |
 | `useFavorites` (`src/hooks/useFavorites.ts:6`) | Hook (per-consumer state!) | Favourite quote ids | AsyncStorage `driftstop:favorites` | `{ ids, isFavorite, toggle, remove, loaded }` |
@@ -184,6 +184,13 @@ Details worth knowing:
   weekend flag, **language** (notification body text) and **themes** (quote pool).
 - **First-launch language.** `detectLanguage()` (`useSettings.tsx:17-22`) picks the device language
   if it is in `AVAILABLE_LANGUAGE_CODES`, else `'tr'`. Stored language always wins.
+- **Social sign-in has three outcomes, not two.** `signInWithProvider` returns
+  `{ error, cancelled? }` — the same shape as `purchasePackage`. Cancelling the provider sheet is
+  neither an error (no red line) nor a success (**the screen must stay open**), and `auth.tsx:72-80`
+  checks `cancelled` *before* `error`. While cancel and success were both a bare `{ error: null }`,
+  dismissing Google's sheet closed `/auth` and dropped the user back on Settings, still a guest,
+  with no explanation. Pinned by `src/hooks/__tests__/useAuthSocial.test.tsx` and
+  `src/__tests__/authScreenSocialCancel.test.tsx`.
 - **`useFavorites` is not a provider** — every screen that calls it holds an independent copy of
   `ids`. Two mounted screens can drift until remount. Writes are last-write-wins.
 - **History is not a generator.** The app never invents "next quote" in-app; new quotes arrive via
@@ -558,6 +565,8 @@ and on the async-effect setState pattern used throughout the repo (see the sever
 | `src/services/__tests__/authorsSync.test.ts` (4) | same four shapes for the RPC |
 | `src/i18n/__tests__/locales.test.ts` (3) | Locale key parity / non-empty / placeholder retention (6 active locales) |
 | `src/hooks/__tests__/useSettings.test.tsx` (4) | Device-locale fallback, AsyncStorage persistence, **reschedule only on schedule-affecting fields**, throw outside provider |
+| `src/hooks/__tests__/useAuthSocial.test.tsx` (8) | `signInWithProvider`'s three outcomes: Google/Apple cancellation → `{ error: null, cancelled: true }` and **no** call to Supabase, real sign-in → not cancelled, every `SocialError` reason → its own key with `cancelled` unset, Supabase rejecting the id token → mapped error |
+| `src/__tests__/authScreenSocialCancel.test.tsx` (3) | `/auth` after a social attempt: cancel keeps the screen open with no error line and a tappable button, a real failure renders the error line and keeps it open, a real success calls `router.back()` |
 | `src/components/__tests__/ErrorBoundary.test.tsx` (4) | Renders children, fallback on throw, reports error, retry action |
 
 ### What has **no** test coverage
@@ -566,10 +575,10 @@ and on the async-effect setState pattern used throughout the repo (see the sever
 |---|---|
 | **Notification scheduling — the app's core feature** | `src/utils/scheduler.ts` (all 6 exports; only its `timeUtils` helpers are tested) |
 | SQLite cache layer | `src/db/quotesCache.ts` (only the purge/tombstone/watermark SQL is tested), `src/db/packsCache.ts` (only `getExpectedPremiumQuoteCount`) — the seed transaction, the upserts, the read queries, the blind `alter table` |
-| Most state | `useHistory`, `usePurchases` (incl. the `entitlementKnown`/`loading` split — only its *consumers* are tested), `useAuth`, `usePacks`, `useFavorites`, `useEnforceFreeLimits`, `useNotifications`, `use-theme` (`usePremiumCacheGuard` **is** covered) |
+| Most state | `useHistory`, `usePurchases` (incl. the `entitlementKnown`/`loading` split — only its *consumers* are tested), `useAuth`'s email/session paths (its **social** path is covered), `usePacks`, `useFavorites`, `useEnforceFreeLimits`, `useNotifications`, `use-theme` (`usePremiumCacheGuard` **is** covered) |
 | Ads | `src/utils/ads.ts` (suppression, gap capping), `src/constants/adUnits.ts` id selection, `AdBanner` |
 | Widget | `src/widgets/*` — the headless handler, its fallbacks, the deep-link URI |
-| Screens | All 10 routes + both layouts under `src/app/` — except Favorites' premium locked/loading/invalidation paths (`src/__tests__/favoritesPremiumInvalidation.test.tsx`). `quote/[id]`, `packs/[id]` and `packs/author/[name]` carry the same invalidation wiring with **no** test |
+| Screens | All 10 routes + both layouts under `src/app/` — except Favorites' premium locked/loading/invalidation paths (`src/__tests__/favoritesPremiumInvalidation.test.tsx`) and `/auth`'s social-outcome branch (`src/__tests__/authScreenSocialCancel.test.tsx`). `quote/[id]`, `packs/[id]` and `packs/author/[name]` carry the same invalidation wiring with **no** test |
 | Pure helpers | `src/utils/sketch.ts`, `src/utils/quoteText.ts` (indirect only), `src/i18n/quoteLocalization.ts`, `src/types/quotePack.ts:localizedPackField` |
 | Backend | Both edge functions (no Deno test runner configured), all SQL/RLS policies, every script in `scripts/` |
 | Config | `plugins/withGradleVersion.js` |
