@@ -127,7 +127,8 @@
       "deleteAccountConfirmMessage": "Dein Konto wird gelöscht und der Zugang zu den Premium-Paketen endet. Favoriten und Einstellungen auf diesem Gerät bleiben erhalten; ein laufendes Abo musst du separat im Store kündigen. Dies kann nicht rückgängig gemacht werden.",
       "deleteAccountErrorTitle": "Konto konnte nicht gelöscht werden",
       "guestHint": "Du nutzt DriftStop als Gast. Mit einem Konto behältst du deinen Pro-Zugang und die Premium-Pakete auch auf einem neuen Handy.",
-      "signInLink": "Anmelden / Konto erstellen"
+      "signInLink": "Anmelden / Konto erstellen",
+      "appleRelayNote": "Das ist Apples private Weiterleitungsadresse für DriftStop. Mails an diese Adresse landen trotzdem in deinem echten Postfach."
     },
     "premium": {
       "goProLink": "Werbung entfernen / Pro werden",
@@ -215,7 +216,8 @@
       "generic": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
       "notConfigured": "Konten sind derzeit nicht verfügbar.",
       "emailRequiredForReset": "Gib zuerst deine E-Mail-Adresse ein.",
-      "providerUnavailable": "Diese Anmeldemethode ist gerade nicht verfügbar."
+      "providerUnavailable": "Diese Anmeldemethode ist gerade nicht verfügbar.",
+      "playServices": "Für die Google-Anmeldung werden die Google Play-Dienste benötigt. Aktualisiere oder aktiviere sie und versuch es noch einmal."
     },
     "resendConfirmation": "Bestätigungs-E-Mail nicht angekommen? Erneut senden",
     "resendSuccess": "Bestätigungs-E-Mail erneut gesendet.",
@@ -223,7 +225,8 @@
     "resetSent": "Ein Link zum Zurücksetzen ist unterwegs zu deinem Postfach.",
     "continueWithGoogle": "Mit Google fortfahren",
     "continueWithApple": "Mit Apple fortfahren",
-    "orEmail": "oder per E-Mail"
+    "orEmail": "oder per E-Mail",
+    "appleRelayHint": "Wenn du „Meine E-Mail-Adresse verbergen“ wählst, gibt Apple uns eine private Weiterleitungsadresse – diese Adresse wird ein eigenes Konto."
   },
   "paywall": {
     "title": "Pro werden",

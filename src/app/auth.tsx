@@ -11,6 +11,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { AppleSignInButton } from '@/components/AppleSignInButton';
+import { GoogleSignInButton } from '@/components/GoogleSignInButton';
 import { PaperBackground } from '@/components/PaperBackground';
 import { SketchButton } from '@/components/SketchButton';
 import { ThemedText } from '@/components/ThemedText';
@@ -59,6 +61,9 @@ export default function AuthScreen() {
   }, []);
 
   const social = async (provider: 'google' | 'apple') => {
+    // Apple'ın yerel düğmesi sönükleştirilmiyor (marka kuralı), o yüzden "aynı
+    // anda tek deneme" kuralını burada da bir kez daha uyguluyoruz.
+    if (socialBusy !== null || submitting) return;
     setSocialBusy(provider);
     setError(null);
     setNotice(null);
@@ -157,18 +162,26 @@ export default function AuthScreen() {
             {(googleSignInAvailable || appleReady) && (
               <View style={styles.social}>
                 {googleSignInAvailable && (
-                  <SketchButton
-                    label={socialBusy === 'google' ? t('common.loading') : t('auth.continueWithGoogle')}
+                  <GoogleSignInButton
+                    label={t('auth.continueWithGoogle')}
                     onPress={() => void social('google')}
+                    busy={socialBusy === 'google'}
                     disabled={socialBusy !== null || submitting}
                   />
                 )}
                 {appleReady && (
-                  <SketchButton
-                    label={socialBusy === 'apple' ? t('common.loading') : t('auth.continueWithApple')}
-                    onPress={() => void social('apple')}
-                    disabled={socialBusy !== null || submitting}
-                  />
+                  <>
+                    <AppleSignInButton
+                      label={t('auth.continueWithApple')}
+                      onPress={() => void social('apple')}
+                      disabled={socialBusy !== null || submitting}
+                    />
+                    {/* "E-postamı Gizle" ayrı bir hesap yaratıyor: Pro'sunu bulamayan
+                        kullanıcının en olası destek sorusu bu, önceden söylüyoruz. */}
+                    <ThemedText variant="label" tone="textMuted">
+                      {t('auth.appleRelayHint')}
+                    </ThemedText>
+                  </>
                 )}
                 <ThemedText variant="label" tone="textMuted" style={styles.socialDivider}>
                   {t('auth.orEmail')}

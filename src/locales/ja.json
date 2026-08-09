@@ -113,6 +113,9 @@
     },
     "preferences": {
       "hint": ""
+    },
+    "account": {
+      "appleRelayNote": "これは DriftStop 用に Apple が発行した非公開の転送アドレスです。ここ宛のメールは実際の受信箱に届きます。"
     }
   },
   "notifications": {
@@ -212,10 +215,12 @@
   },
   "auth": {
     "errors": {
-      "providerUnavailable": "このログイン方法は現在利用できません。"
+      "providerUnavailable": "このログイン方法は現在利用できません。",
+      "playServices": "Google でのログインには Google Play 開発者サービスが必要です。更新または有効にしてから、もう一度お試しください。"
     },
     "continueWithGoogle": "Google で続ける",
     "continueWithApple": "Apple で続ける",
-    "orEmail": "またはメールで"
+    "orEmail": "またはメールで",
+    "appleRelayHint": "「メールを非公開」を選ぶと、Apple から非公開の転送用アドレスが渡されます。そのアドレスは別のアカウントになります。"
   }
 }

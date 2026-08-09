@@ -127,7 +127,8 @@
       "deleteAccountConfirmMessage": "Tu cuenta se eliminará y perderás el acceso a los packs premium. Los favoritos y ajustes de este dispositivo se mantienen, y una suscripción activa debe cancelarse aparte en la tienda. Esta acción no se puede deshacer.",
       "deleteAccountErrorTitle": "No se pudo eliminar la cuenta",
       "guestHint": "Estás usando DriftStop como invitado. Con una cuenta, tu acceso Pro y los packs premium siguen siendo tuyos en un móvil nuevo.",
-      "signInLink": "Iniciar sesión / Crear cuenta"
+      "signInLink": "Iniciar sesión / Crear cuenta",
+      "appleRelayNote": "Esta es la dirección de reenvío privada de Apple para DriftStop. El correo enviado aquí llega igualmente a tu bandeja real."
     },
     "premium": {
       "goProLink": "Quitar anuncios / Hazte Pro",
@@ -215,7 +216,8 @@
       "generic": "Algo salió mal. Inténtalo de nuevo.",
       "notConfigured": "Las cuentas no están disponibles ahora mismo.",
       "emailRequiredForReset": "Primero escribe tu correo electrónico.",
-      "providerUnavailable": "Este método de acceso no está disponible ahora."
+      "providerUnavailable": "Este método de acceso no está disponible ahora.",
+      "playServices": "Para iniciar sesión con Google se necesitan los servicios de Google Play. Actualízalos o actívalos y vuelve a intentarlo."
     },
     "resendConfirmation": "¿No llegó el correo de confirmación? Enviarlo de nuevo",
     "resendSuccess": "Correo de confirmación enviado de nuevo.",
@@ -223,7 +225,8 @@
     "resetSent": "Te enviamos un enlace para restablecerla.",
     "continueWithGoogle": "Continuar con Google",
     "continueWithApple": "Continuar con Apple",
-    "orEmail": "o usa el correo"
+    "orEmail": "o usa el correo",
+    "appleRelayHint": "Si eliges «Ocultar mi correo», Apple nos da una dirección de reenvío privada: esa dirección se convierte en una cuenta aparte."
   },
   "paywall": {
     "title": "Hazte Pro",

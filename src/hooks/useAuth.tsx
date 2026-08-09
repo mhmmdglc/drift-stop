@@ -108,23 +108,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (isSocialError(result)) {
           if (result.cancelled) return { error: null };
-          return {
-            error:
-              result.reason === 'unavailable'
-                ? 'auth.errors.providerUnavailable'
-                : 'auth.errors.generic',
-          };
+          if (result.reason === 'unavailable') return { error: 'auth.errors.providerUnavailable' };
+          // Play Services eksik/eskiyse kullanıcının yapabileceği bir şey var:
+          // genel "bir şeyler ters gitti" satırı bunu gizliyordu.
+          if (result.reason === 'playServices') return { error: 'auth.errors.playServices' };
+          return { error: 'auth.errors.generic' };
         }
 
-        const { error } = await supabase.auth.signInWithIdToken({
+        const { data, error } = await supabase.auth.signInWithIdToken({
           provider: result.provider,
           token: result.idToken,
         });
         if (error) return { error: mapAuthError(error.message) };
 
-        // Apple adı YALNIZCA ilk girişte veriyor. Kaçırırsak bir daha hiç
-        // gelmiyor, o yüzden hemen profile yazıyoruz.
-        if (result.fullName) {
+        // Apple adı YALNIZCA ilk yetkilendirmede veriyor. Kaçırırsak bir daha hiç
+        // gelmiyor, o yüzden hemen profile yazıyoruz — ama YALNIZCA dolu bir ad
+        // geldiyse ve kayıtlıdan farklıysa: ikinci girişte Apple ad göndermiyor,
+        // o anda yazmak daha önce saklanan adı silerdi.
+        const storedName =
+          typeof data.user?.user_metadata?.full_name === 'string'
+            ? data.user.user_metadata.full_name.trim()
+            : '';
+        if (result.fullName && result.fullName !== storedName) {
           await supabase.auth.updateUser({ data: { full_name: result.fullName } });
         }
         return { error: null };

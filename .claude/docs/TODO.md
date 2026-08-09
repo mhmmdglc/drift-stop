@@ -49,11 +49,38 @@ Favorites add/remove, the six locales on screen, schedule-time validation, the w
 deep link from a notification, offline behaviour. And **no purchase has ever been exercised anywhere** —
 the emulator has no Play Billing.
 
-### Social sign-in is still absent
-`social-sign-in.md` was approved 2026-07-25 and **not a line of it exists**. `useAuth` has only
-email/password + sign-out + delete. There is also **no password reset**. Google needs owner-produced OAuth
-clients (web + iOS + Android with three SHA-1s) and Supabase provider config; Apple needs a Services ID and
-a `.p8`. See §1.6 of the spec for who produces each value.
+### ~~Social sign-in is still absent~~ — superseded, this whole paragraph is now wrong
+
+Left in place because the sweep is a dated record, but **do not act on it**. Every claim below has since
+been overtaken:
+
+- *"not a line of it exists"* → commit `5aefed2` shipped `src/lib/socialAuth.ts` + `useAuth.signInWithProvider`.
+- *"there is also no password reset"* → password reset shipped separately.
+- *"Supabase provider config"* → **done 2026-08-09.** Google (web + iOS audiences) and Apple
+  (`com.driftstop.app`) are enabled and verified live; see `OPERATIONS.md` §5.
+- *"Apple needs a Services ID and a `.p8`"* → **only for token revocation, which is now deferred** (below).
+  Native Sign in with Apple needs neither, and neither is configured.
+
+What is genuinely still open is tracked in `specs/social-sign-in.md` §6 (acceptance criteria — no criterion
+has been observed on a device yet) and in the two items below.
+
+### Apple token revocation on account deletion — deferred, accepted compliance gap (2026-08-09)
+
+Owner decision: **not this release** (answers Q1 in `specs/social-sign-in.md` §2 with *no*, reversing the
+provisional "yes" of 2026-07-25). Account deletion itself is unaffected and complete — `auth.users`, its
+`auth.identities` row, `profiles` and `trials` all cascade away. The single visible consequence is that a
+deleted user keeps seeing **DriftStop under iOS Settings → Apple ID → Sign in with Apple**.
+
+Whoever submits to App Review must know this is a knowing, recorded gap and not an oversight. Full detail,
+including what building it would cost (Services ID, a once-downloadable `.p8`, and a silent ~6-month secret
+rotation forever after), is in `OPERATIONS.md` §7.
+
+### Google sign-in on Android is still blocked on an owner-created OAuth client
+
+Supabase now accepts Google id tokens, but Google itself will not issue one to the Android app until an
+**Android OAuth client** exists for package `com.driftstop.app` with the right SHA-1s (debug, upload key,
+and — the one that governs what closed testers actually install — **Play App Signing**). Until then the
+Android button fails with `DEVELOPER_ERROR`. This is spec blocker B1 and is owner-only.
 
 ### Fixed 2026-08-01/02 (this sweep's second pass)
 - `scheduler.ts` now has **27 tests** — permissions, both channels, the 3-day loop, the reschedule guard,
@@ -138,6 +165,9 @@ sonra bir build, sonra abonelik grubunun inceleme ekran görüntüsü (paywall'�
 
 - **On your real phone once v11 reaches the Alpha track:** verify the paywall lists all 3 products with real prices and that a purchase completes. This is the ONLY thing never verified anywhere — the Android emulator has no Play Billing (`BILLING_UNAVAILABLE`), so product listing/purchase can only be checked on a real device with a Play account on the closed-testing list.
 - **Play Console needs 12 testers + 14 days** on closed testing before production is unlockable (personal developer account rule). **Resolved on the tester side: 16 testers, testing daily, day 4 as of 2026-08-05** — production should unlock around **2026-08-15**. The 14 days must be continuous, so nobody should be removed from the Alpha track until then.
+- **Create the Android OAuth client for Google sign-in** (spec blocker B1) — Google Cloud project `driftstop`, package `com.driftstop.app`, registering **all three** SHA-1s: debug keystore, upload key (`93:64:96:08:BB:0F:2F:51:C9:7E:6D:9D:FE:34:43:E1:6F:F7:4D:B3`) and the **Play App Signing** certificate from Play Console → Test and release → Setup → App integrity. Without it the Google button fails with `DEVELOPER_ERROR` on Android — and if only the upload key is registered it will work everywhere *except* for real closed testers. Supabase's side of Google sign-in is already done (2026-08-09).
+- **Publish the Google OAuth app** (spec blocker B3) — Google Auth Platform → Audience → publishing status **"In production"**. While it sits in "Testing", only listed test users can sign in (100 cap) and everyone else sees a failure indistinguishable from a code bug.
+- **Confirm the Sign In with Apple capability** on `com.driftstop.app` and that the regenerated provisioning profile is the one EAS will use (spec blocker B7). `5aefed2`'s commit message says this was done via the ASC API; it has never been independently verified. If it is wrong, the iOS build compiles and Apple sign-in fails only at runtime.
 
 ## v11 submitted for review (2026-07-24)
 

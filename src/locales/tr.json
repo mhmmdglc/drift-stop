@@ -127,7 +127,8 @@
       "deleteAccountConfirmMessage": "Hesabın silinecek ve premium paket erişimin sona erecek. Bu cihazdaki favorilerin ve ayarların olduğu gibi kalır; devam eden bir aboneliğin varsa mağazadan ayrıca iptal etmen gerekir. Bu işlem geri alınamaz.",
       "deleteAccountErrorTitle": "Hesap silinemedi",
       "guestHint": "DriftStop'u misafir olarak kullanıyorsun. Hesap açarsan Pro erişimin ve premium paketler yeni telefonunda da senin olur.",
-      "signInLink": "Giriş yap / Hesap oluştur"
+      "signInLink": "Giriş yap / Hesap oluştur",
+      "appleRelayNote": "Bu, Apple’ın DriftStop için verdiği gizli yönlendirme adresi. Buraya gelen postalar gerçek gelen kutuna ulaşır."
     },
     "premium": {
       "goProLink": "Reklamları kaldır / Pro'ya geç",
@@ -215,7 +216,8 @@
       "generic": "Bir şeyler ters gitti. Tekrar dene.",
       "notConfigured": "Hesap sistemi şu an kullanılamıyor.",
       "emailRequiredForReset": "Sıfırlama için önce e-posta adresini gir.",
-      "providerUnavailable": "Bu giriş yöntemi şu an kullanılamıyor."
+      "providerUnavailable": "Bu giriş yöntemi şu an kullanılamıyor.",
+      "playServices": "Google girişi için Google Play Hizmetleri gerekli. Güncelle ya da etkinleştir, sonra tekrar dene."
     },
     "resendConfirmation": "Onay e-postası gelmedi mi? Tekrar gönder",
     "resendSuccess": "Onay e-postası tekrar gönderildi.",
@@ -223,7 +225,8 @@
     "resetSent": "Şifre sıfırlama bağlantısı e-postana gönderildi.",
     "continueWithGoogle": "Google ile devam et",
     "continueWithApple": "Apple ile devam et",
-    "orEmail": "ya da e-posta ile"
+    "orEmail": "ya da e-posta ile",
+    "appleRelayHint": "\"E-postamı Gizle\" seçersen Apple bize gizli bir yönlendirme adresi verir; o adres ayrı bir hesap olur."
   },
   "paywall": {
     "title": "Pro'ya geç",

@@ -144,7 +144,9 @@ npx eas env:list --environment production
 | `EXPO_PUBLIC_SUPABASE_URL` | Supabase project URL used by `src/lib/supabase.ts` | ✅ required | ✅ required | `https://ftohdffebzhrthrpeuos.supabase.co` |
 | `EXPO_PUBLIC_SUPABASE_ANON_KEY` | Supabase publishable key (`sb_publishable_…` under Supabase's new key naming; replaces the old "anon key"). Without it, auth + quote/pack sync silently no-op | ✅ required | ✅ required | Supabase → Project Settings → API → **Publishable key** |
 | `EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY` | RevenueCat Android public SDK key (`goog_…` for the real Play Store app; `test_…` for the Test Store). Without it, `purchasesConfigured=false` → no paywall, no premium UI | ✅ required | ✅ required | RevenueCat → Project settings → Apps → [Android app] → Public API Key |
-| `EXPO_PUBLIC_REVENUECAT_IOS_API_KEY` | RevenueCat iOS public SDK key | ❌ **does not exist yet** | ❌ not set | Until it exists, iOS purchases are cleanly disabled by design — `Platform.select` in `src/lib/purchases.ts` yields `undefined` and no purchase UI renders. Passing the Android key to iOS throws "invalid API key", so do **not** reuse it |
+| `EXPO_PUBLIC_REVENUECAT_IOS_API_KEY` | RevenueCat iOS public SDK key (`appl_…`) | ✅ present | ✅ `production` + `preview` — ⚠️ **absent from `development`** | Verified present 2026-08-09 by `eas env:list` for all three environments (this row previously said "does not exist yet" — that was stale). Where it is absent, iOS purchases are cleanly disabled by design: `Platform.select` in `src/lib/purchases.ts` yields `undefined` and no purchase UI renders. Passing the Android key to iOS throws "invalid API key", so do **not** reuse it |
+| `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID` | Google OAuth **web** client id. This is the *audience* Supabase validates `signInWithIdToken` tokens against, on **both** platforms. Empty ⇒ `googleSignInAvailable` is false and the Google button is not rendered at all | ✅ required | ✅ present in `production`, `preview`, `development` (verified 2026-08-09) | Must match the first entry of Supabase → Auth → Providers → Google → Client IDs (§5). Public by definition — an OAuth client id is not a secret |
+| `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID` | Google OAuth **iOS** client id. Lets the native flow start on iOS. Never read on Android | ✅ required | ✅ present in `production`, `preview`, `development` (verified 2026-08-09) | Must match the second entry of Supabase's Google Client IDs **and** the reversed form must appear as the `iosUrlScheme` in `app.json` (see the F1/F7 gotcha in `specs/social-sign-in.md`) |
 | `EXPO_PUBLIC_SENTRY_DSN` | Optional crash reporting (`src/utils/crashReporting.ts`). Unset ⇒ Sentry never initializes, app unaffected | optional | optional (must be added if you want it in shipped builds) | Sentry → Settings → Projects → Client Keys (DSN) |
 | `SUPABASE_PASSWORD` | **Real Postgres credential.** Used only by `scripts/db-migrate.js`, `seed-quotes.js`, `seed-packs.js` | ✅ required for DB ops | 🚫 **never** — deliberately excluded | Not an `EXPO_PUBLIC_*` var; must never be bundled into the app |
 | `DATABASE_URL` | Optional full connection-string override for the same three scripts (takes precedence over `SUPABASE_PASSWORD`) | optional | 🚫 never | |
@@ -361,6 +363,72 @@ aws-0-ap-northeast-1.pooler.supabase.com:5432   user: postgres.ftohdffebzhrthrpe
 
 Any new script or ad-hoc `psql` session must use the pooler host too.
 
+### Auth providers (Google + Apple) — social sign-in
+
+**Configured live on 2026-08-09.** Both providers are enabled on project `ftohdffebzhrthrpeuos` and the app's
+`supabase.auth.signInWithIdToken` path is unblocked server-side.
+
+| Setting | Value | Why |
+|---|---|---|
+| Google → enabled | `true` | |
+| Google → Client IDs | `591923071526-4tmk3ook27po20c67nt8rcvrbp2qmhdo.apps.googleusercontent.com` (**web, first**), then `591923071526-2le5mn1grsdie51f63afh8vkmm84pa13.apps.googleusercontent.com` (iOS) | Comma-separated. GoTrue parses this into the list of acceptable `aud` claims. **Web must stay first** |
+| Google → Client Secret | *(empty)* | The native id-token flow never performs an OAuth code exchange |
+| Google → Skip nonce check | *(off — leave it off)* | Turning it on would accept unbound tokens. If a nonce error ever appears, implement the raw/SHA-256 nonce pair, never this toggle |
+| Apple → enabled | `true` | |
+| Apple → Client IDs | `com.driftstop.app` | The iOS bundle id is the `aud` of a native Apple identity token |
+| Apple → Secret Key / Team ID / Key ID | *(empty)* | Only the **web** flow and **token revocation** need them. Neither is in use — see the compliance gap in §7 |
+
+These fields are normally edited at
+`https://supabase.com/dashboard/project/ftohdffebzhrthrpeuos/auth/providers`. They can also be read and
+written through the Management API with the personal access token that `npx supabase login` already stored
+in the macOS keychain (service `Supabase CLI`, go-keyring-base64 encoded), which is how they were set:
+
+```bash
+curl -s -X PATCH "https://api.supabase.com/v1/projects/ftohdffebzhrthrpeuos/config/auth" -H "Authorization: Bearer $SB_TOKEN" -H 'Content-Type: application/json' -d '{"external_google_enabled":true,"external_google_client_id":"<web>,<ios>","external_apple_enabled":true,"external_apple_client_id":"com.driftstop.app"}'
+```
+
+⚠️ **Use `PATCH` with only the keys you mean to change.** The auth config has ~242 keys; `supabase config
+push` would overwrite unrelated settings (email confirmation, session timeouts, captcha) from a local
+`config.toml` that this repo does not even have. Do not use it for this.
+
+Verify without any credential — this is the proof that GoTrue actually reloaded the config, not just that
+the API accepted it:
+
+```bash
+curl -s "$EXPO_PUBLIC_SUPABASE_URL/auth/v1/settings" -H "apikey: $EXPO_PUBLIC_SUPABASE_ANON_KEY"
+```
+
+Expect `"external": { …, "apple": true, "google": true, … }`.
+
+A sharper check — send a deliberately invalid id token and read *which* error comes back:
+
+```bash
+curl -s -X POST "$EXPO_PUBLIC_SUPABASE_URL/auth/v1/token?grant_type=id_token" -H "apikey: $EXPO_PUBLIC_SUPABASE_ANON_KEY" -H 'Content-Type: application/json' -d '{"provider":"google","id_token":"not-a-jwt"}'
+```
+
+| Response | Meaning |
+|---|---|
+| `provider_disabled` — *"Provider (issuer …) is not enabled"* | The provider is **off**. This is the failure this section exists to prevent |
+| `"Bad ID token"` (Google) / *"Unable to detect issuer in ID token for Apple provider"* | Provider is **on** and GoTrue got as far as parsing the token — the expected result for a junk token |
+
+⚠️ **Gotcha: the Client ID list is not observable at runtime.** GoTrue verifies the token signature against
+the provider's JWKS *before* it compares `aud` against the Client IDs, so a forged token always returns
+`Bad ID token` no matter which audience it claims. A wrong or missing Client ID therefore looks **identical**
+to every other token failure. The list can only be confirmed by reading the config (dashboard or Management
+API `GET .../config/auth`) or by a real sign-in on a device.
+
+### Where a social identity lands
+
+`auth.identities` — one row per (user, provider). Signing in with Google on the address of an existing
+confirmed email account **links** a second row to the same `auth.users.id`, so the `profiles` row, the
+RevenueCat `app_user_id` and the entitlement are all preserved. Verified 2026-08-09 that
+`auth.identities.user_id` has `on delete cascade` from `auth.users`, alongside `profiles`, `favorites`,
+`reflections`, `user_settings` and `trials` — so `delete-account` still removes the linked social identity
+without touching a table by name.
+
+Nothing about social sign-in needed a schema change: the `on_auth_user_created` trigger creates the
+`profiles` row for a first-time Google/Apple user exactly as it does for an email signup.
+
 ### Edge Functions
 
 Two functions live in `supabase/functions/`:
@@ -535,7 +603,23 @@ Only review warning on v11 was a missing R8/proguard mapping file — informatio
 ### Store-process differences vs. Android
 
 - **No 12-tester / 14-day requirement.** TestFlight is optional. **App Review is the only gate.**
-- ⚠️ **Gotcha (Apple rule):** offering *any* third-party social login makes **Sign in with Apple mandatory**. Today the app ships email/password only (Google sign-in was deferred for lack of an OAuth client), so this does not bite — but adding "Continue with Google" to the iOS build obligates adding Sign in with Apple in the same release.
+- ⚠️ **Gotcha (Apple rule 4.8):** offering *any* third-party social login makes **Sign in with Apple mandatory**. **This now binds.** As of `5aefed2` the app ships "Continue with Google" *and* Sign in with Apple, the Google OAuth clients exist, and both providers are enabled in Supabase (§5). Google must never ship to iOS in a release that does not also ship Apple. (This bullet previously said the rule "does not bite" because the app was email/password only — that was true until `5aefed2` and is now wrong.)
+
+### ⚠️ Known compliance gap: Apple token revocation on account deletion is NOT implemented
+
+**Owner decision, 2026-08-09: deferred to a later release.** This answers Q1 in
+[`specs/social-sign-in.md`](../specs/social-sign-in.md) §2 with **no** — reversing the provisional "yes"
+recorded on 2026-07-25.
+
+| | |
+|---|---|
+| **What is missing** | `supabase/functions/delete-account/index.ts` deletes the Supabase user but never calls Apple's `https://appleid.apple.com/auth/revoke` for the user's Apple refresh token |
+| **Observable effect** | After deleting their DriftStop account, an Apple-signed-in user still sees **DriftStop listed under iOS Settings → Apple ID → Sign in with Apple**. Nothing else breaks: the `auth.users` row, its `auth.identities` row, `profiles` and `trials` are all really deleted, and signing in with the same Apple ID afterwards produces a genuinely new user id |
+| **Why it is a compliance gap** | Apple's guideline for apps offering account deletion with Sign in with Apple expects the token to be revoked as part of deletion. Deletion itself works, so this is a review/policy risk rather than a data-retention one |
+| **What it would take** | An Apple **Services ID** and a **`.p8` signing key** (both owner-created; the `.p8` downloads exactly once), stored as Supabase function secrets `APPLE_TEAM_ID` / `APPLE_SERVICES_ID` / `APPLE_KEY_ID` / the key body — plus a **recurring ~6-month secret rotation**, because the client secret derived from a `.p8` expires silently and takes Apple sign-in down with it |
+| **If it is ever built** | The Services ID must be listed **first** in Supabase → Apple → Client IDs (native sign-in accepts any id in the list, but the REST/revocation side uses the first). A revocation failure must be **logged and swallowed**, never allowed to block the Supabase deletion — the user asked to be deleted |
+
+Do not mark social sign-in "done" without this gap being visible to whoever submits to App Review.
 
 ---
 
@@ -609,6 +693,12 @@ Pro can be granted manually to a test customer from the RevenueCat dashboard. �
 | DB script exits with "SUPABASE_PASSWORD bulunamadı" | `.env` missing or `SUPABASE_PASSWORD` unset | Add it to local `.env` only — never to EAS env |
 | `supabase functions deploy` said success but the function 404s / is absent from `functions list` | Backgrounded deploy silently no-opped | Redeploy in the **foreground**, then re-verify with `functions list` + curl |
 | `delete-account` accepts unauthenticated requests | Deployed with `--no-verify-jwt` | Redeploy **without** that flag; confirm `verify_jwt: true` |
+| Social sign-in fails with *"Provider (issuer …) is not enabled"* | The Supabase auth provider is off | Enable it and re-check `/auth/v1/settings` (§5) |
+| Google/Apple sign-in fails on every device with a generic invalid-token error, identically on both platforms | Wrong or missing entry in Supabase → Auth → Providers → Client IDs. **Indistinguishable from any other token failure at runtime** — the audience is checked only after signature verification | Read the config back (dashboard or Management API `GET .../config/auth`) and compare byte-for-byte against `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID` / `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID` (§5) |
+| Google sign-in fails on Android with `DEVELOPER_ERROR`, but works on iOS | No Android OAuth client, or the signing certificate's SHA-1 is not registered on it. The Android client id is never read by the app — it only has to exist with the right package + SHA-1 | Register all three SHA-1s (debug, upload key, **Play App Signing**) on an Android OAuth client for `com.driftstop.app`. Only the Play App Signing fingerprint governs what closed testers install, so this can pass locally and fail for every real tester |
+| Google sign-in works for a few accounts and fails for everyone else | The Google OAuth app is still in "Testing" publishing status (100 listed test users) | Google Auth Platform → Audience → publish to production |
+| Apple sign-in *and* revocation both start failing on an app nobody has touched | The client secret derived from the Apple `.p8` expired (~6 months, silently) | Regenerate it. Only applies if revocation is ever implemented — today neither is configured (§7) |
+| Deleted user still sees DriftStop under Settings → Apple ID → Sign in with Apple | **Known, accepted gap** — Apple token revocation is deliberately not implemented (§7). The account really is deleted | Nothing to fix today; see §7 for what shipping it would require |
 | `INSTALL_FAILED_INSUFFICIENT_STORAGE` on the emulator | AVD data partition full | `adb uninstall com.driftstop.app`, `adb uninstall host.exp.exponent`, `adb shell pm trim-caches 1024M` |
 | New native module behaves as if not installed | Only JS reloaded; native side not relinked | Kill and re-run `npx expo run:android` for a fresh prebuild + Gradle build |
 | `java`/`adb`/`emulator` not found | Toolchain not on PATH; system JDK unusable | Export `ANDROID_HOME`, add `platform-tools`+`emulator` to PATH, set `JAVA_HOME` to `/Applications/Android Studio.app/Contents/jbr/Contents/Home` (§3) |

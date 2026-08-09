@@ -313,6 +313,29 @@ returns `(author, quote_count)` for `is_premium = true` only, granted to `anon, 
 deliberately bypasses RLS to expose *counts and names but never text* — the fix for free users
 seeing "0 quotes" on locked packs (rationale in the migration header, `0003:1-6`).
 
+### Auth providers & `auth.identities`
+
+Enabled server-side on `ftohdffebzhrthrpeuos` (configured and verified live 2026-08-09): **email**,
+**google** (accepted audiences = web client id, then iOS client id) and **apple** (audience
+`com.driftstop.app`). No OAuth secret is set for either social provider — `signInWithProvider` in
+`useAuth` uses `supabase.auth.signInWithIdToken`, the native id-token flow, which performs no code
+exchange. Values, the Management-API recipe and the verification curls are in `OPERATIONS.md` §5.
+
+`auth.identities` holds one row per (user, provider). Signing in with Google on the address of an existing
+**confirmed** email account links a *second* identity row to the **same** `auth.users.id` — which is exactly
+why the `profiles` row, the RevenueCat `app_user_id` and the entitlement survive the link. Every child of
+`auth.users` cascades on delete — `auth.identities`, `profiles`, `favorites`, `reflections`,
+`user_settings`, `trials` (verified against the live DB via `pg_constraint`, 2026-08-09) — so
+`delete-account` still removes the linked social identity without naming a single table.
+
+**Social sign-in required no schema change.** The `on_auth_user_created` trigger creates the `profiles` row
+for a first-time Google/Apple user exactly as for an email signup; migrations 0001–0007 are untouched. Live
+check on the same date: 4 users / 4 profiles / 0 users without a profile.
+
+⚠️ **Apple token revocation on account deletion is deliberately not implemented** (owner decision,
+2026-08-09). A deleted Apple user keeps seeing DriftStop under iOS Settings → Apple ID → Sign in with Apple
+even though the account is genuinely gone. Recorded as a compliance gap in `OPERATIONS.md` §7.
+
 ### Edge functions (Deno)
 
 | Function | Auth model | Behaviour |
@@ -334,7 +357,27 @@ seeing "0 quotes" on locked packs (rationale in the migration header, `0003:1-6`
 
 Env vars (`.env.example`): `SUPABASE_PASSWORD` (scripts only), `EXPO_PUBLIC_SUPABASE_URL`,
 `EXPO_PUBLIC_SUPABASE_ANON_KEY`, `EXPO_PUBLIC_REVENUECAT_ANDROID_API_KEY`,
-`EXPO_PUBLIC_SENTRY_DSN`. `.env` and `credentials*` are gitignored (`.gitignore:31-32,46-47`).
+`EXPO_PUBLIC_REVENUECAT_IOS_API_KEY`, `EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID`,
+`EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID`, `EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID`,
+`EXPO_PUBLIC_SENTRY_DSN`, and the four
+`EXPO_PUBLIC_ADMOB_*` unit ids. `.env` and `credentials*` are gitignored
+(`.gitignore:31-32,46-47`).
+
+The two `EXPO_PUBLIC_GOOGLE_*` values are the only ones checked in with real values — OAuth client
+ids are not secrets (they are embedded in every bundle anyway), and the iOS one has to be present in
+CI for the divergence guard below to run. `EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID` is mirrored, reversed,
+as the `iosUrlScheme` prop of the `@react-native-google-signin/google-signin` config plugin in
+`app.json`; without it Google sign-in on iOS has no way back into the app and **nothing errors**.
+`src/lib/__tests__/googleSignInConfig.test.ts` fails if the two ever diverge, or if the plugin is
+registered as a bare string again (which is how the scheme went missing in the first place).
+
+`EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID` is **never read at runtime** — on Android, Google matches the
+caller by package name + signing SHA-1, not by a client id in the bundle. Its only job is to gate the
+button: `googleSignInAvailableFor` (`src/lib/socialAuth.ts`) requires the web id everywhere, the iOS
+id on iOS and this one on Android, so a platform with no OAuth client behind it renders no button
+instead of a button that fails with `DEVELOPER_ERROR`. It is empty today (no Android client exists
+yet), which is why Google sign-in ships iOS-only; turning Android on is a config change — create the
+client, then set the value in `.env` **and** in EAS cloud env — not a code change.
 
 ---
 

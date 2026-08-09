@@ -113,6 +113,9 @@
     },
     "preferences": {
       "hint": ""
+    },
+    "account": {
+      "appleRelayNote": "هذا عنوان التحويل الخاص من Apple لتطبيق DriftStop. الرسائل المُرسَلة إليه تصل إلى بريدك الحقيقي."
     }
   },
   "notifications": {
@@ -212,10 +215,12 @@
   },
   "auth": {
     "errors": {
-      "providerUnavailable": "طريقة تسجيل الدخول هذه غير متاحة حالياً."
+      "providerUnavailable": "طريقة تسجيل الدخول هذه غير متاحة حالياً.",
+      "playServices": "يتطلب تسجيل الدخول عبر Google خدمات Google Play. حدّثها أو فعّلها ثم أعد المحاولة."
     },
     "continueWithGoogle": "المتابعة عبر Google",
     "continueWithApple": "المتابعة عبر Apple",
-    "orEmail": "أو عبر البريد الإلكتروني"
+    "orEmail": "أو عبر البريد الإلكتروني",
+    "appleRelayHint": "إذا اخترت «إخفاء بريدي الإلكتروني»، يمنحنا Apple عنوان تحويل خاصاً، وهذا العنوان يصبح حساباً منفصلاً."
   }
 }

@@ -127,7 +127,8 @@
       "deleteAccountConfirmMessage": "Your account will be deleted and premium pack access will stop. Favorites and settings on this device stay as they are, and an active subscription must be cancelled in the store separately. This cannot be undone.",
       "deleteAccountErrorTitle": "Couldn't delete account",
       "guestHint": "You're using DriftStop as a guest. With an account, your Pro access and premium packs stay yours on a new phone.",
-      "signInLink": "Sign in / Create account"
+      "signInLink": "Sign in / Create account",
+      "appleRelayNote": "This is Apple’s private relay address for DriftStop. Mail sent here still reaches your real inbox."
     },
     "premium": {
       "goProLink": "Remove ads / Go Pro",
@@ -215,7 +216,8 @@
       "generic": "Something went wrong. Please try again.",
       "notConfigured": "Accounts aren't available right now.",
       "emailRequiredForReset": "Enter your email address first.",
-      "providerUnavailable": "This sign-in method is unavailable right now."
+      "providerUnavailable": "This sign-in method is unavailable right now.",
+      "playServices": "Google sign-in needs Google Play services. Update or enable them, then try again."
     },
     "resendConfirmation": "Confirmation email didn't arrive? Send it again",
     "resendSuccess": "Confirmation email sent again.",
@@ -223,7 +225,8 @@
     "resetSent": "A password reset link is on its way to your inbox.",
     "continueWithGoogle": "Continue with Google",
     "continueWithApple": "Continue with Apple",
-    "orEmail": "or use email"
+    "orEmail": "or use email",
+    "appleRelayHint": "If you pick \"Hide My Email\", Apple gives us a private relay address — that address becomes a separate account."
   },
   "paywall": {
     "title": "Go Pro",

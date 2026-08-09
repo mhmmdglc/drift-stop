@@ -20,6 +20,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useEntitlement } from '@/hooks/useEntitlement';
 import { useSettings } from '@/hooks/useSettings';
 import { useTheme } from '@/hooks/use-theme';
+import { isAppleRelayEmail } from '@/lib/socialAuth';
 import type { QuoteTag } from '@/types/quote';
 import { FREE_FREQUENCY_MAX, FREQUENCY_OPTIONS, type Frequency, type ThemeMode } from '@/types/settings';
 import { isValidWindow, toMinutes } from '@/utils/timeUtils';
@@ -106,6 +107,13 @@ export default function SettingsScreen() {
                       {user.email}
                     </ThemedText>
                   </Row>
+                  {/* `xxxx@privaterelay.appleid.com` bozuk veri gibi görünüyor;
+                      tek satırla ne olduğunu söylemek destek sorusunu önlüyor. */}
+                  {isAppleRelayEmail(user.email) && (
+                    <ThemedText variant="label" tone="textMuted">
+                      {t('settings.account.appleRelayNote')}
+                    </ThemedText>
+                  )}
                   {(isSubscribed || isAdsRemoved) && (
                     <ThemedText variant="label" tone="accent">
                       {isSubscribed

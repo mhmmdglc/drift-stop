@@ -127,7 +127,8 @@
       "deleteAccountConfirmMessage": "Il tuo account verrà eliminato e l'accesso ai pack premium terminerà. Preferiti e impostazioni su questo dispositivo restano invariati; un abbonamento attivo va annullato separatamente nello store. Questa azione non può essere annullata.",
       "deleteAccountErrorTitle": "Impossibile eliminare l'account",
       "guestHint": "Stai usando DriftStop come ospite. Con un account, il tuo accesso Pro e i pack premium restano tuoi anche su un nuovo telefono.",
-      "signInLink": "Accedi / Crea account"
+      "signInLink": "Accedi / Crea account",
+      "appleRelayNote": "Questo è l’indirizzo di inoltro privato di Apple per DriftStop. Le email inviate qui arrivano comunque nella tua casella reale."
     },
     "premium": {
       "goProLink": "Rimuovi annunci / Passa a Pro",
@@ -215,7 +216,8 @@
       "generic": "Qualcosa è andato storto. Riprova.",
       "notConfigured": "Gli account non sono disponibili al momento.",
       "emailRequiredForReset": "Inserisci prima il tuo indirizzo email.",
-      "providerUnavailable": "Questo metodo di accesso non è disponibile ora."
+      "providerUnavailable": "Questo metodo di accesso non è disponibile ora.",
+      "playServices": "Per accedere con Google servono i servizi Google Play. Aggiornali o attivali, poi riprova."
     },
     "resendConfirmation": "L'email di conferma non è arrivata? Invia di nuovo",
     "resendSuccess": "Email di conferma inviata di nuovo.",
@@ -223,7 +225,8 @@
     "resetSent": "Ti abbiamo inviato un link per reimpostarla.",
     "continueWithGoogle": "Continua con Google",
     "continueWithApple": "Continua con Apple",
-    "orEmail": "oppure via e-mail"
+    "orEmail": "oppure via e-mail",
+    "appleRelayHint": "Se scegli «Nascondi la mia email», Apple ci dà un indirizzo di inoltro privato: quell’indirizzo diventa un account separato."
   },
   "paywall": {
     "title": "Passa a Pro",

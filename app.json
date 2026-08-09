@@ -149,7 +149,12 @@
           "userTrackingPermission": "Allowing this lets us show you more relevant ads. Your quotes, favourites and reminders work exactly the same either way."
         }
       ],
-      "@react-native-google-signin/google-signin",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.591923071526-2le5mn1grsdie51f63afh8vkmm84pa13"
+        }
+      ],
       "expo-apple-authentication"
     ],
     "locales": {
