@@ -109,6 +109,7 @@
       "version": "",
       "rateApp": "",
       "privacyPolicy": "",
+      "termsOfUse": "شروط الاستخدام",
       "madeWith": ""
     },
     "preferences": {
@@ -234,6 +235,10 @@
       "a11yMonthly": "{{label}}. {{perWeek}} أسبوعيًا. يُحصَّل {{price}} كل شهر.",
       "a11yAnnual": "{{label}}. {{perWeek}} أسبوعيًا. يُحصَّل {{price}} كل سنة.",
       "a11yAnnualSaving": "{{label}}. {{perWeek}} أسبوعيًا. يُحصَّل {{price}} كل سنة. الدفع شهريًا للسنة نفسها يكلّف {{compare}}، أي أقل بنسبة {{percent}}."
+    },
+    "legal": {
+      "privacyPolicy": "سياسة الخصوصية",
+      "termsOfUse": "شروط الاستخدام"
     }
   }
 }

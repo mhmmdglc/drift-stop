@@ -113,6 +113,7 @@
       "version": "Version",
       "rateApp": "App bewerten",
       "privacyPolicy": "Datenschutz",
+      "termsOfUse": "Nutzungsbedingungen",
       "madeWith": "Mit Geduld und Tinte gemacht."
     },
     "preferences": {
@@ -261,7 +262,11 @@
       "noOffering": "Gerade nichts anzuzeigen. Versuch es später erneut."
     },
     "purchaseSuccessPro": "Danke! Pro ist aktiv — alle Pakete, keine Werbung, bis zu 10 Erinnerungen am Tag.",
-    "purchaseSuccessAdsRemoved": "Danke! Werbung ist jetzt aus."
+    "purchaseSuccessAdsRemoved": "Danke! Werbung ist jetzt aus.",
+    "legal": {
+      "privacyPolicy": "Datenschutzerklärung",
+      "termsOfUse": "Nutzungsbedingungen"
+    }
   },
   "trial": {
     "notice": {

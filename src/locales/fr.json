@@ -113,6 +113,7 @@
       "version": "Version",
       "rateApp": "Noter l'application",
       "privacyPolicy": "Politique de confidentialité",
+      "termsOfUse": "Conditions d'utilisation",
       "madeWith": "Fait avec patience et encre."
     },
     "preferences": {
@@ -261,7 +262,11 @@
       "noOffering": "Rien à afficher pour le moment. Réessaie plus tard."
     },
     "purchaseSuccessPro": "Merci ! Pro est activé — toutes les collections, sans publicité, jusqu'à 10 rappels par jour.",
-    "purchaseSuccessAdsRemoved": "Merci ! Les publicités sont désormais désactivées."
+    "purchaseSuccessAdsRemoved": "Merci ! Les publicités sont désormais désactivées.",
+    "legal": {
+      "privacyPolicy": "Politique de confidentialité",
+      "termsOfUse": "Conditions d'utilisation"
+    }
   },
   "trial": {
     "notice": {

@@ -113,6 +113,7 @@
       "version": "Versione",
       "rateApp": "Valuta l'app",
       "privacyPolicy": "Informativa sulla privacy",
+      "termsOfUse": "Termini di utilizzo",
       "madeWith": "Fatto con pazienza e inchiostro."
     },
     "preferences": {
@@ -261,7 +262,11 @@
       "noOffering": "Niente da mostrare ora. Riprova più tardi."
     },
     "purchaseSuccessPro": "Grazie! Pro è attivo — tutte le raccolte, niente pubblicità, fino a 10 promemoria al giorno.",
-    "purchaseSuccessAdsRemoved": "Grazie! La pubblicità è disattivata."
+    "purchaseSuccessAdsRemoved": "Grazie! La pubblicità è disattivata.",
+    "legal": {
+      "privacyPolicy": "Informativa sulla privacy",
+      "termsOfUse": "Termini di utilizzo"
+    }
   },
   "trial": {
     "notice": {

@@ -113,6 +113,7 @@
       "version": "Sürüm",
       "rateApp": "Uygulamayı değerlendir",
       "privacyPolicy": "Gizlilik politikası",
+      "termsOfUse": "Kullanım Koşulları",
       "madeWith": "Sabırla ve mürekkeple yapıldı."
     },
     "preferences": {
@@ -261,7 +262,11 @@
       "noOffering": "Şu an gösterilecek bir şey yok. Daha sonra tekrar dene."
     },
     "purchaseSuccessPro": "Teşekkürler! Pro açıldı — tüm paketler, reklamsız, günde 10'a kadar hatırlatma.",
-    "purchaseSuccessAdsRemoved": "Teşekkürler! Reklamlar artık kapalı."
+    "purchaseSuccessAdsRemoved": "Teşekkürler! Reklamlar artık kapalı.",
+    "legal": {
+      "privacyPolicy": "Gizlilik Politikası",
+      "termsOfUse": "Kullanım Koşulları"
+    }
   },
   "trial": {
     "notice": {

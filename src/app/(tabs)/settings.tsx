@@ -347,6 +347,17 @@ export default function SettingsScreen() {
                 {t('settings.about.privacyPolicy')}
               </ThemedText>
             </Pressable>
+            {/* Android'de bu satır hiç çizilmiyor: Play koşullar bağlantısı
+                istemiyor ve Apple'ın EULA'sı Android kullanıcısını bağlamıyor.
+                "Yakında" uyarısı veren boş bir satır göstermek de yanlış olurdu
+                — eksik değil, o platformda karşılığı yok. */}
+            {Links.termsOfUse ? (
+              <Pressable onPress={() => openLink(Links.termsOfUse)}>
+                <ThemedText variant="body" tone="text" style={styles.link}>
+                  {t('settings.about.termsOfUse')}
+                </ThemedText>
+              </Pressable>
+            ) : null}
             <ThemedText variant="label" tone="textMuted" style={styles.madeWith}>
               {t('settings.about.madeWith')}
             </ThemedText>

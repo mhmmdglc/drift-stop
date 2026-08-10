@@ -109,6 +109,7 @@
       "version": "",
       "rateApp": "",
       "privacyPolicy": "",
+      "termsOfUse": "利用規約",
       "madeWith": ""
     },
     "preferences": {
@@ -234,6 +235,10 @@
       "a11yMonthly": "{{label}}。週 {{perWeek}}。毎月 {{price}} の請求です。",
       "a11yAnnual": "{{label}}。週 {{perWeek}}。毎年 {{price}} の請求です。",
       "a11yAnnualSaving": "{{label}}。週 {{perWeek}}。毎年 {{price}} の請求です。同じ1年を月払いにすると {{compare}} かかり、{{percent}}安くなります。"
+    },
+    "legal": {
+      "privacyPolicy": "プライバシーポリシー",
+      "termsOfUse": "利用規約"
     }
   }
 }

@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, View } from 'react-native';
 import { PACKAGE_TYPE, type PurchasesPackage } from 'react-native-purchases';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -9,6 +9,7 @@ import { SketchStrike } from '@/components/SketchStrike';
 import { ThemedText } from '@/components/ThemedText';
 import { WobblyBorder } from '@/components/WobblyBorder';
 import { Spacing } from '@/constants/layout';
+import { Links } from '@/constants/links';
 import { useEntitlement } from '@/hooks/useEntitlement';
 import { usePurchases } from '@/hooks/usePurchases';
 import { useTheme } from '@/hooks/use-theme';
@@ -16,6 +17,12 @@ import { useTranslation } from '@/i18n/useTranslation';
 import { buildPaywallPricing } from '@/utils/pricing';
 
 type Translate = (key: string, options?: Record<string, unknown>) => string;
+
+/** Boş URL'i hiç açmaya kalkma — `Linking.openURL('')` sessizce reddediliyor. */
+function openLink(url: string) {
+  if (!url) return;
+  void Linking.openURL(url);
+}
 
 function packageLabel(pkg: PurchasesPackage, t: Translate): { label: string; hint: string | null } {
   switch (pkg.packageType) {
@@ -292,6 +299,41 @@ export default function PaywallScreen() {
               {restoring ? t('common.loading') : t('paywall.restorePurchases')}
             </ThemedText>
           </Pressable>
+
+          {/* Abonelik satan bir ekranda gizlilik ve kullanım koşulları
+              bağlantıları isteğe bağlı değil (App Store 3.1.2). Ekranın en
+              altında ve sönük duruyorlar — fiyat hiyerarşisini bozmasınlar
+              diye — ama gerçekten tıklanabilirler; hitSlop dokunma alanını
+              yazının küçüklüğünden bağımsız tutuyor. */}
+          <View style={styles.legalRow}>
+            <Pressable
+              onPress={() => openLink(Links.privacyPolicy)}
+              hitSlop={12}
+              accessibilityRole="link"
+              accessibilityLabel={t('paywall.legal.privacyPolicy')}>
+              <ThemedText variant="label" tone="textMuted" style={styles.legalLink}>
+                {t('paywall.legal.privacyPolicy')}
+              </ThemedText>
+            </Pressable>
+            {/* Android'de koşullar bağlantısı yok (bkz. constants/links.ts),
+                o yüzden ayırıcı da onunla birlikte gidiyor. */}
+            {Links.termsOfUse ? (
+              <>
+                <ThemedText variant="label" tone="textMuted">
+                  {'  ·  '}
+                </ThemedText>
+                <Pressable
+                  onPress={() => openLink(Links.termsOfUse)}
+                  hitSlop={12}
+                  accessibilityRole="link"
+                  accessibilityLabel={t('paywall.legal.termsOfUse')}>
+                  <ThemedText variant="label" tone="textMuted" style={styles.legalLink}>
+                    {t('paywall.legal.termsOfUse')}
+                  </ThemedText>
+                </Pressable>
+              </>
+            ) : null}
+          </View>
         </View>
       </SafeAreaView>
     </PaperBackground>
@@ -362,4 +404,12 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     paddingVertical: Spacing.sm,
   },
+  legalRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: Spacing.sm,
+  },
+  legalLink: { textDecorationLine: 'underline' },
 });
