@@ -619,6 +619,29 @@ is as far as the products can get on their own; they ride along with the version
 | AdMob | real app id `ca-app-pub-6963122807813930~4613840458`; both iOS unit ids registered in EAS `production` |
 | RevenueCat | `EXPO_PUBLIC_REVENUECAT_IOS_API_KEY` present in `production` + `preview` (absent from `development` — see §4) |
 
+### Pre-submission audit — what an iOS submission actually needs
+
+Run this list before every submission. Everything below was read back from the API or the ASC UI on
+2026-08-10, not remembered.
+
+| Item | State | Where |
+|---|---|---|
+| App Privacy | **Published.** 9 data types; Device ID / Advertising Data / Coarse Location / Product Interaction declared as **used for tracking** — this must stay true while AdMob ships | ASC → App Privacy |
+| Content Rights | Declared "has the necessary rights to third-party content" — non-optional for an app whose product *is* 4,325 quotations | App Information |
+| License agreement | **Apple's Standard License Agreement** (no custom EULA). This is why the in-app Terms link points at Apple's `stdeula` URL — anything else would describe an agreement that does not govern the app | App Information |
+| Regulated Medical Device | **Declared "not a regulated medical device"** (2026-08-10, owner's answer). Required because the primary category is **Health & Fitness**; without it Apple can stop distributing in the EU | App Information |
+| Digital Services Act | Trader identified | App Information |
+| Age rating | **9+ in 172 regions, 12+ in Vietnam** — not 4+. Driven by `advertising: true` + `healthOrWellnessTopics: true`. The API's `appStoreAgeRating: FOUR_PLUS` is the legacy pre-iOS-26 value and is misleading on its own | App Information |
+| App Review info | Contact, demo account (`driftstop.appreview@mailinator.com`) and a note saying sign-in is **optional** — the note matters for 5.1.1 | App Review |
+| Export compliance | `ITSAppUsesNonExemptEncryption: false` | `app.json` |
+| 3.1.2 in the binary | Subscription title, length, **price with its billing period**, restore-purchases, and working **Privacy Policy + Terms of Use** links — all on the paywall | `src/app/paywall.tsx` |
+| 3.1.2 in the metadata | "SUBSCRIPTION DETAILS" block in the description: name, duration, price, auto-renewal and cancellation terms, both links | version localizations |
+
+⚠️ The two 3.1.2 rows were **missing** until 2026-08-10 and were caught in this audit, one build after the
+icon. Terms of use did not exist anywhere in the app — not as a screen, not as a constant. Fixed in
+`bb95158`; guarded by `src/__tests__/paywallLegalLinks.test.tsx`, which asserts the press opens the right
+URL rather than merely that a label renders.
+
 ### What is still missing
 
 | Missing | Notes |
@@ -647,6 +670,18 @@ is as far as the products can get on their own; they ride along with the version
 7. `git diff app.json` and commit the `autoIncrement` bump.
 
 #### ⛔ The subscriptions do **not** go with it. The API cannot attach them — use the web UI.
+
+**The working recipe, in the ASC web UI (proven 2026-08-10 — "4 Items Submitted"):** create the submission
+however you like (the API is fine, and the UI then shows it as **Draft Submissions (n)**), then add three
+more items by hand, in this order:
+
+1. Subscription **group** → *Add for Review* → pick the existing draft, **not** "Create New Submission".
+   Adding only the group produces *"New subscription groups must be submitted with an auto-renewable
+   subscription from within that group"* — the group alone is never enough.
+2. Each **subscription** → *Add for Review* → same draft. `pro_monthly` and `pro_yearly` individually.
+3. *Submit for Review* from the draft panel.
+
+The panel should read **4 items**: the app version, the group, and both subscriptions.
 
 Learned the expensive way on 2026-08-10: the version submitted cleanly to `WAITING_FOR_REVIEW` while
 `pro_monthly` and `pro_yearly` stayed behind, and **nothing in the version submission says so**. Had Apple
