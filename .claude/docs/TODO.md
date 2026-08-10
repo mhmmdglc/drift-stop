@@ -2,6 +2,37 @@
 
 Single place to check what's actually outstanding, instead of hunting through scattered notes in other docs. Update this file (don't just append to old docs) whenever a pending item is resolved or a new one comes up.
 
+## 🔴 Found 2026-08-10 on the iOS Simulator — a guest who buys Pro never gets the premium quotes
+
+**Observed on screen, not inferred.** A promotional `pro` entitlement was granted in the RevenueCat dashboard
+to the simulator's anonymous customer (`$RCAnonymousID:e2f4453…`). The app picked it up on relaunch and the
+**UI unlocked correctly**: the Go Pro card and the trial line disappeared, the notification frequencies **7 and
+10 became selectable** (10 was selected and stuck), and every content pack lost its lock. Then opening
+**The Stoics** showed *"Syncing quotes, they'll be here shortly."* — and it never resolved.
+
+**It cannot resolve.** `syncPremiumQuotes` says so in its own comment
+([`quotesSync.ts`](../../src/services/quotesSync.ts)): premium rows are returned by RLS **only to a signed-in
+user whose `profiles.is_premium` is true**; with no entitlement the server returns an empty list and the sync
+silently reports 0. A guest has no Supabase user at all, so there is no profile for the RevenueCat webhook to
+flip.
+
+**Why this is a live revenue risk, not a corner case.** Every part of the product steers users into exactly
+this state: the app advertises that everything works as a guest, the purchase flow never asks for an account,
+and the paywall sells **"3,325+ premium quotes"**. So the default path for a paying iOS customer is: pay →
+ads stop, 10 reminders unlock, packs look open → tap any pack → *"shortly"* forever. That reads as a broken
+app the user just paid for.
+
+**Two things are wrong and they are separable:**
+1. **The message lies.** "They'll be here shortly" is shown in a state where they will never arrive. At
+   minimum this must become "Sign in to get your premium quotes" with a button, for entitled guests.
+2. **The entitlement does not reach the content.** Either purchases must require/offer an account, or the
+   premium read path needs to work for an entitled anonymous customer.
+
+**Not yet checked:** whether a signed-in purchaser works end to end — that needs the RevenueCat webhook to
+flip `profiles.is_premium` from a real purchase, which has still never happened on any platform. The Android
+QA of 2026-08-01 proved premium content for a **signed-in trial** user, which is a different path (the
+`trials` table, not the webhook).
+
 ## Open bugs found during the 2026-07-25 documentation audit
 
 Found by reading the code against the shipped copy while writing `PRODUCT.md`. None of these are fixed yet; none were introduced by the docs work.
