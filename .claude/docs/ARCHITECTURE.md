@@ -546,8 +546,8 @@ directly — which is why `useSettings.update` sets `i18n.locale` *before* calli
 
 Locale files: `src/locales/{tr,en,es,de,fr,it,ar,ja}.json`, top-level namespaces
 `app, onboarding, home, quote, favorites, settings, notifications, share, widget, errors, common,
-themes, auth, paywall, trial, packs, ads, wallpaper`. tr has **234 leaf keys**; ar and ja have
-**155** (79 missing — they carry only the `paywall.packages` price strings, not the whole namespace).
+themes, auth, paywall, trial, packs, ads, wallpaper`. tr has **229 leaf keys**; ar and ja have
+**150** (79 missing — they carry only the `paywall.packages` price strings, not the whole namespace).
 
 **Placeholders are `{{name}}` *or* `%{name}`** — i18n-js's default pattern is
 `/(?:\{\{|%\{)(.*?)(?:\}\}?)/`, which accepts both. The trap: Turkish writes the percent sign
@@ -559,8 +559,10 @@ interpolates the finished text.
 
 **Parity test** — `src/i18n/__tests__/locales.test.ts`. Its `ACTIVE` map covers only the six
 available locales and asserts (a) identical flattened key structure to `tr` including array lengths,
-(b) no empty string values, (c) the six paywall price strings interpolate through the real `i18n`
-instance with no `[missing …]` and no leftover `{{`, (d) `share.quoteTemplate` keeps both `{{quote}}`
+(b) no empty string values, (c) the eight paywall price strings interpolate through the real `i18n`
+instance with no `[missing …]` and no leftover `{{`, (d) every locale's `billedMonthly`/`billedAnnual`
+still names a billing period next to `{{price}}` and the a11y strings still carry both `{{price}}`
+and `{{perWeek}}`, (e) `share.quoteTemplate` keeps both `{{quote}}`
 and `{{author}}` placeholders. **ar/ja are excluded**, so their gaps don't fail CI.
 
 ### `quoteLocalization` vs `quoteText` — two different things
@@ -598,7 +600,7 @@ the workflow explains that the React Compiler rules misfire on Reanimated's `.va
 and on the async-effect setState pattern used throughout the repo (see the several
 `eslint-disable-next-line` markers in `usePacks.tsx:41,53,64,66`, `useHistory.tsx:68`).
 
-### What the 132 tests actually cover
+### What the 285 tests actually cover
 
 | Suite | Covers |
 |---|---|
@@ -607,7 +609,7 @@ and on the async-effect setState pattern used throughout the repo (see the sever
 | `src/utils/__tests__/timeUtils.test.ts` (10) | `formatHM`, `toMinutes`/`windowOf`, `isValidWindow`, `isWeekend`, `dateKey`, `generateRandomTimes` (count/sort/uniqueness/tight-window) |
 | `src/utils/__tests__/quoteSelector.test.ts` (7) | `randomIndex` bounds + exclusion, `pickUnseenQuoteId` incl. exhausted-pool reset |
 | `src/utils/__tests__/share.test.ts` (3) | Template interpolation (no `[missing …]`), TR text selection, cancelled-share swallow |
-| `src/utils/__tests__/pricing.test.ts` (16) | Paywall arithmetic: per-week for both plans, the annual per-month equivalent, the monthly×12 baseline, saving **floored** (24.83% → 24, exact 25% → 25), and every guard — monthly missing, annual missing, annual not cheaper, saving under 1%, mismatched currencies, NaN/zero/blank-currency prices. Plus formatting: store currency (not `$`) and locale-correct percent placement, each with the honest fallback used when `Intl` throws |
+| `src/utils/__tests__/pricing.test.ts` (15) | Paywall arithmetic: per-week for both plans, the monthly×12 baseline, saving **floored** (24.83% → 24, exact 25% → 25), and every guard — monthly missing, annual missing, annual not cheaper, saving under 1%, mismatched currencies, NaN/zero/blank-currency prices. Plus formatting: store currency (not `$`) and locale-correct percent placement, each with the honest fallback used when `Intl` throws |
 | `src/utils/__tests__/crashReporting.test.ts` (4) | Sentry init/report gated on DSN presence |
 | `src/services/__tests__/quotesSync.test.ts` (12) | Always seeds first, upsert + cursor advance, pagination, error swallow, unconfigured no-op; `syncPremiumQuotes` filters on `is_premium` with **no** `updated_at` cursor, never advances the cursor, paginates, swallows errors, no-ops unconfigured, and writes nothing when the caller cancels mid-fetch |
 | `src/services/__tests__/premiumCacheGuard.test.ts` (25) | `'unknown'` never purges (the paying-user-with-a-failed-fetch case), purge on entitlement loss, no download while purging, cheap no-op for free users, cache-sufficiency rules (partial cache re-downloads, backfill watermark stops the re-download loop, missing pack metadata falls back to "not empty"), re-subscribe restore + tombstone clearing, `restore-pending`, cancellation, errors swallowed on both destructive paths, and the version counter bumping/notifying only on real changes |
@@ -617,7 +619,8 @@ and on the async-effect setState pattern used throughout the repo (see the sever
 | `src/__tests__/favoritesPremiumInvalidation.test.tsx` (6) | Favorites screen: locked row for a lapsed subscriber, **re-reads the cache when the restore lands after the purchase** (nothing else changes — this is the memo-dependency regression test), re-reads after a purge, loading row instead of a lock while entitlement resolves, lock once it resolves, free favourites never delayed |
 | `src/services/__tests__/packsSync.test.ts` (4) | camelCase mapping, empty, error, unconfigured |
 | `src/services/__tests__/authorsSync.test.ts` (4) | same four shapes for the RPC |
-| `src/i18n/__tests__/locales.test.ts` (3) | Locale key parity / non-empty / placeholder retention (6 active locales) |
+| `src/i18n/__tests__/locales.test.ts` (5) | Locale key parity / non-empty / placeholder retention (6 active locales), plus: every locale states the **billing period** beside the charged amount and keeps `{{price}}` + `{{perWeek}}` in the paywall a11y strings |
+| `src/__tests__/paywallPriceEmphasis.test.tsx` (4) | Paywall price hierarchy: per-week is the largest number on both rows, the billed amount stays at body size (never below the struck baseline), no bare amount without its period is on screen, and the a11y label still carries the real charge + period + weekly + saving |
 | `src/hooks/__tests__/useSettings.test.tsx` (4) | Device-locale fallback, AsyncStorage persistence, **reschedule only on schedule-affecting fields**, throw outside provider |
 | `src/hooks/__tests__/useAuthSocial.test.tsx` (8) | `signInWithProvider`'s three outcomes: Google/Apple cancellation → `{ error: null, cancelled: true }` and **no** call to Supabase, real sign-in → not cancelled, every `SocialError` reason → its own key with `cancelled` unset, Supabase rejecting the id token → mapped error |
 | `src/__tests__/authScreenSocialCancel.test.tsx` (3) | `/auth` after a social attempt: cancel keeps the screen open with no error line and a tappable button, a real failure renders the error line and keeps it open, a real success calls `router.back()` |
@@ -632,7 +635,8 @@ and on the async-effect setState pattern used throughout the repo (see the sever
 | Most state | `useHistory`, `usePurchases` (incl. the `entitlementKnown`/`loading` split — only its *consumers* are tested), `useAuth`'s email/session paths (its **social** path is covered), `usePacks`, `useFavorites`, `useEnforceFreeLimits`, `useNotifications`, `use-theme` (`usePremiumCacheGuard` **is** covered) |
 | Ads | `src/utils/ads.ts` (suppression, gap capping), `src/constants/adUnits.ts` id selection, `AdBanner` |
 | Widget | `src/widgets/*` — the headless handler, its fallbacks, the deep-link URI |
-| Screens | All 10 routes + both layouts under `src/app/` — except Favorites' premium locked/loading/invalidation paths (`src/__tests__/favoritesPremiumInvalidation.test.tsx`) and `/auth`'s social-outcome branch (`src/__tests__/authScreenSocialCancel.test.tsx`). `quote/[id]`, `packs/[id]` and `packs/author/[name]` carry the same invalidation wiring with **no** test |
+| Screens | All 10 routes + both layouts under `src/app/` — except Favorites' premium locked/loading/invalidation paths (`src/__tests__/favoritesPremiumInvalidation.test.tsx`) `/auth`'s social-outcome branch (`src/__tests__/authScreenSocialCancel.test.tsx`) and the paywall's
+price hierarchy (`src/__tests__/paywallPriceEmphasis.test.tsx`). `quote/[id]`, `packs/[id]` and `packs/author/[name]` carry the same invalidation wiring with **no** test |
 | Pure helpers | `src/utils/sketch.ts`, `src/utils/quoteText.ts` (indirect only), `src/i18n/quoteLocalization.ts`, `src/types/quotePack.ts:localizedPackField` |
 | Backend | Both edge functions (no Deno test runner configured), all SQL/RLS policies, every script in `scripts/` |
 | Config | `plugins/withGradleVersion.js` |
