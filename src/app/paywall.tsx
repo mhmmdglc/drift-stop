@@ -1,11 +1,11 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { PACKAGE_TYPE, type PurchasesPackage } from 'react-native-purchases';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PaperBackground } from '@/components/PaperBackground';
-import { SketchButton } from '@/components/SketchButton';
+import { SketchStrike } from '@/components/SketchStrike';
 import { ThemedText } from '@/components/ThemedText';
 import { WobblyBorder } from '@/components/WobblyBorder';
 import { Spacing } from '@/constants/layout';
@@ -13,8 +13,11 @@ import { useEntitlement } from '@/hooks/useEntitlement';
 import { usePurchases } from '@/hooks/usePurchases';
 import { useTheme } from '@/hooks/use-theme';
 import { useTranslation } from '@/i18n/useTranslation';
+import { buildPaywallPricing } from '@/utils/pricing';
 
-function packageLabel(pkg: PurchasesPackage, t: (key: string) => string): { label: string; hint: string | null } {
+type Translate = (key: string, options?: Record<string, unknown>) => string;
+
+function packageLabel(pkg: PurchasesPackage, t: Translate): { label: string; hint: string | null } {
   switch (pkg.packageType) {
     case PACKAGE_TYPE.LIFETIME:
       return { label: t('paywall.packages.lifetimeLabel'), hint: t('paywall.packages.lifetimeHint') };
@@ -29,7 +32,7 @@ function packageLabel(pkg: PurchasesPackage, t: (key: string) => string): { labe
 
 export default function PaywallScreen() {
   const { colors } = useTheme();
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const router = useRouter();
   // Satın alma eylemleri `usePurchases`ten; "hakkı var mı" sorusu `useEntitlement`ten.
   // Denemedeki kullanıcıya paketler GÖSTERİLMELİ — dönüştürmek istediğimiz kişi o.
@@ -74,12 +77,26 @@ export default function PaywallScreen() {
   };
 
   const packages = offering?.availablePackages ?? [];
+  // Türetilmiş fiyatların tamamı mağazadan gelen sayılardan hesaplanıyor;
+  // paket eksikse ilgili alan null döner ve o satırda hiçbir şey gösterilmez.
+  const monthlyProduct = packages.find((p) => p.packageType === PACKAGE_TYPE.MONTHLY)?.product;
+  const annualProduct = packages.find((p) => p.packageType === PACKAGE_TYPE.ANNUAL)?.product;
+  const pricing = useMemo(
+    () => buildPaywallPricing(monthlyProduct, annualProduct, locale),
+    [monthlyProduct, annualProduct, locale]
+  );
+
+  const restoreDisabled = restoring || !configured;
 
   return (
     <PaperBackground>
       <SafeAreaView style={styles.safe}>
         <View style={styles.header}>
-          <Pressable onPress={() => router.back()} hitSlop={12}>
+          <Pressable
+            onPress={() => router.back()}
+            hitSlop={12}
+            accessibilityRole="button"
+            accessibilityLabel={t('paywall.skip')}>
             <ThemedText variant="label" tone="textMuted">
               {t('paywall.skip')}
             </ThemedText>
@@ -88,8 +105,11 @@ export default function PaywallScreen() {
 
         <View style={styles.content}>
           <ThemedText variant="heading">{t('paywall.title')}</ThemedText>
-          <ThemedText variant="body" tone="textMuted" style={styles.subtitle}>
-            {t('paywall.subtitle')}
+          {/* Eski `paywall.subtitle` (özellik cümlesi) burada DEĞİL: iki paragraf
+              üst üste binince planlar ekranın altına kaçıyordu. Somut liste
+              hemen aşağıdaki tek satırlık `proFeatures`ta duruyor. */}
+          <ThemedText variant="body" style={styles.intro}>
+            {t('paywall.intro')}
           </ThemedText>
           <ThemedText variant="label" tone="textMuted">
             {t('paywall.packages.proFeatures')}
@@ -127,25 +147,91 @@ export default function PaywallScreen() {
             <View style={styles.packages}>
               {packages.map((pkg) => {
                 const { label, hint } = packageLabel(pkg, t);
+                const isAnnual = pkg.packageType === PACKAGE_TYPE.ANNUAL;
+                const comparison = isAnnual ? pricing.comparison : null;
+                const perWeek = isAnnual
+                  ? pricing.annualPerWeek
+                  : pkg.packageType === PACKAGE_TYPE.MONTHLY
+                    ? pricing.monthlyPerWeek
+                    : null;
+                const perMonth = isAnnual ? pricing.annualPerMonth : null;
+                const busy = busyId === pkg.identifier;
+
+                // Üstü çizili bir rakam ekran okuyucuya bağlamsız okunursa
+                // anlamsız; satırın tamamı tek bir cümleye çevriliyor.
+                const a11yLabel = comparison
+                  ? t('paywall.packages.a11yAnnual', {
+                      label,
+                      price: pkg.product.priceString,
+                      compare: comparison.annualizedMonthly,
+                      perWeek,
+                      perMonth,
+                      percent: comparison.savingPercentText,
+                    })
+                  : perWeek
+                    ? t('paywall.packages.a11yPackageWeekly', {
+                        label,
+                        price: pkg.product.priceString,
+                        perWeek,
+                      })
+                    : t('paywall.packages.a11yPackage', {
+                        label,
+                        price: pkg.product.priceString,
+                      });
+
                 return (
                   <Pressable
                     key={pkg.identifier}
                     onPress={() => buy(pkg)}
                     disabled={busyId !== null}
-                    style={styles.packageCard}>
-                    <WobblyBorder stroke={colors.accent} strokeWidth={1.4} />
+                    accessible
+                    accessibilityRole="button"
+                    accessibilityLabel={a11yLabel}
+                    accessibilityState={{ disabled: busyId !== null, busy }}
+                    style={({ pressed }) => [
+                      styles.packageCard,
+                      // Dolgulu kart: satın alma satırları ekranın en tıklanabilir
+                      // görünen öğesi olmalı (eskiden "geri yükle" öyleydi).
+                      { backgroundColor: colors.surface, opacity: pressed ? 0.85 : 1 },
+                    ]}>
+                    <WobblyBorder stroke={colors.accent} strokeWidth={1.8} />
                     <View style={styles.packageRow}>
                       <View style={styles.packageInfo}>
                         <ThemedText variant="body">{label}</ThemedText>
-                        {hint && (
+                        {comparison ? (
+                          <ThemedText variant="label" tone="accent">
+                            {t('paywall.packages.savePercent', {
+                              percent: comparison.savingPercentText,
+                            })}
+                          </ThemedText>
+                        ) : hint ? (
                           <ThemedText variant="label" tone="accent">
                             {hint}
                           </ThemedText>
+                        ) : null}
+                        {perWeek && (
+                          <ThemedText variant="label" tone="textMuted">
+                            {perMonth
+                              ? t('paywall.packages.perWeekAndMonth', {
+                                  week: perWeek,
+                                  month: perMonth,
+                                })
+                              : t('paywall.packages.perWeek', { price: perWeek })}
+                          </ThemedText>
                         )}
                       </View>
-                      <ThemedText variant="body" tone="accent">
-                        {busyId === pkg.identifier ? t('common.loading') : pkg.product.priceString}
-                      </ThemedText>
+                      <View style={styles.priceColumn}>
+                        {comparison && (
+                          <SketchStrike>
+                            <ThemedText variant="label" tone="textMuted">
+                              {comparison.annualizedMonthly}
+                            </ThemedText>
+                          </SketchStrike>
+                        )}
+                        <ThemedText variant="body" tone="accent">
+                          {busy ? t('common.loading') : pkg.product.priceString}
+                        </ThemedText>
+                      </View>
                     </View>
                   </Pressable>
                 );
@@ -159,13 +245,20 @@ export default function PaywallScreen() {
             </ThemedText>
           )}
 
-          <SketchButton
-            label={restoring ? t('common.loading') : t('paywall.restorePurchases')}
+          {/* Kurtarma eylemi, satın alma satırlarından daha "buton" görünmemeli —
+              eskiden ekrandaki tek buton buydu ve hiyerarşi tersti. */}
+          <Pressable
             onPress={restore}
-            disabled={restoring || !configured}
-            textTone="textMuted"
-            style={styles.restoreBtn}
-          />
+            disabled={restoreDisabled}
+            hitSlop={12}
+            accessibilityRole="button"
+            accessibilityLabel={t('paywall.restorePurchases')}
+            accessibilityState={{ disabled: restoreDisabled, busy: restoring }}
+            style={[styles.restoreBtn, { opacity: restoreDisabled ? 0.4 : 1 }]}>
+            <ThemedText variant="label" tone="textMuted">
+              {restoring ? t('common.loading') : t('paywall.restorePurchases')}
+            </ThemedText>
+          </Pressable>
         </View>
       </SafeAreaView>
     </PaperBackground>
@@ -185,7 +278,7 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     gap: Spacing.md,
   },
-  subtitle: {
+  intro: {
     marginTop: -Spacing.xs,
   },
   stateMsg: {
@@ -203,8 +296,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    gap: Spacing.md,
   },
   packageInfo: {
+    flexShrink: 1,
+    gap: Spacing.xs / 2,
+  },
+  priceColumn: {
+    alignItems: 'flex-end',
     gap: Spacing.xs / 2,
   },
   message: {
@@ -213,5 +312,6 @@ const styles = StyleSheet.create({
   restoreBtn: {
     marginTop: Spacing.lg,
     alignSelf: 'center',
+    paddingVertical: Spacing.sm,
   },
 });

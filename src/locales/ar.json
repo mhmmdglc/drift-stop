@@ -222,5 +222,16 @@
     "continueWithApple": "المتابعة عبر Apple",
     "orEmail": "أو عبر البريد الإلكتروني",
     "appleRelayHint": "إذا اخترت «إخفاء بريدي الإلكتروني»، يمنحنا Apple عنوان تحويل خاصاً، وهذا العنوان يصبح حساباً منفصلاً."
+  },
+  "paywall": {
+    "intro": "القهوة تُبقيك صاحيًا ساعة. والجملة المناسبة تبقيك يومًا كاملًا.",
+    "packages": {
+      "savePercent": "توفير {{percent}}",
+      "perWeek": "{{price}} أسبوعيًا",
+      "perWeekAndMonth": "{{week}} أسبوعيًا · {{month}} شهريًا",
+      "a11yPackage": "{{label}}، {{price}}",
+      "a11yPackageWeekly": "{{label}}، {{price}}، {{perWeek}} أسبوعيًا",
+      "a11yAnnual": "{{label}}، {{price}}. الدفع شهريًا للسنة نفسها يكلّف {{compare}}. الخطة السنوية تعادل {{perWeek}} أسبوعيًا و{{perMonth}} شهريًا، أي أقل بنسبة {{percent}}."
+    }
   }
 }

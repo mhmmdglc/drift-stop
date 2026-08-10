@@ -230,6 +230,7 @@
   },
   "paywall": {
     "title": "Pro'ya geç",
+    "intro": "Bir kahve seni bir saat ayakta tutar. Doğru bir cümle, bütün günü.",
     "subtitle": "Reklamları kalıcı olarak kaldır, 3.325+ premium söze ve 18 koleksiyona eriş, günde 10’a kadar hatırlatma kur.",
     "skip": "Belki sonra",
     "restorePurchases": "Satın alımları geri yükle",
@@ -244,7 +245,13 @@
       "annualLabel": "Pro — Yıllık",
       "annualHint": "En avantajlı",
       "monthlyLabel": "Pro — Aylık",
-      "proFeatures": "Reklamsız · Premium paketler · Günde 10 hatırlatma"
+      "proFeatures": "Reklamsız · Premium paketler · Günde 10 hatırlatma",
+      "savePercent": "{{percent}} tasarruf",
+      "perWeek": "haftada {{price}}",
+      "perWeekAndMonth": "haftada {{week}} · ayda {{month}}",
+      "a11yPackage": "{{label}}, {{price}}",
+      "a11yPackageWeekly": "{{label}}, {{price}}, haftada {{perWeek}}",
+      "a11yAnnual": "{{label}}, {{price}}. Aynı süre aylık ödenseydi {{compare}} ederdi. Yıllıkta haftada {{perWeek}}, ayda {{perMonth}}; {{percent}} tasarruf."
     },
     "errors": {
       "generic": "Bir şeyler ters gitti. Tekrar dene.",

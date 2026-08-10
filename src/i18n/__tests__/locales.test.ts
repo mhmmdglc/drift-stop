@@ -1,4 +1,5 @@
 /// <reference types="jest" />
+import i18n from '@/i18n';
 import de from '@/locales/de.json';
 import en from '@/locales/en.json';
 import es from '@/locales/es.json';
@@ -47,6 +48,48 @@ describe('locale files', () => {
     for (const [code, json] of Object.entries(ACTIVE)) {
       expect({ code, empties: emptyValues(json as Json) }).toEqual({ code, empties: [] });
     }
+  });
+
+  // i18n-js'in yer tutucu deseni HEM `{{x}}` HEM `%{x}` kabul ediyor, bu yüzden
+  // Türkçedeki "%{{percent}}" gibi bir yazım yer tutucuyu sessizce bozup
+  // ekrana `[missing "…" value]` bastırıyor. Paywall'daki fiyat metinleri
+  // gerçek i18n motorundan geçirilerek kontrol ediliyor.
+  it('paywall price strings interpolate with no missing placeholders', () => {
+    const options = {
+      label: 'Pro',
+      price: '$35.99',
+      compare: '$47.88',
+      perWeek: '$0.69',
+      perMonth: '$3.00',
+      percent: '24%',
+      week: '$0.69',
+      month: '$3.00',
+    };
+    const keys = [
+      'paywall.packages.savePercent',
+      'paywall.packages.perWeek',
+      'paywall.packages.perWeekAndMonth',
+      'paywall.packages.a11yPackage',
+      'paywall.packages.a11yPackageWeekly',
+      'paywall.packages.a11yAnnual',
+    ];
+    for (const code of Object.keys(ACTIVE)) {
+      i18n.locale = code;
+      for (const key of keys) {
+        const text = i18n.t(key, options);
+        expect({ code, key, text }).toEqual({
+          code,
+          key,
+          text: expect.not.stringContaining('missing'),
+        });
+        expect({ code, key, text }).toEqual({
+          code,
+          key,
+          text: expect.not.stringContaining('{{'),
+        });
+      }
+    }
+    i18n.locale = 'tr';
   });
 
   it('share template keeps placeholders in every locale', () => {

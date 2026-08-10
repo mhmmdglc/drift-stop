@@ -230,6 +230,7 @@
   },
   "paywall": {
     "title": "Passer en Pro",
+    "intro": "Un café te tient une heure. La bonne phrase, toute la journée.",
     "subtitle": "Supprime les publicités pour de bon, débloque plus de 3 325 citations premium dans 18 packs et configure jusqu’à 10 rappels par jour.",
     "skip": "Plus tard",
     "restorePurchases": "Restaurer les achats",
@@ -244,7 +245,13 @@
       "annualLabel": "Pro — Annuel",
       "annualHint": "Meilleure offre",
       "monthlyLabel": "Pro — Mensuel",
-      "proFeatures": "Sans publicité · Collections premium · 10 rappels par jour"
+      "proFeatures": "Sans publicité · Collections premium · 10 rappels par jour",
+      "savePercent": "{{percent}} d’économie",
+      "perWeek": "{{price}} par semaine",
+      "perWeekAndMonth": "{{week}} par semaine · {{month}} par mois",
+      "a11yPackage": "{{label}}, {{price}}",
+      "a11yPackageWeekly": "{{label}}, {{price}}, {{perWeek}} par semaine",
+      "a11yAnnual": "{{label}}, {{price}}. Payer au mois pendant la même année coûterait {{compare}}. En annuel, cela revient à {{perWeek}} par semaine, {{perMonth}} par mois ; {{percent}} de moins."
     },
     "errors": {
       "generic": "Une erreur s'est produite. Réessaie.",

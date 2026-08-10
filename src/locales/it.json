@@ -230,6 +230,7 @@
   },
   "paywall": {
     "title": "Passa a Pro",
+    "intro": "Un caffè ti tiene su un’ora. La frase giusta, tutto il giorno.",
     "subtitle": "Rimuovi gli annunci per sempre, sblocca oltre 3.325 citazioni premium in 18 pacchetti e imposta fino a 10 promemoria al giorno.",
     "skip": "Forse più tardi",
     "restorePurchases": "Ripristina acquisti",
@@ -244,7 +245,13 @@
       "annualLabel": "Pro — Annuale",
       "annualHint": "Il migliore",
       "monthlyLabel": "Pro — Mensile",
-      "proFeatures": "Niente pubblicità · Raccolte premium · 10 promemoria al giorno"
+      "proFeatures": "Niente pubblicità · Raccolte premium · 10 promemoria al giorno",
+      "savePercent": "Risparmi il {{percent}}",
+      "perWeek": "{{price}} a settimana",
+      "perWeekAndMonth": "{{week}} a settimana · {{month}} al mese",
+      "a11yPackage": "{{label}}, {{price}}",
+      "a11yPackageWeekly": "{{label}}, {{price}}, {{perWeek}} a settimana",
+      "a11yAnnual": "{{label}}, {{price}}. Pagare mese per mese nello stesso anno costerebbe {{compare}}. Con l’annuale sono {{perWeek}} a settimana, {{perMonth}} al mese; il {{percent}} in meno."
     },
     "errors": {
       "generic": "Qualcosa è andato storto. Riprova.",

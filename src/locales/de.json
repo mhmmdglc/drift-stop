@@ -230,6 +230,7 @@
   },
   "paywall": {
     "title": "Pro werden",
+    "intro": "Ein Kaffee hält dich eine Stunde wach. Der richtige Satz den ganzen Tag.",
     "subtitle": "Entferne Werbung für immer, schalte über 3.325 Premium-Zitate in 18 Paketen frei und richte bis zu 10 tägliche Erinnerungen ein.",
     "skip": "Vielleicht später",
     "restorePurchases": "Käufe wiederherstellen",
@@ -244,7 +245,13 @@
       "annualLabel": "Pro — Jährlich",
       "annualHint": "Bester Preis",
       "monthlyLabel": "Pro — Monatlich",
-      "proFeatures": "Keine Werbung · Premium-Pakete · 10 Erinnerungen am Tag"
+      "proFeatures": "Keine Werbung · Premium-Pakete · 10 Erinnerungen am Tag",
+      "savePercent": "{{percent}} sparen",
+      "perWeek": "{{price}} pro Woche",
+      "perWeekAndMonth": "{{week}} pro Woche · {{month}} pro Monat",
+      "a11yPackage": "{{label}}, {{price}}",
+      "a11yPackageWeekly": "{{label}}, {{price}}, {{perWeek}} pro Woche",
+      "a11yAnnual": "{{label}}, {{price}}. Monatlich zu zahlen würde im selben Jahr {{compare}} kosten. Jährlich sind es {{perWeek}} pro Woche, {{perMonth}} pro Monat; {{percent}} weniger."
     },
     "errors": {
       "generic": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",

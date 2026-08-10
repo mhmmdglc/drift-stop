@@ -72,12 +72,13 @@ Build profiles in `eas.json`: `development` (APK, dev client), `preview` (APK, l
 |---|---|---|
 | `index.js` | Custom entry point: registers the Android widget task handler, then `require('expo-router/entry')` | Anything that must run before the router mounts |
 | `src/app/` | expo-router routes. `_layout.tsx` = providers + boot gate; `(tabs)/` = Home/Favorites/Settings; `onboarding`, `auth`, `paywall`, `quote/[id]`, `packs/*` | New screens, navigation, boot order |
-| `src/components/` | Presentational components incl. the "sketch" family (`WobblyBorder`, `SketchButton`, `SketchToggle`, `SketchUnderline`, `SketchIcons`, `SketchOnboardingIcons`, `CornerBrackets`, `Doodle`, `PaperBackground`), plus `QuoteCard`, `ThemedText`, `TimePicker`, `FrequencySelector`, `ThemeChips`, `AdBanner`, `SplashOverlay`, `ErrorBoundary` | UI work |
+| `src/components/` | Presentational components incl. the "sketch" family (`WobblyBorder`, `SketchButton`, `SketchToggle`, `SketchUnderline`, `SketchIcons`, `SketchOnboardingIcons`, `SketchStrike`, `CornerBrackets`, `Doodle`,
+`PaperBackground`), plus `QuoteCard`, `ThemedText`, `TimePicker`, `FrequencySelector`, `ThemeChips`, `AdBanner`, `SplashOverlay`, `ErrorBoundary` | UI work |
 | `src/hooks/` | Providers + hooks: `useSettings`, `use-theme`, `useAuth`, `usePurchases`, `useHistory`, `usePacks`, `useFavorites`, `useNotifications`, `useEnforceFreeLimits`, `usePremiumCacheGuard`, `usePremiumCacheVersion`, `use-color-scheme(.web)` | State ownership, persistence |
 | `src/services/` | Supabase → SQLite sync: `quotesSync`, `packsSync`, `authorsSync`; entitlement↔cache reconciliation: `premiumCacheGuard` | Remote content refresh logic |
 | `src/db/` | SQLite cache layer: `quotesCache`, `packsCache` (both open `driftstop.db`) | Cache schema, local queries |
 | `src/lib/` | Third-party client construction: `supabase.ts`, `purchases.ts` | SDK config / env keys |
-| `src/utils/` | `scheduler` (notifications), `storage` (AsyncStorage keys), `timeUtils`, `quoteSelector`, `quoteText`, `ads`, `share`, `sketch` (SVG path math), `runtime` (Expo Go detection), `crashReporting` | Pure logic, platform shims |
+| `src/utils/` | `scheduler` (notifications), `storage` (AsyncStorage keys), `timeUtils`, `quoteSelector`, `quoteText`, `ads`, `share`, `sketch` (SVG path math), `pricing` (paywall price arithmetic), `runtime` (Expo Go detection), `crashReporting` | Pure logic, platform shims |
 | `src/types/` | `quote.ts` (`Quote`, categories/eras/tags), `quotePack.ts`, `settings.ts` (`Settings`, `DEFAULT_SETTINGS`, frequency gate) | Domain model changes |
 | `src/constants/` | `colors` (palettes), `fonts`, `layout` (spacing/radius/paper), `adUnits` (AdMob ids), `links` (store/privacy URLs) | Design tokens, ids |
 | `src/data/` | `quotes.json` (1000 free quotes) + `quotes.ts` reader, `quotesAnySource.ts` (static ∪ SQLite), `gen/*.json` (regional build inputs), `tags/*.json` (tag assignments) | Content pipeline |
@@ -409,6 +410,28 @@ Entitlement derivation (`src/hooks/usePurchases.tsx`):
 id (`:84-100`) — without this the webhook cannot find a `profiles` row to update (comment `:81-83`).
 `purchasePackage` treats `userCancelled` as a non-error (`:122`).
 
+### Paywall price display (`src/utils/pricing.ts` + `src/app/paywall.tsx`)
+
+Everything the paywall claims about money is **derived at runtime** from the numeric
+`product.price` + `product.currencyCode` of the packages RevenueCat returns. No price, total or
+percentage is ever written into the code or the locale files: prices are set per country (TR monthly
+is ₺229.99, not a converted dollar figure), so a baked-in "$47.88" would be false almost everywhere.
+`priceString` is displayed but never parsed — it is localized text.
+
+`buildPaywallPricing(monthly, annual, locale)` returns `monthlyPerWeek`, `annualPerWeek`,
+`annualPerMonth` and a `comparison`. The rules, all tested:
+
+- per-week = `price × 12 / 52` for the monthly plan, `price / 52` for the annual;
+- the struck-through baseline is `monthly.price × 12`, rendered with `SketchStrike`;
+- the saving is `Math.floor(...)` — **rounded down**, because claiming 25% when it is 24.8% is a lie;
+- `comparison` is `null` unless **both** a MONTHLY and an ANNUAL package exist, they share a
+  currency, and the annual is genuinely cheaper by ≥ 1%. A one-package offering shows the plain
+  price and nothing else rather than inventing a baseline.
+
+Formatting goes through `Intl.NumberFormat` with the store's currency code, with a fallback to
+`"47.88 USD"` if the Hermes build has no usable `Intl` — an honest ISO code instead of a guessed
+symbol.
+
 ### Ad suppression
 
 `utils/ads.ts` holds module-level state, not React state:
@@ -503,12 +526,22 @@ directly — which is why `useSettings.update` sets `i18n.locale` *before* calli
 
 Locale files: `src/locales/{tr,en,es,de,fr,it,ar,ja}.json`, top-level namespaces
 `app, onboarding, home, quote, favorites, settings, notifications, share, widget, errors, common,
-themes, auth, paywall, packs, ads`. tr has **176 leaf keys**; ar and ja have **103** (73 missing).
+themes, auth, paywall, trial, packs, ads, wallpaper`. tr has **234 leaf keys**; ar and ja have
+**155** (79 missing — they carry only the `paywall.packages` price strings, not the whole namespace).
 
-**Parity test** — `src/i18n/__tests__/locales.test.ts`. Its `ACTIVE` map (`:9`) covers only the six
-available locales and asserts (a) identical flattened key structure to `tr` including array lengths
-(`:39-44`), (b) no empty string values (`:46-50`), (c) `share.quoteTemplate` keeps both `{{quote}}`
-and `{{author}}` placeholders (`:52-58`). **ar/ja are excluded**, so their gaps don't fail CI.
+**Placeholders are `{{name}}` *or* `%{name}`** — i18n-js's default pattern is
+`/(?:\{\{|%\{)(.*?)(?:\}\}?)/`, which accepts both. The trap: Turkish writes the percent sign
+*before* the number, so `"%{{percent}} tasarruf"` is parsed as the `%{…}` form, the placeholder name
+comes out as `{percent`, and the screen renders `[missing "%{{percent}}" value]`. Percent signs are
+therefore never typed into a locale file — `formatPercent` (`src/utils/pricing.ts`) asks
+`Intl.NumberFormat` where the sign goes (`%24` in tr, `24%` in en, `24 %` in fr) and the string
+interpolates the finished text.
+
+**Parity test** — `src/i18n/__tests__/locales.test.ts`. Its `ACTIVE` map covers only the six
+available locales and asserts (a) identical flattened key structure to `tr` including array lengths,
+(b) no empty string values, (c) the six paywall price strings interpolate through the real `i18n`
+instance with no `[missing …]` and no leftover `{{`, (d) `share.quoteTemplate` keeps both `{{quote}}`
+and `{{author}}` placeholders. **ar/ja are excluded**, so their gaps don't fail CI.
 
 ### `quoteLocalization` vs `quoteText` — two different things
 
@@ -554,6 +587,7 @@ and on the async-effect setState pattern used throughout the repo (see the sever
 | `src/utils/__tests__/timeUtils.test.ts` (10) | `formatHM`, `toMinutes`/`windowOf`, `isValidWindow`, `isWeekend`, `dateKey`, `generateRandomTimes` (count/sort/uniqueness/tight-window) |
 | `src/utils/__tests__/quoteSelector.test.ts` (7) | `randomIndex` bounds + exclusion, `pickUnseenQuoteId` incl. exhausted-pool reset |
 | `src/utils/__tests__/share.test.ts` (3) | Template interpolation (no `[missing …]`), TR text selection, cancelled-share swallow |
+| `src/utils/__tests__/pricing.test.ts` (16) | Paywall arithmetic: per-week for both plans, the annual per-month equivalent, the monthly×12 baseline, saving **floored** (24.83% → 24, exact 25% → 25), and every guard — monthly missing, annual missing, annual not cheaper, saving under 1%, mismatched currencies, NaN/zero/blank-currency prices. Plus formatting: store currency (not `$`) and locale-correct percent placement, each with the honest fallback used when `Intl` throws |
 | `src/utils/__tests__/crashReporting.test.ts` (4) | Sentry init/report gated on DSN presence |
 | `src/services/__tests__/quotesSync.test.ts` (12) | Always seeds first, upsert + cursor advance, pagination, error swallow, unconfigured no-op; `syncPremiumQuotes` filters on `is_premium` with **no** `updated_at` cursor, never advances the cursor, paginates, swallows errors, no-ops unconfigured, and writes nothing when the caller cancels mid-fetch |
 | `src/services/__tests__/premiumCacheGuard.test.ts` (25) | `'unknown'` never purges (the paying-user-with-a-failed-fetch case), purge on entitlement loss, no download while purging, cheap no-op for free users, cache-sufficiency rules (partial cache re-downloads, backfill watermark stops the re-download loop, missing pack metadata falls back to "not empty"), re-subscribe restore + tombstone clearing, `restore-pending`, cancellation, errors swallowed on both destructive paths, and the version counter bumping/notifying only on real changes |
@@ -714,7 +748,7 @@ Ordered roughly by blast radius.
     (`0003:12-25`) are the entire content paywall. `get_premium_author_counts` is granted to `anon`
     by design — safe today because it selects only `author, count(*)`, but any future edit to that
     function body leaks premium text to anonymous callers with no test to stop it.
-12. **ar/ja locales are 73 keys short of tr (103 vs 176) and excluded from the parity test**
+12. **ar/ja locales are 79 keys short of tr (155 vs 234) and excluded from the parity test**
     (`locales.test.ts:9`). They are hidden by `available: false` (`i18n/index.ts:23-24`); flipping
     that flag ships a half-Turkish UI (via `enableFallback`) with a green CI. There is also no
     RTL handling anywhere for Arabic.

@@ -230,6 +230,7 @@
   },
   "paywall": {
     "title": "Hazte Pro",
+    "intro": "Un café te mantiene una hora. La frase adecuada, todo el día.",
     "subtitle": "Elimina los anuncios para siempre, desbloquea más de 3.325 citas premium en 18 packs y configura hasta 10 recordatorios diarios.",
     "skip": "Quizás después",
     "restorePurchases": "Restaurar compras",
@@ -244,7 +245,13 @@
       "annualLabel": "Pro — Anual",
       "annualHint": "Mejor precio",
       "monthlyLabel": "Pro — Mensual",
-      "proFeatures": "Sin anuncios · Colecciones premium · 10 recordatorios al día"
+      "proFeatures": "Sin anuncios · Colecciones premium · 10 recordatorios al día",
+      "savePercent": "Ahorras un {{percent}}",
+      "perWeek": "{{price}} a la semana",
+      "perWeekAndMonth": "{{week}} a la semana · {{month}} al mes",
+      "a11yPackage": "{{label}}, {{price}}",
+      "a11yPackageWeekly": "{{label}}, {{price}}, {{perWeek}} a la semana",
+      "a11yAnnual": "{{label}}, {{price}}. Pagar mes a mes durante el mismo año costaría {{compare}}. El plan anual sale a {{perWeek}} a la semana, {{perMonth}} al mes; un {{percent}} menos."
     },
     "errors": {
       "generic": "Algo salió mal. Inténtalo de nuevo.",

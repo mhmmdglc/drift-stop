@@ -230,6 +230,7 @@
   },
   "paywall": {
     "title": "Go Pro",
+    "intro": "A coffee keeps you going for an hour. The right sentence, all day.",
     "subtitle": "Remove ads for good, unlock 3,325+ premium quotes in 18 packs, and set up to 10 daily reminders.",
     "skip": "Maybe later",
     "restorePurchases": "Restore purchases",
@@ -244,7 +245,13 @@
       "annualLabel": "Pro — Yearly",
       "annualHint": "Best value",
       "monthlyLabel": "Pro — Monthly",
-      "proFeatures": "No ads · Premium packs · 10 reminders a day"
+      "proFeatures": "No ads · Premium packs · 10 reminders a day",
+      "savePercent": "Save {{percent}}",
+      "perWeek": "{{price}} a week",
+      "perWeekAndMonth": "{{week}} a week · {{month}} a month",
+      "a11yPackage": "{{label}}, {{price}}",
+      "a11yPackageWeekly": "{{label}}, {{price}}, {{perWeek}} a week",
+      "a11yAnnual": "{{label}}, {{price}}. Paying monthly for the same year would cost {{compare}}. Yearly works out to {{perWeek}} a week, {{perMonth}} a month; {{percent}} less."
     },
     "errors": {
       "generic": "Something went wrong. Please try again.",
