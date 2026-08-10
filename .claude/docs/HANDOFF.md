@@ -11,15 +11,36 @@ Plan [`specs/monetization-v2.md`](../specs/monetization-v2.md) ve
 
 ## Tek satırlık durum
 
-**Android canlı:** `1.2.0 (versionCode 16)` Play kapalı test → **alpha** kanalında,
-16 testçi güncelleyebilir. Emülatörde RELEASE-READY aldı.
+**Android canlı:** `1.2.0 (versionCode 17)` Play kapalı test → **alpha** kanalında.
+Play API'sinden okunarak doğrulandı (16 → 17). Production kanalı **boş**, sayaç ~15 Ağustos.
 
-**iOS incelemede.** `1.2.0 (build 5)` ve iki abonelik `WAITING_FOR_REVIEW` (2026-08-10).
-Build 4 terk edildi — 3.1.2 düzeltmesi build 5'e girdi. İkon düzeltmesi ve hukuki bağlantılar
-**binary'nin içinden** doğrulandı, config'e bakarak değil.
+**iOS incelemede.** `1.2.0 (build 5)` + iki abonelik `WAITING_FOR_REVIEW`, gönderim
+`1cc18361-…`, **4 kalem**. Apple 48 saate kadar diyor. Sonuç e-postayla gelecek.
 
-Kapılar: `tsc` temiz · **285 test / 32 suite** (oturuma 214 ile başladı) ·
-`expo lint` **11 hata = değişmemiş taban** (uyarı sayısı test dosyalarıyla arttı, hata değil).
+Kapılar: `tsc` temiz · **292 test / 34 suite** (oturuma 214 ile başladı) ·
+`expo lint` **11 hata = değişmemiş taban**.
+
+⚠️ **HEAD, incelemedeki build'in ÖNÜNDE.** `99d782d` (misafir-Pro düzeltmesi) build 5'ten
+sonra geldi. iOS 1.2.0 onaylanırsa mağazaya o düzeltme **olmadan** çıkar — sahibin bilinçli
+kararı, 1.2.1'e bırakıldı. Android 17 de bu düzeltmeden önce derlendi.
+
+---
+
+## ⛔ SIRADAKİ İŞ — Apple'ın cevabını beklemek
+
+Şu an yapılacak bir şey yok; karar noktası Apple'ın cevabı:
+
+**Onaylanırsa:** iOS canlıya çıkar. Hemen ardından **1.2.1** kesilmeli — içeriği aşağıdaki
+"yapılacaklar"ın ilk maddesi (misafir-Pro düzeltmesi zaten HEAD'de hazır ve test edilmiş,
+sadece build almak kaldı).
+
+**Reddedilirse:** red sebebini `OPERATIONS.md` §7'deki denetim tablosuyla karşılaştır.
+En olası iki aday zaten kapatıldı (ikon, 3.1.2), o yüzden yeni bir şey çıkarsa tabloya
+eklenmeli. Sürüm kaydı yine `DEVELOPER_REJECTED`'a düşer ve **yeniden kullanılır** —
+yeni sürüm kaydı açma.
+
+**Her iki durumda da:** `app.json`'daki `autoIncrement` yazımını commit etmeyi unutma
+(`OPERATIONS.md` §2'deki uyarı).
 
 ---
 
@@ -34,6 +55,12 @@ Kapılar: `tsc` temiz · **285 test / 32 suite** (oturuma 214 ile başladı) ·
 | `8761f98` | **iOS ikonu** — Expo placeholder'ı yerine DriftStop alevi |
 | `46b0cfb` | İptal artık `/auth` ekranını kapatmıyor |
 | `cbc971b` `90fb3f2` | Paywall: haftalık fiyat kahraman, üstü çizili $47.88, %24 tasarruf, kahve cümlesi |
+| `c5ac4c7` | iOS 1.2.0 build 4 + `app.json`'ın mağazanın gerisine düşmesi düzeltildi |
+| `4348849` `22f6aca` | ASC API'sinin abonelik gönderemediği, ve iOS gönderim öncesi denetim listesi |
+| `bb95158` | **3.1.2** — paywall'a gizlilik + kullanım koşulları, mağaza açıklamasına abonelik bloğu |
+| `870b2ff` | iOS 1.2.0 (build 5) + iki abonelik incelemeye gönderildi |
+| `36d78a2` | Android 1.2.0 (versionCode 17) Alpha'ya + `scripts/play-upload.js` |
+| `a157444` `99d782d` `030c3c8` | **Misafir-Pro kusuru** — bulundu, düzeltildi, ekranda doğrulandı |
 
 ---
 
@@ -80,17 +107,43 @@ Abonelikler sürümle birlikte gidiyor — ayrıca göndermek gerekmiyor.
 
 ## Sahipten bekleyen kararlar / işler
 
-1. **Gerçek cihazda satın alma testi.** Oturum boyunca değişmeyen tek boşluk. Ne simülatör
-   ne emülatör çözüyor; **gelir yolunun hâlâ hiçbir kanıtı yok.**
-2. **Android üretim ~2026-08-15'te açılıyor** (14 gün × 16 testçi, sayaç 5 Ağustos'ta 4. gündeydi).
-   Süre **kesintisiz** olmalı — sayaç dolmadan Alpha kanalından kimse çıkarılmamalı.
+1. **Tamamlanmış bir satın alma — hâlâ tek gerçek boşluk, ama artık çok daha dar.**
+   2026-08-10'da zincirin **iki ucu ayrı ayrı** kanıtlandı:
+   - **Ön uç:** simülatörde paywall iki ürünü de **gerçek App Store fiyatlarıyla** çekti
+     (`$3.99` / `$35.99`, ASC'yle birebir) ve "Satın Al" **StoreKit'in ödeme ekranını açtı**.
+   - **Arka uç:** RevenueCat panelinden promotional `pro` verildiğinde uygulama **doğru
+     davrandı** — Go Pro kartı gitti, 7 ve 10 seçilebilir oldu, paketler açıldı.
+
+   Test edilmemiş tek halka **Apple'ın satın almayı onaylaması**. Bunun için sandbox testçi
+   hesabı gerekiyor; `muhammed.gulcu+dsbox1@gmail.com` oluşturuldu ama simülatörde giriş
+   Apple'ın **iki faktörlü doğrulamasına** takıldı ve tamamlanamadı. Doğru yer
+   **Ayarlar → Developer → Sandbox Apple Account** (satın alma sırasında çıkan sistem
+   penceresi DEĞİL — oradan girmek hesabı tam Apple hesabı sanıp 2FA kurmaya çalışıyor).
+   İlk gerçek satın alma büyük ihtimalle App Review'da olacak.
+
+2. **Android üretim ~2026-08-15'te açılıyor** (14 gün × 16 testçi). Süre **kesintisiz**
+   olmalı — sayaç dolmadan Alpha kanalından kimse çıkarılmamalı.
 3. **AdMob** iki kapı da kapalı: hesap (`muhammed.gulcu.x@gmail.com` / `pub-6963122807813930`)
    hâlâ doğrulanıyor, ve mağaza bağlantısı ancak uygulamalar **herkese açık listelendiğinde**
    eklenebiliyor. Kapalı testte eklenemiyor — 2026-08-05'te arama ile denendi, sıfır sonuç.
+4. **Apple ile giriş hiçbir cihazda çalıştırılmadı.** Simülatör bunu çözemiyor: imzasız build
+   `com.apple.developer.applesignin` entitlement'ını taşımıyor (`AKAuthenticationError -7026`),
+   bu Mac'te imzalama kimliği yok. İlk kanıt App Review'dan gelecek.
 
 ---
 
 ## 🔨 Yapılacak işler — sahip onayladı, kodlanmadı
+
+### 0. **1.2.1'i kes** — kod hazır, sadece build kaldı ⭐ sıradaki
+`99d782d` HEAD'de duruyor ve **hiçbir mağaza build'inde yok**: misafir olarak Pro alan
+kullanıcıya artık "birazdan gelecek" denmiyor, hesap çağrısı + butonu gösteriliyor.
+Simülatörde ekranda doğrulandı, koruma testi iki sabotajla kanıtlandı.
+
+Apple 1.2.0'ı onaylar onaylamaz (ya da reddederse hemen) bu build alınmalı — iki mağaza için de.
+Android tarafında `versionCode 17` de bu düzeltmeden önce derlendi, yani 18 gerekiyor.
+
+**Aynı build'e girmesi mantıklı olan:** aşağıdaki 3. maddenin "satın alma sonrası mesaj"
+alt maddesi zaten `99d782d` ile kapandı — listeden düşürüldü.
 
 ### 1. Pro alınca bildirim sıklığı otomatik 7'ye çıksın
 Sahip 10 istedi, riski konuşulunca **7'de karar kılındı** (ürün "sessiz dürtme" vaat ediyor;
@@ -115,10 +168,12 @@ Sahibin son isteği, hiç konuşulmadı. Android'de `react-native-android-widget
 - **Paketleri sekmeye çıkar** — sattığın şeyin sekmesi yok, Ayarlar'da tek satır
 - **ATT'yi ilk değer anından sonraya al** — şu an kullanıcı tek söz görmeden izin isteniyor,
   opt-in düşüklüğü doğrudan reklam geliri kaybı
-- **Satın alma sonrası mesaj** — Pro alana "reklamlar kapandı" diyor (`paywall.tsx`,
-  `PACKAGE_TYPE.LIFETIME` dalı)
+- ~~Satın alma sonrası mesaj~~ — **kapandı** (`99d782d`): misafire ayrı onay veriliyor,
+  LIFETIME dalı zaten `cbc971b`'de düzeltilmişti
 
-⚠️ Hepsi `src/locales/`'in sekiz dosyasına dokunuyor — **paralel agent çalıştırma**, çakışır.
+⚠️ Hepsi `src/locales/`'e dokunuyor — **paralel agent çalıştırma**, çakışır. Not: parity testi
+**altı aktif dili** kapsıyor (`tr en es de fr it`); `ja` ve `ar` kısmi dosyalar, `packs`/`paywall`
+bölümleri hiç yok ve teste girmiyorlar.
 
 ---
 
@@ -133,7 +188,45 @@ parçasını çözüyor ama tamamını değil.
 
 ---
 
-## Bu oturumda öğrenilen tuzaklar — tekrar düşmeyin
+## 2026-08-10'da öğrenilenler
+
+### Bir sürüm, aboneliklerini arkada bırakarak incelemeye girebiliyor
+Sürüm `WAITING_FOR_REVIEW` oldu, gönderimde **tek kalem** vardı, abonelikler `READY_TO_SUBMIT`'te
+kaldı — ve bunu **sürüm tarafında hiçbir alan söylemiyor**. Onaylansaydı iOS hiçbir şey satamayan
+bir paywall'la yayına girerdi. **Kural: sürümün durumuna bakma, abonelik tarafını oku**
+(`/v1/subscriptions/{id}` + `/versions`). ASC API'si abonelik eklemeyi dört ayrı uçtan reddediyor;
+arayüz şart ve grup tek başına yetmiyor — tarif `OPERATIONS.md` §7'de.
+
+### RevenueCat'i Apple hesabı olmadan test edebilirsin
+Sandbox'a takılırsan zincirin arka ucunu ayrıca sınayabilirsin: uygulamanın müşteri kimliği
+simülatör konteynerinde duruyor —
+`Library/Preferences/com.revenuecat.user_defaults.plist` içinde `$RCAnonymousID:…`
+(`strings` ile çek, `plutil` bu dosyayı JSON'a çeviremiyor). Panelden o müşteriye promotional
+entitlement ver, uygulamayı yeniden başlat. Hiçbir kimlik bilgisi gerekmiyor ve
+"hak gelince uygulama doğru davranıyor mu" sorusunu tek başına cevaplıyor.
+
+### Simülatörde uygulamayı çalıştırmanın üç engeli var
+1. **CocoaPods** UTF-8 olmayan locale'de patlıyor → `LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8`.
+2. **Port 8081** başka bir projenin Metro'su tarafından tutuluyor → `--port 8082`.
+3. **`expo run:ios` simülatörü fiziksel cihaz sanıp imza istiyor** (UDID versen de, isim
+   versen de). Çözüm: Expo CLI'yı atla, doğrudan
+   `xcodebuild -workspace ios/DriftStop.xcworkspace -scheme DriftStop -configuration Release
+   -sdk iphonesimulator -destination "id=<udid>" CODE_SIGNING_ALLOWED=NO` + `simctl install`.
+   Release seçmek Metro ihtiyacını da kaldırıyor ve gerçek paketlenmiş JS'i çalıştırıyor.
+
+### Hermes bundle'da `grep` boş dönerse panik yapma
+`main.jsbundle` **Hermes bytecode**, düz `grep` hiçbir şey bulmaz ve bu "düzeltme binary'de yok"
+gibi okunur. `grep -a` kullan. Bugün hukuki URL'lerin build 5'te olduğu böyle kanıtlandı.
+
+### `app.json` mağazanın gerisine düşüyor
+`cli.appVersionSource` ayarlı değil → EAS `autoIncrement` sayıyı **`app.json` içinde** artırıp
+çalışma ağacına yazıyor. Commit edilmezse dosya sessizce geride kalıyor: repo `versionCode 15`
+derken Play'de 16 vardı, sıradaki build 16'yı tekrar üretip **duplicate** yiyecekti.
+**Her production build'den sonra `git diff app.json` ve commit.**
+
+---
+
+## Daha önceki oturumda öğrenilen tuzaklar — tekrar düşmeyin
 
 ### `captureRef` birimi platforma göre değişiyor
 - **iOS** `rendererFormat.scale = 0` → verilen sayı **nokta**, piksel oranıyla çarpılıyor.
