@@ -643,8 +643,38 @@ is as far as the products can get on their own; they ride along with the version
 5. `PATCH /v1/appStoreVersions/{id}` with the new `versionString`, then
    `PATCH /v1/appStoreVersions/{id}/relationships/build` to attach it.
 6. Submit: `POST /v1/reviewSubmissions` (app + platform), `POST /v1/reviewSubmissionItems` pointing at the
-   version, then `PATCH /v1/reviewSubmissions/{id}` with `submitted: true`. The subscriptions go with it.
+   version, then `PATCH /v1/reviewSubmissions/{id}` with `submitted: true`.
 7. `git diff app.json` and commit the `autoIncrement` bump.
+
+#### ⛔ The subscriptions do **not** go with it. The API cannot attach them — use the web UI.
+
+Learned the expensive way on 2026-08-10: the version submitted cleanly to `WAITING_FOR_REVIEW` while
+`pro_monthly` and `pro_yearly` stayed behind, and **nothing in the version submission says so**. Had Apple
+approved it, iOS would have gone live with a paywall that lists nothing — the same revenue-dead outcome as
+finding #14 in `TODO.md`.
+
+Every API route was tried and every one refuses:
+
+| Attempt | Result |
+|---|---|
+| `reviewSubmissionItems` + `subscription` relationship | `409` — *"'subscription' is not a relationship on the resource"* |
+| same with `inAppPurchaseV2`, `subscriptionV2` | `409`, same wording. The relationship name is validated **before** state, so these are not state errors |
+| `POST /v1/inAppPurchaseSubmissions` | `409` — wants `inAppPurchaseV2`, which is not a subscription |
+| `POST /v1/subscriptionSubmissions` | `409` — *"This subscription cannot be reviewed, please check associated errors."* Tried both with a submission pending **and** with none |
+
+`ReviewSubmissionItemCreateRequest` simply has no in-app-purchase relationship in v1. **Only the App Store
+Connect web UI can attach a subscription to a version submission**, and the web UI needs an interactive
+Apple sign-in with 2FA — which an agent cannot do. Name it as an owner step.
+
+**How to tell whether they actually went:** do not trust the version's state. Read the subscription side —
+`GET /v1/subscriptions/{id}` (`state`), `/subscriptions/{id}/versions`, `/subscriptionLocalizations`, and
+`/v1/subscriptionGroups/{id}/subscriptionGroupLocalizations`. If those still read `PREPARE_FOR_SUBMISSION` /
+`READY_TO_SUBMIT` after the version is submitted, the subscriptions are **not** in review.
+
+If it happens again: `PATCH /v1/reviewSubmissions/{id}` `{"canceled": true}` pulls the version back (it
+returns to `DEVELOPER_REJECTED`, which is reusable), then redo the submission from the web UI. A submission
+that was created but never submitted is **not** cancellable — `409 "Resource is not in cancellable state"` —
+so it just sits there holding the version at `READY_FOR_REVIEW`.
 
 ### Store-process differences vs. Android
 
