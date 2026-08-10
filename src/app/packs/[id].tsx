@@ -5,6 +5,7 @@ import { FlatList, Pressable, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { PaperBackground } from '@/components/PaperBackground';
+import { PremiumContentEmpty } from '@/components/PremiumContentEmpty';
 import { SketchButton } from '@/components/SketchButton';
 import { SketchUnderline } from '@/components/SketchUnderline';
 import { ThemedText } from '@/components/ThemedText';
@@ -88,11 +89,7 @@ export default function PackDetailScreen() {
                 />
               </View>
             ) : quotes.length === 0 ? (
-              <View style={styles.empty}>
-                <ThemedText variant="body" tone="textMuted" style={styles.emptyText}>
-                  {t('packs.syncingBody')}
-                </ThemedText>
-              </View>
+              <PremiumContentEmpty />
             ) : (
               <FlatList
                 data={quotes}

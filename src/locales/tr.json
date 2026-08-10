@@ -262,6 +262,7 @@
       "noOffering": "Şu an gösterilecek bir şey yok. Daha sonra tekrar dene."
     },
     "purchaseSuccessPro": "Teşekkürler! Pro açıldı — tüm paketler, reklamsız, günde 10'a kadar hatırlatma.",
+    "purchaseSuccessProGuest": "Teşekkürler! Pro açıldı. Premium koleksiyonların insin ve yeni telefonuna da gelsin diye giriş yap.",
     "purchaseSuccessAdsRemoved": "Teşekkürler! Reklamlar artık kapalı.",
     "legal": {
       "privacyPolicy": "Gizlilik Politikası",
@@ -301,6 +302,9 @@
     "unlockCta": "Pro'ya geç",
     "quoteCount": "%{count} söz",
     "syncingBody": "Sözler senkronize ediliyor, birazdan burada olacak.",
+    "needsAccountTitle": "Premium sözlerin için bir hesap gerekiyor",
+    "needsAccountBody": "Bu cihazda Pro açık. Giriş yaptığında koleksiyonlar saniyeler içinde iniyor — ve yeni telefonunda da senin kalıyor.",
+    "needsAccountCta": "Giriş yap / Hesap oluştur",
     "collectionsSectionTitle": "Koleksiyonlar",
     "authorsSectionTitle": "Yazarlar"
   },

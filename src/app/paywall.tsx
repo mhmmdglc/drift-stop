@@ -10,6 +10,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { WobblyBorder } from '@/components/WobblyBorder';
 import { Spacing } from '@/constants/layout';
 import { Links } from '@/constants/links';
+import { useAuth } from '@/hooks/useAuth';
 import { useEntitlement } from '@/hooks/useEntitlement';
 import { usePurchases } from '@/hooks/usePurchases';
 import { useTheme } from '@/hooks/use-theme';
@@ -44,6 +45,7 @@ export default function PaywallScreen() {
   // Satın alma eylemleri `usePurchases`ten; "hakkı var mı" sorusu `useEntitlement`ten.
   // Denemedeki kullanıcıya paketler GÖSTERİLMELİ — dönüştürmek istediğimiz kişi o.
   const { configured, loading, offering, purchasePackage, restorePurchases } = usePurchases();
+  const { user, configured: authConfigured } = useAuth();
   const { source, trialDaysLeft, isSubscribed, isAdsRemoved } = useEntitlement();
 
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -62,11 +64,21 @@ export default function PaywallScreen() {
     }
     // Tek bir "reklamlar kapandı" mesajı HER satın almada gösteriliyordu — Pro
     // abone olan kullanıcıya daha ucuz ürünün onayını vermek yanlış bilgi.
+    //
+    // Misafire ayrı bir onay veriliyor çünkü onun için iş bitmiyor: premium
+    // sözler RLS gereği yalnızca oturum açmış kullanıcıya dönüyor
+    // (bkz. services/quotesSync.ts). Bunu söylemezsek kullanıcı ödeme yapıp
+    // paketleri açık görüyor, içeri girince sonsuza kadar "senkronize ediliyor"
+    // yazısıyla kalıyor — sattığımız şeyin ta kendisi eksik kalıyor.
+    const proMessage =
+      authConfigured && !user
+        ? t('paywall.purchaseSuccessProGuest')
+        : t('paywall.purchaseSuccessPro');
     setMessage({
       text:
         pkg.packageType === PACKAGE_TYPE.LIFETIME
           ? t('paywall.purchaseSuccessAdsRemoved')
-          : t('paywall.purchaseSuccessPro'),
+          : proMessage,
       tone: 'accent',
     });
   };

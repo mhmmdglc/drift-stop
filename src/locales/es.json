@@ -262,6 +262,7 @@
       "noOffering": "No hay nada que mostrar ahora. Inténtalo más tarde."
     },
     "purchaseSuccessPro": "¡Gracias! Pro está activo: todas las colecciones, sin anuncios, hasta 10 recordatorios al día.",
+    "purchaseSuccessProGuest": "¡Gracias! Pro está activo. Inicia sesión para que tus colecciones premium se descarguen y te acompañen a un teléfono nuevo.",
     "purchaseSuccessAdsRemoved": "¡Gracias! Los anuncios ya están desactivados.",
     "legal": {
       "privacyPolicy": "Política de Privacidad",
@@ -301,6 +302,9 @@
     "unlockCta": "Hazte Pro",
     "quoteCount": "%{count} frases",
     "syncingBody": "Sincronizando frases, estarán aquí en breve.",
+    "needsAccountTitle": "Tus frases premium necesitan una cuenta",
+    "needsAccountBody": "Pro está activo en este dispositivo. Inicia sesión y tus colecciones se descargan en segundos, y siguen siendo tuyas en un teléfono nuevo.",
+    "needsAccountCta": "Iniciar sesión / Crear cuenta",
     "collectionsSectionTitle": "Colecciones",
     "authorsSectionTitle": "Autores"
   },

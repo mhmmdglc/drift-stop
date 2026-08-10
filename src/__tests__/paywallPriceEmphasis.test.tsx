@@ -42,6 +42,12 @@ jest.mock('@/hooks/usePurchases', () => ({
     restorePurchases: jest.fn(),
   }),
 }));
+jest.mock('@/hooks/useAuth', () => ({
+  // Paywall artık oturum durumunu okuyor (misafire farklı satın alma onayı
+  // veriliyor). Gerçek hook Supabase'i, o da expo-sqlite'ı çekiyor ve test
+  // ortamında ayağa kalkmıyor — buradaki mesele kimlik değil, ekranın kendisi.
+  useAuth: () => ({ user: null, configured: true }),
+}));
 jest.mock('@/hooks/useEntitlement', () => ({
   useEntitlement: () => ({
     entitled: false,

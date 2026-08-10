@@ -262,6 +262,7 @@
       "noOffering": "Niente da mostrare ora. Riprova più tardi."
     },
     "purchaseSuccessPro": "Grazie! Pro è attivo — tutte le raccolte, niente pubblicità, fino a 10 promemoria al giorno.",
+    "purchaseSuccessProGuest": "Grazie! Pro è attivo. Accedi per scaricare le tue raccolte premium e portarle con te su un nuovo telefono.",
     "purchaseSuccessAdsRemoved": "Grazie! La pubblicità è disattivata.",
     "legal": {
       "privacyPolicy": "Informativa sulla privacy",
@@ -301,6 +302,9 @@
     "unlockCta": "Passa a Pro",
     "quoteCount": "%{count} citazioni",
     "syncingBody": "Sincronizzazione delle citazioni, saranno qui a breve.",
+    "needsAccountTitle": "Le tue frasi premium richiedono un account",
+    "needsAccountBody": "Pro è attivo su questo dispositivo. Accedi e le tue raccolte si scaricano in pochi secondi, e restano tue anche su un nuovo telefono.",
+    "needsAccountCta": "Accedi / Crea account",
     "collectionsSectionTitle": "Collezioni",
     "authorsSectionTitle": "Autori"
   },

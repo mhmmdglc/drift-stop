@@ -262,6 +262,7 @@
       "noOffering": "Gerade nichts anzuzeigen. Versuch es später erneut."
     },
     "purchaseSuccessPro": "Danke! Pro ist aktiv — alle Pakete, keine Werbung, bis zu 10 Erinnerungen am Tag.",
+    "purchaseSuccessProGuest": "Danke! Pro ist aktiv. Melde dich an, damit deine Premium-Sammlungen laden und dich auf ein neues Handy begleiten.",
     "purchaseSuccessAdsRemoved": "Danke! Werbung ist jetzt aus.",
     "legal": {
       "privacyPolicy": "Datenschutzerklärung",
@@ -301,6 +302,9 @@
     "unlockCta": "Pro werden",
     "quoteCount": "%{count} Zitate",
     "syncingBody": "Zitate werden synchronisiert, sie sind gleich da.",
+    "needsAccountTitle": "Deine Premium-Zitate brauchen ein Konto",
+    "needsAccountBody": "Pro ist auf diesem Gerät aktiv. Melde dich an, dann laden deine Sammlungen in Sekunden — und bleiben auch auf einem neuen Handy deine.",
+    "needsAccountCta": "Anmelden / Konto erstellen",
     "collectionsSectionTitle": "Sammlungen",
     "authorsSectionTitle": "Autoren"
   },

@@ -262,6 +262,7 @@
       "noOffering": "Rien à afficher pour le moment. Réessaie plus tard."
     },
     "purchaseSuccessPro": "Merci ! Pro est activé — toutes les collections, sans publicité, jusqu'à 10 rappels par jour.",
+    "purchaseSuccessProGuest": "Merci ! Pro est actif. Connecte-toi pour que tes collections premium se téléchargent et te suivent sur un nouveau téléphone.",
     "purchaseSuccessAdsRemoved": "Merci ! Les publicités sont désormais désactivées.",
     "legal": {
       "privacyPolicy": "Politique de confidentialité",
@@ -301,6 +302,9 @@
     "unlockCta": "Passer en Pro",
     "quoteCount": "%{count} citations",
     "syncingBody": "Synchronisation des citations, elles arrivent bientôt.",
+    "needsAccountTitle": "Tes citations premium nécessitent un compte",
+    "needsAccountBody": "Pro est actif sur cet appareil. Connecte-toi et tes collections se téléchargent en quelques secondes — et restent les tiennes sur un nouveau téléphone.",
+    "needsAccountCta": "Se connecter / Créer un compte",
     "collectionsSectionTitle": "Collections",
     "authorsSectionTitle": "Auteurs"
   },

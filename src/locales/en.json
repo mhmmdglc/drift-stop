@@ -262,6 +262,7 @@
       "noOffering": "Nothing to show right now. Try again later."
     },
     "purchaseSuccessPro": "Thank you! Pro is on — every pack, no ads, up to 10 reminders a day.",
+    "purchaseSuccessProGuest": "Thank you! Pro is on. Sign in so your premium collections download and follow you to a new phone.",
     "purchaseSuccessAdsRemoved": "Thank you! Ads are now off.",
     "legal": {
       "privacyPolicy": "Privacy Policy",
@@ -301,6 +302,9 @@
     "unlockCta": "Go Pro",
     "quoteCount": "%{count} quotes",
     "syncingBody": "Syncing quotes, they'll be here shortly.",
+    "needsAccountTitle": "Your premium quotes need an account",
+    "needsAccountBody": "Pro is active on this device. Sign in and your collections download in seconds — and stay yours on a new phone.",
+    "needsAccountCta": "Sign in / Create account",
     "collectionsSectionTitle": "Collections",
     "authorsSectionTitle": "Authors"
   },
