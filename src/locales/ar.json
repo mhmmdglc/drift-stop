@@ -227,11 +227,13 @@
     "intro": "القهوة تُبقيك صاحيًا ساعة. والجملة المناسبة تبقيك يومًا كاملًا.",
     "packages": {
       "savePercent": "توفير {{percent}}",
-      "perWeek": "{{price}} أسبوعيًا",
-      "perWeekAndMonth": "{{week}} أسبوعيًا · {{month}} شهريًا",
+      "perWeekUnit": "/ أسبوع",
+      "billedMonthly": "{{price}} / شهر",
+      "billedAnnual": "{{price}} / سنة",
       "a11yPackage": "{{label}}، {{price}}",
-      "a11yPackageWeekly": "{{label}}، {{price}}، {{perWeek}} أسبوعيًا",
-      "a11yAnnual": "{{label}}، {{price}}. الدفع شهريًا للسنة نفسها يكلّف {{compare}}. الخطة السنوية تعادل {{perWeek}} أسبوعيًا و{{perMonth}} شهريًا، أي أقل بنسبة {{percent}}."
+      "a11yMonthly": "{{label}}. {{perWeek}} أسبوعيًا. يُحصَّل {{price}} كل شهر.",
+      "a11yAnnual": "{{label}}. {{perWeek}} أسبوعيًا. يُحصَّل {{price}} كل سنة.",
+      "a11yAnnualSaving": "{{label}}. {{perWeek}} أسبوعيًا. يُحصَّل {{price}} كل سنة. الدفع شهريًا للسنة نفسها يكلّف {{compare}}، أي أقل بنسبة {{percent}}."
     }
   }
 }

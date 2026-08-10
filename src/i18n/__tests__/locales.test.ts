@@ -60,18 +60,17 @@ describe('locale files', () => {
       price: '$35.99',
       compare: '$47.88',
       perWeek: '$0.69',
-      perMonth: '$3.00',
       percent: '24%',
-      week: '$0.69',
-      month: '$3.00',
     };
     const keys = [
       'paywall.packages.savePercent',
-      'paywall.packages.perWeek',
-      'paywall.packages.perWeekAndMonth',
+      'paywall.packages.perWeekUnit',
+      'paywall.packages.billedMonthly',
+      'paywall.packages.billedAnnual',
       'paywall.packages.a11yPackage',
-      'paywall.packages.a11yPackageWeekly',
+      'paywall.packages.a11yMonthly',
       'paywall.packages.a11yAnnual',
+      'paywall.packages.a11yAnnualSaving',
     ];
     for (const code of Object.keys(ACTIVE)) {
       i18n.locale = code;
@@ -90,6 +89,43 @@ describe('locale files', () => {
       }
     }
     i18n.locale = 'tr';
+  });
+
+  // Paywall'da en büyük rakam haftalık karşılık; tahsil edilen tutarın YANINDA
+  // dönemi yazmazsa (yalnızca "$35.99") mağaza kuralları açısından yanıltıcı
+  // olur. Çeviri sırasında dönem kelimesinin düşmesi ekranda fark edilmeyecek
+  // ama incelemede takılacak bir hata — burada sabitleniyor.
+  it('every locale states the billing period next to the charged amount', () => {
+    for (const [code, json] of Object.entries(ACTIVE)) {
+      const pkgs = (json as { paywall: { packages: Record<string, string> } }).paywall.packages;
+      for (const key of ['billedMonthly', 'billedAnnual']) {
+        const text = pkgs[key];
+        expect({ code, key, text }).toEqual({
+          code,
+          key,
+          text: expect.stringContaining('{{price}}'),
+        });
+        // Yer tutucu çıkarıldığında geriye dönemi anlatan bir metin kalmalı.
+        expect({ code, key, rest: text.replace('{{price}}', '').replace(/[\s/]/g, '') }).toEqual({
+          code,
+          key,
+          rest: expect.not.stringMatching(/^$/),
+        });
+      }
+      // Ekran okuyucu da gerçek tahsilatı duymalı — sadece haftalık rakamı değil.
+      for (const key of ['a11yMonthly', 'a11yAnnual', 'a11yAnnualSaving']) {
+        expect({ code, key, text: pkgs[key] }).toEqual({
+          code,
+          key,
+          text: expect.stringContaining('{{price}}'),
+        });
+        expect({ code, key, text: pkgs[key] }).toEqual({
+          code,
+          key,
+          text: expect.stringContaining('{{perWeek}}'),
+        });
+      }
+    }
   });
 
   it('share template keeps placeholders in every locale', () => {

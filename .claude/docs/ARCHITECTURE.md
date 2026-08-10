@@ -418,8 +418,8 @@ percentage is ever written into the code or the locale files: prices are set per
 is ₺229.99, not a converted dollar figure), so a baked-in "$47.88" would be false almost everywhere.
 `priceString` is displayed but never parsed — it is localized text.
 
-`buildPaywallPricing(monthly, annual, locale)` returns `monthlyPerWeek`, `annualPerWeek`,
-`annualPerMonth` and a `comparison`. The rules, all tested:
+`buildPaywallPricing(monthly, annual, locale)` returns `monthlyPerWeek`, `annualPerWeek` and a
+`comparison`. The rules, all tested:
 
 - per-week = `price × 12 / 52` for the monthly plan, `price / 52` for the annual;
 - the struck-through baseline is `monthly.price × 12`, rendered with `SketchStrike`;
@@ -431,6 +431,26 @@ is ₺229.99, not a converted dollar figure), so a baked-in "$47.88" would be fa
 Formatting goes through `Intl.NumberFormat` with the store's currency code, with a fallback to
 `"47.88 USD"` if the Hermes build has no usable `Intl` — an honest ISO code instead of a guessed
 symbol.
+
+**Emphasis hierarchy on the package row** (`paywall.tsx`, price column, right-aligned):
+
+| Slot | Content | Style |
+|---|---|---|
+| hero | per-week amount + `perWeekUnit` ("/ week") | `heading` (22, display font) in `accent`, unit at `label` (13) on a shared baseline |
+| secondary | the **actually billed amount with its period** — `billedAnnual` / `billedMonthly` → "$35.99 / year" | `body` (15) in the primary text colour |
+| baseline | `comparison.annualizedMonthly` under `SketchStrike` | `label` (13), muted |
+
+The per-week figure is the largest number on the screen because that is what converts, but the
+charged amount is never rendered bare and never below body size: App Store Review 3.1.2 and Play's
+subscription policy require the amount and billing period to be *clear and conspicuous*, and a
+headline "$0.69" over a whisper-thin real price is a known rejection trigger. The LIFETIME row has no
+per-week figure, so its `priceString` takes the hero slot instead.
+
+The a11y label is one sentence per row and **must carry the same facts in the same honesty order**:
+weekly figure, then real charge + period, then (annual only) baseline + floored saving.
+`src/__tests__/paywallPriceEmphasis.test.tsx` pins both halves — the rendered font sizes
+(weekly > billed ≥ struck) and the a11y string content — and `locales.test.ts` asserts every locale's
+`billed*`/`a11y*` strings still contain `{{price}}` plus a period word.
 
 ### Ad suppression
 

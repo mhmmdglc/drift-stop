@@ -247,11 +247,13 @@
       "monthlyLabel": "Pro — Aylık",
       "proFeatures": "Reklamsız · Premium paketler · Günde 10 hatırlatma",
       "savePercent": "{{percent}} tasarruf",
-      "perWeek": "haftada {{price}}",
-      "perWeekAndMonth": "haftada {{week}} · ayda {{month}}",
+      "perWeekUnit": "/ hafta",
+      "billedMonthly": "{{price}} / ay",
+      "billedAnnual": "{{price}} / yıl",
       "a11yPackage": "{{label}}, {{price}}",
-      "a11yPackageWeekly": "{{label}}, {{price}}, haftada {{perWeek}}",
-      "a11yAnnual": "{{label}}, {{price}}. Aynı süre aylık ödenseydi {{compare}} ederdi. Yıllıkta haftada {{perWeek}}, ayda {{perMonth}}; {{percent}} tasarruf."
+      "a11yMonthly": "{{label}}. Haftada {{perWeek}}. Ayda bir {{price}} tahsil edilir.",
+      "a11yAnnual": "{{label}}. Haftada {{perWeek}}. Yılda bir {{price}} tahsil edilir.",
+      "a11yAnnualSaving": "{{label}}. Haftada {{perWeek}}. Yılda bir {{price}} tahsil edilir. Aynı süre aylık ödenseydi {{compare}} ederdi; {{percent}} tasarruf."
     },
     "errors": {
       "generic": "Bir şeyler ters gitti. Tekrar dene.",

@@ -247,11 +247,13 @@
       "monthlyLabel": "Pro — Monthly",
       "proFeatures": "No ads · Premium packs · 10 reminders a day",
       "savePercent": "Save {{percent}}",
-      "perWeek": "{{price}} a week",
-      "perWeekAndMonth": "{{week}} a week · {{month}} a month",
+      "perWeekUnit": "/ week",
+      "billedMonthly": "{{price}} / month",
+      "billedAnnual": "{{price}} / year",
       "a11yPackage": "{{label}}, {{price}}",
-      "a11yPackageWeekly": "{{label}}, {{price}}, {{perWeek}} a week",
-      "a11yAnnual": "{{label}}, {{price}}. Paying monthly for the same year would cost {{compare}}. Yearly works out to {{perWeek}} a week, {{perMonth}} a month; {{percent}} less."
+      "a11yMonthly": "{{label}}. {{perWeek}} a week. Billed {{price}} every month.",
+      "a11yAnnual": "{{label}}. {{perWeek}} a week. Billed {{price}} every year.",
+      "a11yAnnualSaving": "{{label}}. {{perWeek}} a week. Billed {{price}} every year. Paying monthly for the same year would cost {{compare}}; {{percent}} less."
     },
     "errors": {
       "generic": "Something went wrong. Please try again.",

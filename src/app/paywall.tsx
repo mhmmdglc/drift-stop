@@ -154,30 +154,42 @@ export default function PaywallScreen() {
                   : pkg.packageType === PACKAGE_TYPE.MONTHLY
                     ? pricing.monthlyPerWeek
                     : null;
-                const perMonth = isAnnual ? pricing.annualPerMonth : null;
+                // Tahsil edilen tutar dönemi olmadan asla yazılmıyor: haftalık
+                // rakam büyük dururken yalnız bir "$35.99" görmek kullanıcıya
+                // hangi periyotta ne ödeyeceğini söylemez.
+                const billed = perWeek
+                  ? t(
+                      isAnnual
+                        ? 'paywall.packages.billedAnnual'
+                        : 'paywall.packages.billedMonthly',
+                      { price: pkg.product.priceString }
+                    )
+                  : null;
                 const busy = busyId === pkg.identifier;
 
-                // Üstü çizili bir rakam ekran okuyucuya bağlamsız okunursa
-                // anlamsız; satırın tamamı tek bir cümleye çevriliyor.
-                const a11yLabel = comparison
-                  ? t('paywall.packages.a11yAnnual', {
+                // Ekran okuyucu için satır tek bir cümle: büyük rakam haftalık
+                // olsa da GERÇEK tahsilat ve dönemi burada da açıkça geçmeli —
+                // görsel hiyerarşi ile sesli okuma birbirinden ayrılırsa hem
+                // kullanıcı hem denetçi için yanıltıcı olur.
+                const a11yLabel = !perWeek
+                  ? t('paywall.packages.a11yPackage', {
                       label,
                       price: pkg.product.priceString,
-                      compare: comparison.annualizedMonthly,
-                      perWeek,
-                      perMonth,
-                      percent: comparison.savingPercentText,
                     })
-                  : perWeek
-                    ? t('paywall.packages.a11yPackageWeekly', {
+                  : comparison
+                    ? t('paywall.packages.a11yAnnualSaving', {
                         label,
                         price: pkg.product.priceString,
+                        compare: comparison.annualizedMonthly,
                         perWeek,
+                        percent: comparison.savingPercentText,
                       })
-                    : t('paywall.packages.a11yPackage', {
-                        label,
-                        price: pkg.product.priceString,
-                      });
+                    : t(
+                        isAnnual
+                          ? 'paywall.packages.a11yAnnual'
+                          : 'paywall.packages.a11yMonthly',
+                        { label, price: pkg.product.priceString, perWeek }
+                      );
 
                 return (
                   <Pressable
@@ -209,28 +221,49 @@ export default function PaywallScreen() {
                             {hint}
                           </ThemedText>
                         ) : null}
-                        {perWeek && (
-                          <ThemedText variant="label" tone="textMuted">
-                            {perMonth
-                              ? t('paywall.packages.perWeekAndMonth', {
-                                  week: perWeek,
-                                  month: perMonth,
-                                })
-                              : t('paywall.packages.perWeek', { price: perWeek })}
+                      </View>
+                      {/* Fiyat sütununda hiyerarşi: en büyük rakam haftalık
+                          karşılık, hemen altında tahsil edilen tutar dönemiyle
+                          birlikte. Tahsilat satırı küçük ama SÖNÜK DEĞİL (ana
+                          metin rengi, gövde boyu) — mağaza kuralları gerçek
+                          tutarın okunaklı kalmasını şart koşuyor. Rakamlar sağ
+                          kenara hizalı, çünkü el yazısı font tabular değil ve
+                          soldan hizalanınca satırlar rastgele kayıyor. */}
+                      <View style={styles.priceColumn}>
+                        {busy ? (
+                          <ThemedText variant="body" tone="accent">
+                            {t('common.loading')}
+                          </ThemedText>
+                        ) : perWeek ? (
+                          <>
+                            <View style={styles.heroRow}>
+                              <ThemedText variant="heading" tone="accent">
+                                {perWeek}
+                              </ThemedText>
+                              <ThemedText variant="label" tone="textMuted">
+                                {t('paywall.packages.perWeekUnit')}
+                              </ThemedText>
+                            </View>
+                            <View style={styles.billedGroup}>
+                              {comparison && (
+                                <SketchStrike>
+                                  <ThemedText variant="label" tone="textMuted">
+                                    {comparison.annualizedMonthly}
+                                  </ThemedText>
+                                </SketchStrike>
+                              )}
+                              <ThemedText variant="body" style={styles.billedText}>
+                                {billed}
+                              </ThemedText>
+                            </View>
+                          </>
+                        ) : (
+                          // Tek seferlik ürün: haftalık karşılığı yok, ödenecek
+                          // tutarın kendisi başlık rakamı.
+                          <ThemedText variant="heading" tone="accent">
+                            {pkg.product.priceString}
                           </ThemedText>
                         )}
-                      </View>
-                      <View style={styles.priceColumn}>
-                        {comparison && (
-                          <SketchStrike>
-                            <ThemedText variant="label" tone="textMuted">
-                              {comparison.annualizedMonthly}
-                            </ThemedText>
-                          </SketchStrike>
-                        )}
-                        <ThemedText variant="body" tone="accent">
-                          {busy ? t('common.loading') : pkg.product.priceString}
-                        </ThemedText>
                       </View>
                     </View>
                   </Pressable>
@@ -305,6 +338,21 @@ const styles = StyleSheet.create({
   priceColumn: {
     alignItems: 'flex-end',
     gap: Spacing.xs / 2,
+  },
+  heroRow: {
+    flexDirection: 'row',
+    // Büyük rakam ile küçük "/ hafta" ekinin ortak taban çizgisi; ortalanınca
+    // ek, rakamın ortasına gelip kazara hizalanmış gibi duruyordu.
+    alignItems: 'baseline',
+    gap: Spacing.xs,
+  },
+  billedGroup: {
+    alignItems: 'flex-end',
+    gap: Spacing.xs / 2,
+    marginTop: Spacing.xs / 2,
+  },
+  billedText: {
+    textAlign: 'right',
   },
   message: {
     textAlign: 'center',

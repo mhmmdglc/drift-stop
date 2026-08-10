@@ -247,11 +247,13 @@
       "monthlyLabel": "Pro — Mensuel",
       "proFeatures": "Sans publicité · Collections premium · 10 rappels par jour",
       "savePercent": "{{percent}} d’économie",
-      "perWeek": "{{price}} par semaine",
-      "perWeekAndMonth": "{{week}} par semaine · {{month}} par mois",
+      "perWeekUnit": "/ semaine",
+      "billedMonthly": "{{price}} / mois",
+      "billedAnnual": "{{price}} / an",
       "a11yPackage": "{{label}}, {{price}}",
-      "a11yPackageWeekly": "{{label}}, {{price}}, {{perWeek}} par semaine",
-      "a11yAnnual": "{{label}}, {{price}}. Payer au mois pendant la même année coûterait {{compare}}. En annuel, cela revient à {{perWeek}} par semaine, {{perMonth}} par mois ; {{percent}} de moins."
+      "a11yMonthly": "{{label}}. {{perWeek}} par semaine. Facturé {{price}} chaque mois.",
+      "a11yAnnual": "{{label}}. {{perWeek}} par semaine. Facturé {{price}} chaque année.",
+      "a11yAnnualSaving": "{{label}}. {{perWeek}} par semaine. Facturé {{price}} chaque année. Payer au mois pendant la même année coûterait {{compare}} ; {{percent}} de moins."
     },
     "errors": {
       "generic": "Une erreur s'est produite. Réessaie.",

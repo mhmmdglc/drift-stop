@@ -247,11 +247,13 @@
       "monthlyLabel": "Pro — Monatlich",
       "proFeatures": "Keine Werbung · Premium-Pakete · 10 Erinnerungen am Tag",
       "savePercent": "{{percent}} sparen",
-      "perWeek": "{{price}} pro Woche",
-      "perWeekAndMonth": "{{week}} pro Woche · {{month}} pro Monat",
+      "perWeekUnit": "/ Woche",
+      "billedMonthly": "{{price}} / Monat",
+      "billedAnnual": "{{price}} / Jahr",
       "a11yPackage": "{{label}}, {{price}}",
-      "a11yPackageWeekly": "{{label}}, {{price}}, {{perWeek}} pro Woche",
-      "a11yAnnual": "{{label}}, {{price}}. Monatlich zu zahlen würde im selben Jahr {{compare}} kosten. Jährlich sind es {{perWeek}} pro Woche, {{perMonth}} pro Monat; {{percent}} weniger."
+      "a11yMonthly": "{{label}}. {{perWeek}} pro Woche. Abgerechnet werden {{price}} monatlich.",
+      "a11yAnnual": "{{label}}. {{perWeek}} pro Woche. Abgerechnet werden {{price}} jährlich.",
+      "a11yAnnualSaving": "{{label}}. {{perWeek}} pro Woche. Abgerechnet werden {{price}} jährlich. Monatlich zu zahlen würde im selben Jahr {{compare}} kosten; {{percent}} weniger."
     },
     "errors": {
       "generic": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",

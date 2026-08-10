@@ -59,11 +59,6 @@ describe('buildPaywallPricing', () => {
     expect(p.annualPerWeek).toContain('0.69');
   });
 
-  it('derives the annual per-month equivalent', () => {
-    const p = buildPaywallPricing(usdMonthly, usdAnnual, 'en');
-    expect(p.annualPerMonth).toContain('3.00');
-  });
-
   it('compares against monthly x 12 and rounds the saving down', () => {
     const p = buildPaywallPricing(usdMonthly, usdAnnual, 'en');
     expect(p.comparison?.annualizedMonthly).toContain('47.88');
@@ -114,7 +109,6 @@ describe('buildPaywallPricing', () => {
     const p = buildPaywallPricing(usdMonthly, null, 'en');
     expect(p.comparison).toBeNull();
     expect(p.annualPerWeek).toBeNull();
-    expect(p.annualPerMonth).toBeNull();
     expect(p.monthlyPerWeek).toContain('0.92');
   });
 

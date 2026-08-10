@@ -227,11 +227,13 @@
     "intro": "コーヒーは一時間、あなたを支えてくれます。ふさわしい一文は、一日じゅう。",
     "packages": {
       "savePercent": "{{percent}}お得",
-      "perWeek": "週 {{price}}",
-      "perWeekAndMonth": "週 {{week}} · 月 {{month}}",
+      "perWeekUnit": "/ 週",
+      "billedMonthly": "{{price}} / 月",
+      "billedAnnual": "{{price}} / 年",
       "a11yPackage": "{{label}}、{{price}}",
-      "a11yPackageWeekly": "{{label}}、{{price}}、週 {{perWeek}}",
-      "a11yAnnual": "{{label}}、{{price}}。同じ1年を月払いにすると {{compare}} かかります。年払いなら週 {{perWeek}}、月 {{perMonth}} で、{{percent}}安くなります。"
+      "a11yMonthly": "{{label}}。週 {{perWeek}}。毎月 {{price}} の請求です。",
+      "a11yAnnual": "{{label}}。週 {{perWeek}}。毎年 {{price}} の請求です。",
+      "a11yAnnualSaving": "{{label}}。週 {{perWeek}}。毎年 {{price}} の請求です。同じ1年を月払いにすると {{compare}} かかり、{{percent}}安くなります。"
     }
   }
 }

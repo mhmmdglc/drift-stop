@@ -36,9 +36,15 @@ export type AnnualComparison = {
 };
 
 export type PaywallPricing = {
+  /**
+   * Haftalık karşılıklar paywall'ın en büyük rakamı. Bu yüzden ekranda yanında
+   * MUTLAKA tahsil edilen tutar + dönemi ("$35.99 / yıl") duruyor: mağaza
+   * kuralları (App Store 3.1.2, Play abonelik politikası) gerçek tutarın açık
+   * ve göze çarpar biçimde yazılmasını istiyor, türetilmiş haftalık rakam onun
+   * yerine geçemez.
+   */
   monthlyPerWeek: string | null;
   annualPerWeek: string | null;
-  annualPerMonth: string | null;
   /** Sadece HEM aylık HEM yıllık paket varken ve yıllık gerçekten ucuzken dolu. */
   comparison: AnnualComparison | null;
 };
@@ -141,7 +147,6 @@ export function buildPaywallPricing(
       ? formatMoney((m.price * MONTHS_PER_YEAR) / WEEKS_PER_YEAR, m.currencyCode, locale)
       : null,
     annualPerWeek: a ? formatMoney(a.price / WEEKS_PER_YEAR, a.currencyCode, locale) : null,
-    annualPerMonth: a ? formatMoney(a.price / MONTHS_PER_YEAR, a.currencyCode, locale) : null,
     comparison: buildComparison(m, a, locale),
   };
 }
