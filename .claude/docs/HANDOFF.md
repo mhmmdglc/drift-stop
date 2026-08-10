@@ -14,9 +14,9 @@ Plan [`specs/monetization-v2.md`](../specs/monetization-v2.md) ve
 **Android canlı:** `1.2.0 (versionCode 16)` Play kapalı test → **alpha** kanalında,
 16 testçi güncelleyebilir. Emülatörde RELEASE-READY aldı.
 
-**iOS mağazada DEĞİL — ama build artık Apple'da.** `1.2.0 (build 4)` yüklendi ve `VALID`;
-sürüm kaydı `PREPARE_FOR_SUBMISSION`, build bağlı. **İncelemeye gönderilmedi** (aşağı bak).
-İkon düzeltmesi bu kez **binary'nin içinde** doğrulandı, config'e bakarak değil.
+**iOS incelemede.** `1.2.0 (build 5)` ve iki abonelik `WAITING_FOR_REVIEW` (2026-08-10).
+Build 4 terk edildi — 3.1.2 düzeltmesi build 5'e girdi. İkon düzeltmesi ve hukuki bağlantılar
+**binary'nin içinden** doğrulandı, config'e bakarak değil.
 
 Kapılar: `tsc` temiz · **285 test / 32 suite** (oturuma 214 ile başladı) ·
 `expo lint` **11 hata = değişmemiş taban** (uyarı sayısı test dosyalarıyla arttı, hata değil).
@@ -37,7 +37,29 @@ Kapılar: `tsc` temiz · **285 test / 32 suite** (oturuma 214 ile başladı) ·
 
 ---
 
-## ⛔ SIRADAKİ İŞ — iOS 1.2.0'ı incelemeye göndermek
+## ✅ iOS 1.2.0 İNCELEMEDE — 2026-08-10
+
+`1.2.0 (build 5)` + **iki abonelik birlikte** gönderildi. Gönderim `1cc18361-…`, **4 kalem**,
+hepsi `WAITING_FOR_REVIEW`. Apple 48 saate kadar diyor.
+
+Bugün iki tuzak yakalandı, ikisi de gönderimden **önce**:
+
+1. **Sürüm abonelikleri arkada bırakarak gönderilebiliyor.** İlk gönderim `WAITING_FOR_REVIEW`
+   oldu ama içinde tek kalem vardı; onaylansaydı iOS **hiçbir şey satamayan bir paywall**'la
+   yayına girerdi. ASC API'si abonelik eklemeyi kabul etmiyor — arayüz şart (`OPERATIONS.md` §7).
+2. **3.1.2:** paywall'da gizlilik/koşullar bağlantısı yoktu, kullanım koşulları uygulamanın
+   **hiçbir yerinde** yoktu. Eklendi (`bb95158`), mağaza açıklamasına da abonelik bloğu girdi.
+
+Ayrıca **"Regulated Medical Device: hayır"** beyanı verildi — birincil kategori Health & Fitness
+olduğu için AB dağıtımını açık tutuyor.
+
+**Doğrulama kuralı:** sürümün durumuna bakma, **abonelik tarafını oku**
+(`/v1/subscriptions/{id}` + `/versions`). Sürüm `WAITING_FOR_REVIEW` iken abonelikler
+`READY_TO_SUBMIT`'te kalabiliyor ve bunu başka hiçbir yer söylemiyor.
+
+---
+
+## Eski not — iOS 1.2.0'ı incelemeye göndermek
 
 **2026-08-10'da yapıldı:** build alındı (`1.2.0`, build **4**), `.ipa`'nın içi açılıp ikon
 gözle doğrulandı, `altool` ile yüklendi, Apple tarafında **`VALID`** oldu, ve sürüm kaydı
