@@ -2,7 +2,14 @@
 
 Single place to check what's actually outstanding, instead of hunting through scattered notes in other docs. Update this file (don't just append to old docs) whenever a pending item is resolved or a new one comes up.
 
-## 🔴 Found 2026-08-10 on the iOS Simulator — a guest who buys Pro never gets the premium quotes
+## ~~🔴 Found 2026-08-10 on the iOS Simulator — a guest who buys Pro never gets the premium quotes~~ — **half fixed the same day (`99d782d`)**
+
+**Fixed:** the screen no longer lies. An entitled guest now gets *"Your premium quotes need an account"* and a button straight to `/auth`; an entitled **signed-in** user still gets the waiting message, because for them the download is real. The purchase confirmation says the same thing to a guest instead of "Pro is on, enjoy". Verified on the simulator with a granted entitlement: the CTA renders and opens the sign-in screen. Guard test proven by breaking it twice.
+
+**Still open, deliberately:** an entitled *anonymous* customer still cannot read premium rows — the fix routes them to an account rather than making RLS work without one. That is the right trade for now (the content model is account-based end to end), but if guest purchases turn out to be the majority path, the read model itself has to change.
+
+⚠️ **This fix is NOT in the build now in App Review** (`1.2.0 (5)` was cut before it). iOS 1.2.0 will ship with the old, misleading message unless the submission is pulled and rebuilt.
+
 
 **Observed on screen, not inferred.** A promotional `pro` entitlement was granted in the RevenueCat dashboard
 to the simulator's anonymous customer (`$RCAnonymousID:e2f4453…`). The app picked it up on relaunch and the
