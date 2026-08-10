@@ -66,14 +66,23 @@ The Google Play Console listing for DriftStop **and** the Expo/EAS project are b
 | Thing | Value |
 |---|---|
 | Android package / iOS bundle id | `com.driftstop.app` |
-| Current app version | `1.1.0` (`app.json` → `expo.version`) |
-| Current Android versionCode | `14` (live in Play alpha) |
-| Current iOS buildNumber | `3` (first successful EAS build, 2026-08-04) |
+| Current app version | `1.2.0` (`app.json` → `expo.version`) |
+| Current Android versionCode | `16` (live in Play alpha, 2026-08-10) |
+| Current iOS buildNumber | `4` (`1.2.0`, uploaded 2026-08-10) |
 | iOS signing | cert `S583744M99` (expires 2027-08-04) · profile `568J8YR282` · files in `credentials/` (gitignored) |
 | IAP product ids | `pro_monthly`, `pro_yearly` — **`remove_ads` is retired**, see below |
 | RevenueCat entitlements | `pro`, `no_ads` — both subscriptions grant both |
 | RevenueCat offering | `default` (Annual / Monthly). The `$rc_lifetime` package was removed with `remove_ads`. |
 | Closed-testing opt-in link | https://play.google.com/apps/testing/com.driftstop.app |
+
+### ⚠️ Gotcha: the build number lives in `app.json`, and `eas build` edits that file
+
+`cli.appVersionSource` is unset, so EAS uses the **local** default: `autoIncrement` reads the number out of
+`app.json`, bumps it, and writes it back to your working tree. **If that write is never committed, the file
+silently falls behind the store.** It had — the Android 1.2.0 build produced `versionCode 16` while the repo
+still said `15`, so the next production build would have re-minted `16` and Play would have rejected it as a
+duplicate. Both numbers were resynced on 2026-08-10. After every production build: `git diff app.json`, then
+commit it.
 
 ### ⚠️ Gotcha: AdMob lives in a *third* Google account, and ads cannot serve yet
 
@@ -574,31 +583,68 @@ Only review warning on v11 was a missing R8/proguard mapping file — informatio
 
 ## 7) Release process (iOS)
 
-**Status: not submitted. No App Store Connect app record exists yet.** Android was deliberately finished first ([build-plan.md](build-plan.md) Phase 8).
+**Status: not on the App Store. An app record exists and one version has been through review once.**
+Version `1.1.0` was submitted on 2026-08-03 and then **withdrawn by us** — the binary carried Expo's blue
+placeholder icon. The version record therefore sits in `DEVELOPER_REJECTED`, which is a state you *reuse*
+(edit the version string and attach a new build), not one you clear.
 
-### What already exists
+This section was rewritten on 2026-08-10 after being stale for a week; the rows below were read back from
+the App Store Connect API, not from memory.
 
-| Item | Value / location |
+### App Store Connect facts
+
+| Item | Value |
 |---|---|
-| `ios.bundleIdentifier` | `com.driftstop.app` (`app.json`) |
-| `ios.buildNumber` | `1` |
+| App id (`ascAppId`) | `6797533621` · bundle id `com.driftstop.app` · Team `J8FX8G238M` |
+| Version record | `2c376703-e1a8-4791-9b5b-43b365b4b4cb` — `1.1.0`, `DEVELOPER_REJECTED` |
+| Localizations | `en-US` (`ade646c4-…`) and `en-GB` (`ddddfac1-…`); `whatsNew` empty, which is correct for a first release |
+| Screenshots | one set, `APP_IPHONE_67`. That is the only size Apple still requires |
+| Age rating | `FOUR_PLUS` (Brazil `L`) |
+| Subscriptions | group **DriftStop Pro** (`22283837`) → `pro_monthly` (`6797551481`, $3.99) and `pro_yearly` (`6797551678`, $35.99), both **`READY_TO_SUBMIT`** with a review screenshot uploaded |
+| Uploaded builds | build `3` (`1.1.0`), `VALID` — the icon-broken one |
+
+⚠️ Apple ships the **first** auto-renewable subscription only alongside an app version. `READY_TO_SUBMIT`
+is as far as the products can get on their own; they ride along with the version submission.
+
+### Build / signing facts
+
+| Item | Value |
+|---|---|
+| `ios.buildNumber` | `4`, in `app.json`. `autoIncrement` bumps it there on every production build — see the warning in §2 about committing that write |
+| iOS icon | top-level `./assets/images/icon.png`. There is **no** `ios.icon` override any more — `./assets/expo.icon` was the placeholder that caused the withdrawal (`8761f98`). Proof lives in the binary, not the config: `CFBundleIcons.CFBundlePrimaryIcon.CFBundleIconName` must read `AppIcon`, and it read `expo` in build 3 |
 | `ios.supportsTablet` | `false` |
 | `ITSAppUsesNonExemptEncryption` | `false` (in `ios.infoPlist`) — pre-answers the export-compliance question |
-| iOS icon | `./assets/expo.icon` |
-| AdMob iOS app id | present in the `react-native-google-mobile-ads` plugin config |
-| Apple developer account | the user has one |
-| Local run | `npx expo run:ios` works |
+| Entitlements | `com.apple.developer.applesignin: ["Default"]` — present in the introspected config *and* in `credentials/driftstop-appstore.mobileprovision` |
+| URL schemes | `driftstop`, `com.driftstop.app`, and the reversed Google iOS client — verify with `expo config --type introspect`, never by reading the diff |
+| AdMob | real app id `ca-app-pub-6963122807813930~4613840458`; both iOS unit ids registered in EAS `production` |
+| RevenueCat | `EXPO_PUBLIC_REVENUECAT_IOS_API_KEY` present in `production` + `preview` (absent from `development` — see §4) |
 
 ### What is still missing
 
 | Missing | Notes |
 |---|---|
-| **`EXPO_PUBLIC_REVENUECAT_IOS_API_KEY`** | Must be added to `.env` **and** `eas env:create` for each environment. Until it exists, iOS purchases are **cleanly disabled by design** — `purchasesConfigured` is false, so no paywall, no Pro card, no ads-removal UI. Do not substitute the Android key: RevenueCat throws "invalid API key". |
-| **App Store Connect app record** | Create under bundle id `com.driftstop.app` |
-| **IAP products** | Mirror Play's: `remove_ads` (non-consumable), `pro_monthly`, `pro_yearly` — then wire the iOS app in RevenueCat |
-| **App Privacy form** | Equivalent of Play's Data safety; AdMob collects an advertising identifier, so declare it |
-| **iOS screenshots** | Required sizes per App Store Connect; `store-assets/` currently holds Android-sized assets only |
+| **A purchase proven on a real iPhone** | Nothing about the revenue path has ever been exercised on iOS hardware. The first evidence will come from App Review |
+| **Sign in with Apple proven on a device** | Configuration is right, but the simulator cannot run it (unsigned builds strip the entitlement — see `HANDOFF.md`) |
+| **App Privacy form** | Was filled to get 1.1.0 into review; **re-check it before each submission** — AdMob collects an advertising identifier and that answer must stay declared |
 | **iOS home-screen widget** | Not planned for launch — `react-native-android-widget` is Android-only; an iOS widget needs WidgetKit/Swift + App Groups |
+
+### Submitting a new build (the whole recipe)
+
+1. `npx eas build --platform ios --profile production` — signs from `credentials.json`, no Apple login.
+2. **Open the `.ipa` before uploading it.** This is the step whose absence cost a review cycle: the config
+   looked right and the binary did not. Unzip it and check `Payload/*.app/Info.plist` for
+   `CFBundleShortVersionString`, `CFBundleVersion` and `CFBundleIcons → CFBundlePrimaryIcon →
+   CFBundleIconName` (must be `AppIcon`), then extract `AppIcon60x60@2x.png` and **look at it**.
+3. Download the `.ipa` from the build URL, then
+   `xcrun altool --upload-app -f <ipa> -t ios --apiKey 2B4CL4C8CB --apiIssuer bc64b7a2-f7c3-45f5-b073-2c4083fa3b0c`
+   (the key must live at `~/.appstoreconnect/private_keys/AuthKey_2B4CL4C8CB.p8`). `eas submit` also works but
+   queues behind the free tier.
+4. Wait for `processingState: VALID` on the new build (`GET /v1/builds?filter[app]=6797533621&sort=-uploadedDate`).
+5. `PATCH /v1/appStoreVersions/{id}` with the new `versionString`, then
+   `PATCH /v1/appStoreVersions/{id}/relationships/build` to attach it.
+6. Submit: `POST /v1/reviewSubmissions` (app + platform), `POST /v1/reviewSubmissionItems` pointing at the
+   version, then `PATCH /v1/reviewSubmissions/{id}` with `submitted: true`. The subscriptions go with it.
+7. `git diff app.json` and commit the `autoIncrement` bump.
 
 ### Store-process differences vs. Android
 
