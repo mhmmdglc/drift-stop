@@ -14,9 +14,9 @@ Plan [`specs/monetization-v2.md`](../specs/monetization-v2.md) ve
 **Android canlı:** `1.2.0 (versionCode 16)` Play kapalı test → **alpha** kanalında,
 16 testçi güncelleyebilir. Emülatörde RELEASE-READY aldı.
 
-**iOS mağazada DEĞİL.** Gönderim iptal edildi (sürüm `DEVELOPER_REJECTED`) çünkü
-gönderilen build **Expo'nun mavi placeholder ikonunu** taşıyordu. İkon düzeltildi,
-yeni build alınmadı.
+**iOS mağazada DEĞİL — ama build artık Apple'da.** `1.2.0 (build 4)` yüklendi ve `VALID`;
+sürüm kaydı `PREPARE_FOR_SUBMISSION`, build bağlı. **İncelemeye gönderilmedi** (aşağı bak).
+İkon düzeltmesi bu kez **binary'nin içinde** doğrulandı, config'e bakarak değil.
 
 Kapılar: `tsc` temiz · **285 test / 32 suite** (oturuma 214 ile başladı) ·
 `expo lint` **11 hata = değişmemiş taban** (uyarı sayısı test dosyalarıyla arttı, hata değil).
@@ -37,14 +37,22 @@ Kapılar: `tsc` temiz · **285 test / 32 suite** (oturuma 214 ile başladı) ·
 
 ---
 
-## ⛔ SIRADAKİ İŞ — iOS 1.2.0 build'i
+## ⛔ SIRADAKİ İŞ — iOS 1.2.0'ı incelemeye göndermek
 
-Kod hazır, hiçbir engel kalmadı. Sıra: build → `altool` ile yükle → incelemeye gönder.
-Bu build ikon düzeltmesini, cancel düzeltmesini, duvar kağıdını ve yeni paywall'ı taşıyor.
+**2026-08-10'da yapıldı:** build alındı (`1.2.0`, build **4**), `.ipa`'nın içi açılıp ikon
+gözle doğrulandı, `altool` ile yüklendi, Apple tarafında **`VALID`** oldu, ve sürüm kaydı
+`1.1.0`/`DEVELOPER_REJECTED` → **`1.2.0`/`PREPARE_FOR_SUBMISSION`** çekilip build 4 bağlandı.
 
-⚠️ **iOS 1.1.0 iptal edildiği için sürüm kaydı `DEVELOPER_REJECTED` durumda.** Yeni build
-yüklendikten sonra ASC'de sürüm numarasını `1.2.0`'a çekip build'i seçmek gerekiyor
-(`PATCH /v1/appStoreVersions/{id}`), sonra "Add for Review".
+**Kalan tek adım incelemeye göndermek** ve bu bilerek yapılmadı — sahibin kararı. İki şey
+gönderimden önce bilinsin diye duruyor:
+
+1. **Apple token iptali hâlâ yok** (bilinerek ertelendi, `OPERATIONS.md` §7).
+2. **iOS'ta ne bir satın alma ne de Apple ile giriş hiçbir cihazda çalıştırılmadı.**
+   Yapılandırma kâğıt üzerinde doğru; ilk gerçek çalıştırma App Review'da olacak.
+   TestFlight'tan geçmek bunu gönderimden önce kanıtlardı.
+
+Gönderme çağrıları (`reviewSubmissions` üçlüsü) `OPERATIONS.md` §7'de yazılı.
+Abonelikler sürümle birlikte gidiyor — ayrıca göndermek gerekmiyor.
 
 ---
 

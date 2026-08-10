@@ -8,6 +8,18 @@ The orchestrator writes an entry **when an agent is dispatched** and updates it 
 
 ---
 
+## 2026-08-10
+
+| Time | Agent | Task | Outcome | Evidence |
+|---|---|---|---|---|
+| 06:05 | orchestrator | **Attach 1.2.0 to the App Store Connect version record** | Done. `1.1.0`/`DEVELOPER_REJECTED` was **reused, not recreated** — `PATCH /v1/appStoreVersions/{id}` set `versionString` to `1.2.0` (200), then `PATCH .../relationships/build` attached build 4 (204). Read back: `1.2.0`, `PREPARE_FOR_SUBMISSION`, build `4`. **Not submitted for review** — that is the owner's call and is being asked before it is made | version `2c376703-…`, build `1673e54a-…` |
+| 05:58 | orchestrator | **Upload iOS 1.2.0 to App Store Connect** | Done via `xcrun altool` (the EAS submit queue was skipped, as `HANDOFF.md` advises). `UPLOAD SUCCEEDED with no errors`, 37.9 MB in 11 s. Apple-side processing reached **`VALID`** | delivery UUID `1673e54a-82a4-430d-8a26-e4d8d00fdf38` |
+| 05:56 | orchestrator | **Verify the icon fix in the binary, not the config** | **Passed, and this is the check that was missing last cycle.** Unzipped the `.ipa`: `CFBundleIcons → CFBundlePrimaryIcon → CFBundleIconName` = `AppIcon` (build 3 had `expo`), `CFBundleShortVersionString` `1.2.0`, `CFBundleVersion` `4`, real AdMob app id present. Extracted `AppIcon60x60@2x.png` (120×120) and **looked at it** — DriftStop flame, not Expo's blue placeholder | `.ipa` from build `80c54da5-…`; recipe now written into `OPERATIONS.md` §7 step 2 |
+| 05:40 | orchestrator | **EAS production iOS build — 1.2.0 (build 4)** | Finished. Signed from local `credentials.json`, no Apple login. All 11 `EXPO_PUBLIC_*` vars confirmed loaded from the `production` environment in the build log — the check that three Play builds once failed silently | build `80c54da5-6826-4797-bc95-dab6898b36d5` |
+| 05:35 | orchestrator | Pre-build audit | Passed. `tsc` clean · **285/285 tests, 32 suites** · introspected config shows no `ios.icon` override, `com.apple.developer.applesignin` entitlement present, reversed Google iOS client in `CFBundleURLTypes` · ASC read back: both subscriptions `READY_TO_SUBMIT` with review screenshots, 6.7" screenshots and `FOUR_PLUS` rating already in place | `c5ac4c7` |
+| 06:10 | orchestrator | **Found: `app.json` was drifting behind the store** | Fixed. `cli.appVersionSource` is unset → EAS `autoIncrement` bumps the number **inside `app.json`** and writes it to the working tree; that write was never committed after the Android 1.2.0 build. Repo said `versionCode 15`, Play had `16` — the next production build would have re-minted `16` and Play would have rejected it as a duplicate. Both numbers resynced; the trap is now written into `OPERATIONS.md` §2 | `c5ac4c7`; EAS build list shows Android `16` FINISHED 2026-08-10 |
+| 06:10 | orchestrator | **Found: `OPERATIONS.md` §7 was a week stale** | Rewritten from values read back through the ASC API. It had still claimed *"not submitted, no App Store Connect app record exists yet"*, listed `./assets/expo.icon` as the current icon and the RevenueCat iOS key as missing — all three untrue since 2026-08-03/04 | `c5ac4c7` |
+
 ## 2026-08-09
 
 | Time | Agent | Task | Outcome | Evidence |
