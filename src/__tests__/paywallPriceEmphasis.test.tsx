@@ -3,12 +3,16 @@
 /**
  * Paywall fiyat hiyerarşisi.
  *
- * Vurgu bilinçli olarak haftalık karşılıkta: en büyük rakam "haftada $0.69".
- * Bu düzenin tek riski, gerçekten tahsil edilen tutarın kaybolması — App Store
- * 3.1.2 ve Play abonelik politikası tutarın ve dönemin açıkça yazılmasını
- * istiyor, ve bu ekran bu yüzden bir kez reddedildi. Bu dosya üç şeyi sabitler:
- * haftalık rakam gerçekten daha büyük, tahsil edilen tutar dönemiyle EKRANDA,
- * ve ekran okuyucu da aynı gerçeği duyuyor.
+ * ⚠️ BU DOSYA BİR KEZ YANLIŞ KURALI SABİTLEDİ. Eskiden "haftalık rakam iki
+ * satırda da en büyük olmalı" diye test ediyordu ve tam da bu düzen yüzünden
+ * **1.2.0 (5) App Review'dan 3.1.2(c) ile reddedildi**:
+ *
+ *   "The auto-renewable subscription displays the weekly calculated pricing
+ *    more clearly and conspicuously than the billed amount."
+ *
+ * Apple'ın şartı net: TAHSİL EDİLEN TUTAR ekrandaki en belirgin fiyat öğesi
+ * olmalı; haftalık karşılık, indirim ve deneme dahil diğer her şey ona göre
+ * ikincil KONUMDA ve BOYUTTA durmalı. Test artık bunu sabitliyor.
  */
 
 jest.mock('react-native-purchases', () => ({
@@ -97,23 +101,38 @@ afterAll(() => {
 });
 
 describe('paywall price emphasis', () => {
-  it('makes the per-week figure the biggest number on both rows', async () => {
+  it('makes the BILLED AMOUNT the biggest number on both rows', async () => {
     await render(<PaywallScreen />);
-    // 35.99 / 52 ve 3.99 * 12 / 52 — ikisi de mağaza fiyatından türetiliyor.
-    const annualWeekly = fontSizeOf('$0.69');
-    const monthlyWeekly = fontSizeOf('$0.92');
+    // Reddin tam sebebi buydu; sıra tersine dönerse test kırılmalı.
+    const annualBilled = fontSizeOf('$35.99 / year');
+    const monthlyBilled = fontSizeOf('$3.99 / month');
 
-    expect(fontSizeOf('$35.99 / year')).toBeLessThan(annualWeekly);
-    expect(fontSizeOf('$3.99 / month')).toBeLessThan(monthlyWeekly);
+    expect(fontSizeOf('≈ $0.69 / week')).toBeLessThan(annualBilled);
+    expect(fontSizeOf('≈ $0.92 / week')).toBeLessThan(monthlyBilled);
   });
 
-  it('keeps the charged amount legible rather than tiny', async () => {
+  it('keeps every other price element subordinate to the charge', async () => {
     await render(<PaywallScreen />);
-    // "Küçük" demek "okunmaz" demek değil: tahsilat satırı gövde metniyle aynı
-    // boyda kalmalı, üstü çizili karşılaştırmadan (etiket boyu) küçük olmamalı.
+    // Apple "diğer fiyat öğeleri ikincil boyutta" diyor — üstü çizili
+    // karşılaştırma da haftalık karşılık da tahsilattan küçük kalmalı.
     const billed = fontSizeOf('$35.99 / year');
-    expect(billed).toBeGreaterThanOrEqual(fontSizeOf('$47.88'));
-    expect(billed / fontSizeOf('$0.69')).toBeGreaterThan(0.5);
+    expect(fontSizeOf('$47.88')).toBeLessThan(billed);
+    expect(fontSizeOf('≈ $0.69 / week')).toBeLessThan(billed);
+  });
+
+  it('states the auto-renewal and cancellation terms inside the purchase flow', async () => {
+    await render(<PaywallScreen />);
+    // Reddin ikinci maddesi: sonraki dönemde ödemenin OTOMATİK başlayacağı
+    // açık değildi. Metnin tamamını değil, taşıması gereken üç gerçeği sınıyoruz.
+    const terms = screen.getByText(/renews automatically/i);
+    expect(terms).toBeTruthy();
+    expect(terms.props.children).toMatch(/cancel/i);
+    expect(terms.props.children).toMatch(/24 hours/i);
+  });
+
+  it('offers a visible way to keep using the app without paying', async () => {
+    await render(<PaywallScreen />);
+    expect(screen.getByText('Continue with the free version')).toBeTruthy();
   });
 
   it('states the billing period next to every charged amount', async () => {
@@ -131,6 +150,10 @@ describe('paywall price emphasis', () => {
     expect(annual.props.accessibilityLabel).toContain('$35.99');
     expect(annual.props.accessibilityLabel).toContain('every year');
     expect(annual.props.accessibilityLabel).toContain('$0.69');
+    // Sesli okuma da ekranla aynı sırayı izlemeli: önce tahsilat, sonra haftalık.
+    expect(annual.props.accessibilityLabel.indexOf('$35.99')).toBeLessThan(
+      annual.props.accessibilityLabel.indexOf('$0.69')
+    );
     // Üstü çizili rakam ve indirim yüzdesi de sesli okumada geçmeli.
     expect(annual.props.accessibilityLabel).toContain('$47.88');
     expect(annual.props.accessibilityLabel).toContain('24%');

@@ -235,6 +235,8 @@
     "subtitle": "Supprime les publicités pour de bon, débloque plus de 3 325 citations premium dans 18 packs et configure jusqu’à 10 rappels par jour.",
     "skip": "Plus tard",
     "restorePurchases": "Restaurer les achats",
+    "renewalTerms": "Le paiement est débité de ton compte Apple à la confirmation. L'abonnement se renouvelle automatiquement au même tarif et pour la même durée sauf résiliation au moins 24 heures avant la fin. Gère ou résilie à tout moment dans Réglages → Compte Apple → Abonnements.",
+    "continueFree": "Continuer avec la version gratuite",
     "restoreSuccess": "Achats restaurés.",
     "restoreNothingFound": "Aucun achat précédent trouvé.",
     "buyButton": "Continuer",
@@ -249,12 +251,13 @@
       "proFeatures": "Sans publicité · Collections premium · 10 rappels par jour",
       "savePercent": "{{percent}} d’économie",
       "perWeekUnit": "/ semaine",
+      "perWeekApprox": "≈ {{price}} / semaine",
       "billedMonthly": "{{price}} / mois",
       "billedAnnual": "{{price}} / an",
       "a11yPackage": "{{label}}, {{price}}",
-      "a11yMonthly": "{{label}}. {{perWeek}} par semaine. Facturé {{price}} chaque mois.",
-      "a11yAnnual": "{{label}}. {{perWeek}} par semaine. Facturé {{price}} chaque année.",
-      "a11yAnnualSaving": "{{label}}. {{perWeek}} par semaine. Facturé {{price}} chaque année. Payer au mois pendant la même année coûterait {{compare}} ; {{percent}} de moins."
+      "a11yMonthly": "{{label}}. {{price}} facturés chaque mois, environ {{perWeek}} par semaine.",
+      "a11yAnnual": "{{label}}. {{price}} facturés chaque année, environ {{perWeek}} par semaine.",
+      "a11yAnnualSaving": "{{label}}. {{price}} facturés chaque année, environ {{perWeek}} par semaine. Payer au mois la même année coûterait {{compare}} ; {{percent}} de moins."
     },
     "errors": {
       "generic": "Une erreur s'est produite. Réessaie.",

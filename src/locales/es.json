@@ -235,6 +235,8 @@
     "subtitle": "Elimina los anuncios para siempre, desbloquea más de 3.325 citas premium en 18 packs y configura hasta 10 recordatorios diarios.",
     "skip": "Quizás después",
     "restorePurchases": "Restaurar compras",
+    "renewalTerms": "El pago se carga a tu Cuenta de Apple al confirmar. La suscripción se renueva automáticamente al mismo precio y periodo salvo que la canceles al menos 24 horas antes de que termine. Gestiónala o cancélala cuando quieras en Ajustes → Cuenta de Apple → Suscripciones.",
+    "continueFree": "Continuar con la versión gratuita",
     "restoreSuccess": "Compras restauradas.",
     "restoreNothingFound": "No se encontró ninguna compra anterior.",
     "buyButton": "Continuar",
@@ -249,12 +251,13 @@
       "proFeatures": "Sin anuncios · Colecciones premium · 10 recordatorios al día",
       "savePercent": "Ahorras un {{percent}}",
       "perWeekUnit": "/ semana",
+      "perWeekApprox": "≈ {{price}} / semana",
       "billedMonthly": "{{price}} / mes",
       "billedAnnual": "{{price}} / año",
       "a11yPackage": "{{label}}, {{price}}",
-      "a11yMonthly": "{{label}}. {{perWeek}} a la semana. Se cobran {{price}} cada mes.",
-      "a11yAnnual": "{{label}}. {{perWeek}} a la semana. Se cobran {{price}} cada año.",
-      "a11yAnnualSaving": "{{label}}. {{perWeek}} a la semana. Se cobran {{price}} cada año. Pagar mes a mes durante el mismo año costaría {{compare}}; un {{percent}} menos."
+      "a11yMonthly": "{{label}}. Se cobran {{price}} cada mes, unos {{perWeek}} por semana.",
+      "a11yAnnual": "{{label}}. Se cobran {{price}} cada año, unos {{perWeek}} por semana.",
+      "a11yAnnualSaving": "{{label}}. Se cobran {{price}} cada año, unos {{perWeek}} por semana. Pagar mensualmente el mismo año costaría {{compare}}; {{percent}} menos."
     },
     "errors": {
       "generic": "Algo salió mal. Inténtalo de nuevo.",

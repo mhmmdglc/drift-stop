@@ -235,6 +235,8 @@
     "subtitle": "Reklamları kalıcı olarak kaldır, 3.325+ premium söze ve 18 koleksiyona eriş, günde 10’a kadar hatırlatma kur.",
     "skip": "Belki sonra",
     "restorePurchases": "Satın alımları geri yükle",
+    "renewalTerms": "Ödeme, onay anında Apple Hesabından tahsil edilir. Abonelik, bitiminden en az 24 saat önce iptal edilmezse aynı fiyat ve süreyle kendiliğinden yenilenir. Ayarlar → Apple Hesabı → Abonelikler'den istediğin zaman yönetebilir ya da iptal edebilirsin.",
+    "continueFree": "Ücretsiz sürümle devam et",
     "restoreSuccess": "Satın alımlar geri yüklendi.",
     "restoreNothingFound": "Önceki bir satın alım bulunamadı.",
     "buyButton": "Devam et",
@@ -249,12 +251,13 @@
       "proFeatures": "Reklamsız · Premium paketler · Günde 10 hatırlatma",
       "savePercent": "{{percent}} tasarruf",
       "perWeekUnit": "/ hafta",
+      "perWeekApprox": "≈ haftada {{price}}",
       "billedMonthly": "{{price}} / ay",
       "billedAnnual": "{{price}} / yıl",
       "a11yPackage": "{{label}}, {{price}}",
-      "a11yMonthly": "{{label}}. Haftada {{perWeek}}. Ayda bir {{price}} tahsil edilir.",
-      "a11yAnnual": "{{label}}. Haftada {{perWeek}}. Yılda bir {{price}} tahsil edilir.",
-      "a11yAnnualSaving": "{{label}}. Haftada {{perWeek}}. Yılda bir {{price}} tahsil edilir. Aynı süre aylık ödenseydi {{compare}} ederdi; {{percent}} tasarruf."
+      "a11yMonthly": "{{label}}. Ayda {{price}} tahsil edilir, haftada yaklaşık {{perWeek}}.",
+      "a11yAnnual": "{{label}}. Yılda {{price}} tahsil edilir, haftada yaklaşık {{perWeek}}.",
+      "a11yAnnualSaving": "{{label}}. Yılda {{price}} tahsil edilir, haftada yaklaşık {{perWeek}}. Aynı yılı aylık ödemek {{compare}} tutardı; {{percent}} daha az."
     },
     "errors": {
       "generic": "Bir şeyler ters gitti. Tekrar dene.",

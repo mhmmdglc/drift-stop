@@ -235,6 +235,8 @@
     "subtitle": "Entferne Werbung für immer, schalte über 3.325 Premium-Zitate in 18 Paketen frei und richte bis zu 10 tägliche Erinnerungen ein.",
     "skip": "Vielleicht später",
     "restorePurchases": "Käufe wiederherstellen",
+    "renewalTerms": "Die Zahlung wird bei Bestätigung deinem Apple-Konto belastet. Das Abo verlängert sich automatisch zum gleichen Preis und Zeitraum, sofern du nicht mindestens 24 Stunden vor Ablauf kündigst. Verwalten oder kündigen kannst du jederzeit unter Einstellungen → Apple-Konto → Abos.",
+    "continueFree": "Mit der kostenlosen Version fortfahren",
     "restoreSuccess": "Käufe wiederhergestellt.",
     "restoreNothingFound": "Kein früherer Kauf gefunden.",
     "buyButton": "Weiter",
@@ -249,12 +251,13 @@
       "proFeatures": "Keine Werbung · Premium-Pakete · 10 Erinnerungen am Tag",
       "savePercent": "{{percent}} sparen",
       "perWeekUnit": "/ Woche",
+      "perWeekApprox": "≈ {{price}} / Woche",
       "billedMonthly": "{{price}} / Monat",
       "billedAnnual": "{{price}} / Jahr",
       "a11yPackage": "{{label}}, {{price}}",
-      "a11yMonthly": "{{label}}. {{perWeek}} pro Woche. Abgerechnet werden {{price}} monatlich.",
-      "a11yAnnual": "{{label}}. {{perWeek}} pro Woche. Abgerechnet werden {{price}} jährlich.",
-      "a11yAnnualSaving": "{{label}}. {{perWeek}} pro Woche. Abgerechnet werden {{price}} jährlich. Monatlich zu zahlen würde im selben Jahr {{compare}} kosten; {{percent}} weniger."
+      "a11yMonthly": "{{label}}. {{price}} monatlich, etwa {{perWeek}} pro Woche.",
+      "a11yAnnual": "{{label}}. {{price}} jährlich, etwa {{perWeek}} pro Woche.",
+      "a11yAnnualSaving": "{{label}}. {{price}} jährlich, etwa {{perWeek}} pro Woche. Monatlich zu zahlen würde im selben Jahr {{compare}} kosten; {{percent}} weniger."
     },
     "errors": {
       "generic": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",

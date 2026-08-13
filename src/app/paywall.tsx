@@ -186,10 +186,11 @@ export default function PaywallScreen() {
                   : null;
                 const busy = busyId === pkg.identifier;
 
-                // Ekran okuyucu için satır tek bir cümle: büyük rakam haftalık
-                // olsa da GERÇEK tahsilat ve dönemi burada da açıkça geçmeli —
-                // görsel hiyerarşi ile sesli okuma birbirinden ayrılırsa hem
-                // kullanıcı hem denetçi için yanıltıcı olur.
+                // Ekran okuyucu satırı ekrandaki sırayı izliyor: ÖNCE tahsil
+                // edilen tutar ve dönemi, SONRA haftalık yaklaşık karşılık.
+                // Görsel hiyerarşi ile sesli okuma ayrışırsa hem kullanıcı hem
+                // denetçi için yanıltıcı olur — 3.1.2(c) reddi tam da sıranın
+                // tersine kurulmuş olmasındandı.
                 const a11yLabel = !perWeek
                   ? t('paywall.packages.a11yPackage', {
                       label,
@@ -241,13 +242,16 @@ export default function PaywallScreen() {
                           </ThemedText>
                         ) : null}
                       </View>
-                      {/* Fiyat sütununda hiyerarşi: en büyük rakam haftalık
-                          karşılık, hemen altında tahsil edilen tutar dönemiyle
-                          birlikte. Tahsilat satırı küçük ama SÖNÜK DEĞİL (ana
-                          metin rengi, gövde boyu) — mağaza kuralları gerçek
-                          tutarın okunaklı kalmasını şart koşuyor. Rakamlar sağ
-                          kenara hizalı, çünkü el yazısı font tabular değil ve
-                          soldan hizalanınca satırlar rastgele kayıyor. */}
+                      {/* Fiyat hiyerarşisi: EN BÜYÜK RAKAM TAHSİL EDİLEN TUTAR.
+                          Haftalık karşılık ve üstü çizili karşılaştırma onun
+                          altında, etiket boyunda ve sönük renkte.
+                          Bu sıra tersine çevrilemez: 1.2.0 (5) tam olarak bunun
+                          tersi olduğu için **App Review'dan 3.1.2(c) ile reddedildi**
+                          — "hesaplanmış fiyat, tahsil edilen tutardan daha
+                          belirgin". Apple diğer tüm fiyat öğelerinin tutara göre
+                          ikincil konumda VE boyutta olmasını şart koşuyor.
+                          Rakamlar sağ kenara hizalı, çünkü el yazısı font tabular
+                          değil ve soldan hizalanınca satırlar rastgele kayıyor. */}
                       <View style={styles.priceColumn}>
                         {busy ? (
                           <ThemedText variant="body" tone="accent">
@@ -255,15 +259,13 @@ export default function PaywallScreen() {
                           </ThemedText>
                         ) : perWeek ? (
                           <>
-                            <View style={styles.heroRow}>
-                              <ThemedText variant="heading" tone="accent">
-                                {perWeek}
-                              </ThemedText>
-                              <ThemedText variant="label" tone="textMuted">
-                                {t('paywall.packages.perWeekUnit')}
-                              </ThemedText>
-                            </View>
-                            <View style={styles.billedGroup}>
+                            <ThemedText
+                              variant="heading"
+                              tone="accent"
+                              style={styles.billedText}>
+                              {billed}
+                            </ThemedText>
+                            <View style={styles.subordinateGroup}>
                               {comparison && (
                                 <SketchStrike>
                                   <ThemedText variant="label" tone="textMuted">
@@ -271,8 +273,8 @@ export default function PaywallScreen() {
                                   </ThemedText>
                                 </SketchStrike>
                               )}
-                              <ThemedText variant="body" style={styles.billedText}>
-                                {billed}
+                              <ThemedText variant="label" tone="textMuted">
+                                {t('paywall.packages.perWeekApprox', { price: perWeek })}
                               </ThemedText>
                             </View>
                           </>
@@ -291,11 +293,39 @@ export default function PaywallScreen() {
             </View>
           )}
 
+          {/* Otomatik yenileme beyanı. App Review 1.2.0 (5)'i reddederken bunu
+              da yazdı: "ücretsiz deneme sunuluyor ama sonraki dönem için ödemenin
+              OTOMATİK başlayacağı açık değil". Uygulamanın 7 günlük denemesi
+              StoreKit denemesi değil, ama denetçi ekranda "Trial active" görüp
+              öyle okuyor — o yüzden yenileme ve iptal cümlesi paketlerin hemen
+              altında, satın alma akışının içinde duruyor. */}
+          {packages.length > 0 && (
+            <ThemedText variant="label" tone="textMuted" style={styles.renewalTerms}>
+              {t('paywall.renewalTerms')}
+            </ThemedText>
+          )}
+
           {message && (
             <ThemedText variant="body" tone={message.tone} style={styles.message}>
               {message.text}
             </ThemedText>
           )}
+
+          {/* Ücretsiz yola açık bir çıkış. Üstteki "Maybe later" bağlantısı
+              vardı ama ekranın en tepesinde ve sönüktü; fiyatları okuduktan
+              sonra kullanıcının gözü orada değil. Satın almanın zorunlu
+              olmadığını satın alma akışının İÇİNDE söylemek, 3.1.2'nin
+              "kullanıcıyı yanıltma" maddesinin de doğru tarafında durmak. */}
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
+            hitSlop={12}
+            accessibilityRole="button"
+            accessibilityLabel={t('paywall.continueFree')}
+            style={styles.continueFreeBtn}>
+            <ThemedText variant="body" tone="textMuted">
+              {t('paywall.continueFree')}
+            </ThemedText>
+          </Pressable>
 
           {/* Kurtarma eylemi, satın alma satırlarından daha "buton" görünmemeli —
               eskiden ekrandaki tek buton buydu ve hiyerarşi tersti. */}
@@ -393,17 +423,19 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     gap: Spacing.xs / 2,
   },
-  heroRow: {
-    flexDirection: 'row',
-    // Büyük rakam ile küçük "/ hafta" ekinin ortak taban çizgisi; ortalanınca
-    // ek, rakamın ortasına gelip kazara hizalanmış gibi duruyordu.
-    alignItems: 'baseline',
-    gap: Spacing.xs,
-  },
-  billedGroup: {
+  subordinateGroup: {
     alignItems: 'flex-end',
     gap: Spacing.xs / 2,
     marginTop: Spacing.xs / 2,
+  },
+  renewalTerms: {
+    textAlign: 'center',
+    marginTop: Spacing.md,
+  },
+  continueFreeBtn: {
+    alignSelf: 'center',
+    marginTop: Spacing.lg,
+    paddingVertical: Spacing.sm,
   },
   billedText: {
     textAlign: 'right',
