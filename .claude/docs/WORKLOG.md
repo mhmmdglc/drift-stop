@@ -8,6 +8,14 @@ The orchestrator writes an entry **when an agent is dispatched** and updates it 
 
 ---
 
+## 2026-08-13
+
+| Time | Agent | Task | Outcome | Evidence |
+|---|---|---|---|---|
+| 13:05 | orchestrator | **1.2.0 (build 6) yeniden gönderildi** | **Doğrulandı:** sürüm `WAITING_FOR_REVIEW` + **build 6**, iki abonelik `IN_REVIEW`, gönderim `WAITING_FOR_REVIEW`, **4 kalem**. **Tuzak:** yeni build'i API'den bağlamak reddi TEMİZLEMİYOR — kalem "Rejected" kalıyor ve "Resubmit to App Review" soluk duruyor. `PATCH reviewSubmissions {submitted:true}` de `409 "cannot be reviewed"` veriyor. Doğru yol sürüm sayfasındaki **"Update Review"**: ona basınca dört kalem birden `Ready for Review`'a dönüyor, sonra Resubmit aktifleşiyor | gönderim `1cc18361-…` (aynı kayıt yeniden kullanıldı) |
+| 12:55 | orchestrator | **App Review reddi 3.1.2(c) — sebep düzeltildi, build 6 yüklendi** | **Red:** *"the weekly calculated pricing is displayed more clearly and conspicuously than the billed amount"* + tahsilat yeterince açık değil + ücretsiz dönem sonrası **otomatik ödemenin** başlayacağı söylenmiyor. Sebep bizim kendi tasarım kararımızdı (`90fb3f2`, "haftalık fiyatı kahraman yap"). **Düzeltildi:** hiyerarşi ters çevrildi (tahsilat başlık boyu + accent; haftalık ve üstü çizili karşılaştırma etiket boyu + sönük), yenileme/iptal beyanı satın alma akışına girdi, açık bir "Continue with the free version" çıkışı eklendi. **Ekranda doğrulandı** (yeni simülatör, iOS 26.5). `.ipa` açıldı: üç yeni metin de Hermes bytecode'unda. Build 6 `altool` ile yüklendi | `1db6031`; delivery `c6a41bb0-…` |
+| 12:40 | orchestrator | **Testin yanlış kuralı sabitlediği bulundu** | `paywallPriceEmphasis.test.tsx` birebir *"haftalık rakam iki satırda da en büyük olmalı"* diye sınıyordu — yani Apple'ın reddettiği düzeni koruyordu ve yeşil olduğu için kimse şüphelenmedi. **Test yanlış olduğu için değil, yanlış şeyi doğru sabitlediği için tehlikeliydi.** Artık tersini sınıyor; üstüne yenileme beyanını ve ücretsiz çıkışı da ekledi. `tsc` temiz, **294 test / 34 suite** | `1db6031` |
+
 ## 2026-08-10
 
 | Time | Agent | Task | Outcome | Evidence |

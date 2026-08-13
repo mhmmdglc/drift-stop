@@ -669,6 +669,17 @@ URL rather than merely that a label renders.
    version, then `PATCH /v1/reviewSubmissions/{id}` with `submitted: true`.
 7. `git diff app.json` and commit the `autoIncrement` bump.
 
+#### Re-submitting after a rejection: attaching a build is not enough
+
+Learned 2026-08-13. `PATCH /v1/appStoreVersions/{id}/relationships/build` moves the version back to
+`PREPARE_FOR_SUBMISSION`, but the **submission item stays `Rejected`** and *Resubmit to App Review* stays
+greyed out. `PATCH /v1/reviewSubmissions/{id}` `{"submitted": true}` answers
+`409 "This resource cannot be reviewed"`.
+
+The button that actually clears it is **"Update Review" on the app version page**. Pressing it flips all four
+items back to `Ready for Review`, and only then does *Resubmit to App Review* become active. The same
+submission record is reused — you do not create a new one, and the subscriptions ride along.
+
 #### ⛔ The subscriptions do **not** go with it. The API cannot attach them — use the web UI.
 
 **The working recipe, in the ASC web UI (proven 2026-08-10 — "4 Items Submitted"):** create the submission
