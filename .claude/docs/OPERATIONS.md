@@ -67,8 +67,8 @@ The Google Play Console listing for DriftStop **and** the Expo/EAS project are b
 |---|---|
 | Android package / iOS bundle id | `com.driftstop.app` |
 | Current app version | `1.2.0` (`app.json` → `expo.version`) |
-| Current Android versionCode | `16` (live in Play alpha, 2026-08-10) |
-| Current iOS buildNumber | `4` (`1.2.0`, uploaded 2026-08-10) |
+| Current Android versionCode | `17` (live in Play alpha, 2026-08-10) |
+| Current iOS buildNumber | `6` (`1.2.0`, in review 2026-08-13). Builds 4 and 5 abandoned — 5 was rejected under 3.1.2(c) |
 | iOS signing | cert `S583744M99` (expires 2027-08-04) · profile `568J8YR282` · files in `credentials/` (gitignored) |
 | IAP product ids | `pro_monthly`, `pro_yearly` — **`remove_ads` is retired**, see below |
 | RevenueCat entitlements | `pro`, `no_ads` — both subscriptions grant both |
