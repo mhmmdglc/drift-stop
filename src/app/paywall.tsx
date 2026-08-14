@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Linking, Pressable, StyleSheet, View } from 'react-native';
+import { Linking, Platform, Pressable, StyleSheet, View } from 'react-native';
 import { PACKAGE_TYPE, type PurchasesPackage } from 'react-native-purchases';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -301,7 +301,14 @@ export default function PaywallScreen() {
               altında, satın alma akışının içinde duruyor. */}
           {packages.length > 0 && (
             <ThemedText variant="label" tone="textMuted" style={styles.renewalTerms}>
-              {t('paywall.renewalTerms')}
+              {/* Metin platforma göre değişmek ZORUNDA: aboneliği yöneten mağaza
+                  ve kullanıcının gideceği ekran farklı. Android'e "Settings →
+                  Apple Account → Subscriptions" demek, var olmayan bir yere
+                  yönlendirmek olurdu — ve iptal yolunu yanlış tarif etmek, iki
+                  mağazanın da abonelik şeffaflığı kurallarına aykırı. */}
+              {Platform.OS === 'ios'
+                ? t('paywall.renewalTerms')
+                : t('paywall.renewalTermsAndroid')}
             </ThemedText>
           )}
 

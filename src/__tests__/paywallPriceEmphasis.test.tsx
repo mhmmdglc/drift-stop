@@ -100,6 +100,37 @@ afterAll(() => {
   i18n.locale = 'tr';
 });
 
+describe('renewal terms follow the store that actually bills', () => {
+  // Apple metni Android'e giderse kullanıcıya var olmayan bir ekran tarif edilir
+  // ("Settings → Apple Account → Subscriptions") ve iptal yolu yanlış anlatılmış
+  // olur. İki mağaza da abonelik şartlarının doğru olmasını istiyor.
+  it('names Google Play, not Apple, on Android', async () => {
+    const { Platform } = require('react-native');
+    const original = Platform.OS;
+    Platform.OS = 'android';
+    try {
+      await render(<PaywallScreen />);
+      expect(screen.getByText(/Google Play/)).toBeTruthy();
+      expect(screen.queryByText(/Apple Account/)).toBeNull();
+    } finally {
+      Platform.OS = original;
+    }
+  });
+
+  it('names the Apple Account on iOS', async () => {
+    const { Platform } = require('react-native');
+    const original = Platform.OS;
+    Platform.OS = 'ios';
+    try {
+      await render(<PaywallScreen />);
+      expect(screen.getByText(/Apple Account/)).toBeTruthy();
+      expect(screen.queryByText(/Google Play/)).toBeNull();
+    } finally {
+      Platform.OS = original;
+    }
+  });
+});
+
 describe('paywall price emphasis', () => {
   it('makes the BILLED AMOUNT the biggest number on both rows', async () => {
     await render(<PaywallScreen />);

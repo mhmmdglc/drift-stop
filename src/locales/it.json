@@ -236,6 +236,7 @@
     "skip": "Forse più tardi",
     "restorePurchases": "Ripristina acquisti",
     "renewalTerms": "Il pagamento viene addebitato sul tuo account Apple alla conferma. L'abbonamento si rinnova automaticamente allo stesso prezzo e periodo se non lo annulli almeno 24 ore prima della scadenza. Gestiscilo o annullalo quando vuoi in Impostazioni → Account Apple → Abbonamenti.",
+    "renewalTermsAndroid": "Il pagamento viene addebitato sul tuo account Google Play alla conferma. L'abbonamento si rinnova automaticamente allo stesso prezzo e periodo, salvo disdetta almeno 24 ore prima della scadenza. Gestiscilo o disdicilo quando vuoi in Google Play → Abbonamenti.",
     "continueFree": "Continua con la versione gratuita",
     "restoreSuccess": "Acquisti ripristinati.",
     "restoreNothingFound": "Nessun acquisto precedente trovato.",

@@ -236,6 +236,7 @@
     "skip": "Maybe later",
     "restorePurchases": "Restore purchases",
     "renewalTerms": "Payment is charged to your Apple Account at confirmation. The subscription renews automatically for the same price and period unless you cancel at least 24 hours before it ends. Manage or cancel any time in Settings → Apple Account → Subscriptions.",
+    "renewalTermsAndroid": "Payment is charged to your Google Play account at confirmation. The subscription renews automatically for the same price and period unless you cancel at least 24 hours before it ends. Manage or cancel any time in Google Play → Subscriptions.",
     "continueFree": "Continue with the free version",
     "restoreSuccess": "Purchases restored.",
     "restoreNothingFound": "No previous purchase found.",
