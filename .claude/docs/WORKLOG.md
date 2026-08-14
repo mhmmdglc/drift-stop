@@ -8,6 +8,16 @@ The orchestrator writes an entry **when an agent is dispatched** and updates it 
 
 ---
 
+## 2026-08-14
+
+| Time | Agent | Task | Outcome | Evidence |
+|---|---|---|---|---|
+| 14:20 | orchestrator | **2.1 cevabı gönderildi, 1.2.0 (6) yeniden incelemede** | **Doğrulandı:** sürüm `WAITING_FOR_REVIEW` build 6 ile, iki abonelik `IN_REVIEW`, gönderim 4 kalem. Cevap `Messages (3)` altında ekleriyle duruyor. **Tuzak:** ilk gönderme denemesi *"An error has occurred"* verdi ve mesaj taslakta kaldı — sahibin önerisiyle **sayfa tazelenince** `Continue Draft` → `Reply` sorunsuz çalıştı. Hata bayat oturum durumundan geliyordu, içerikten değil | gönderim `1cc18361-…` |
+| 14:10 | orchestrator | **App Review'ın 8 maddesi cevaplandı + ekran kaydı** | Red **kod hatası değildi**: Guideline 2.1, yeni uygulama için bilgi talebi — ve 3.1.2 bir daha yazılmadı, yani o düzeltme **geçti**. 2-8. maddelerin tamamı hem cevaba hem App Review Notes'a yazıldı (3.981/4.000). **8:42'lik kayıt** simülatörde çekildi: temiz kurulum → onboarding → **ATT istemi** → bildirim izni → söz/favori → satın alma ekranı (fiyat+dönem, yenileme şartları, iki hukuki bağlantı, restore, ücretsiz çıkış) → Apple EULA → demo hesapla giriş → hesap silme onayı. **İki şey açıkça yazıldı:** kayıt fiziksel cihazda değil simülatörde alındı, ve hesap silme onay ekranında **bilerek** durduruldu çünkü giriş yapılan hesap denetçinin kullanacağı demo hesap | kayıt `DriftStop-AppReview.mp4` (668 KB) |
+| 14:00 | orchestrator | **Android 1.2.0 (versionCode 19) Alpha'ya** | Play API'sinden okunarak doğrulandı: alpha 17 → **19**. **18 değil 19**, çünkü iptal edilen build 18'i zaten tüketmişti — sayaç `app.json`'da yaşıyor ve iptal numarayı geri vermiyor. iOS'takiyle aynı iki düzeltmeyi taşıyor (doğru mağaza metni + misafir-Pro) | `8b82121` |
+| 13:30 | orchestrator | **Yakalandı: Android'e "Apple Account" deniyordu** | 3.1.2 için eklenen yenileme metni *"Settings → Apple Account → Subscriptions"* diyordu; Android'de öyle bir ekran yok, yani her Android kullanıcısına **var olmayan bir iptal yolu** tarif edilecekti. Platforma göre ayrıldı, altı dilde Google Play metni yazıldı. İki test her `Platform.OS` için diğer mağazanın **yokluğunu** sınıyor; Apple metnini her yere zorlayarak kırılması doğrulandı. Taşıyan Android build'i uçuş sırasında iptal edildi | `063060f`; 296 test / 34 suite |
+| 12:30 | orchestrator | **Simülatör koordinat ölçeği yanlış hesaplanıyordu** | Ekran görüntüsünün en-boy oranı nokta uzayıyla birebir değil (920/440 ≠ 1936/956), bu yüzden **alt kısımdaki dokunuşlar sessizce ıskalıyordu** — "Continue" ve "Start" çalışmıyor sanıldı. Doğru katsayı her iki eksende de `440/920 = 0.4783`. Bu bilinmeden onboarding kaydı alınamıyordu | `HANDOFF.md` tuzaklar bölümü |
+
 ## 2026-08-13
 
 | Time | Agent | Task | Outcome | Evidence |

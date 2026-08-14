@@ -1,4 +1,4 @@
-# Devir notu — 2026-08-10
+# Devir notu — 2026-08-14
 
 Yeni oturum bu dosyayı okuyup kaldığı yerden devam edebilir. Bu, 2026-08-03 tarihli
 devir notunun yerini alıyor; oradaki App Store gönderim tarifleri ve API tuzakları
@@ -9,38 +9,55 @@ Plan [`specs/monetization-v2.md`](../specs/monetization-v2.md) ve
 
 ---
 
-## Tek satırlık durum
+## Tek satırlık durum — 2026-08-14
 
-**Android canlı:** `1.2.0 (versionCode 17)` Play kapalı test → **alpha** kanalında.
-Play API'sinden okunarak doğrulandı (16 → 17). Production kanalı **boş**, sayaç ~15 Ağustos.
+**Android canlı:** `1.2.0 (versionCode 19)` Play kapalı test → **alpha** kanalında,
+Play API'sinden okunarak doğrulandı. Production kanalı **boş**, sayaç ~15 Ağustos.
 
-**iOS incelemede.** `1.2.0 (build 5)` + iki abonelik `WAITING_FOR_REVIEW`, gönderim
-`1cc18361-…`, **4 kalem**. Apple 48 saate kadar diyor. Sonuç e-postayla gelecek.
+**iOS incelemede (üçüncü tur).** `1.2.0 (build 6)` + iki abonelik `WAITING_FOR_REVIEW`,
+gönderim `1cc18361-…`, **4 kalem**.
 
-Kapılar: `tsc` temiz · **292 test / 34 suite** (oturuma 214 ile başladı) ·
-`expo lint` **11 hata = değişmemiş taban**.
+Kapılar: `tsc` temiz · **296 test / 34 suite** · `expo lint` **11 hata = değişmemiş taban**.
 
-⚠️ **HEAD, incelemedeki build'in ÖNÜNDE.** `99d782d` (misafir-Pro düzeltmesi) build 5'ten
-sonra geldi. iOS 1.2.0 onaylanırsa mağazaya o düzeltme **olmadan** çıkar — sahibin bilinçli
-kararı, 1.2.1'e bırakıldı. Android 17 de bu düzeltmeden önce derlendi.
+**HEAD ile mağazadakiler artık aynı.** Build 6 ve versionCode 19, bugünkü bütün
+düzeltmeleri taşıyor — geride kalan bir şey yok.
+
+---
+
+## Apple iki kez reddetti, ikisi de kapatıldı
+
+**1. Guideline 3.1.2(c) — build 5 (2026-08-13).** *"Haftalık hesaplanmış fiyat, tahsil
+edilen tutardan daha belirgin."* Sebep bizim kendi tasarım kararımızdı (`90fb3f2`).
+Hiyerarşi ters çevrildi, yenileme/iptal beyanı eklendi, açık bir ücretsiz çıkış kondu.
+**Bu tur bir daha yazılmadı — yani geçti.**
+
+**2. Guideline 2.1 Information Needed — build 6 (2026-08-14).** Kod hatası değil, bilgi
+talebi. 8 maddenin tamamı hem cevaba hem App Review Notes'a yazıldı, 8:42'lik ekran kaydı
+eklendi. Cevap `Messages (3)` altında duruyor.
+
+⚠️ **Apple'a açıkça söylenen iki şey** — bir sonraki oturum bunları bilsin, çünkü Apple
+bunlara geri dönebilir:
+- Kayıt **fiziksel cihazda değil, simülatörde** alındı. Gerçek cihaz şart koşulursa tek
+  çıkış bir iPhone bulup TestFlight'tan kurmak.
+- Hesap silme **onay ekranında durduruldu**, çünkü giriş yapılan hesap denetçinin
+  kullanacağı demo hesap. Silinseydi bir sonraki tur "erişemedik" diye reddedilirdi.
 
 ---
 
 ## ⛔ SIRADAKİ İŞ — Apple'ın cevabını beklemek
 
-Şu an yapılacak bir şey yok; karar noktası Apple'ın cevabı:
+**Onaylanırsa:** iOS canlıya çıkar. Android production sayacı da ~15 Ağustos'ta dolduğu
+için ikisi birlikte yayına alınabilir.
 
-**Onaylanırsa:** iOS canlıya çıkar. Hemen ardından **1.2.1** kesilmeli — içeriği aşağıdaki
-"yapılacaklar"ın ilk maddesi (misafir-Pro düzeltmesi zaten HEAD'de hazır ve test edilmiş,
-sadece build almak kaldı).
+**Yine 2.1 gelirse:** büyük ihtimalle fiziksel cihaz kaydı isteyeceklerdir. Bu noktada
+herhangi bir iPhone + TestFlight tek çözüm; build 6 zaten ASC'de, kurulum dakikalar sürer.
 
-**Reddedilirse:** red sebebini `OPERATIONS.md` §7'deki denetim tablosuyla karşılaştır.
-En olası iki aday zaten kapatıldı (ikon, 3.1.2), o yüzden yeni bir şey çıkarsa tabloya
-eklenmeli. Sürüm kaydı yine `DEVELOPER_REJECTED`'a düşer ve **yeniden kullanılır** —
-yeni sürüm kaydı açma.
+**Başka bir gerekçe gelirse:** `OPERATIONS.md` §7'deki denetim tablosuyla karşılaştır ve
+yeni çıkan maddeyi tabloya ekle. Sürüm kaydı `REJECTED`'a düşer ve **yeniden kullanılır** —
+yeni kayıt açma. Reddi temizleyen düğme sürüm sayfasındaki **"Update Review"**; yeni build
+bağlamak tek başına yetmiyor (bkz. `OPERATIONS.md` §7).
 
-**Her iki durumda da:** `app.json`'daki `autoIncrement` yazımını commit etmeyi unutma
-(`OPERATIONS.md` §2'deki uyarı).
+**Her durumda:** `app.json`'daki `autoIncrement` yazımını commit et.
 
 ---
 
@@ -61,47 +78,10 @@ yeni sürüm kaydı açma.
 | `870b2ff` | iOS 1.2.0 (build 5) + iki abonelik incelemeye gönderildi |
 | `36d78a2` | Android 1.2.0 (versionCode 17) Alpha'ya + `scripts/play-upload.js` |
 | `a157444` `99d782d` `030c3c8` | **Misafir-Pro kusuru** — bulundu, düzeltildi, ekranda doğrulandı |
-
----
-
-## ✅ iOS 1.2.0 İNCELEMEDE — 2026-08-10
-
-`1.2.0 (build 5)` + **iki abonelik birlikte** gönderildi. Gönderim `1cc18361-…`, **4 kalem**,
-hepsi `WAITING_FOR_REVIEW`. Apple 48 saate kadar diyor.
-
-Bugün iki tuzak yakalandı, ikisi de gönderimden **önce**:
-
-1. **Sürüm abonelikleri arkada bırakarak gönderilebiliyor.** İlk gönderim `WAITING_FOR_REVIEW`
-   oldu ama içinde tek kalem vardı; onaylansaydı iOS **hiçbir şey satamayan bir paywall**'la
-   yayına girerdi. ASC API'si abonelik eklemeyi kabul etmiyor — arayüz şart (`OPERATIONS.md` §7).
-2. **3.1.2:** paywall'da gizlilik/koşullar bağlantısı yoktu, kullanım koşulları uygulamanın
-   **hiçbir yerinde** yoktu. Eklendi (`bb95158`), mağaza açıklamasına da abonelik bloğu girdi.
-
-Ayrıca **"Regulated Medical Device: hayır"** beyanı verildi — birincil kategori Health & Fitness
-olduğu için AB dağıtımını açık tutuyor.
-
-**Doğrulama kuralı:** sürümün durumuna bakma, **abonelik tarafını oku**
-(`/v1/subscriptions/{id}` + `/versions`). Sürüm `WAITING_FOR_REVIEW` iken abonelikler
-`READY_TO_SUBMIT`'te kalabiliyor ve bunu başka hiçbir yer söylemiyor.
-
----
-
-## Eski not — iOS 1.2.0'ı incelemeye göndermek
-
-**2026-08-10'da yapıldı:** build alındı (`1.2.0`, build **4**), `.ipa`'nın içi açılıp ikon
-gözle doğrulandı, `altool` ile yüklendi, Apple tarafında **`VALID`** oldu, ve sürüm kaydı
-`1.1.0`/`DEVELOPER_REJECTED` → **`1.2.0`/`PREPARE_FOR_SUBMISSION`** çekilip build 4 bağlandı.
-
-**Kalan tek adım incelemeye göndermek** ve bu bilerek yapılmadı — sahibin kararı. İki şey
-gönderimden önce bilinsin diye duruyor:
-
-1. **Apple token iptali hâlâ yok** (bilinerek ertelendi, `OPERATIONS.md` §7).
-2. **iOS'ta ne bir satın alma ne de Apple ile giriş hiçbir cihazda çalıştırılmadı.**
-   Yapılandırma kâğıt üzerinde doğru; ilk gerçek çalıştırma App Review'da olacak.
-   TestFlight'tan geçmek bunu gönderimden önce kanıtlardı.
-
-Gönderme çağrıları (`reviewSubmissions` üçlüsü) `OPERATIONS.md` §7'de yazılı.
-Abonelikler sürümle birlikte gidiyor — ayrıca göndermek gerekmiyor.
+| `1db6031` | **3.1.2(c) reddi** — tahsil edilen tutar kahraman, yenileme şartları, ücretsiz çıkış |
+| `246ec1f` `ed8c8e1` | 1.2.0 (6) yeniden gönderildi; reddi temizleyen "Update Review" tarifi |
+| `063060f` | **Android'e "Apple Account" deniyordu** — platforma göre ayrıldı, 2 testle sabitlendi |
+| `8b82121` | Android 1.2.0 (versionCode 19) Alpha'ya |
 
 ---
 
@@ -134,16 +114,9 @@ Abonelikler sürümle birlikte gidiyor — ayrıca göndermek gerekmiyor.
 
 ## 🔨 Yapılacak işler — sahip onayladı, kodlanmadı
 
-### 0. **1.2.1'i kes** — kod hazır, sadece build kaldı ⭐ sıradaki
-`99d782d` HEAD'de duruyor ve **hiçbir mağaza build'inde yok**: misafir olarak Pro alan
-kullanıcıya artık "birazdan gelecek" denmiyor, hesap çağrısı + butonu gösteriliyor.
-Simülatörde ekranda doğrulandı, koruma testi iki sabotajla kanıtlandı.
-
-Apple 1.2.0'ı onaylar onaylamaz (ya da reddederse hemen) bu build alınmalı — iki mağaza için de.
-Android tarafında `versionCode 17` de bu düzeltmeden önce derlendi, yani 18 gerekiyor.
-
-**Aynı build'e girmesi mantıklı olan:** aşağıdaki 3. maddenin "satın alma sonrası mesaj"
-alt maddesi zaten `99d782d` ile kapandı — listeden düşürüldü.
+### ~~0. 1.2.1'i kes~~ — **gerek kalmadı, düzeltmeler 1.2.0'a yetişti**
+Misafir-Pro düzeltmesi (`99d782d`) iOS build 6'ya ve Android versionCode 19'a girdi.
+Ayrı bir sürüm kesmeye gerek yok.
 
 ### 1. Pro alınca bildirim sıklığı otomatik 7'ye çıksın
 Sahip 10 istedi, riski konuşulunca **7'de karar kılındı** (ürün "sessiz dürtme" vaat ediyor;
@@ -185,6 +158,43 @@ bölümleri hiç yok ve teste girmiyorlar.
 kullanıcı bunu "bildirimlerim zenginleşecek" diye okuyor. **İade ve kötü yorum riski.**
 Ya rotasyona sokulmalı ya vaat dürüstleştirilmeli. Madde 1 (7'ye çıkarma) bunun bir
 parçasını çözüyor ama tamamını değil.
+
+---
+
+## 2026-08-13/14'te öğrenilenler
+
+### Bir testin yeşil olması, doğru şeyi koruduğu anlamına gelmiyor
+`paywallPriceEmphasis.test.tsx` birebir *"haftalık rakam iki satırda da en büyük olmalı"*
+diye sınıyordu — yani **App Store'un reddettiği düzeni** koruyordu ve yeşil olduğu için
+kimse şüphelenmedi. Test bozuk değildi; yanlış kuralı doğru şekilde sabitliyordu.
+Bir mağaza kuralını koda gömerken, testin o kuralı **mağazanın yazdığı gibi** ifade
+ettiğinden emin ol.
+
+### Reddi temizleyen şey yeni build değil, "Update Review"
+`PATCH .../relationships/build` sürümü `PREPARE_FOR_SUBMISSION`'a çekiyor ama gönderim
+kalemi **`Rejected` kalıyor** ve Resubmit soluk duruyor. `PATCH reviewSubmissions
+{submitted:true}` da `409` veriyor. Sürüm sayfasındaki **"Update Review"** düğmesi dört
+kalemi birden `Ready for Review`'a çeviriyor; asıl anahtar o.
+
+### Platforma özel metin, platforma özel test ister
+3.1.2 için eklenen yenileme metni *"Settings → Apple Account → Subscriptions"* diyordu ve
+Android'e olduğu gibi gidiyordu — var olmayan bir iptal yolu. Mağazaya bağlı her cümle
+`Platform.OS` ile ayrılmalı **ve** her iki dal ayrı ayrı sınanmalı; tek dallı test bunu
+yakalamaz.
+
+### Simülatör dokunuşlarında ekran görüntüsü ölçeği tuzak
+Ekran görüntüsünün en-boy oranı nokta uzayıyla birebir değil (`920/440 ≠ 1936/956`).
+Yüksekliği kendi oranıyla çevirirsen **alt kısımdaki dokunuşlar sessizce ıskalar** —
+düğme çalışmıyor sanırsın. Her iki eksende de **genişlik oranını** kullan
+(`440/920 = 0.4783`).
+
+### ASC arayüzünde "An error has occurred" çoğu zaman bayat oturum
+Cevap gönderimi hata verip taslakta kaldı; **sayfa tazelenince** `Continue Draft` → `Reply`
+ilk denemede çalıştı. İçerikte sorun yoktu. Aynı hatayı görürsen önce yenile.
+
+### İptal edilen build numarayı geri vermiyor
+Android build'i uçuşta iptal edildi ama `versionCode 18`'i tüketmişti; sonraki build 19
+oldu. Sayaç `app.json`'da yaşıyor — iptal ettiğin numarayı bir daha kullanamazsın.
 
 ---
 
