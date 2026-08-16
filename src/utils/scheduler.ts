@@ -78,15 +78,22 @@ function randomTitle(): string {
   return i18n.t('app.name');
 }
 
-/** Havuzdan prevId dışında rastgele bir söz seç (art arda tekrar yok). */
-function pickQuoteId(pool: Quote[], prevId: number | null): number {
+/**
+ * Havuzdan rastgele bir söz seç. `excludeSet` yakın geçmişi ve aynı plandaki önceki
+ * seçimleri taşır — günde 5 bildirimle "hep aynı sözler" hissi uygulamayı sildirir.
+ * Hepsi dışlanmışsa dışlama yok sayılır: dar havuzda plansız kalmak tekrardan kötü.
+ */
+function pickQuoteId(pool: Quote[], prevId: number | null, excludeSet: Set<number>): number {
   if (pool.length === 0) return -1;
   if (pool.length === 1) return pool[0].id;
-  let i = Math.floor(Math.random() * pool.length);
-  if (prevId !== null && pool[i].id === prevId) {
-    i = (i + 1) % pool.length;
+  // ≤2 sözlük havuzda dışlama anlamsız — art arda tekrar engeli tek başına yeterli.
+  const candidates = pool.length > 2 ? pool.filter((q) => !excludeSet.has(q.id)) : pool;
+  const source = candidates.length > 0 ? candidates : pool;
+  let i = Math.floor(Math.random() * source.length);
+  if (prevId !== null && source[i].id === prevId && source.length > 1) {
+    i = (i + 1) % source.length;
   }
-  return pool[i].id;
+  return source[i].id;
 }
 
 /**
@@ -136,6 +143,12 @@ export async function applySchedule(settings: Settings): Promise<void> {
 
   const now = new Date();
   const pool = getQuotesByThemes(settings.themes);
+  // Dışlama, geçmişin en yeni kayıtlarından kurulur ama havuzun yarısını aşamaz:
+  // tema filtresi havuzu daralttığında bile seçilecek söz her zaman kalır.
+  const history = await getJSON<number[]>(StorageKeys.seenHistory, []);
+  const excludeSet = new Set(
+    history.slice(0, Math.min(history.length, Math.floor(pool.length * 0.5)))
+  );
   const scheduled: ScheduledQuote[] = [];
   let prevId: number | null = null;
 
@@ -150,8 +163,10 @@ export async function applySchedule(settings: Settings): Promise<void> {
       const fireDate = dateAt(day, minuteOfDay);
       if (fireDate.getTime() <= now.getTime() + 60_000) continue; // geçmiş/çok yakın atla
 
-      const quoteId = pickQuoteId(pool, prevId);
+      const quoteId = pickQuoteId(pool, prevId, excludeSet);
       prevId = quoteId;
+      // Seçilen de dışlanır → 3 günlük plan kendi içinde de tekrarsız (havuz elverdiğince).
+      excludeSet.add(quoteId);
       const quote = getQuoteById(quoteId);
       if (!quote) continue;
 

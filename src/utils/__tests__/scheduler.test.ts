@@ -1,4 +1,6 @@
 /// <reference types="jest" />
+// Tip-import derlemede silinir → jest.mock hoisting'inden etkilenmez, en üstte durabilir.
+import type { Quote } from '@/types/quote';
 /**
  * `scheduler.ts` — uygulamanın çekirdeği ve bugüne kadar SIFIR testi vardı.
  * Buradaki bir regresyon sessizdir: bildirimler yalnızca gelmemeye başlar, hiçbir
@@ -21,6 +23,18 @@ jest.mock('expo-notifications', () => ({
   SchedulableTriggerInputTypes: { DATE: 'date' },
 }));
 jest.mock('@/utils/runtime', () => ({ nativeFeaturesAvailable: true, isExpoGo: false }));
+
+// Varsayılan gerçek veri; tekrar-önleme testleri küçük/uç havuzları ancak
+// bu iki fonksiyonu geçici override ederek kurabiliyor (1000 sözlük gerçek
+// havuzda "hepsi dışlandı" durumu üretilemez).
+jest.mock('@/data/quotes', () => {
+  const actual = jest.requireActual('@/data/quotes');
+  return {
+    ...actual,
+    getQuotesByThemes: jest.fn(actual.getQuotesByThemes),
+    getQuoteById: jest.fn(actual.getQuoteById),
+  };
+});
 
 const store: Record<string, unknown> = {};
 jest.mock('@/utils/storage', () => ({
@@ -249,6 +263,97 @@ describe('applySchedule', () => {
     await applySchedule(settings());
 
     expect(mockNotifications.cancelAllScheduledNotificationsAsync).toHaveBeenCalled();
+  });
+});
+
+describe('applySchedule — rotasyonda tekrar önleme', () => {
+  const mockData = jest.requireMock('@/data/quotes') as {
+    getQuotesByThemes: jest.Mock;
+    getQuoteById: jest.Mock;
+  };
+
+  const mkQuotes = (n: number): Quote[] =>
+    Array.from({ length: n }, (_, i) => ({
+      id: i + 1,
+      text: `t${i + 1}`,
+      textTr: `m${i + 1}`,
+      author: 'a',
+      origin: 'o',
+      originEmoji: '🔥',
+      category: 'fire',
+      era: 'modern',
+      tags: ['motivation'],
+    }));
+
+  const usePool = (pool: Quote[]) => {
+    mockData.getQuotesByThemes.mockReturnValue(pool);
+    mockData.getQuoteById.mockImplementation((id: number) => pool.find((q) => q.id === id));
+  };
+
+  const scheduledQuoteIds = (): number[] =>
+    mockNotifications.scheduleNotificationAsync.mock.calls.map(
+      (c) => (c[0] as { content: { data: { quoteId: number } } }).content.data.quoteId
+    );
+
+  afterEach(() => {
+    // Override'lar `clearAllMocks`tan sağ çıkar (mockClear implementasyonu silmez)
+    // → gerçek veri diğer describe'lara elle geri verilmeli.
+    const actual = jest.requireActual('@/data/quotes') as {
+      getQuotesByThemes: (...args: unknown[]) => unknown;
+      getQuoteById: (...args: unknown[]) => unknown;
+    };
+    mockData.getQuotesByThemes.mockImplementation(actual.getQuotesByThemes);
+    mockData.getQuoteById.mockImplementation(actual.getQuoteById);
+  });
+
+  it('yakın geçmişteki sözler plana girmez', async () => {
+    const pool = mkQuotes(40);
+    usePool(pool);
+    // 10 kayıt < floor(40 × 0.5) = 20 → geçmişin tamamı dışlama setinde.
+    const recent = pool.slice(0, 10).map((q) => q.id);
+    store['k:history'] = recent;
+
+    await applySchedule(settings({ frequency: 3 }));
+
+    const ids = scheduledQuoteIds();
+    expect(ids.length).toBeGreaterThan(0);
+    for (const id of ids) expect(recent).not.toContain(id);
+  });
+
+  it('havuzun tamamı geçmişteyse yine plan kurulur (dışlama havuzun yarısıyla sınırlı)', async () => {
+    const pool = mkQuotes(6);
+    usePool(pool);
+    store['k:history'] = pool.map((q) => q.id);
+
+    await applySchedule(settings({ frequency: 3 }));
+
+    const ids = scheduledQuoteIds();
+    // Plan içi seçimler dışlama setini havuzun ötesine büyütür → "hepsi dışlandı"
+    // dalı da bu testte çalışır; planlama yine de durmamalı.
+    expect(ids.length).toBeGreaterThanOrEqual(6);
+    for (const id of ids) expect(pool.map((q) => q.id)).toContain(id);
+  });
+
+  it('3 günlük plan kendi içinde tekrarsız (havuz yeterince genişken)', async () => {
+    usePool(mkQuotes(200));
+
+    await applySchedule(settings({ frequency: 10 }));
+
+    const ids = scheduledQuoteIds();
+    // 30 bildirim ≤ havuzun yarısı (100) → tek bir tekrar bile regresyondur.
+    expect(ids.length).toBeGreaterThan(0);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('tek sözlük havuz çökmez, planlamaya devam eder', async () => {
+    usePool(mkQuotes(1));
+    store['k:history'] = [1];
+
+    await applySchedule(settings({ frequency: 3 }));
+
+    const ids = scheduledQuoteIds();
+    expect(ids.length).toBeGreaterThan(0);
+    for (const id of ids) expect(id).toBe(1);
   });
 });
 
