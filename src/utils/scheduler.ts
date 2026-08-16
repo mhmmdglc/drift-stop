@@ -70,7 +70,23 @@ export async function ensurePermissions(): Promise<boolean> {
   return req.granted;
 }
 
-function randomTitle(): string {
+/**
+ * Kişisel başlık oranı — her bildirim kişiselleşirse tekrar hissi verir,
+ * hiç kişiselleşmezse özellik görünmez.
+ */
+const GOAL_TITLE_RATIO = 0.3;
+
+/** Test için export edildi; üretimde yalnızca applySchedule çağırır. */
+export function randomTitle(goal: string | null): string {
+  // W0.c tuzağı: %{goal} şablonu parametresiz çözülürse çıktı "[missing …]" olur
+  // ve bildirimde aynen görünür — hedef yokken goalTitles havuzuna ASLA girilmez.
+  if (goal) {
+    const goalTitles = i18n.t('notifications.goalTitles') as unknown as string[];
+    if (Array.isArray(goalTitles) && goalTitles.length > 0 && Math.random() < GOAL_TITLE_RATIO) {
+      const idx = Math.floor(Math.random() * goalTitles.length);
+      return i18n.t(`notifications.goalTitles.${idx}`, { goal });
+    }
+  }
   const titles = i18n.t('notifications.titles') as unknown as string[];
   if (Array.isArray(titles) && titles.length > 0) {
     return titles[Math.floor(Math.random() * titles.length)];
@@ -173,7 +189,7 @@ export async function applySchedule(settings: Settings): Promise<void> {
       const body = quoteDisplayText(quote, i18n.locale);
       await Notifications.scheduleNotificationAsync({
         content: {
-          title: randomTitle(),
+          title: randomTitle(settings.goal),
           body,
           subtitle: `${localizeAuthor(quote.author, i18n.locale)} · ${localizeOrigin(quote.origin, i18n.locale)}`,
           data: { quoteId },

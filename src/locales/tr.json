@@ -24,6 +24,12 @@
     "preferences": {
       "title": "Ne arıyorsun?",
       "body": "Birden fazla seç. Sözleri buna göre göstereceğiz — istediğin zaman değiştir."
+    },
+    "goal": {
+      "title": "Neyi bırakmak üzeresin?",
+      "body": "Adını koy. Adı olmayan şey seni sessizce yener.",
+      "placeholder": "sigara, erteleme, pes etmek…",
+      "skipHint": "İstersen boş bırak. Ama yazarsan, sana onunla sesleniriz."
     }
   },
   "home": {
@@ -139,6 +145,11 @@
       "cardTitle": "DriftStop Pro",
       "cardBenefits": "Reklamsız kullanım · 3.325+ premium söz, 18 koleksiyon · Günde 10’a kadar hatırlatma",
       "cardCta": "Pro’ya geç"
+    },
+    "goal": {
+      "label": "Hedefin",
+      "placeholder": "Adını koy…",
+      "hint": "Bildirimlerin bir kısmı bunu yüzüne söyler. Silersen kişiselleştirme durur."
     }
   },
   "notifications": {
@@ -151,6 +162,13 @@
       "→ Geri dön.",
       "Ateşini söndürme.",
       "Sürükleniyorsun."
+    ],
+    "goalTitles": [
+      "%{goal} seni yenmesin.",
+      "Unutma: %{goal}.",
+      "Mesele şu: %{goal}.",
+      "%{goal} pes etmedi. Sen?",
+      "Yine %{goal}? Hayır."
     ],
     "permissionTitle": "Bildirim İzni",
     "permissionBody": "Gün içinde seni uyarmamız için izne ihtiyacımız var.",

@@ -19,6 +19,21 @@ export type Frequency = (typeof FREQUENCY_OPTIONS)[number];
  */
 export const FREE_FREQUENCY_MAX: Frequency = 3;
 
+/**
+ * Hedef metninin üst sınırı — bildirim başlığı şablonlarına (%{goal}) giriyor;
+ * 32 karakter + en uzun şablon eki Android'de tek satırda kalıyor.
+ */
+export const GOAL_MAX_LENGTH = 32;
+
+/**
+ * Serbest hedef girdisini tek noktadan normalize eder: trim + üst sınır, boşsa null.
+ * `maxLength` platformca uygulanıyor ama tek doğruluk noktası kayıt anıdır
+ * (yapıştırma/IME uç durumlarına güvenilmez).
+ */
+export function normalizeGoal(text: string): string | null {
+  return text.trim().slice(0, GOAL_MAX_LENGTH) || null;
+}
+
 export type Settings = {
   notificationsEnabled: boolean;
   frequency: Frequency;
@@ -31,6 +46,8 @@ export type Settings = {
   language: LanguageCode;
   /** Seçili tema tag'leri. Boş = hepsi (filtre yok). */
   themes: QuoteTag[];
+  /** Kullanıcının bırakmaya çalıştığı şey ("sigara" vb.). null = kişiselleştirme yok. */
+  goal: string | null;
 };
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -44,6 +61,7 @@ export const DEFAULT_SETTINGS: Settings = {
   themeMode: 'dark',
   language: 'tr',
   themes: [],
+  goal: null,
 };
 
 /** Bitiş, başlangıçtan en az bu kadar dakika sonra olmalı (2 saat). */

@@ -24,6 +24,12 @@
     "preferences": {
       "title": "¿Qué buscas?",
       "body": "Elige varios. Mostraremos frases acordes — cámbialo cuando quieras."
+    },
+    "goal": {
+      "title": "¿Qué estás a punto de dejar?",
+      "body": "Ponle nombre. Lo que no tiene nombre te vence en silencio.",
+      "placeholder": "fumar, procrastinar, rendirte…",
+      "skipHint": "Déjalo en blanco si quieres. Pero si le pones nombre, te lo diremos a la cara."
     }
   },
   "home": {
@@ -139,6 +145,11 @@
       "cardTitle": "DriftStop Pro",
       "cardBenefits": "Sin anuncios · Más de 3.325 citas premium en 18 packs · Hasta 10 recordatorios diarios",
       "cardCta": "Hazte Pro"
+    },
+    "goal": {
+      "label": "Tu lucha",
+      "placeholder": "Ponle nombre…",
+      "hint": "Algunas notificaciones te lo echarán en cara. Si lo borras, se detienen."
     }
   },
   "notifications": {
@@ -151,6 +162,13 @@
       "→ Vuelve.",
       "No apagues tu fuego.",
       "Te estás desviando."
+    ],
+    "goalTitles": [
+      "No dejes que %{goal} gane.",
+      "Recuerda: %{goal}.",
+      "Esto va de %{goal}.",
+      "%{goal} no se rindió. ¿Y tú?",
+      "¿Otra vez %{goal}? No."
     ],
     "permissionTitle": "Permiso de notificaciones",
     "permissionBody": "Necesitamos permiso para avisarte durante el día.",

@@ -24,6 +24,12 @@
     "preferences": {
       "title": "",
       "body": ""
+    },
+    "goal": {
+      "title": "",
+      "body": "",
+      "placeholder": "",
+      "skipHint": ""
     }
   },
   "home": {
@@ -117,6 +123,11 @@
     },
     "account": {
       "appleRelayNote": "これは DriftStop 用に Apple が発行した非公開の転送アドレスです。ここ宛のメールは実際の受信箱に届きます。"
+    },
+    "goal": {
+      "label": "",
+      "placeholder": "",
+      "hint": ""
     }
   },
   "notifications": {
@@ -124,6 +135,13 @@
       "",
       "",
       "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "goalTitles": [
       "",
       "",
       "",

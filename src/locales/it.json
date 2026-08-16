@@ -24,6 +24,12 @@
     "preferences": {
       "title": "Cosa cerchi?",
       "body": "Scegline più di uno. Mostreremo frasi adatte — modificabile quando vuoi."
+    },
+    "goal": {
+      "title": "Cosa stai per lasciare?",
+      "body": "Dagli un nome. Ciò che non ha nome ti batte in silenzio.",
+      "placeholder": "fumare, rimandare, mollare…",
+      "skipHint": "Lascia vuoto se vuoi. Ma se gli dai un nome, te lo diremo in faccia."
     }
   },
   "home": {
@@ -139,6 +145,11 @@
       "cardTitle": "DriftStop Pro",
       "cardBenefits": "Niente annunci · Oltre 3.325 citazioni premium in 18 pacchetti · Fino a 10 promemoria al giorno",
       "cardCta": "Passa a Pro"
+    },
+    "goal": {
+      "label": "La tua lotta",
+      "placeholder": "Dagli un nome…",
+      "hint": "Alcune notifiche te lo sbatteranno in faccia. Cancellalo e si fermano."
     }
   },
   "notifications": {
@@ -151,6 +162,13 @@
       "→ Torna indietro.",
       "Non spegnere il tuo fuoco.",
       "Stai andando alla deriva."
+    ],
+    "goalTitles": [
+      "Non lasciare che %{goal} vinca.",
+      "Ricorda: %{goal}.",
+      "Si tratta di %{goal}.",
+      "%{goal} non ha mollato. E tu?",
+      "Ancora %{goal}? No."
     ],
     "permissionTitle": "Permesso notifiche",
     "permissionBody": "Ci serve il permesso per scuoterti durante la giornata.",

@@ -24,6 +24,12 @@
     "preferences": {
       "title": "Wonach suchst du?",
       "body": "Wähle mehrere. Wir zeigen passende Zitate — jederzeit änderbar."
+    },
+    "goal": {
+      "title": "Wovon willst du gerade loskommen?",
+      "body": "Gib ihm einen Namen. Was keinen Namen hat, besiegt dich leise.",
+      "placeholder": "rauchen, aufschieben, aufgeben…",
+      "skipHint": "Lass es leer, wenn du willst. Aber wenn du es benennst, sprechen wir dich damit an."
     }
   },
   "home": {
@@ -139,6 +145,11 @@
       "cardTitle": "DriftStop Pro",
       "cardBenefits": "Keine Werbung · Über 3.325 Premium-Zitate in 18 Paketen · Bis zu 10 tägliche Erinnerungen",
       "cardCta": "Pro werden"
+    },
+    "goal": {
+      "label": "Dein Kampf",
+      "placeholder": "Gib ihm einen Namen…",
+      "hint": "Manche Mitteilungen halten dir das vor. Löschst du es, hört das auf."
     }
   },
   "notifications": {
@@ -151,6 +162,13 @@
       "→ Komm zurück.",
       "Lass dein Feuer nicht ausgehen.",
       "Du treibst ab."
+    ],
+    "goalTitles": [
+      "Lass %{goal} nicht gewinnen.",
+      "Vergiss nicht: %{goal}.",
+      "Darum geht es: %{goal}.",
+      "%{goal} gibt nicht auf. Du?",
+      "Schon wieder %{goal}? Nein."
     ],
     "permissionTitle": "Mitteilungen erlauben",
     "permissionBody": "Wir brauchen die Erlaubnis, um dich im Lauf des Tages aufzurütteln.",

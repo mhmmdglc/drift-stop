@@ -61,6 +61,22 @@ describe('useSettings', () => {
     expect(mockApplySchedule).toHaveBeenCalledTimes(1);
   });
 
+  it('fills goal as null when the stored settings predate the field (no migration needed)', async () => {
+    // Eski sürümden kalan diskteki obje `goal` alanını hiç bilmiyor; merge
+    // (`{...DEFAULT_SETTINGS, ...stored}`) varsayımı her yeni alanda testle kanıtlanır.
+    await AsyncStorage.setItem(
+      StorageKeys.settings,
+      JSON.stringify({ language: 'en', frequency: 10, themeMode: 'light' })
+    );
+
+    const { result } = await renderHook(() => useSettings(), { wrapper: SettingsProvider });
+    await waitFor(() => expect(result.current.loaded).toBe(true));
+
+    expect(result.current.settings.goal).toBeNull();
+    // Eski alanlar da kaybolmamalı — merge tek yönlü ezmemeli.
+    expect(result.current.settings.frequency).toBe(10);
+  });
+
   it('throws a clear error when used outside SettingsProvider', async () => {
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     await expect(renderHook(() => useSettings())).rejects.toThrow(

@@ -1,6 +1,9 @@
 /// <reference types="jest" />
 // Tip-import derlemede silinir → jest.mock hoisting'inden etkilenmez, en üstte durabilir.
 import type { Quote } from '@/types/quote';
+// i18n mock'lanmıyor ve jest.mock çağrıları babel'ce bunun üstüne taşınır —
+// gerçek çeviri dosyalarıyla çalışır (interpolasyon davranışı gerçek motorda sınanır).
+import i18n from '@/i18n';
 /**
  * `scheduler.ts` — uygulamanın çekirdeği ve bugüne kadar SIFIR testi vardı.
  * Buradaki bir regresyon sessizdir: bildirimler yalnızca gelmemeye başlar, hiçbir
@@ -58,6 +61,7 @@ import {
   applySchedule,
   cancelAll,
   ensurePermissions,
+  randomTitle,
   rescheduleIfNeeded,
   setupAndroidChannel,
   syncDeliveredToHistory,
@@ -354,6 +358,85 @@ describe('applySchedule — rotasyonda tekrar önleme', () => {
     const ids = scheduledQuoteIds();
     expect(ids.length).toBeGreaterThan(0);
     for (const id of ids) expect(id).toBe(1);
+  });
+});
+
+describe('randomTitle — hedef kişiselleştirmesi', () => {
+  // W0.c tuzağı: %{goal} parametresiz çözülürse çıktı "[missing …]" olur ve
+  // bildirim başlığında aynen görünür. Bu describe o tuzağın regresyon bekçisi.
+  let randomSpy: jest.SpyInstance | null = null;
+
+  afterEach(() => {
+    randomSpy?.mockRestore();
+    randomSpy = null;
+  });
+
+  it('hedef null iken hiçbir Math.random dalında goalTitles havuzuna girmez', () => {
+    const titles = i18n.t('notifications.titles') as unknown as string[];
+    // Oran zarının her iki tarafı ve uç değerler: dal ne olursa olsun jenerik havuz.
+    for (const r of [0, 0.1, 0.29, 0.3, 0.7, 0.999]) {
+      randomSpy = jest.spyOn(Math, 'random').mockReturnValue(r);
+      const title = randomTitle(null);
+      expect({ r, title }).toEqual({ r, title: expect.not.stringContaining('missing') });
+      expect(titles).toContain(title);
+      randomSpy.mockRestore();
+      randomSpy = null;
+    }
+  });
+
+  it('hedef varken oran zarı %30 altındaysa şablonu hedefle interpolate eder', () => {
+    // 1. çağrı oran zarı (<0.3 → kişisel havuz), 2. çağrı şablon seçimi.
+    randomSpy = jest.spyOn(Math, 'random').mockReturnValueOnce(0.1).mockReturnValueOnce(0);
+    const title = randomTitle('sigara');
+    expect(title).toContain('sigara');
+    expect(title).not.toContain('missing');
+  });
+
+  it('hedef varken oran zarı %30 üstündeyse jenerik havuzdan seçer', () => {
+    const titles = i18n.t('notifications.titles') as unknown as string[];
+    randomSpy = jest.spyOn(Math, 'random').mockReturnValueOnce(0.9).mockReturnValueOnce(0.5);
+    const title = randomTitle('sigara');
+    expect(titles).toContain(title);
+  });
+
+  it('her goalTitles şablonu eksik parametre bırakmadan çözülür', () => {
+    const goalTitles = i18n.t('notifications.goalTitles') as unknown as string[];
+    expect(goalTitles.length).toBeGreaterThan(0);
+    goalTitles.forEach((_, idx) => {
+      randomSpy = jest
+        .spyOn(Math, 'random')
+        .mockReturnValueOnce(0)
+        .mockReturnValueOnce(idx / goalTitles.length);
+      const title = randomTitle('erteleme');
+      expect({ idx, title }).toEqual({ idx, title: expect.stringContaining('erteleme') });
+      expect(title).not.toContain('missing');
+      randomSpy?.mockRestore();
+      randomSpy = null;
+    });
+  });
+
+  it('applySchedule hedefi başlıklara geçirir ve hiçbir başlıkta "[missing" kalmaz', async () => {
+    const titlesOf = (): string[] =>
+      mockNotifications.scheduleNotificationAsync.mock.calls.map(
+        (c) => (c[0] as { content: { title: string } }).content.title
+      );
+
+    await applySchedule(settings({ frequency: 10, goal: 'sigara' }));
+    const withGoal = titlesOf();
+    expect(withGoal.length).toBeGreaterThan(0);
+    for (const title of withGoal) expect(title).not.toContain('missing');
+
+    jest.clearAllMocks();
+    mockNotifications.getAllScheduledNotificationsAsync.mockResolvedValue([]);
+    mockNotifications.scheduleNotificationAsync.mockResolvedValue('id');
+
+    await applySchedule(settings({ frequency: 10, goal: null }));
+    const goalTitles = i18n.t('notifications.goalTitles') as unknown as string[];
+    for (const title of titlesOf()) {
+      expect(title).not.toContain('missing');
+      // Hedefsiz kullanıcıya şablon iskeleti bile sızmamalı.
+      expect(goalTitles).not.toContain(title);
+    }
   });
 });
 

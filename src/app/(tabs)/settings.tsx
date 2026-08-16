@@ -6,6 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { FrequencySelector } from '@/components/FrequencySelector';
 import { PaperBackground } from '@/components/PaperBackground';
+import { SketchTextInput } from '@/components/SketchTextInput';
 import { SketchToggle } from '@/components/SketchToggle';
 import { SketchUnderline } from '@/components/SketchUnderline';
 import { ThemeChips } from '@/components/ThemeChips';
@@ -22,7 +23,14 @@ import { useSettings } from '@/hooks/useSettings';
 import { useTheme } from '@/hooks/use-theme';
 import { isAppleRelayEmail } from '@/lib/socialAuth';
 import type { QuoteTag } from '@/types/quote';
-import { FREE_FREQUENCY_MAX, FREQUENCY_OPTIONS, type Frequency, type ThemeMode } from '@/types/settings';
+import {
+  FREE_FREQUENCY_MAX,
+  FREQUENCY_OPTIONS,
+  GOAL_MAX_LENGTH,
+  normalizeGoal,
+  type Frequency,
+  type ThemeMode,
+} from '@/types/settings';
 import { isValidWindow, toMinutes } from '@/utils/timeUtils';
 
 const THEME_MODES: ThemeMode[] = ['dark', 'light', 'system'];
@@ -94,7 +102,9 @@ export default function SettingsScreen() {
   return (
     <PaperBackground>
       <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
-        <ScrollView contentContainerStyle={styles.content}>
+        {/* Klavye açıkken başka bir kontrole ilk dokunuş yutulmasın (hedef input'u
+            blur → commit yine de çalışır). */}
+        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
           <ThemedText variant="heading">{t('settings.screenTitle')}</ThemedText>
 
           {/* Hesap — en üstte: global ürün deseni (profil + upgrade önce gelir) */}
@@ -187,6 +197,16 @@ export default function SettingsScreen() {
               {t('settings.premium.packsLink')}
             </ThemedText>
           </Pressable>
+
+          {/* Hedef — kimlik beyanı: ayar mekaniğinin üstünde, monetizasyon
+              yüzeylerinin altında durur. `key`: kaydedilmiş değer dışarıdan
+              değişince (ilk diskten yükleme, commit sonrası trim) taslak state'i
+              remount ile hizalanır — effect içinde setState'e gerek kalmaz. */}
+          <GoalSection
+            key={settings.goal ?? ''}
+            goal={settings.goal}
+            onCommit={(next) => update({ goal: next })}
+          />
 
           {/* Bildirimler */}
           <Section title={t('settings.sections.notifications')}>
@@ -365,6 +385,46 @@ export default function SettingsScreen() {
         </ScrollView>
       </SafeAreaView>
     </PaperBackground>
+  );
+}
+
+function GoalSection({
+  goal,
+  onCommit,
+}: {
+  goal: string | null;
+  onCommit: (next: string | null) => void;
+}) {
+  const { t } = useTranslation();
+  const [draft, setDraft] = useState(goal ?? '');
+
+  const commit = () => {
+    const next = normalizeGoal(draft);
+    // 'goal' SCHEDULE_KEYS'te: her update 30 bildirimlik planı iptal edip yeniden
+    // kurar, o yüzden yalnızca değer gerçekten değiştiyse yazılır.
+    if (next !== goal) onCommit(next);
+  };
+
+  // Görüntüle/düzenle ayrımı yok — satır her zaman input; boşaltıp çıkmak = silmek
+  // (hint bunu söylüyor, ayrı "sil" butonu gürültü olurdu).
+  return (
+    <Section title={t('settings.goal.label')}>
+      <SketchTextInput
+        value={draft}
+        onChangeText={setDraft}
+        placeholder={t('settings.goal.placeholder')}
+        maxLength={GOAL_MAX_LENGTH}
+        variant="quote"
+        returnKeyType="done"
+        onSubmitEditing={commit}
+        onBlur={commit}
+        accessibilityLabel={t('settings.goal.label')}
+        accessibilityHint={t('settings.goal.hint')}
+      />
+      <ThemedText variant="label" tone="textMuted">
+        {t('settings.goal.hint')}
+      </ThemedText>
+    </Section>
   );
 }
 

@@ -24,6 +24,12 @@
     "preferences": {
       "title": "",
       "body": ""
+    },
+    "goal": {
+      "title": "",
+      "body": "",
+      "placeholder": "",
+      "skipHint": ""
     }
   },
   "home": {
@@ -117,6 +123,11 @@
     },
     "account": {
       "appleRelayNote": "هذا عنوان التحويل الخاص من Apple لتطبيق DriftStop. الرسائل المُرسَلة إليه تصل إلى بريدك الحقيقي."
+    },
+    "goal": {
+      "label": "",
+      "placeholder": "",
+      "hint": ""
     }
   },
   "notifications": {
@@ -124,6 +135,13 @@
       "",
       "",
       "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "goalTitles": [
       "",
       "",
       "",

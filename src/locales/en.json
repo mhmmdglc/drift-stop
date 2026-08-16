@@ -24,6 +24,12 @@
     "preferences": {
       "title": "What are you looking for?",
       "body": "Pick more than one. We'll show quotes to match — change it anytime."
+    },
+    "goal": {
+      "title": "What are you about to quit?",
+      "body": "Name it. What has no name beats you quietly.",
+      "placeholder": "smoking, procrastination, giving up…",
+      "skipHint": "Leave it blank if you want. But if you name it, we'll call you by it."
     }
   },
   "home": {
@@ -139,6 +145,11 @@
       "cardTitle": "DriftStop Pro",
       "cardBenefits": "No ads · 3,325+ premium quotes in 18 packs · Up to 10 daily reminders",
       "cardCta": "Go Pro"
+    },
+    "goal": {
+      "label": "Your fight",
+      "placeholder": "Name it…",
+      "hint": "Some notifications will throw this back at you. Clear it and they stop."
     }
   },
   "notifications": {
@@ -151,6 +162,13 @@
       "→ Come back.",
       "Don't let your fire die.",
       "You're drifting."
+    ],
+    "goalTitles": [
+      "Don't let %{goal} win.",
+      "Remember: %{goal}.",
+      "This is about %{goal}.",
+      "%{goal} didn't quit. You?",
+      "%{goal} again? No."
     ],
     "permissionTitle": "Notification Access",
     "permissionBody": "We need permission to reach you through the day.",

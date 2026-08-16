@@ -24,6 +24,12 @@
     "preferences": {
       "title": "Que cherches-tu ?",
       "body": "Choisis-en plusieurs. On adaptera les citations — modifiable à tout moment."
+    },
+    "goal": {
+      "title": "Qu'es-tu sur le point d'arrêter ?",
+      "body": "Donne-lui un nom. Ce qui n'a pas de nom te bat en silence.",
+      "placeholder": "fumer, procrastiner, abandonner…",
+      "skipHint": "Laisse vide si tu veux. Mais si tu le nommes, on te le rappellera en face."
     }
   },
   "home": {
@@ -139,6 +145,11 @@
       "cardTitle": "DriftStop Pro",
       "cardBenefits": "Sans publicité · Plus de 3 325 citations premium dans 18 packs · Jusqu’à 10 rappels par jour",
       "cardCta": "Passer en Pro"
+    },
+    "goal": {
+      "label": "Ton combat",
+      "placeholder": "Donne-lui un nom…",
+      "hint": "Certaines notifications te le renverront en face. Efface-le et ça s'arrête."
     }
   },
   "notifications": {
@@ -151,6 +162,13 @@
       "→ Reviens.",
       "N'éteins pas ta flamme.",
       "Tu es en train de dériver."
+    ],
+    "goalTitles": [
+      "Ne laisse pas %{goal} gagner.",
+      "Rappelle-toi : %{goal}.",
+      "Tout est là : %{goal}.",
+      "%{goal} n'a pas cédé. Et toi ?",
+      "Encore %{goal} ? Non."
     ],
     "permissionTitle": "Autorisation des notifications",
     "permissionBody": "On a besoin de ton autorisation pour te prévenir dans la journée.",
