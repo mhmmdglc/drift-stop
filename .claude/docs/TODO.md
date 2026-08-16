@@ -194,6 +194,15 @@ varsayılan listede saklıyor; Play ile fiyat eşitlemeye çalışan biri burada
 sonra bir build, sonra abonelik grubunun inceleme ekran görüntüsü (paywall'ın dolması
 `appl_`'a bağlı olduğu için ondan önce üretilemez).
 
+## Known, accepted limitation (2026-08-16 device QA)
+
+- **Android widget's system-picker description is hardcoded Turkish** ("Günün sözü", `app.json`'s
+  `react-native-android-widget` plugin config). This string is baked into a native resource at
+  prebuild time — the system's "Add Widget" picker reads it before any JS/i18n runs, unlike the
+  widget's own runtime strings (which do use `i18n.t(...)`). A real fix needs per-locale Android
+  product flavors/resource overlays; not attempted given the low visibility (users rarely browse
+  the system widget picker) and real engineering cost. Revisit if it becomes a support complaint.
+
 ## Needs device QA (not blocked on you)
 
 - **W1.1/W1.2 (2026-08-16 QA pass) — two criteria have no on-device surface to verify against.**
