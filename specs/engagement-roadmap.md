@@ -59,23 +59,32 @@ paralel yürüyebilir.
 Üç API varsayımı var; üçü de yanlışsa ilgili işin tasarımı değişir. Her spike'ın çıktısı bu
 dokümana işlenen bir karar cümlesidir.
 
-- [ ] **W0.a — Bildirim aksiyon butonları (W1.3 + W1.4'ün temeli).** Expo v56
-      `expo-notifications` dokümanından doğrula: `setNotificationCategoryAsync` Android'de
-      destekleniyor mu; `opensAppToForeground: false` ile basılan buton, **uygulama kapalıyken**
-      `addNotificationResponseReceivedListener`'a ne zaman düşüyor (anında headless mı, yoksa bir
-      sonraki açılışta `getLastNotificationResponseAsync` ile mi)? Dev client'ta 5 satırlık deneme:
-      kategori kur, bildirimi zamanla, uygulamayı öldür, butona bas, davranışı logla.
-      - Sonuç "anında düşmüyor" ise: aksiyonlar `opensAppToForeground: true` + hedef route ile
-        çalışır (aşağıdaki her özellikte Fallback olarak yazıldı) — kullanıcı için hâlâ tek dokunuş,
-        sadece uygulama öne gelir.
-- [ ] **W0.b — Widget'ta ikinci tıklama alanı (W2.2'nin temeli).** `react-native-android-widget`
-      dokümanından doğrula: bir `FlexWidget` alt öğesine ayrı `clickAction`/`clickActionData` verip
-      `OPEN_URI` ile `driftstop://sos` açtırılabiliyor mu? (Mevcut widget zaten
-      `driftstop://quote/<id>` açıyor — `src/widgets/DriftStopWidget.tsx:41` — yani URI açma çalışıyor;
-      doğrulanacak olan *aynı widget'ta iki ayrı tıklama bölgesi*.)
-- [ ] **W0.c — i18n interpolasyonu (W1.2'nin temeli).** Projedeki `i18n-js` kurulumunda
-      `t('key', { goal })` + `%{goal}` sözdiziminin çalıştığını mevcut bir anahtar üzerinde doğrula
-      (kod tabanında bugün interpolasyonlu anahtar yok; ilk kullanan biz olacağız).
+- [x] **W0.a — Bildirim aksiyon butonları (W1.3 + W1.4'ün temeli).** **SONUÇ (2026-08-16,
+      doküman doğrulaması):** `setNotificationCategoryAsync` v56 dokümanında "Supported platforms:
+      Android, iOS". Uygulama kapalıyken aksiyon dokunuşu için dokümanın cümlesi: *"Only on Android,
+      the task also runs in response to a notification action tap when the app is backgrounded or
+      terminated"* — yani headless işleme `Notifications.registerTaskAsync` + `expo-task-manager`
+      ile mümkün (registerTaskAsync zaten expo-task-manager üstünde çalışıyor).
+      - **Karar:** W1.4 `expo-task-manager` bağımlılığını ekler; aksiyon işleme birincil olarak
+        background task'ta yapılır, `getLastNotificationResponseAsync` açılış mutabakatı yedek kalır
+        (dikkat: yalnızca SON cevabı tutar — kapalıyken iki ❤️ basılırsa teki kurtulur, bu yüzden
+        birincil yol background task'tır). `opensAppToForeground` için doküman varsayılan değer
+        vermiyor → her aksiyonda AÇIKÇA yazılır.
+      - **Doğrulanmadı:** çalışma zamanı davranışı. Mevcut dev client'ta denenemez — `expo-task-manager`
+        kurulu değil, native modül binary'de yok; ilk kanıt W1.4'ün yeni dev client build'inde alınır.
+        Dokümandaki davranış sahada çıkmazsa fallback tasarımı (aksiyonlar `opensAppToForeground: true`)
+        aynen geçerli, W1.3/W1.4 kabul kriterleri fallback'le de sağlanır.
+- [x] **W0.b — Widget'ta ikinci tıklama alanı (W2.2'nin temeli).** **SONUÇ (2026-08-16, kurulu
+      paket 0.20.3'ün tip tanımlarından):** `clickAction`/`clickActionData` her widget öğesinin ortak
+      prop'u (`common-internal.props.d.ts`), `'OPEN_URI'` + `{ uri }` destekleniyor
+      (`click-action.d.ts`); mevcut widget kökte zaten `OPEN_URI` kullanıyor
+      (`DriftStopWidget.tsx:45-46`). **Aynı widget'ta birden çok tıklama bölgesi API olarak mümkün →
+      W2.2'nin widget girişi tasarlandığı gibi yapılır.** Ekranda davranış W2.2 cihaz-QA'sında doğrulanır.
+- [x] **W0.c — i18n interpolasyonu (W1.2'nin temeli).** **SONUÇ (2026-08-16, yerel çalıştırma,
+      i18n-js 4.5.3):** `t('key', { goal })` + `%{goal}` tr/en'de doğru çalışıyor. **Tuzak:** parametre
+      verilmezse çıktı `[missing "%{goal}" value]` — bu metin bildirimde ASLA görünmemeli; `randomTitle`
+      hedef `null` iken `goalTitles` havuzuna hiç girmez ve bunu sabitleyen test yazılır (W1.2 test
+      listesinde zaten var, bu tuzak gerekçesidir).
 
 ---
 
@@ -242,6 +251,12 @@ hammaddesidir.
 `{ date: string, count: number }`; `StorageKeys.engagementLog = 'driftstop:engagementLog'` →
 `{ hour: number, at: number }[]` (cap 200 — W3.2 bunu tüketecek, log'u bu işte başlat ki veri birikmeye başlasın).
 
+- [ ] **Bağımlılık (W0.a kararı):** `expo-task-manager` eklenir; `index.js`'te
+      `TaskManager.defineTask` ile aksiyon işleyici tanımlanır (widget handler'ın oradaki kayıt
+      deseniyle aynı mantık), boot'ta `Notifications.registerTaskAsync`. İşleyicinin çekirdeği
+      `handleNotificationAction` saf fonksiyonudur — hem background task hem foreground listener
+      aynı fonksiyonu çağırır. **Yeni dev client build gerektirir** (native modül); W1.4'ün cihaz
+      QA'sı bu build üstünde koşulur ve W0.a'nın çalışma zamanı kanıtı burada alınır.
 - [ ] Kategori: `setupNotificationCategories`'e `'quote'` kategorisi —
       `favorite` (`buttonTitle: t('notifications.actionFavorite')`) ve
       `oneMore` (`t('notifications.actionOneMore')`).

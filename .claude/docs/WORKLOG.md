@@ -8,6 +8,15 @@ The orchestrator writes an entry **when an agent is dispatched** and updates it 
 
 ---
 
+## 2026-08-16
+
+| Time | Agent | Task | Outcome | Evidence |
+|---|---|---|---|---|
+| — | orchestrator | Engagement dalgası spec'i yazıldı ([`specs/engagement-roadmap.md`](../../specs/engagement-roadmap.md)) | Done — 8 özellik, 3 dalga, dosya seviyesinde TODO + kabul kriterleri | `299f4cf` |
+| — | orchestrator | **W0 spike'ları** (spec §W0) | **W0.a doküman-doğrulandı:** kategori/aksiyonlar Android'de var; kapalı uygulamada aksiyon işleme `registerTaskAsync` + `expo-task-manager` ister (kurulu değil → çalışma zamanı kanıtı W1.4 build'ine ertelendi, fallback tasarım hazır). **W0.b doğrulandı:** `clickAction` öğe başına prop (paket 0.20.3 tipleri) → widget'ta çoklu tıklama bölgesi mümkün. **W0.c doğrulandı:** `%{goal}` interpolasyonu çalışıyor (yerel çalıştırma); eksik parametre `[missing …]` basıyor — test zorunluluğu spec'e işlendi | Expo v56 dokümanı; `click-action.d.ts`; node çalıştırma çıktısı; spec güncellemesi bu commit'te |
+| — | orchestrator → ux-designer | W1.2 UI kararları (onboarding hedef adımı + Settings hedef satırı) | dispatched | — |
+| — | orchestrator → frontend-dev | W1.1 tekrar önleme (spec §W1.1) | dispatched | — |
+
 ## 2026-08-14
 
 | Time | Agent | Task | Outcome | Evidence |
