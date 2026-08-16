@@ -48,6 +48,8 @@ export type Settings = {
   themes: QuoteTag[];
   /** Kullanıcının bırakmaya çalıştığı şey ("sigara" vb.). null = kişiselleştirme yok. */
   goal: string | null;
+  /** Gece hesaplaşması bildirimi + Home şeridi açık mı. Kapatınca bildirim kurulmaz. */
+  reckoningEnabled: boolean;
 };
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -62,6 +64,7 @@ export const DEFAULT_SETTINGS: Settings = {
   language: 'tr',
   themes: [],
   goal: null,
+  reckoningEnabled: true,
 };
 
 /** Bitiş, başlangıçtan en az bu kadar dakika sonra olmalı (2 saat). */

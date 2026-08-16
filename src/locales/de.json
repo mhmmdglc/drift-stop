@@ -41,7 +41,11 @@
     "swipeHint": "Wisch oder tipp",
     "patience": "Das nächste kommt, wenn es Zeit ist. Sei geduldig.",
     "randomFromHistory": "Zufällig aus dem Verlauf",
-    "historyEmpty": "Noch kein Verlauf."
+    "historyEmpty": "Noch kein Verlauf.",
+    "reckoningWaiting": "Die heutige Abrechnung wartet",
+    "reckoningWeek": "Diese Woche %{resisted}/%{total}",
+    "reckoningA11yAnswered": "Abrechnung: %{streak} Tage in Folge durchgehalten, diese Woche %{resisted}/%{total}. Zum Öffnen tippen.",
+    "reckoningA11yPending": "Die heutige Abrechnung wartet. Zum Antworten tippen."
   },
   "quote": {
     "authorPrefix": "—",
@@ -150,6 +154,11 @@
       "label": "Dein Kampf",
       "placeholder": "Gib ihm einen Namen…",
       "hint": "Manche Mitteilungen halten dir das vor. Löschst du es, hört das auf."
+    },
+    "reckoning": {
+      "label": "Nächtliche Abrechnung",
+      "labelOff": "Nächtliche Abrechnung aus",
+      "hint": "Jeden Abend eine Frage: widerstanden oder abgedriftet? Die Wochenend-Ausnahme richtet sich nach der Einstellung unter Zeitplan."
     }
   },
   "notifications": {
@@ -353,5 +362,23 @@
       "permission": "Zum Sichern wird Zugriff auf die Fotos benötigt. Du kannst ihn in den Einstellungen geben.",
       "generic": "Etwas ist schiefgelaufen. Nochmal versuchen?"
     }
+  },
+  "reckoning": {
+    "notifTitle": "Die Abrechnung des Tages",
+    "notifBody": "Hast du heute widerstanden oder bist du abgedriftet?",
+    "actionResisted": "Widerstanden",
+    "actionDrifted": "Abgedriftet",
+    "title": "Die Abrechnung des Tages",
+    "question": "Hast du heute widerstanden oder bist du abgedriftet?",
+    "honestyHint": "Ein unbeantworteter Tag zählt ebenfalls als Abdriften.",
+    "answeredResisted": "Heute: Du hast widerstanden.",
+    "answeredDrifted": "Heute: Du bist abgedriftet.",
+    "streakLabel": "Tage in Folge durchgehalten",
+    "weekLabel": "Diese Woche: %{resisted}/%{total}",
+    "emptyHint": "Deine erste Abrechnung. Sie beginnt hier.",
+    "settingsLabel": "Möchtest du das ausschalten?",
+    "settingsLink": "Einstellungen",
+    "closeButton": "Schließen",
+    "a11yAnsweredToday": "Die heutige Antwort ist gespeichert: %{answer}"
   }
 }

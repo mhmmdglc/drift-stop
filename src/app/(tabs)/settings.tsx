@@ -239,6 +239,23 @@ export default function SettingsScreen() {
                 </ThemedText>
               )}
             </View>
+            {/* Ayrı bir Section DEĞİL: hesaplaşma teknik olarak günlük sözlerle AYNI
+                kanalda ve ana anahtar şemsiyesinde — ayrı bölüm yanlış bağımsızlık
+                izlenimi verir (`w1.3-ux.md` §5). */}
+            <Row label={
+              settings.reckoningEnabled
+                ? t('settings.reckoning.label')
+                : t('settings.reckoning.labelOff')
+            }>
+              <SketchToggle
+                value={settings.reckoningEnabled}
+                onChange={(v) => update({ reckoningEnabled: v })}
+                accessibilityLabel={t('settings.reckoning.label')}
+              />
+            </Row>
+            <ThemedText variant="label" tone="textMuted">
+              {t('settings.reckoning.hint')}
+            </ThemedText>
           </Section>
 
           {/* Zamanlama */}

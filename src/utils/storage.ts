@@ -15,6 +15,8 @@ export const StorageKeys = {
   trialStartedAt: 'driftstop:trialStartedAt',
   /** `/trial-ended` ekranı bir kez gösterildi mi. */
   trialEndedShown: 'driftstop:trialEndedShown',
+  /** Gece hesaplaşması günlüğü: `dateKey → 'resisted' | 'drifted'`. Bkz. utils/reckoning.ts */
+  reckoningLog: 'driftstop:reckoningLog',
 } as const;
 
 export async function getJSON<T>(key: string, fallback: T): Promise<T> {

@@ -15,6 +15,7 @@ import i18n from '@/i18n';
 // (modül require edildiğinde o const henüz başlatılmamış olur).
 jest.mock('expo-notifications', () => ({
   setNotificationChannelAsync: jest.fn(),
+  setNotificationCategoryAsync: jest.fn(),
   getPermissionsAsync: jest.fn(),
   requestPermissionsAsync: jest.fn(),
   scheduleNotificationAsync: jest.fn(),
@@ -64,10 +65,15 @@ import {
   randomTitle,
   rescheduleIfNeeded,
   setupAndroidChannel,
+  setupNotificationCategories,
   syncDeliveredToHistory,
   NOTIFICATION_CHANNEL_ID,
   TRIAL_CHANNEL_ID,
   TRIAL_NOTICE_KIND,
+  RECKONING_KIND,
+  RECKONING_CATEGORY,
+  RECKONING_ACTION_RESISTED,
+  RECKONING_ACTION_DRIFTED,
 } from '../scheduler';
 import { DEFAULT_SETTINGS, type Settings } from '@/types/settings';
 import { dateKey } from '@/utils/timeUtils';
@@ -76,11 +82,21 @@ const mockNotifications = ExpoNotifications as unknown as Record<string, jest.Mo
 
 const settings = (over: Partial<Settings> = {}): Settings => ({ ...DEFAULT_SETTINGS, ...over });
 
-/** Kurulan bildirimin `trigger.date`i (planlama döngüsünü doğrulamak için). */
+/**
+ * `Settings.reckoningEnabled` varsayılan `true` (W1.3) — `applySchedule` artık her
+ * plan gününe bir hesaplaşma bildirimi de ekliyor. Aşağıdaki söz-odaklı testler bunu
+ * bilmiyor olmalı (kendi describe bloğu var), o yüzden ölçümler yalnızca `quoteId`
+ * taşıyan çağrıları sayar — hesaplaşma çağrıları `content.data.quoteId` taşımaz.
+ */
+const isQuoteCall = (call: unknown[]) =>
+  typeof (call[0] as { content: { data?: { quoteId?: number } } }).content.data?.quoteId ===
+  'number';
+
+/** Kurulan SÖZ bildirimlerinin `trigger.date`i (planlama döngüsünü doğrulamak için). */
 const scheduledDates = (): Date[] =>
-  mockNotifications.scheduleNotificationAsync.mock.calls.map(
-    (c) => (c[0] as { trigger: { date: Date } }).trigger.date
-  );
+  mockNotifications.scheduleNotificationAsync.mock.calls
+    .filter(isQuoteCall)
+    .map((c) => (c[0] as { trigger: { date: Date } }).trigger.date);
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -91,6 +107,7 @@ beforeEach(() => {
   mockNotifications.cancelAllScheduledNotificationsAsync.mockResolvedValue(undefined);
   mockNotifications.cancelScheduledNotificationAsync.mockResolvedValue(undefined);
   mockNotifications.setNotificationChannelAsync.mockResolvedValue(undefined);
+  mockNotifications.setNotificationCategoryAsync.mockResolvedValue(undefined);
 });
 
 describe('ensurePermissions', () => {
@@ -208,7 +225,7 @@ describe('applySchedule', () => {
   it('frekans başına 3 günlük plan kurar ve hepsini diske yazar', async () => {
     await applySchedule(settings({ frequency: 3 }));
 
-    const count = mockNotifications.scheduleNotificationAsync.mock.calls.length;
+    const count = mockNotifications.scheduleNotificationAsync.mock.calls.filter(isQuoteCall).length;
     // Bugünün penceresi kısmen geçmiş olabilir → üst sınır 3 gün × 3, alt sınır 2 gün × 3.
     expect(count).toBeGreaterThanOrEqual(6);
     expect(count).toBeLessThanOrEqual(9);
@@ -218,13 +235,13 @@ describe('applySchedule', () => {
 
   it('daha yüksek frekans daha çok bildirim kurar', async () => {
     await applySchedule(settings({ frequency: 3 }));
-    const low = mockNotifications.scheduleNotificationAsync.mock.calls.length;
+    const low = mockNotifications.scheduleNotificationAsync.mock.calls.filter(isQuoteCall).length;
 
     jest.clearAllMocks();
     mockNotifications.getAllScheduledNotificationsAsync.mockResolvedValue([]);
     mockNotifications.scheduleNotificationAsync.mockResolvedValue('id');
     await applySchedule(settings({ frequency: 10 }));
-    const high = mockNotifications.scheduleNotificationAsync.mock.calls.length;
+    const high = mockNotifications.scheduleNotificationAsync.mock.calls.filter(isQuoteCall).length;
 
     expect(high).toBeGreaterThan(low);
   });
@@ -239,7 +256,7 @@ describe('applySchedule', () => {
   it('her bildirim günlük kanala ve quoteId verisiyle gider', async () => {
     await applySchedule(settings({ frequency: 3 }));
 
-    for (const call of mockNotifications.scheduleNotificationAsync.mock.calls) {
+    for (const call of mockNotifications.scheduleNotificationAsync.mock.calls.filter(isQuoteCall)) {
       const arg = call[0] as {
         content: { body: string; data: { quoteId: number } };
         trigger: { channelId: string };
@@ -295,9 +312,9 @@ describe('applySchedule — rotasyonda tekrar önleme', () => {
   };
 
   const scheduledQuoteIds = (): number[] =>
-    mockNotifications.scheduleNotificationAsync.mock.calls.map(
-      (c) => (c[0] as { content: { data: { quoteId: number } } }).content.data.quoteId
-    );
+    mockNotifications.scheduleNotificationAsync.mock.calls
+      .filter(isQuoteCall)
+      .map((c) => (c[0] as { content: { data: { quoteId: number } } }).content.data.quoteId);
 
   afterEach(() => {
     // Override'lar `clearAllMocks`tan sağ çıkar (mockClear implementasyonu silmez)
@@ -529,5 +546,127 @@ describe('syncDeliveredToHistory', () => {
 
     expect(history).toHaveLength(200);
     expect(history?.[0]).toBe(1);
+  });
+});
+
+describe('setupNotificationCategories', () => {
+  it('reckoning kategorisini iki aksiyonla kaydeder — ikisi de opensAppToForeground:false', async () => {
+    await setupNotificationCategories();
+
+    expect(mockNotifications.setNotificationCategoryAsync).toHaveBeenCalledWith(
+      RECKONING_CATEGORY,
+      [
+        {
+          identifier: RECKONING_ACTION_RESISTED,
+          buttonTitle: i18n.t('reckoning.actionResisted'),
+          options: { opensAppToForeground: false },
+        },
+        {
+          identifier: RECKONING_ACTION_DRIFTED,
+          buttonTitle: i18n.t('reckoning.actionDrifted'),
+          options: { opensAppToForeground: false },
+        },
+      ]
+    );
+  });
+
+  it('API reddederse sessizce geçer (eski cihaz/OS)', async () => {
+    mockNotifications.setNotificationCategoryAsync.mockRejectedValueOnce(new Error('nope'));
+
+    await expect(setupNotificationCategories()).resolves.toBeUndefined();
+  });
+});
+
+describe('applySchedule — gece hesaplaşması', () => {
+  const reckoningCalls = () =>
+    mockNotifications.scheduleNotificationAsync.mock.calls.filter(
+      (c) =>
+        (c[0] as { content: { data?: { kind?: string } } }).content.data?.kind === RECKONING_KIND
+    );
+
+  const quoteCalls = () =>
+    mockNotifications.scheduleNotificationAsync.mock.calls.filter(
+      (c) => typeof (c[0] as { content: { data?: { quoteId?: number } } }).content.data?.quoteId === 'number'
+    );
+
+  it('dil değişse de yeniden pişsin diye kategoriyi HER çağrıda yeniden kaydeder', async () => {
+    await applySchedule(settings());
+    expect(mockNotifications.setNotificationCategoryAsync).toHaveBeenCalled();
+  });
+
+  it('her plan gününe (hafta sonu hariç) bir hesaplaşma bildirimi ekler', async () => {
+    await applySchedule(settings());
+
+    // DAYS_AHEAD=3; bugünün penceresi kısmen geçmiş olabileceğinden alt sınır 2.
+    expect(reckoningCalls().length).toBeGreaterThanOrEqual(2);
+    expect(reckoningCalls().length).toBeLessThanOrEqual(3);
+  });
+
+  it('saat = pencere bitişi + 45 dk (23:15 altında kaldığı sürece)', async () => {
+    await applySchedule(settings({ startHour: 7, startMinute: 0, endHour: 9, endMinute: 0 }));
+
+    const calls = reckoningCalls();
+    expect(calls.length).toBeGreaterThan(0);
+    for (const c of calls) {
+      const date = (c[0] as { trigger: { date: Date } }).trigger.date;
+      expect(date.getHours() * 60 + date.getMinutes()).toBe(9 * 60 + 45);
+    }
+  });
+
+  it('23:15 üst sınırını aşmaz', async () => {
+    await applySchedule(settings({ startHour: 20, startMinute: 0, endHour: 23, endMinute: 0 }));
+
+    const calls = reckoningCalls();
+    expect(calls.length).toBeGreaterThan(0);
+    for (const c of calls) {
+      const date = (c[0] as { trigger: { date: Date } }).trigger.date;
+      expect(date.getHours()).toBe(23);
+      expect(date.getMinutes()).toBe(15);
+    }
+  });
+
+  it('disableWeekends açıkken hafta sonuna hesaplaşma da kurulmaz', async () => {
+    await applySchedule(settings({ frequency: 10, disableWeekends: true }));
+
+    for (const c of reckoningCalls()) {
+      const date = (c[0] as { trigger: { date: Date } }).trigger.date;
+      expect([0, 6]).not.toContain(date.getDay());
+    }
+  });
+
+  it('reckoningEnabled false iken hiç kurulmaz — sözler etkilenmez', async () => {
+    await applySchedule(settings({ reckoningEnabled: false }));
+
+    expect(reckoningCalls()).toHaveLength(0);
+    expect(quoteCalls().length).toBeGreaterThan(0);
+  });
+
+  it('notificationsEnabled false iken hesaplaşma da kurulmaz', async () => {
+    await applySchedule(settings({ notificationsEnabled: false }));
+
+    expect(reckoningCalls()).toHaveLength(0);
+  });
+
+  it('kanal/kategori/veri doğru, ve `scheduledQuoteIds` planına SIZMAZ (söz değildir)', async () => {
+    await applySchedule(settings());
+
+    const calls = reckoningCalls();
+    expect(calls.length).toBeGreaterThan(0);
+    for (const c of calls) {
+      const arg = c[0] as {
+        content: { title: string; body: string; categoryIdentifier: string; data: { kind: string; date: string } };
+        trigger: { channelId: string };
+      };
+      expect(arg.trigger.channelId).toBe(NOTIFICATION_CHANNEL_ID);
+      expect(arg.content.categoryIdentifier).toBe(RECKONING_CATEGORY);
+      expect(arg.content.data.kind).toBe(RECKONING_KIND);
+      expect(typeof arg.content.data.date).toBe('string');
+      expect(arg.content.title).toBe(i18n.t('reckoning.notifTitle'));
+      expect(arg.content.body).toBe(i18n.t('reckoning.notifBody'));
+    }
+
+    // scheduledQuoteIds diske yazılan planda quoteId sayısı kadar kayıt olmalı —
+    // hesaplaşma bildirimleri o planın İÇİNDE olmamalı.
+    expect((store['k:scheduled'] as unknown[]).length).toBe(quoteCalls().length);
   });
 });

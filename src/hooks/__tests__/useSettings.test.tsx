@@ -77,6 +77,32 @@ describe('useSettings', () => {
     expect(result.current.settings.frequency).toBe(10);
   });
 
+  it('fills reckoningEnabled as true when the stored settings predate the field (W1.3)', async () => {
+    // Eski stored objede alan hiç yok → DEFAULT_SETTINGS.reckoningEnabled (true) kazanmalı,
+    // aksi halde eski kullanıcılar hiç sormadan hesaplaşmasız kalır.
+    await AsyncStorage.setItem(
+      StorageKeys.settings,
+      JSON.stringify({ language: 'en', frequency: 10 })
+    );
+
+    const { result } = await renderHook(() => useSettings(), { wrapper: SettingsProvider });
+    await waitFor(() => expect(result.current.loaded).toBe(true));
+
+    expect(result.current.settings.reckoningEnabled).toBe(true);
+  });
+
+  it('reschedules when reckoningEnabled changes (it affects the nightly notification)', async () => {
+    const { result } = await renderHook(() => useSettings(), { wrapper: SettingsProvider });
+    await waitFor(() => expect(result.current.loaded).toBe(true));
+    mockApplySchedule.mockClear();
+
+    await act(async () => {
+      result.current.update({ reckoningEnabled: false });
+    });
+
+    expect(mockApplySchedule).toHaveBeenCalledTimes(1);
+  });
+
   it('throws a clear error when used outside SettingsProvider', async () => {
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
     await expect(renderHook(() => useSettings())).rejects.toThrow(

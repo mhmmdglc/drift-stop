@@ -32,6 +32,20 @@ export const TRIAL_CHANNEL_ID = 'driftstop_trial';
  * İşaretsiz eski bildirimler günlük sayılır (geriye dönük uyumluluk).
  */
 export const TRIAL_NOTICE_KIND = 'trial-notice';
+/**
+ * Gece hesaplaşması bildiriminin işareti (`data.kind`). `syncDeliveredToHistory`
+ * yalnızca `data.quoteId` okuduğu için bu tür doğal olarak geçmişe sızmaz — söz
+ * değildir, kotadan yemez (bkz. W1.3 kabul kriteri).
+ */
+export const RECKONING_KIND = 'reckoning';
+/** Bildirim aksiyon kategorisi kimliği — `setupNotificationCategories` ile kaydedilir. */
+export const RECKONING_CATEGORY = 'reckoning';
+export const RECKONING_ACTION_RESISTED = 'resisted';
+export const RECKONING_ACTION_DRIFTED = 'drifted';
+/** Hesaplaşma bildirimi hiçbir zaman bu saatten geç kurulmaz (23:15). */
+const RECKONING_LATEST_MIN = 23 * 60 + 15;
+/** Hesaplaşma, pencerenin bitişinden bu kadar dakika sonra gelir. */
+const RECKONING_OFFSET_MIN = 45;
 const DAYS_AHEAD = 3; // tampon: birkaç gün önceden zamanla
 const MIN_GAP = 90; // dakika
 const HISTORY_CAP = 200; // useHistory ile aynı
@@ -68,6 +82,36 @@ export async function ensurePermissions(): Promise<boolean> {
   if (!current.canAskAgain) return false;
   const req = await Notifications.requestPermissionsAsync();
   return req.granted;
+}
+
+/**
+ * Hesaplaşma bildiriminin aksiyon butonlarını kaydeder (W0.a: `expo-task-manager`
+ * ile headless işleme birincil yol, `getLastNotificationResponseAsync` yedek).
+ * Buton metinleri diskten değil o an aktif `i18n.locale`den pişiyor — dil
+ * değişince kategori de yeniden kaydedilmeli, bu yüzden `applySchedule` başında
+ * da çağrılır (`_layout.tsx`'teki boot çağrısı yalnızca ilk kurulum içindir).
+ * API cihaz/OS sürümüne göre desteklenmeyebilir → sessizce geç.
+ */
+export async function setupNotificationCategories(): Promise<void> {
+  if (!nativeFeaturesAvailable) return;
+  try {
+    await Notifications.setNotificationCategoryAsync(RECKONING_CATEGORY, [
+      {
+        identifier: RECKONING_ACTION_RESISTED,
+        buttonTitle: i18n.t('reckoning.actionResisted'),
+        // İdeal senaryo (W0.a): headless background task işler, uygulama hiç
+        // açılmaz — "tek dokunuşla günü kapat" vaadinin tam karşılığı.
+        options: { opensAppToForeground: false },
+      },
+      {
+        identifier: RECKONING_ACTION_DRIFTED,
+        buttonTitle: i18n.t('reckoning.actionDrifted'),
+        options: { opensAppToForeground: false },
+      },
+    ]);
+  } catch {
+    // kategori API'si yoksa (eski Expo Go/cihaz) sessizce geç
+  }
 }
 
 /**
@@ -146,6 +190,9 @@ export async function cancelAll(): Promise<void> {
  */
 export async function applySchedule(settings: Settings): Promise<void> {
   if (!nativeFeaturesAvailable) return;
+  // Buton metinleri aktif dilden pişiyor — dil değişip de kategori yeniden
+  // kaydedilmezse kullanıcı eski dildeki butonları görmeye devam eder.
+  await setupNotificationCategories();
   await cancelAll();
 
   if (!settings.notificationsEnabled) {
@@ -202,6 +249,30 @@ export async function applySchedule(settings: Settings): Promise<void> {
         },
       });
       scheduled.push({ id: quoteId, at: fireDate.getTime() });
+    }
+
+    // Gece hesaplaşması: söz DEĞİLDİR, `scheduled` planına eklenmez (syncDeliveredToHistory
+    // yalnızca data.quoteId okur, bu tür doğal olarak dışarıda kalır). Pencere bitişinden
+    // 45 dk sonra, 23:15 üst sınırıyla — hafta sonu kuralı yukarıdaki `continue` ile zaten
+    // uygulanmış oluyor (o gün için hiçbir bildirim kurulmuyor).
+    if (settings.reckoningEnabled) {
+      const reckoningMinute = Math.min(endMin + RECKONING_OFFSET_MIN, RECKONING_LATEST_MIN);
+      const reckoningFireDate = dateAt(day, reckoningMinute);
+      if (reckoningFireDate.getTime() > now.getTime() + 60_000) {
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: i18n.t('reckoning.notifTitle'),
+            body: i18n.t('reckoning.notifBody'),
+            data: { kind: RECKONING_KIND, date: dateKey(day) },
+            categoryIdentifier: RECKONING_CATEGORY,
+          },
+          trigger: {
+            type: Notifications.SchedulableTriggerInputTypes.DATE,
+            date: reckoningFireDate,
+            channelId: NOTIFICATION_CHANNEL_ID,
+          },
+        });
+      }
     }
   }
 

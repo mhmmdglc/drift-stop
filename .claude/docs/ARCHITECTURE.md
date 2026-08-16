@@ -41,6 +41,7 @@ From `package.json`:
 | Local DB | `expo-sqlite` `~56.0.5` | | file `driftstop.db` |
 | Storage | `@react-native-async-storage/async-storage` `2.2.0` | | all user state |
 | Notifications | `expo-notifications` `~56.0.18` | | local scheduled notifications only, no push server |
+| Background tasks | `expo-task-manager` `~56.0.25` | | **New (W1.3).** Headless handling of the reckoning notification's action buttons (`src/utils/reckoningTaskHandler.ts`). Its JS reads its native module at *import* time (`requireNativeModule('ExpoTaskManager')`), which throws synchronously in any dev client built before this dependency was added — `index.js` wraps the `require()` in `try/catch` for exactly that reason. **Requires a new dev client build**; untestable in the current one |
 | Widget | `react-native-android-widget` `^0.20.3` | | Android only |
 | Ads | `react-native-google-mobile-ads` `^16.3.4` | | AdMob banner + interstitial |
 | Purchases | `react-native-purchases` `^10.4.2` | | RevenueCat |
@@ -172,7 +173,8 @@ screen calls `ensurePermissions()` itself at `src/app/onboarding.tsx:44` before 
 | `useHistory` (`src/hooks/useHistory.tsx:40`) | Provider | Ordered list of *seen* quote ids + a read pointer | AsyncStorage `driftstop:seenHistory` (cap 200, `:19`) | `{ quote, count, loaded, record, goOlder, goNewer, randomFromHistory, canOlder, canNewer }` |
 | `useFavorites` (`src/hooks/useFavorites.ts:6`) | Hook (per-consumer state!) | Favourite quote ids | AsyncStorage `driftstop:favorites` | `{ ids, isFavorite, toggle, remove, loaded }` |
 | `usePacks` (`src/hooks/usePacks.tsx:28`) | Hook | Premium pack + author lists with `locked` flags | reads SQLite synchronously; refreshes from Supabase on mount | `{ packs, authors, loading, refresh }` |
-| `useNotificationObserver` (`src/hooks/useNotifications.ts:35`) | Hook | Notification-tap routing | none | `void` |
+| `useNotificationObserver` (`src/hooks/useNotifications.ts`) | Hook | Notification-tap routing; also routes reckoning notification taps/actions (see §8) | writes `driftstop:reckoningLog` via `utils/reckoningAction` on action taps | `void` |
+| `useReckoning` (`src/hooks/useReckoning.tsx`) | Hook (per-consumer state, `useFocusEffect`-refreshed) | `reckoningLog` + derived `computeStreak`/`weekSummary` (`utils/reckoning.ts`) | AsyncStorage `driftstop:reckoningLog` | `{ loaded, log, today, streak, week, answeredToday, hasAnyAnswer, answer(value) }` |
 | `useEnforceFreeLimits` (`src/hooks/useEnforceFreeLimits.ts:13`) | Hook | Clamps `frequency` to `FREE_FREQUENCY_MAX` | writes through `useSettings.update` | `void` |
 | `usePremiumCacheGuard` (`src/hooks/usePremiumCacheGuard.ts:37`) | Hook | Keeps the local premium cache aligned with entitlement | writes SQLite via `services/premiumCacheGuard` | `void` |
 | `usePremiumCacheVersion` (`src/hooks/usePremiumCacheVersion.ts:18`) | Hook (`useSyncExternalStore`) | Re-render signal for screens that read the premium cache; the counter lives in `services/premiumCacheGuard` and bumps on purge/restore | none | `number` |
@@ -226,6 +228,7 @@ both of which swallow errors (`:16-32`).
 | `driftstop:widgetQuoteId` | `widgets/updateWidget.tsx:15` | *(nothing reads it)* | vestigial |
 | `driftstop:themeMode` | *(nothing)* | *(nothing)* | superseded by `settings.themeMode` |
 | `driftstop:seenToday` | *(nothing)* | *(nothing)* | dead key |
+| `driftstop:reckoningLog` | `hooks/useReckoning.tsx`, `utils/reckoningAction.ts` | `hooks/useReckoning.tsx` | `Record<dateKey, 'resisted' \| 'drifted'>` — nightly reckoning (W1.3), cap 90 days via `utils/reckoning.ts#pruneLog` |
 
 ### SQLite (`driftstop.db`)
 
@@ -497,6 +500,23 @@ Every exported function early-returns when `!nativeFeaturesAvailable` (Expo Go).
 | `syncDeliveredToHistory()` | `:145` | Two sources: notifications currently in the tray (`getPresentedNotificationsAsync`, `:152`) and stored `{id, at}` entries whose `at <= now` (`:162-174`, which also prunes them). Prepends to `seenHistory` newest-last-wins, caps at 200. Returns the new array or `null` |
 | `rescheduleIfNeeded(settings)` | `:189` | Reschedules when `lastScheduledDate !== today`, **or** when `scheduledQuoteIds` is detected in the legacy `number[]` format (`:200-202`) |
 | `cancelAll()` | `:73` | `cancelAllScheduledNotificationsAsync` |
+| `setupNotificationCategories()` | scheduler.ts | (W1.3) Registers the `reckoning` category — `resisted`/`drifted` actions, both `opensAppToForeground: false` (W0.a primary path). Button titles come from the active `i18n.locale`, so this is re-run at the top of every `applySchedule` (language may have changed) in addition to the one-time boot call in `_layout.tsx` |
+
+**Nightly reckoning (W1.3).** `applySchedule`'s per-day loop also schedules one `reckoning`-kind
+notification per non-weekend day at `min(windowEnd + 45min, 23:15)`, on the same
+`NOTIFICATION_CHANNEL_ID` (no separate channel — muting the daily channel mutes this too, by
+design). It carries `data: { kind: 'reckoning', date }` and **never** enters `scheduledQuoteIds`
+(it isn't a quote — `syncDeliveredToHistory` only reads `data.quoteId`, so it can't leak into
+history). Gated by `Settings.reckoningEnabled` (default `true`, in `SCHEDULE_KEYS`). Answers are
+stored in `driftstop:reckoningLog` (`Record<dateKey, 'resisted'|'drifted'>`); `src/utils/reckoning.ts`
+holds the pure `computeStreak`/`weekSummary`/`pruneLog` (90-day cap). Action-button taps are meant
+to be handled **headless** via `expo-task-manager` (`src/utils/reckoningTaskHandler.ts`, defined +
+registered at `index.js` module scope, before the router mounts — same reason the widget task
+handler lives there) calling the shared `src/utils/reckoningAction.ts#recordReckoningAction`; the
+same function is also called from `useNotificationObserver`'s foreground/cold-start path as the
+W0.a fallback. Body taps (`DEFAULT_ACTION_IDENTIFIER`) route to `/reckoning` (`presentation: 'modal'`);
+action taps do not navigate. **Not runtime-verified** — `expo-task-manager` is a new native module,
+untestable in the existing dev client (needs a new build, see §1/OPERATIONS.md).
 
 Pure time math lives in `src/utils/timeUtils.ts` with injectable `rng` for determinism:
 `generateRandomTimes` (`:35`) progressively halves the gap when the window is too tight

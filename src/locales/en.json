@@ -41,7 +41,11 @@
     "swipeHint": "Swipe or tap",
     "patience": "The next one comes when it's time. Be patient.",
     "randomFromHistory": "Random from history",
-    "historyEmpty": "No history yet."
+    "historyEmpty": "No history yet.",
+    "reckoningWaiting": "Today's reckoning is waiting",
+    "reckoningWeek": "This week %{resisted}/%{total}",
+    "reckoningA11yAnswered": "Reckoning: %{streak} days in a row resisted, %{resisted}/%{total} this week. Tap for details.",
+    "reckoningA11yPending": "Today's reckoning is waiting. Tap to answer."
   },
   "quote": {
     "authorPrefix": "—",
@@ -150,6 +154,11 @@
       "label": "Your fight",
       "placeholder": "Name it…",
       "hint": "Some notifications will throw this back at you. Clear it and they stop."
+    },
+    "reckoning": {
+      "label": "Night reckoning",
+      "labelOff": "Night reckoning off",
+      "hint": "One question every evening: did you resist, or drift? The weekend exemption follows the setting in Schedule."
     }
   },
   "notifications": {
@@ -353,5 +362,23 @@
       "permission": "Saving needs photo library access. You can grant it in Settings.",
       "generic": "Something went wrong. Try again?"
     }
+  },
+  "reckoning": {
+    "notifTitle": "Today's reckoning",
+    "notifBody": "Did you resist today, or drift?",
+    "actionResisted": "Resisted",
+    "actionDrifted": "Drifted",
+    "title": "Today's reckoning",
+    "question": "Did you resist today, or drift?",
+    "honestyHint": "A day left unanswered counts as drifting too.",
+    "answeredResisted": "Today: You resisted.",
+    "answeredDrifted": "Today: You drifted.",
+    "streakLabel": "days in a row",
+    "weekLabel": "This week: %{resisted}/%{total}",
+    "emptyHint": "Your first reckoning. It starts here.",
+    "settingsLabel": "Want to turn this off?",
+    "settingsLink": "Settings",
+    "closeButton": "Close",
+    "a11yAnsweredToday": "Today's answer is recorded: %{answer}"
   }
 }

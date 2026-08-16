@@ -41,7 +41,11 @@
     "swipeHint": "Glisse ou touche",
     "patience": "La prochaine viendra le moment venu. Sois patient.",
     "randomFromHistory": "Aléatoire de l'historique",
-    "historyEmpty": "Pas encore d'historique."
+    "historyEmpty": "Pas encore d'historique.",
+    "reckoningWaiting": "Le bilan d'aujourd'hui t'attend",
+    "reckoningWeek": "Cette semaine %{resisted}/%{total}",
+    "reckoningA11yAnswered": "Bilan : %{streak} jours de suite de résistance, %{resisted}/%{total} cette semaine. Appuie pour les détails.",
+    "reckoningA11yPending": "Le bilan d'aujourd'hui t'attend. Appuie pour répondre."
   },
   "quote": {
     "authorPrefix": "—",
@@ -150,6 +154,11 @@
       "label": "Ton combat",
       "placeholder": "Donne-lui un nom…",
       "hint": "Certaines notifications te le renverront en face. Efface-le et ça s'arrête."
+    },
+    "reckoning": {
+      "label": "Bilan nocturne",
+      "labelOff": "Bilan nocturne désactivé",
+      "hint": "Une question chaque soir : as-tu résisté ou cédé ? L'exemption du week-end suit le réglage dans Horaires."
     }
   },
   "notifications": {
@@ -353,5 +362,23 @@
       "permission": "L’enregistrement nécessite l’accès aux photos. Tu peux l’autoriser dans les Réglages.",
       "generic": "Une erreur est survenue. Réessayer ?"
     }
+  },
+  "reckoning": {
+    "notifTitle": "Le bilan du jour",
+    "notifBody": "Aujourd'hui, as-tu résisté ou cédé ?",
+    "actionResisted": "Résisté",
+    "actionDrifted": "Cédé",
+    "title": "Le bilan du jour",
+    "question": "Aujourd'hui, as-tu résisté ou cédé ?",
+    "honestyHint": "Un jour sans réponse compte aussi comme une dérive.",
+    "answeredResisted": "Aujourd'hui : tu as résisté.",
+    "answeredDrifted": "Aujourd'hui : tu as cédé.",
+    "streakLabel": "jours de suite de résistance",
+    "weekLabel": "Cette semaine : %{resisted}/%{total}",
+    "emptyHint": "Ton premier bilan. Ça commence ici.",
+    "settingsLabel": "Tu veux le désactiver ?",
+    "settingsLink": "Réglages",
+    "closeButton": "Fermer",
+    "a11yAnsweredToday": "La réponse d'aujourd'hui est enregistrée : %{answer}"
   }
 }

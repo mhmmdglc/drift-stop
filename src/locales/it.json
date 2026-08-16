@@ -41,7 +41,11 @@
     "swipeHint": "Scorri o tocca",
     "patience": "La prossima arriva quando è il momento. Abbi pazienza.",
     "randomFromHistory": "Casuale dalla cronologia",
-    "historyEmpty": "Nessuna cronologia."
+    "historyEmpty": "Nessuna cronologia.",
+    "reckoningWaiting": "Il bilancio di oggi ti aspetta",
+    "reckoningWeek": "Questa settimana %{resisted}/%{total}",
+    "reckoningA11yAnswered": "Bilancio: %{streak} giorni di fila resistendo, %{resisted}/%{total} questa settimana. Tocca per i dettagli.",
+    "reckoningA11yPending": "Il bilancio di oggi ti aspetta. Tocca per rispondere."
   },
   "quote": {
     "authorPrefix": "—",
@@ -150,6 +154,11 @@
       "label": "La tua lotta",
       "placeholder": "Dagli un nome…",
       "hint": "Alcune notifiche te lo sbatteranno in faccia. Cancellalo e si fermano."
+    },
+    "reckoning": {
+      "label": "Bilancio notturno",
+      "labelOff": "Bilancio notturno disattivato",
+      "hint": "Una domanda ogni sera: hai resistito o hai ceduto? L'esenzione nel weekend segue l'impostazione in Programmazione."
     }
   },
   "notifications": {
@@ -353,5 +362,23 @@
       "permission": "Per salvare serve l’accesso alle foto. Puoi concederlo nelle Impostazioni.",
       "generic": "Qualcosa è andato storto. Riprovi?"
     }
+  },
+  "reckoning": {
+    "notifTitle": "Il bilancio del giorno",
+    "notifBody": "Oggi hai resistito o hai ceduto?",
+    "actionResisted": "Resistito",
+    "actionDrifted": "Ceduto",
+    "title": "Il bilancio del giorno",
+    "question": "Oggi hai resistito o hai ceduto?",
+    "honestyHint": "Anche un giorno senza risposta conta come cedimento.",
+    "answeredResisted": "Oggi: hai resistito.",
+    "answeredDrifted": "Oggi: hai ceduto.",
+    "streakLabel": "giorni di fila resistendo",
+    "weekLabel": "Questa settimana: %{resisted}/%{total}",
+    "emptyHint": "Il tuo primo bilancio. Inizia qui.",
+    "settingsLabel": "Vuoi disattivarlo?",
+    "settingsLink": "Impostazioni",
+    "closeButton": "Chiudi",
+    "a11yAnsweredToday": "La risposta di oggi è stata registrata: %{answer}"
   }
 }

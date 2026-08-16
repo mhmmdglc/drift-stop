@@ -62,6 +62,7 @@ The three main screens live in a `(tabs)` group with a fully custom hand-drawn t
 | `/settings` (tab) | `src/app/(tabs)/settings.tsx` | Account section (top), Pro card, packs link, notification master toggle + frequency, schedule window + weekend toggle, theme mode, language, interest themes, about (version / rate / privacy). | Tab bar, or gear icon on Home (`index.tsx:112`) |
 | `/onboarding` | `src/app/onboarding.tsx` | 5 steps: 3 informational slides + a goal question ("What are you about to quit?", free text, ≤32 chars, feeds `Settings.goal` and personalizes ~30% of notification titles) + interest-theme picker. "Start" requests notification permission, saves themes + goal (which triggers scheduling), marks onboarding complete, replaces to `/` (`:43-48`). Skippable at any step. | Auto-redirect on first launch when `driftstop:onboardingComplete` is false (`_layout.tsx:64-73`) |
 | `/quote/[id]` | `src/app/quote/[id].tsx` | Single-quote detail with favorite/share. Records the quote into history **unless it is premium** (`:41-43`). A premium quote without entitlement shows a locked state (`quote.lockedTitle`/`lockedBody` + "Go Pro") — and `common.loading` while entitlement is still resolving; `errors.noQuotes` only when the ID resolves to nothing at all. | Notification tap, widget tap (`driftstop://quote/<id>`, `src/widgets/DriftStopWidget.tsx:41`), favorites row, pack/author row |
+| `/reckoning` | `src/app/reckoning.tsx` | **New (W1.3).** Modal (`presentation: 'modal'`). Unanswered: "Did you resist today, or drift?" + two large buttons (Resisted/Drifted, neither is coloured red — see `specs/w1.3-ux.md`), with the honesty rule stated up front ("a day left unanswered counts as drifting too"). Answered: today's verdict + streak (`🔥N`) + a 7-box weekly strip. No Pro gate — fully free, deliberately (this is the "why use DriftStop" feature). | Reckoning notification tap/body, Home reckoning strip, Settings → "Night reckoning" hint link |
 | `/wallpaper/[id]` | `src/app/wallpaper/[id].tsx` | Turns a quote into a phone background. Live preview (`WallpaperCanvas`) over five code-drawn backdrops (`src/constants/wallpapers.ts`), then **Save to photos** or **Share**. Saving asks for **write-only** media-library permission and drops a `DriftStop-wallpaper*.png` into the gallery; sharing needs no permission. Resolves the quote through `lookupQuoteAnySource`, so a premium quote shows the locked/`errors.noQuotes` state instead of leaking content. Export is 1080×2340 — the size passed to `captureRef` is platform-dependent (points on iOS, raw pixels on Android — see `src/utils/wallpaper.ts`). | Wallpaper icon on the quote card, on Home (`(tabs)/index.tsx:130`) and on quote detail (`quote/[id].tsx:78`) |
 | `/auth` | `src/app/auth.tsx` | Email + password sign-in / sign-up toggle, client-side validation (email regex, password ≥ 6), inline errors, always skippable. | Settings → Account → "Sign in / Create account" (`settings.tsx:127`) |
 | `/paywall` | `src/app/paywall.tsx` | Lists RevenueCat offering packages with real store prices; purchase + restore; graceful states for not-configured / loading / empty offering / already entitled. | 5 entry points — see [§7](#paywall-entry-points) |
@@ -105,6 +106,15 @@ Notifications are `expo-notifications` one-shot DATE triggers created on-device
 
 Upper bound on outstanding scheduled notifications: 10/day × 3 days = 30 (fewer if weekends are skipped or
 times already passed).
+
+**Nightly reckoning notification (W1.3, `Settings.reckoningEnabled`, default on).** In addition to the
+quote notifications above, `applySchedule` schedules one more notification per non-weekend day: "Did
+you resist today, or drift?" at `min(windowEnd + 45min, 23:15)`, same channel, category `reckoning`
+with `Resisted`/`Drifted` action buttons. It does **not** count against the quote quota and never
+enters history (it isn't a quote). Answers go to `driftstop:reckoningLog`; a streak (consecutive
+`resisted` days — an unanswered day breaks it exactly like `drifted` does, by product decision) and a
+7-day summary are shown on a Home strip (hidden until the first answer) and on `/reckoning`. See
+`specs/engagement-roadmap.md` §W1.3 and `specs/w1.3-ux.md` for the full design rationale.
 
 ### `applySchedule(settings)` — `scheduler.ts:82-137`
 
@@ -342,6 +352,7 @@ mandatory for this content type, so no external payment path exists.
 | 18 premium packs / 3325 quotes | 🔒 metadata + counts only | 🔒 | ✅ unlocked |
 | Authors section on `/packs` | 🔒 visible but locked | 🔒 | ✅ |
 | Favorites, history, widget, share, themes, 6-language UI | ✅ | ✅ | ✅ |
+| Nightly reckoning + streak (`/reckoning`, W1.3) | ✅ no gate | ✅ | ✅ |
 | Cross-device sync | ❌ not built for anyone | ❌ | ❌ |
 | Premium quotes in notifications / widget / Home | ❌ | ❌ | ❌ (by design, see §4) |
 

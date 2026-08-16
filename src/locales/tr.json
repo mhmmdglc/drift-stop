@@ -41,7 +41,11 @@
     "swipeHint": "Kaydır ya da dokun",
     "patience": "Yenisi vakti gelince gelir. Sabret.",
     "randomFromHistory": "Geçmişten rastgele",
-    "historyEmpty": "Henüz geçmişin yok."
+    "historyEmpty": "Henüz geçmişin yok.",
+    "reckoningWaiting": "Bugünün hesabı bekliyor",
+    "reckoningWeek": "Bu hafta %{resisted}/%{total}",
+    "reckoningA11yAnswered": "Hesaplaşma: %{streak} gün üst üste direndin, bu hafta %{resisted}/%{total}. Detay için dokun.",
+    "reckoningA11yPending": "Bugünün hesabı bekliyor. Dokun ve cevapla."
   },
   "quote": {
     "authorPrefix": "—",
@@ -150,6 +154,11 @@
       "label": "Hedefin",
       "placeholder": "Adını koy…",
       "hint": "Bildirimlerin bir kısmı bunu yüzüne söyler. Silersen kişiselleştirme durur."
+    },
+    "reckoning": {
+      "label": "Gece hesaplaşması",
+      "labelOff": "Gece hesaplaşması kapalı",
+      "hint": "Her akşam tek soru: direndin mi, kaçtın mı? Hafta sonu muafiyeti Zamanlama bölümündeki ayara bağlı."
     }
   },
   "notifications": {
@@ -353,5 +362,23 @@
       "permission": "Kaydetmek için galeri izni gerekiyor. Ayarlardan verebilirsin.",
       "generic": "Bir şeyler ters gitti. Tekrar dener misin?"
     }
+  },
+  "reckoning": {
+    "notifTitle": "Günün hesabı",
+    "notifBody": "Bugün direndin mi, kaçtın mı?",
+    "actionResisted": "Direndim",
+    "actionDrifted": "Kaçtım",
+    "title": "Günün hesabı",
+    "question": "Bugün direndin mi, kaçtın mı?",
+    "honestyHint": "Cevapsız gün de kaçış sayılır.",
+    "answeredResisted": "Bugün: Direndin.",
+    "answeredDrifted": "Bugün: Kaçtın.",
+    "streakLabel": "gün üst üste direndin",
+    "weekLabel": "Bu hafta: %{resisted}/%{total}",
+    "emptyHint": "İlk hesabın. Buradan başlıyor.",
+    "settingsLabel": "Kapatmak ister misin?",
+    "settingsLink": "Ayarlar",
+    "closeButton": "Kapat",
+    "a11yAnsweredToday": "Bugünün cevabı verildi: %{answer}"
   }
 }

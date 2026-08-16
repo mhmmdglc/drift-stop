@@ -41,7 +41,11 @@
     "swipeHint": "",
     "patience": "",
     "randomFromHistory": "",
-    "historyEmpty": ""
+    "historyEmpty": "",
+    "reckoningWaiting": "",
+    "reckoningWeek": "",
+    "reckoningA11yAnswered": "",
+    "reckoningA11yPending": ""
   },
   "quote": {
     "authorPrefix": "",
@@ -127,6 +131,11 @@
     "goal": {
       "label": "",
       "placeholder": "",
+      "hint": ""
+    },
+    "reckoning": {
+      "label": "",
+      "labelOff": "",
       "hint": ""
     }
   },
@@ -258,5 +267,23 @@
       "privacyPolicy": "プライバシーポリシー",
       "termsOfUse": "利用規約"
     }
+  },
+  "reckoning": {
+    "notifTitle": "",
+    "notifBody": "",
+    "actionResisted": "",
+    "actionDrifted": "",
+    "title": "",
+    "question": "",
+    "honestyHint": "",
+    "answeredResisted": "",
+    "answeredDrifted": "",
+    "streakLabel": "",
+    "weekLabel": "",
+    "emptyHint": "",
+    "settingsLabel": "",
+    "settingsLink": "",
+    "closeButton": "",
+    "a11yAnsweredToday": ""
   }
 }

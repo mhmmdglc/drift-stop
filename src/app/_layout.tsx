@@ -26,7 +26,12 @@ import { ThemeProvider, useTheme } from '@/hooks/use-theme';
 import { initAds } from '@/utils/ads';
 import { initCrashReporting } from '@/utils/crashReporting';
 import { nativeFeaturesAvailable } from '@/utils/runtime';
-import { ensurePermissions, rescheduleIfNeeded, setupAndroidChannel } from '@/utils/scheduler';
+import {
+  ensurePermissions,
+  rescheduleIfNeeded,
+  setupAndroidChannel,
+  setupNotificationCategories,
+} from '@/utils/scheduler';
 import { getJSON, StorageKeys } from '@/utils/storage';
 import { syncQuotes } from '@/services/quotesSync';
 import { syncPacks } from '@/services/packsSync';
@@ -55,6 +60,7 @@ function AppShell() {
 
   useEffect(() => {
     void setupAndroidChannel();
+    void setupNotificationCategories();
     initAds();
     void syncQuotes();
     void syncPacks();
@@ -102,6 +108,7 @@ function AppShell() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="onboarding" />
+        <Stack.Screen name="reckoning" options={{ presentation: 'modal' }} />
         <Stack.Screen name="quote/[id]" />
         <Stack.Screen name="packs/index" />
         <Stack.Screen name="packs/[id]" />

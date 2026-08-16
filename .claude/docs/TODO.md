@@ -269,10 +269,15 @@ User demanded a real monetization funnel ("how will we sell subscriptions?"). No
 
 ## Not started yet (future phases, no urgency)
 
-- **Engagement dalgası spec'i yazıldı (2026-08-16), iş başlamadı.** Onboarding hedef sorusu, gece
-  hesaplaşması + streak, bildirim aksiyonları, geleceğe mesaj kasası, SOS, sertlik ayarı, akıllı
-  zamanlama, özel bildirim sesi — dosya dosya TODO, testler ve cihaz-QA adımlarıyla:
-  [`specs/engagement-roadmap.md`](../../specs/engagement-roadmap.md). İlk adım W0 spike'ları.
+- **Engagement dalgası sürüyor (spec 2026-08-16):**
+  [`specs/engagement-roadmap.md`](../../specs/engagement-roadmap.md). W0 spike'ları tamamlandı.
+  **W1.1 (tekrar önleme) ve W1.2 (onboarding hedef sorusu) shipped**, cihaz-QA bekliyor.
+  **W1.3 (gece hesaplaşması + streak) kod tarafı bitti** (`utils/reckoning.ts`,
+  `hooks/useReckoning.tsx`, `/reckoning` modal ekranı, Home şeridi, Settings toggle'ı,
+  `expo-task-manager` bağımlılığı) — **yeni dev client build gerektiriyor** (headless aksiyon
+  işleyicisi native modül; mevcut build'de test edilemedi) ve cihaz-QA henüz yapılmadı. Kalan:
+  bildirim aksiyonları (W1.4), geleceğe mesaj kasası, SOS, sertlik ayarı, akıllı zamanlama, özel
+  bildirim sesi.
 
 From the backend roadmap's rollout order — now unblocked since the webhook is deployed:
 - Cross-device sync (favorites + settings + streak)

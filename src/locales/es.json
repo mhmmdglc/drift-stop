@@ -41,7 +41,11 @@
     "swipeHint": "Desliza o toca",
     "patience": "El siguiente llega cuando es su momento. Ten paciencia.",
     "randomFromHistory": "Aleatorio del historial",
-    "historyEmpty": "Aún no hay historial."
+    "historyEmpty": "Aún no hay historial.",
+    "reckoningWaiting": "El balance de hoy está pendiente",
+    "reckoningWeek": "Esta semana %{resisted}/%{total}",
+    "reckoningA11yAnswered": "Balance: %{streak} días seguidos resistiendo, %{resisted}/%{total} esta semana. Toca para ver más.",
+    "reckoningA11yPending": "El balance de hoy está pendiente. Toca para responder."
   },
   "quote": {
     "authorPrefix": "—",
@@ -150,6 +154,11 @@
       "label": "Tu lucha",
       "placeholder": "Ponle nombre…",
       "hint": "Algunas notificaciones te lo echarán en cara. Si lo borras, se detienen."
+    },
+    "reckoning": {
+      "label": "Balance nocturno",
+      "labelOff": "Balance nocturno desactivado",
+      "hint": "Una pregunta cada noche: ¿resististe o cediste? La excepción de fin de semana depende del ajuste en Horario."
     }
   },
   "notifications": {
@@ -353,5 +362,23 @@
       "permission": "Para guardar se necesita acceso a la galería. Puedes darlo en Ajustes.",
       "generic": "Algo salió mal. ¿Intentas de nuevo?"
     }
+  },
+  "reckoning": {
+    "notifTitle": "El balance del día",
+    "notifBody": "¿Hoy resististe o cediste?",
+    "actionResisted": "Resistí",
+    "actionDrifted": "Cedí",
+    "title": "El balance del día",
+    "question": "¿Hoy resististe o cediste?",
+    "honestyHint": "Un día sin respuesta también cuenta como ceder.",
+    "answeredResisted": "Hoy: Resististe.",
+    "answeredDrifted": "Hoy: Cediste.",
+    "streakLabel": "días seguidos resistiendo",
+    "weekLabel": "Esta semana: %{resisted}/%{total}",
+    "emptyHint": "Tu primer balance. Empieza aquí.",
+    "settingsLabel": "¿Quieres desactivarlo?",
+    "settingsLink": "Ajustes",
+    "closeButton": "Cerrar",
+    "a11yAnsweredToday": "La respuesta de hoy quedó registrada: %{answer}"
   }
 }

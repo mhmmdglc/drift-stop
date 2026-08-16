@@ -57,6 +57,7 @@
       ],
       "expo-localization",
       "expo-sharing",
+      "expo-task-manager",
       [
         "react-native-google-mobile-ads",
         {

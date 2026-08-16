@@ -17,6 +17,12 @@ type Props = {
   textTone?: 'text' | 'textMuted' | 'accent' | 'fire';
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
+  /**
+   * `large`: /reckoning'in iki ana eylemi gibi ekranın TEK eylemi olan butonlar için —
+   * paywall paket kartları ağırlığında (`w1.3-ux.md` §3). Mevcut `default` kullanımlar
+   * DEĞİŞMEZ, bu yalnızca ek bir varyant.
+   */
+  size?: 'default' | 'large';
 };
 
 /** Aceleyle bir kutu çizilmiş gibi görünen buton. Basınca ink-stamp ölçek animasyonu. */
@@ -27,6 +33,7 @@ export function SketchButton({
   textTone = 'accent',
   disabled = false,
   style,
+  size = 'default',
 }: Props) {
   const { colors } = useTheme();
   const scale = useSharedValue(1);
@@ -47,11 +54,16 @@ export function SketchButton({
         accessibilityRole="button"
         accessibilityLabel={label}
         accessibilityState={{ disabled }}
-        style={[styles.btn, { opacity: disabled ? 0.4 : 1 }, style]}>
+        style={[
+          styles.btn,
+          size === 'large' && styles.btnLarge,
+          { opacity: disabled ? 0.4 : 1 },
+          style,
+        ]}>
         <View style={StyleSheet.absoluteFill}>
           <WobblyBorder stroke={stroke ?? colors.accent} strokeWidth={1.5} />
         </View>
-        <ThemedText variant="body" tone={textTone} style={styles.label}>
+        <ThemedText variant={size === 'large' ? 'heading' : 'body'} tone={textTone} style={styles.label}>
           {label}
         </ThemedText>
       </Pressable>
@@ -65,6 +77,10 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  btnLarge: {
+    minHeight: 64,
+    paddingVertical: Spacing.lg,
   },
   label: {
     letterSpacing: 1,

@@ -16,16 +16,70 @@ import { AdBanner } from '@/components/AdBanner';
 import { PaperBackground } from '@/components/PaperBackground';
 import { QuoteCard } from '@/components/QuoteCard';
 import { SketchButton } from '@/components/SketchButton';
+import { FlameSketch } from '@/components/SketchOnboardingIcons';
 import { ThemedText } from '@/components/ThemedText';
+import { WobblyBorder } from '@/components/WobblyBorder';
 import { INTERSTITIAL_EVERY } from '@/constants/adUnits';
 import { Spacing } from '@/constants/layout';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useHistory } from '@/hooks/useHistory';
+import { useReckoning } from '@/hooks/useReckoning';
+import { useSettings } from '@/hooks/useSettings';
 import { useTheme } from '@/hooks/use-theme';
 import { useTranslation } from '@/i18n/useTranslation';
 import { showInterstitialIfReady } from '@/utils/ads';
 import { shareQuote } from '@/utils/share';
 import { updateWidgetWithQuote } from '@/widgets/updateWidget';
+
+/**
+ * Kartın hemen altındaki kompakt hesaplaşma şeridi (`w1.3-ux.md` §2). Log boşsa
+ * ya da özellik kapalıysa TAMAMEN render edilmez (boşluk bırakmaz) — ilk cevaba
+ * kadar Home kalabalıklaşmasın.
+ */
+function ReckoningStrip() {
+  const { colors } = useTheme();
+  const { t } = useTranslation();
+  const router = useRouter();
+  const { settings } = useSettings();
+  const { loaded, streak, week, answeredToday, hasAnyAnswer } = useReckoning();
+
+  if (!settings.reckoningEnabled || !loaded || !hasAnyAnswer) return null;
+
+  const accessibilityLabel = answeredToday
+    ? t('home.reckoningA11yAnswered', { streak, resisted: week.resisted, total: week.total })
+    : t('home.reckoningA11yPending');
+
+  return (
+    <Pressable
+      onPress={() => router.push('/reckoning')}
+      style={styles.reckoningStrip}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}>
+      <WobblyBorder stroke={colors.faintLine} strokeWidth={1.2} inset={3} doubleStroke={false} />
+      {answeredToday ? (
+        <>
+          <FlameSketch size={20} color={streak > 0 ? colors.fire : colors.textMuted} />
+          <ThemedText variant="body" tone={streak > 0 ? 'fire' : 'textMuted'}>
+            {streak}
+          </ThemedText>
+          <ThemedText variant="label" tone="textMuted" style={styles.reckoningWeek}>
+            {t('home.reckoningWeek', { resisted: week.resisted, total: week.total })}
+          </ThemedText>
+        </>
+      ) : (
+        <>
+          <FlameSketch size={20} color={colors.accent} />
+          <ThemedText variant="body" tone="accent" style={styles.reckoningWeek}>
+            {t('home.reckoningWaiting')}
+          </ThemedText>
+        </>
+      )}
+      <ThemedText variant="body" tone="textMuted">
+        ›
+      </ThemedText>
+    </Pressable>
+  );
+}
 
 export default function HomeScreen() {
   const { colors } = useTheme();
@@ -133,6 +187,8 @@ export default function HomeScreen() {
           </Animated.View>
         </GestureDetector>
 
+        <ReckoningStrip />
+
         {/* "Sonraki" yok: yeni söz zamanı gelince bildirimle gelir */}
         <ThemedText variant="body" tone="textMuted" style={styles.patience}>
           {t('home.patience')}
@@ -185,5 +241,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     gap: Spacing.md,
     paddingBottom: Spacing.sm,
+  },
+  reckoningStrip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    minHeight: 48,
+    marginHorizontal: Spacing.lg,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    marginBottom: Spacing.sm,
+  },
+  reckoningWeek: {
+    flex: 1,
   },
 });
