@@ -74,13 +74,41 @@ export async function handleFavoriteAction(quoteId: number | undefined): Promise
 }
 
 /**
+ * `handleOneMoreAction`'a AYNI süreç içinde eşzamanlı gelen çağrıları sıraya
+ * sokar. Kod tabanı headless task + `getLastNotificationResponseAsync` yedek
+ * yolunun AYNI cevabı iki kez işlemesini kasıtlı ve "zararsız" sayıyor
+ * (`recordReckoningAction`daki gerekçe) — ama o varsayım idempotent bir
+ * üzerine-yazmaya dayanıyor, `oneMore` ise sayaç ARTIRAN bir yan etki.
+ * Kilit olmadan iki eşzamanlı çağrı aynı sayacı okuyup ikisi de bildirim
+ * kurabiliyordu, günlük sınırı (`ONE_MORE_DAILY_LIMIT`) aşarak (code review,
+ * 2026-08-16 — eşzamanlı çağrıyla doğrudan tekrarlandı). Çapraz-soğuk-başlatma
+ * tekrarı ayrıca `Notifications.clearLastNotificationResponseAsync()` ile
+ * kapatılıyor (bkz. `useNotifications.ts`).
+ */
+let oneMoreQueue: Promise<unknown> = Promise.resolve();
+
+/**
  * "Bir tane daha" aksiyonu: günlük sınıra (`ONE_MORE_DAILY_LIMIT`) takılırsa
  * SESSİZCE no-op — yeni bildirim KURULMAZ ("hakkın bitti" bildirimi göndermek
  * dırdıra döner, W1.4 kararı). Sınır altındaysa havuzdan (W1.1 dışlama kurallı
  * `pickQuoteId`) bir söz seçip +5 sn'ye tek bildirim kurar; `scheduledQuoteIds`'e
- * eklenir ki `syncDeliveredToHistory` onu geçmişe taşısın.
+ * eklenir ki `syncDeliveredToHistory` onu geçmişe taşısın. `triggeringQuoteId`
+ * (aksiyona basılan bildirimin kendi sözü) dışlama setine eklenir — headless
+ * yolda bu söz henüz `seenHistory`'ye girmemiş olabilir, o yüzden "bir tane
+ * daha" aynı sözü tekrar seçebilirdi (code review bulgusu).
  */
-export async function handleOneMoreAction(now: Date = new Date()): Promise<void> {
+export function handleOneMoreAction(
+  now: Date = new Date(),
+  triggeringQuoteId?: number
+): Promise<void> {
+  const task = oneMoreQueue.then(() => runOneMoreAction(now, triggeringQuoteId));
+  // Zincir bir sonraki çağrı için canlı kalsın diye hatayı burada yutuyoruz;
+  // bu çağrının kendi reddi `task` üzerinden çağırana aynen ulaşır.
+  oneMoreQueue = task.catch(() => undefined);
+  return task;
+}
+
+async function runOneMoreAction(now: Date, triggeringQuoteId?: number): Promise<void> {
   const today = dateKey(now);
   const log = await getJSON<ExtraQuoteLog | null>(StorageKeys.extraQuoteLog, null);
   const count = todaysCount(log, today);
@@ -95,6 +123,7 @@ export async function handleOneMoreAction(now: Date = new Date()): Promise<void>
   const excludeSet = new Set(
     history.slice(0, Math.min(history.length, Math.floor(pool.length * 0.5)))
   );
+  if (typeof triggeringQuoteId === 'number') excludeSet.add(triggeringQuoteId);
   const quoteId = pickQuoteId(pool, null, excludeSet);
   const quote = getQuoteById(quoteId);
   if (!quote) return;
@@ -141,7 +170,7 @@ export async function recordQuoteAction(
     return;
   }
   if (actionIdentifier === QUOTE_ACTION_ONE_MORE) {
-    await handleOneMoreAction();
+    await handleOneMoreAction(new Date(), data?.quoteId);
     return;
   }
   // bilinmeyen aksiyon kimliği → no-op

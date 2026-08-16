@@ -78,6 +78,12 @@ export function useNotificationObserver() {
     try {
       Notifications.getLastNotificationResponseAsync().then((response) => {
         if (mounted) void handle(response);
+        // Native taraf bu cevabı bir sonraki soğuk başlatmada da döndürmeye
+        // devam eder — temizlemezsek `oneMore` gibi yan etkili aksiyonlar
+        // günler sonra tekrar "işlenmiş" sayılıp yeniden tetiklenebilir
+        // (code review, 2026-08-16: handleOneMoreAction'ın günlük sınır
+        // yarışının ikinci kök nedeni buydu).
+        if (response) void Notifications.clearLastNotificationResponseAsync().catch(() => {});
       });
     } catch {
       // sessizce geç

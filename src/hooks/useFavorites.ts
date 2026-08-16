@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 
 import { getJSON, setJSON, StorageKeys } from '@/utils/storage';
@@ -7,6 +7,9 @@ import { getJSON, setJSON, StorageKeys } from '@/utils/storage';
 export function useFavorites() {
   const [ids, setIds] = useState<number[]>([]);
   const [loaded, setLoaded] = useState(false);
+  // `persist()`in fire-and-forget diske yazımını izler — aşağıdaki AppState
+  // dinleyicisi okumadan önce bunu bekler.
+  const pendingWrite = useRef<Promise<void>>(Promise.resolve());
 
   useEffect(() => {
     let active = true;
@@ -23,11 +26,18 @@ export function useFavorites() {
 
   // Bildirimden ❤️ aksiyonuyla (W1.4) arka planda eklenen bir favori, uygulama
   // açık dururken görünmez ve bir sonraki state yazımı onu ezer — `useHistory.tsx`
-  // ile aynı gerekçe/desen: öne gelince en güncel diskten oku.
+  // ile aynı gerekçe/desen: öne gelince en güncel diskten oku. ÖNCE `pendingWrite`i
+  // bekliyoruz: kullanıcı tam bu anda bir favoriyi siliyorsa (`persist()` diske
+  // henüz inmemiş fire-and-forget bir yazım başlatmışken bir `AppState` geçişi
+  // gelirse) bekleme olmadan okumak o silmeyi geri getirebiliyordu — `persist`
+  // her zaman EN SON bilinen state'i senkron olarak `ids`e yazdığı için, disk
+  // yazımının inmesini beklemek asla bir kullanıcı aksiyonunu kaybettirmez,
+  // sadece okuma sırasını doğru yapar (code review, 2026-08-16).
   useEffect(() => {
     const sub = AppState.addEventListener('change', (state) => {
       if (state !== 'active') return;
-      getJSON<number[]>(StorageKeys.favorites, [])
+      pendingWrite.current
+        .then(() => getJSON<number[]>(StorageKeys.favorites, []))
         .then(setIds)
         .catch(() => {});
     });
@@ -36,7 +46,7 @@ export function useFavorites() {
 
   const persist = useCallback((next: number[]) => {
     setIds(next);
-    void setJSON(StorageKeys.favorites, next);
+    pendingWrite.current = setJSON(StorageKeys.favorites, next);
   }, []);
 
   const isFavorite = useCallback((id: number) => ids.includes(id), [ids]);

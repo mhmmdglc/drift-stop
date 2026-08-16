@@ -20,6 +20,7 @@ import {
 } from '../quoteAction';
 import { QUOTE_ACTION_FAVORITE, QUOTE_ACTION_ONE_MORE, RECKONING_KIND } from '../scheduler';
 import { StorageKeys } from '../storage';
+import type { Quote } from '@/types/quote';
 
 jest.mock('expo-notifications', () => ({
   scheduleNotificationAsync: jest.fn(),
@@ -27,6 +28,17 @@ jest.mock('expo-notifications', () => ({
   SchedulableTriggerInputTypes: { DATE: 'date' },
   DEFAULT_ACTION_IDENTIFIER: 'expo.modules.notifications.actions.DEFAULT',
 }));
+
+// scheduler.test.ts ile aynı desen: dışlama testi havuzu geçici olarak
+// küçük/kontrollü tutmak için bu iki fonksiyonu override eder.
+jest.mock('@/data/quotes', () => {
+  const actual = jest.requireActual('@/data/quotes');
+  return {
+    ...actual,
+    getQuotesByThemes: jest.fn(actual.getQuotesByThemes),
+    getQuoteById: jest.fn(actual.getQuoteById),
+  };
+});
 
 const mockNotifications = ExpoNotifications as unknown as Record<string, jest.Mock>;
 
@@ -153,6 +165,67 @@ describe('handleOneMoreAction', () => {
     expect(scheduled).toHaveLength(1);
     expect(typeof scheduled[0].id).toBe('number');
     expect(scheduled[0].at).toBe(day1.getTime() + 5000);
+  });
+
+  it('regresyon: eşzamanlı 2 çağrı yarışmaz — sayaç sıralı olduğu gibi tam 2 olur', async () => {
+    // Bulunan bug (code review, 2026-08-16): kod tabanı headless task +
+    // getLastNotificationResponseAsync yedeğinin AYNI cevabı iki kez
+    // işlemesini kasıtlı/zararsız sayıyordu, ama oneMore idempotent değil —
+    // kilitsizken iki eşzamanlı çağrı aynı sayacı (0) okuyup İKİSİ de
+    // bildirim kuruyor, sayaç 1'de kalıyordu (2 olması gerekirken).
+    await Promise.all([handleOneMoreAction(day1), handleOneMoreAction(day1)]);
+
+    expect(mockNotifications.scheduleNotificationAsync).toHaveBeenCalledTimes(2);
+    expect(await readExtraQuoteLog()).toEqual({ date: '2026-08-19', count: 2 });
+  });
+
+  it('regresyon: eşzamanlı 3 çağrıda bile günlük sınır (2) hâlâ kesin tutar', async () => {
+    await Promise.all([
+      handleOneMoreAction(day1),
+      handleOneMoreAction(day1),
+      handleOneMoreAction(day1),
+    ]);
+
+    expect(mockNotifications.scheduleNotificationAsync).toHaveBeenCalledTimes(ONE_MORE_DAILY_LIMIT);
+    expect(await readExtraQuoteLog()).toEqual({ date: '2026-08-19', count: ONE_MORE_DAILY_LIMIT });
+  });
+
+  it('tetikleyen sözün kendisi seçim havuzundan dışlanır', async () => {
+    const mockData = jest.requireMock('@/data/quotes') as {
+      getQuotesByThemes: jest.Mock;
+      getQuoteById: jest.Mock;
+    };
+    // `pickQuoteId`'nin dışlama kuralı (`pool.length > 2`) devreye girsin diye
+    // 3 sözlük bir havuz — 2 sözlükte dışlama anlamsız sayılıp yok sayılıyor.
+    const mkQuote = (id: number): Quote => ({
+      id,
+      text: `t${id}`,
+      textTr: `m${id}`,
+      author: 'a',
+      origin: 'o',
+      originEmoji: '🔥',
+      category: 'fire',
+      era: 'modern',
+      tags: ['motivation'],
+    });
+    const threeQuotePool: Quote[] = [mkQuote(501), mkQuote(502), mkQuote(503)];
+    mockData.getQuotesByThemes.mockReturnValue(threeQuotePool);
+    mockData.getQuoteById.mockImplementation((id: number) =>
+      threeQuotePool.find((q) => q.id === id)
+    );
+
+    for (let i = 0; i < 20; i++) {
+      await AsyncStorage.clear();
+      mockNotifications.scheduleNotificationAsync.mockClear();
+      await handleOneMoreAction(day1, 501);
+      const call = mockNotifications.scheduleNotificationAsync.mock.calls[0][0] as {
+        content: { data: { quoteId: number } };
+      };
+      expect(call.content.data.quoteId).not.toBe(501);
+    }
+
+    mockData.getQuotesByThemes.mockImplementation(jest.requireActual('@/data/quotes').getQuotesByThemes);
+    mockData.getQuoteById.mockImplementation(jest.requireActual('@/data/quotes').getQuoteById);
   });
 });
 
