@@ -17,6 +17,16 @@ export const StorageKeys = {
   trialEndedShown: 'driftstop:trialEndedShown',
   /** Gece hesaplaşması günlüğü: `dateKey → 'resisted' | 'drifted'`. Bkz. utils/reckoning.ts */
   reckoningLog: 'driftstop:reckoningLog',
+  /**
+   * "Bir tane daha" günlük sayacı: `{ date: dateKey, count }`. Gün değişince
+   * sıfırlanmış sayılır (yeni kayıt yazılmaz, `date` eskiyse 0 okunur). Bkz. utils/quoteAction.ts
+   */
+  extraQuoteLog: 'driftstop:extraQuoteLog',
+  /**
+   * Bildirim gövdesine dokunma anları: `{ hour, at }[]`, cap 200 — W3.2'nin
+   * "akıllı zamanlama" için biriktirdiği ham etkileşim verisi. Bkz. utils/quoteAction.ts
+   */
+  engagementLog: 'driftstop:engagementLog',
 } as const;
 
 export async function getJSON<T>(key: string, fallback: T): Promise<T> {

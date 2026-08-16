@@ -41,7 +41,7 @@ From `package.json`:
 | Local DB | `expo-sqlite` `~56.0.5` | | file `driftstop.db` |
 | Storage | `@react-native-async-storage/async-storage` `2.2.0` | | all user state |
 | Notifications | `expo-notifications` `~56.0.18` | | local scheduled notifications only, no push server |
-| Background tasks | `expo-task-manager` `~56.0.25` | | **New (W1.3).** Headless handling of the reckoning notification's action buttons (`src/utils/reckoningTaskHandler.ts`). Its JS reads its native module at *import* time (`requireNativeModule('ExpoTaskManager')`), which throws synchronously in any dev client built before this dependency was added — `index.js` wraps the `require()` in `try/catch` for exactly that reason. **Requires a new dev client build**; untestable in the current one |
+| Background tasks | `expo-task-manager` `~56.0.25` | | Added W1.3, extended W1.4 (no new dependency). Headless handling of both the reckoning AND quote notification action buttons, one shared task (`src/utils/notificationTaskHandler.ts`). Its JS reads its native module at *import* time (`requireNativeModule('ExpoTaskManager')`), which throws synchronously in any dev client built before this dependency was added — `index.js` wraps the `require()` in `try/catch` for exactly that reason. **Requires a new dev client build**; untestable in the current one |
 | Widget | `react-native-android-widget` `^0.20.3` | | Android only |
 | Ads | `react-native-google-mobile-ads` `^16.3.4` | | AdMob banner + interstitial |
 | Purchases | `react-native-purchases` `^10.4.2` | | RevenueCat |
@@ -171,9 +171,9 @@ screen calls `ensurePermissions()` itself at `src/app/onboarding.tsx:44` before 
 | `useAuth` (`src/hooks/useAuth.tsx:33`) | Provider | Supabase session | Supabase client's own storage (SQLite-backed `localStorage`, `src/lib/supabase.ts:1,16`) | `{ configured, session, user, loading, signUpWithEmail, signInWithEmail, resendConfirmation, sendPasswordReset, signInWithProvider, signOut, deleteAccount }` |
 | `usePurchases` (`src/hooks/usePurchases.tsx:37`) | Provider | RevenueCat `CustomerInfo`, current offering, entitlement flags | RevenueCat SDK | `{ configured, loading, entitlementKnown, isPro, isAdsRemoved, offering, purchasePackage, restorePurchases }` |
 | `useHistory` (`src/hooks/useHistory.tsx:40`) | Provider | Ordered list of *seen* quote ids + a read pointer | AsyncStorage `driftstop:seenHistory` (cap 200, `:19`) | `{ quote, count, loaded, record, goOlder, goNewer, randomFromHistory, canOlder, canNewer }` |
-| `useFavorites` (`src/hooks/useFavorites.ts:6`) | Hook (per-consumer state!) | Favourite quote ids | AsyncStorage `driftstop:favorites` | `{ ids, isFavorite, toggle, remove, loaded }` |
+| `useFavorites` (`src/hooks/useFavorites.ts:6`) | Hook (per-consumer state!) | Favourite quote ids | AsyncStorage `driftstop:favorites`; re-reads on `AppState → active` (W1.4, same pattern as `useHistory`) | `{ ids, isFavorite, toggle, remove, loaded }` |
 | `usePacks` (`src/hooks/usePacks.tsx:28`) | Hook | Premium pack + author lists with `locked` flags | reads SQLite synchronously; refreshes from Supabase on mount | `{ packs, authors, loading, refresh }` |
-| `useNotificationObserver` (`src/hooks/useNotifications.ts`) | Hook | Notification-tap routing; also routes reckoning notification taps/actions (see §8) | writes `driftstop:reckoningLog` via `utils/reckoningAction` on action taps | `void` |
+| `useNotificationObserver` (`src/hooks/useNotifications.ts`) | Hook | Notification-tap routing; also routes reckoning AND quote notification taps/actions (see §8) | writes `driftstop:reckoningLog` via `utils/reckoningAction`, and `driftstop:favorites`/`driftstop:extraQuoteLog`/`driftstop:engagementLog` via `utils/quoteAction` (W1.4), on action/body taps | `void` |
 | `useReckoning` (`src/hooks/useReckoning.tsx`) | Hook (per-consumer state, `useFocusEffect`-refreshed) | `reckoningLog` + derived `computeStreak`/`weekSummary` (`utils/reckoning.ts`) | AsyncStorage `driftstop:reckoningLog` | `{ loaded, log, today, streak, week, answeredToday, hasAnyAnswer, answer(value) }` |
 | `useEnforceFreeLimits` (`src/hooks/useEnforceFreeLimits.ts:13`) | Hook | Clamps `frequency` to `FREE_FREQUENCY_MAX` | writes through `useSettings.update` | `void` |
 | `usePremiumCacheGuard` (`src/hooks/usePremiumCacheGuard.ts:37`) | Hook | Keeps the local premium cache aligned with entitlement | writes SQLite via `services/premiumCacheGuard` | `void` |
@@ -220,7 +220,7 @@ both of which swallow errors (`:16-32`).
 | Key | Written by | Read by | Meaning |
 |---|---|---|---|
 | `driftstop:settings` | `useSettings.tsx:74` | `useSettings.tsx:54` | serialized `Settings` |
-| `driftstop:favorites` | `useFavorites.ts:25` | `useFavorites.ts:12` | `number[]` quote ids |
+| `driftstop:favorites` | `useFavorites.ts`, `utils/quoteAction.ts#handleFavoriteAction` (❤️ action, W1.4) | `useFavorites.ts` (mount + `AppState → active`, W1.4) | `number[]` quote ids |
 | `driftstop:onboardingComplete` | `onboarding.tsx:46` | `_layout.tsx:51` | boot gate |
 | `driftstop:seenHistory` | `useHistory.tsx:58,90`, `scheduler.ts:184` | `useHistory.tsx:51`, `widget-task-handler.tsx:25` | newest-first `number[]`, cap 200 |
 | `driftstop:scheduledQuoteIds` | `scheduler.ts:87,135,172` | `scheduler.ts:162,199` | `{id, at}[]` — pending notifications with fire time |
@@ -229,6 +229,8 @@ both of which swallow errors (`:16-32`).
 | `driftstop:themeMode` | *(nothing)* | *(nothing)* | superseded by `settings.themeMode` |
 | `driftstop:seenToday` | *(nothing)* | *(nothing)* | dead key |
 | `driftstop:reckoningLog` | `hooks/useReckoning.tsx`, `utils/reckoningAction.ts` | `hooks/useReckoning.tsx` | `Record<dateKey, 'resisted' \| 'drifted'>` — nightly reckoning (W1.3), cap 90 days via `utils/reckoning.ts#pruneLog` |
+| `driftstop:extraQuoteLog` | `utils/quoteAction.ts#handleOneMoreAction` | `utils/quoteAction.ts#handleOneMoreAction` | `{ date, count }` — today's "one more" tally (W1.4), reset when `date` is stale, capped at `ONE_MORE_DAILY_LIMIT = 2` |
+| `driftstop:engagementLog` | `utils/quoteAction.ts#recordEngagement` (quote-notification body tap, W1.4) | *(not yet consumed — W3.2 input)* | `{ hour, at }[]`, cap 200, oldest dropped first |
 
 ### SQLite (`driftstop.db`)
 
@@ -500,7 +502,7 @@ Every exported function early-returns when `!nativeFeaturesAvailable` (Expo Go).
 | `syncDeliveredToHistory()` | `:145` | Two sources: notifications currently in the tray (`getPresentedNotificationsAsync`, `:152`) and stored `{id, at}` entries whose `at <= now` (`:162-174`, which also prunes them). Prepends to `seenHistory` newest-last-wins, caps at 200. Returns the new array or `null` |
 | `rescheduleIfNeeded(settings)` | `:189` | Reschedules when `lastScheduledDate !== today`, **or** when `scheduledQuoteIds` is detected in the legacy `number[]` format (`:200-202`) |
 | `cancelAll()` | `:73` | `cancelAllScheduledNotificationsAsync` |
-| `setupNotificationCategories()` | scheduler.ts | (W1.3) Registers the `reckoning` category — `resisted`/`drifted` actions, both `opensAppToForeground: false` (W0.a primary path). Button titles come from the active `i18n.locale`, so this is re-run at the top of every `applySchedule` (language may have changed) in addition to the one-time boot call in `_layout.tsx` |
+| `setupNotificationCategories()` | scheduler.ts | (W1.3, extended W1.4) Registers, in the same call, the `reckoning` category (`resisted`/`drifted`) **and** the `quote` category (`favorite`/`oneMore`) — all four actions `opensAppToForeground: false` (W0.a primary path). Button titles come from the active `i18n.locale`, so this is re-run at the top of every `applySchedule` (language may have changed) in addition to the one-time boot call in `_layout.tsx` |
 
 **Nightly reckoning (W1.3).** `applySchedule`'s per-day loop also schedules one `reckoning`-kind
 notification per non-weekend day at `min(windowEnd + 45min, 23:15)`, on the same
@@ -510,13 +512,42 @@ design). It carries `data: { kind: 'reckoning', date }` and **never** enters `sc
 history). Gated by `Settings.reckoningEnabled` (default `true`, in `SCHEDULE_KEYS`). Answers are
 stored in `driftstop:reckoningLog` (`Record<dateKey, 'resisted'|'drifted'>`); `src/utils/reckoning.ts`
 holds the pure `computeStreak`/`weekSummary`/`pruneLog` (90-day cap). Action-button taps are meant
-to be handled **headless** via `expo-task-manager` (`src/utils/reckoningTaskHandler.ts`, defined +
+to be handled **headless** via `expo-task-manager` (`src/utils/notificationTaskHandler.ts`, defined +
 registered at `index.js` module scope, before the router mounts — same reason the widget task
 handler lives there) calling the shared `src/utils/reckoningAction.ts#recordReckoningAction`; the
 same function is also called from `useNotificationObserver`'s foreground/cold-start path as the
 W0.a fallback. Body taps (`DEFAULT_ACTION_IDENTIFIER`) route to `/reckoning` (`presentation: 'modal'`);
 action taps do not navigate. **Not runtime-verified** — `expo-task-manager` is a new native module,
 untestable in the existing dev client (needs a new build, see §1/OPERATIONS.md).
+
+**Quote notification actions (W1.4).** Every quote notification (`applySchedule`'s per-day loop)
+now carries `categoryIdentifier: 'quote'`. `src/utils/quoteAction.ts` holds the pure/testable pieces:
+`addFavorite` (idempotent prepend), `pushEngagement` (append + drop-oldest cap 200), and the
+effectful `handleFavoriteAction`/`handleOneMoreAction`/`recordQuoteAction`/`recordEngagement` that
+read/write AsyncStorage directly (same shape as `reckoningAction.ts#recordReckoningAction`).
+`recordQuoteAction(actionIdentifier, data)` is the single dispatch point, guarded on
+`data.kind !== RECKONING_KIND` so it never processes a reckoning response even if called
+unconditionally (see below). `favorite` prepends to `driftstop:favorites`; `oneMore` checks
+`driftstop:extraQuoteLog` (`{ date, count }`, reset when `date` is stale) against
+`ONE_MORE_DAILY_LIMIT = 2` — at/over the cap it is a **silent no-op, no notification is sent**
+(deliberate: an "out of extras" push would itself become the nag). Under the cap it picks a quote
+via the same `pickQuoteId` rotation-avoidance rule as `applySchedule`, schedules it 5 s out with
+`categoryIdentifier: 'quote'` (so it too carries ❤️/one-more), and appends `{ id, at }` to
+`scheduledQuoteIds` so `syncDeliveredToHistory` later folds it into history. `recordEngagement`
+appends `{ hour, at }` to `driftstop:engagementLog` (cap 200) on every quote-notification **body**
+tap — raw input for the not-yet-built W3.2 smart-timing feature; reckoning/trial notifications never
+write to it.
+
+**One background task, two responsibilities.** `expo-notifications`' `registerTaskAsync` registers a
+single headless notification-response task per app (confirmed from the v56 source: the doc's own
+example uses one task name for both receipt and response handling). W1.3 originally named this task
+around reckoning only; W1.4 renamed it to `src/utils/notificationTaskHandler.ts` /
+`NOTIFICATION_BACKGROUND_TASK` and made its callback call **both** `recordReckoningAction` and
+`recordQuoteAction` unconditionally — each guards on its own `kind`/action-identifier and no-ops for
+data it doesn't own, so calling both is safe. Registering a second task for the quote actions instead
+would have silently displaced the reckoning registration. **Not runtime-verified** — same native
+dependency as W1.3, needs the same new dev client build (no additional native dependency was added
+for W1.4, so both features can be verified in one build/QA pass).
 
 Pure time math lives in `src/utils/timeUtils.ts` with injectable `rng` for determinism:
 `generateRandomTimes` (`:35`) progressively halves the gap when the window is too tight
@@ -526,11 +557,12 @@ Pure time math lives in `src/utils/timeUtils.ts` with injectable `rng` for deter
 **Notification handling.**
 `Notifications.setNotificationHandler` is registered at module scope of
 `src/hooks/useNotifications.ts:8-21` (banner + list + sound, no badge).
-`useNotificationObserver` (`:35`) handles both cold start
-(`getLastNotificationResponseAsync`, `:50`) and warm taps
-(`addNotificationResponseReceivedListener`, `:57`), routing to `/quote/${quoteId}`.
-Separately, `_layout.tsx:60-64` listens for *foreground receipt* and records the quote into history
-without navigating. `quote/[id].tsx:33-35` records the opened quote — but **only if
+`useNotificationObserver` handles both cold start (`getLastNotificationResponseAsync`) and warm taps
+(`addNotificationResponseReceivedListener`), branching three ways per response: reckoning-kind data →
+`/reckoning` on body tap or `recordReckoningAction` on an action tap; quote-carrying data → `/quote/${quoteId}`
+**plus `recordEngagement()`** on a body tap (W1.4), or `recordQuoteAction` on a `favorite`/`oneMore`
+action tap. Separately, `_layout.tsx:60-64` listens for *foreground receipt* and records the quote
+into history without navigating. `quote/[id].tsx:33-35` records the opened quote — but **only if
 `!quote.isPremium`**, because Home's history resolves ids through the static array only.
 
 ### Android widget
@@ -772,9 +804,13 @@ Ordered roughly by blast radius.
    be reasoned about across both modules.
 7. **`useFavorites` is per-consumer, not shared.** Home, Favorites and `/quote/[id]` each mount an
    independent copy (`(tabs)/index.tsx:35`, `quote/[id].tsx:24`). Concurrent screens can show stale
-   favourite state and can clobber each other's writes (`useFavorites.ts:23-27` persists the whole
-   array). The server `favorites` table exists with correct RLS but is unused — favourites are
-   device-local and lost on reinstall, despite the app having accounts.
+   favourite state and can clobber each other's writes (`useFavorites.ts` persists the whole array).
+   The server `favorites` table exists with correct RLS but is unused — favourites are device-local
+   and lost on reinstall, despite the app having accounts. **W1.4 partially narrowed one instance of
+   this**: the hook now re-reads from disk on `AppState → active` (same pattern as `useHistory.tsx`),
+   so a ❤️ favorited from a background/killed-app notification tap is no longer invisible in an
+   already-mounted screen — but the multi-screen clobber risk between two *simultaneously foregrounded*
+   consumers is unchanged.
 8. **Premium ids must never enter `seenHistory`.** Home resolves history ids through the static
    array only (`useHistory.tsx:106` → `getQuoteById`), so a premium id renders a blank card. Today
    this is guarded in exactly one place — `quote/[id].tsx:34` (`if (quote && !quote.isPremium)`) —

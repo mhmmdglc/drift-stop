@@ -182,7 +182,9 @@
     "permissionTitle": "Mitteilungen erlauben",
     "permissionBody": "Wir brauchen die Erlaubnis, um dich im Lauf des Tages aufzurütteln.",
     "permissionGranted": "Danke. Wir sind bei dir.",
-    "permissionDenied": "Du kannst es jederzeit in den Einstellungen aktivieren."
+    "permissionDenied": "Du kannst es jederzeit in den Einstellungen aktivieren.",
+    "actionFavorite": "❤️ Favorit",
+    "actionOneMore": "Noch einer"
   },
   "share": {
     "quoteTemplate": "{{quote}}\n\n— {{author}}\n\nmit DriftStop",

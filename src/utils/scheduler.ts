@@ -43,6 +43,14 @@ export const RECKONING_CATEGORY = 'reckoning';
 export const RECKONING_ACTION_RESISTED = 'resisted';
 export const RECKONING_ACTION_DRIFTED = 'drifted';
 /**
+ * Günlük söz bildirimlerinin aksiyon kategorisi (W1.4: ❤️ favorile / "bir tane
+ * daha"). Hesaplaşma ve deneme bildirimlerinde bu kategori KULLANILMAZ — aksiyonlar
+ * yalnızca söz bildirimlerinde anlamlı (bkz. `recordQuoteAction` guard'ı).
+ */
+export const QUOTE_CATEGORY = 'quote';
+export const QUOTE_ACTION_FAVORITE = 'favorite';
+export const QUOTE_ACTION_ONE_MORE = 'oneMore';
+/**
  * Hesaplaşma bildirimi için gün-içi son temsil edilebilir dakika (23:59) — yalnızca
  * `dateAt` aynı gün içinde kalsın diye bir tavan, pencere bitişinin ÖNÜNE geçmez (aşağıya bkz.).
  */
@@ -53,8 +61,12 @@ const DAYS_AHEAD = 3; // tampon: birkaç gün önceden zamanla
 const MIN_GAP = 90; // dakika
 const HISTORY_CAP = 200; // useHistory ile aynı
 
-/** Zamanlanmış bir bildirimin sözü + ne zaman gösterileceği (epoch ms). */
-type ScheduledQuote = { id: number; at: number };
+/**
+ * Zamanlanmış bir bildirimin sözü + ne zaman gösterileceği (epoch ms). Export
+ * edildi: `quoteAction.ts`'teki "bir tane daha" aksiyonu aynı şekilde
+ * `scheduledQuoteIds`'e ekleme yapar (`syncDeliveredToHistory` bunu okur).
+ */
+export type ScheduledQuote = { id: number; at: number };
 
 /** Android bildirim kanalını oluştur (HIGH önem, titreşim, badge). */
 export async function setupAndroidChannel(): Promise<void> {
@@ -88,12 +100,12 @@ export async function ensurePermissions(): Promise<boolean> {
 }
 
 /**
- * Hesaplaşma bildiriminin aksiyon butonlarını kaydeder (W0.a: `expo-task-manager`
- * ile headless işleme birincil yol, `getLastNotificationResponseAsync` yedek).
- * Buton metinleri diskten değil o an aktif `i18n.locale`den pişiyor — dil
- * değişince kategori de yeniden kaydedilmeli, bu yüzden `applySchedule` başında
- * da çağrılır (`_layout.tsx`'teki boot çağrısı yalnızca ilk kurulum içindir).
- * API cihaz/OS sürümüne göre desteklenmeyebilir → sessizce geç.
+ * Bildirim aksiyon butonlarını kaydeder (W0.a: `expo-task-manager` ile headless
+ * işleme birincil yol, `getLastNotificationResponseAsync` yedek). Hesaplaşma VE
+ * söz kategorileri AYNI çağrıda pişiyor — ikisinin de buton metinleri o an aktif
+ * `i18n.locale`den geliyor, dil değişince ikisi de yeniden kaydedilmeli, bu yüzden
+ * `applySchedule` başında da çağrılır (`_layout.tsx`'teki boot çağrısı yalnızca ilk
+ * kurulum içindir). API cihaz/OS sürümüne göre desteklenmeyebilir → sessizce geç.
  */
 export async function setupNotificationCategories(): Promise<void> {
   if (!nativeFeaturesAvailable) return;
@@ -109,6 +121,19 @@ export async function setupNotificationCategories(): Promise<void> {
       {
         identifier: RECKONING_ACTION_DRIFTED,
         buttonTitle: i18n.t('reckoning.actionDrifted'),
+        options: { opensAppToForeground: false },
+      },
+    ]);
+    await Notifications.setNotificationCategoryAsync(QUOTE_CATEGORY, [
+      {
+        identifier: QUOTE_ACTION_FAVORITE,
+        buttonTitle: i18n.t('notifications.actionFavorite'),
+        // Aynı gerekçe: sözü açmadan favoriler — "sürtünmesiz etkileşim" (W1.4).
+        options: { opensAppToForeground: false },
+      },
+      {
+        identifier: QUOTE_ACTION_ONE_MORE,
+        buttonTitle: i18n.t('notifications.actionOneMore'),
         options: { opensAppToForeground: false },
       },
     ]);
@@ -145,8 +170,9 @@ export function randomTitle(goal: string | null): string {
  * Havuzdan rastgele bir söz seç. `excludeSet` yakın geçmişi ve aynı plandaki önceki
  * seçimleri taşır — günde 5 bildirimle "hep aynı sözler" hissi uygulamayı sildirir.
  * Hepsi dışlanmışsa dışlama yok sayılır: dar havuzda plansız kalmak tekrardan kötü.
+ * Export edildi: `quoteAction.ts`'teki "bir tane daha" aksiyonu aynı kuralla seçim yapar.
  */
-function pickQuoteId(pool: Quote[], prevId: number | null, excludeSet: Set<number>): number {
+export function pickQuoteId(pool: Quote[], prevId: number | null, excludeSet: Set<number>): number {
   if (pool.length === 0) return -1;
   if (pool.length === 1) return pool[0].id;
   // ≤2 sözlük havuzda dışlama anlamsız — art arda tekrar engeli tek başına yeterli.
@@ -243,6 +269,7 @@ export async function applySchedule(settings: Settings): Promise<void> {
           body,
           subtitle: `${localizeAuthor(quote.author, i18n.locale)} · ${localizeOrigin(quote.origin, i18n.locale)}`,
           data: { quoteId },
+          categoryIdentifier: QUOTE_CATEGORY, // ❤️ / "bir tane daha" aksiyonları (W1.4)
           // sound: kanal varsayılanı kullanılır (özel 'default' uyarısını önlemek için belirtilmedi)
         },
         trigger: {

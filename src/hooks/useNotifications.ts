@@ -2,6 +2,7 @@ import * as Notifications from 'expo-notifications';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 
+import { recordEngagement, recordQuoteAction } from '@/utils/quoteAction';
 import { recordReckoningAction } from '@/utils/reckoningAction';
 import { nativeFeaturesAvailable } from '@/utils/runtime';
 import { RECKONING_KIND } from '@/utils/scheduler';
@@ -31,12 +32,17 @@ function extractData(response: Notifications.NotificationResponse | null): Notif
 /**
  * Bildirime tıklanınca ilgili sözü açar (/quote/[id]) veya, hesaplaşma
  * bildirimiyse aksiyona/gövdeye göre davranır:
- * - Aksiyon butonu (`resisted`/`drifted`): `reckoningLog`a sessizce yazar,
- *   YÖNLENDİRME YAPMAZ — "tek dokunuşla günü kapat" vaadinin karşılığı budur.
- *   Headless background task (`reckoningTaskHandler`) aynı işi uygulama
- *   kapalıyken zaten yapmış olabilir; `recordReckoningAction` aynı güne
- *   üzerine yazar, çift çağrı zararsız (W0.a yedek yolu budur).
- * - Gövdeye dokunma (DEFAULT): `/reckoning`e götürür, söz yönlendirmesi yapılmaz.
+ * - Hesaplaşma aksiyon butonu (`resisted`/`drifted`): `reckoningLog`a sessizce
+ *   yazar, YÖNLENDİRME YAPMAZ — "tek dokunuşla günü kapat" vaadinin karşılığı
+ *   budur. Headless background task (`notificationTaskHandler`) aynı işi
+ *   uygulama kapalıyken zaten yapmış olabilir; `recordReckoningAction` aynı
+ *   güne üzerine yazar, çift çağrı zararsız (W0.a yedek yolu budur).
+ * - Hesaplaşma gövdesine dokunma (DEFAULT): `/reckoning`e götürür, söz
+ *   yönlendirmesi yapılmaz.
+ * - Söz bildirimi aksiyon butonu (`favorite`/`oneMore`, W1.4): `recordQuoteAction`
+ *   sessizce işler, sözü AÇMAZ — aynı "uygulamayı açmadan etkileşim" vaadi.
+ * - Söz bildirimi gövdesine dokunma (DEFAULT): mevcut davranış (`/quote/[id]`)
+ *   korunur, ek olarak `engagementLog`a dokunma anı yazılır (W3.2'nin girdisi).
  * Expo Go'da no-op (native bildirim yok).
  */
 export function useNotificationObserver() {
@@ -59,8 +65,13 @@ export function useNotificationObserver() {
         return;
       }
 
-      if (typeof data.quoteId === 'number' && mounted) {
-        router.push(`/quote/${data.quoteId}`);
+      if (typeof data.quoteId === 'number') {
+        if (response.actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER) {
+          await recordEngagement();
+          if (mounted) router.push(`/quote/${data.quoteId}`);
+        } else {
+          await recordQuoteAction(response.actionIdentifier, data);
+        }
       }
     };
 

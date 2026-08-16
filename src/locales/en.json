@@ -182,7 +182,9 @@
     "permissionTitle": "Notification Access",
     "permissionBody": "We need permission to reach you through the day.",
     "permissionGranted": "Thank you. We're with you.",
-    "permissionDenied": "You can turn it on from settings anytime."
+    "permissionDenied": "You can turn it on from settings anytime.",
+    "actionFavorite": "❤️ Favorite",
+    "actionOneMore": "One more"
   },
   "share": {
     "quoteTemplate": "{{quote}}\n\n— {{author}}\n\nvia DriftStop",

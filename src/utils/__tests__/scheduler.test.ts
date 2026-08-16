@@ -74,6 +74,9 @@ import {
   RECKONING_CATEGORY,
   RECKONING_ACTION_RESISTED,
   RECKONING_ACTION_DRIFTED,
+  QUOTE_CATEGORY,
+  QUOTE_ACTION_FAVORITE,
+  QUOTE_ACTION_ONE_MORE,
 } from '../scheduler';
 import { DEFAULT_SETTINGS, type Settings } from '@/types/settings';
 import { dateKey } from '@/utils/timeUtils';
@@ -253,16 +256,18 @@ describe('applySchedule', () => {
     for (const d of scheduledDates()) expect(d.getTime()).toBeGreaterThan(now);
   });
 
-  it('her bildirim günlük kanala ve quoteId verisiyle gider', async () => {
+  it('her bildirim günlük kanala, quoteId verisiyle ve quote kategorisiyle gider', async () => {
     await applySchedule(settings({ frequency: 3 }));
 
     for (const call of mockNotifications.scheduleNotificationAsync.mock.calls.filter(isQuoteCall)) {
       const arg = call[0] as {
-        content: { body: string; data: { quoteId: number } };
+        content: { body: string; data: { quoteId: number }; categoryIdentifier: string };
         trigger: { channelId: string };
       };
       expect(arg.trigger.channelId).toBe(NOTIFICATION_CHANNEL_ID);
       expect(typeof arg.content.data.quoteId).toBe('number');
+      // ❤️ / "bir tane daha" aksiyonları yalnızca bu kategoride görünür (W1.4).
+      expect(arg.content.categoryIdentifier).toBe(QUOTE_CATEGORY);
       // Boş gövdeli bildirim kullanıcıya boş kart gösterir.
       expect(arg.content.body.length).toBeGreaterThan(0);
     }
@@ -568,6 +573,25 @@ describe('setupNotificationCategories', () => {
         },
       ]
     );
+  });
+
+  it('quote kategorisini AYNI çağrıda favorite + oneMore aksiyonlarıyla kaydeder — ikisi de opensAppToForeground:false', async () => {
+    await setupNotificationCategories();
+
+    expect(mockNotifications.setNotificationCategoryAsync).toHaveBeenCalledWith(QUOTE_CATEGORY, [
+      {
+        identifier: QUOTE_ACTION_FAVORITE,
+        buttonTitle: i18n.t('notifications.actionFavorite'),
+        options: { opensAppToForeground: false },
+      },
+      {
+        identifier: QUOTE_ACTION_ONE_MORE,
+        buttonTitle: i18n.t('notifications.actionOneMore'),
+        options: { opensAppToForeground: false },
+      },
+    ]);
+    // Kategoriler birlikte pişiyor — dil değişince ikisi de yeniden kurulmalı.
+    expect(mockNotifications.setNotificationCategoryAsync).toHaveBeenCalledTimes(2);
   });
 
   it('API reddederse sessizce geçer (eski cihaz/OS)', async () => {

@@ -14,13 +14,13 @@ function isReckoningAnswer(id: string): id is ReckoningAnswer {
 /**
  * Hesaplaşma bildirimi aksiyon cevabını `reckoningLog`a yazar. Hem foreground
  * listener (`useNotificationObserver`) hem headless background task
- * (`reckoningTaskHandler`) AYNI fonksiyonu çağırır — mantık tek yerde, iki
+ * (`notificationTaskHandler`) AYNI fonksiyonu çağırır — mantık tek yerde, iki
  * tetikleyici; ikisi de çalışırsa (örn. yedek `getLastNotificationResponseAsync`
  * headless görevden SONRA da tetiklenirse) sorun değil, aynı güne üzerine yazar.
  *
  * `kind !== RECKONING_KIND` veya bilinmeyen aksiyon kimliğiyse no-op — söz
- * bildirimlerinin (W1.4) aksiyonları da aynı listener'dan geçecek, biri
- * diğerinin verisini ezmemeli.
+ * bildirimlerinin (W1.4) aksiyonları da aynı görevden/listener'dan geçiyor
+ * (`recordQuoteAction`), biri diğerinin verisini ezmemeli.
  */
 export async function recordReckoningAction(
   actionIdentifier: string,

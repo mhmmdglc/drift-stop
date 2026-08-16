@@ -1,0 +1,160 @@
+import * as Notifications from 'expo-notifications';
+
+import { getQuoteById, getQuotesByThemes } from '@/data/quotes';
+import i18n from '@/i18n';
+import { localizeAuthor, localizeOrigin } from '@/i18n/quoteLocalization';
+import {
+  NOTIFICATION_CHANNEL_ID,
+  QUOTE_ACTION_FAVORITE,
+  QUOTE_ACTION_ONE_MORE,
+  QUOTE_CATEGORY,
+  RECKONING_KIND,
+  pickQuoteId,
+  randomTitle,
+  type ScheduledQuote,
+} from '@/utils/scheduler';
+import { DEFAULT_SETTINGS, type Settings } from '@/types/settings';
+import { quoteDisplayText } from '@/utils/quoteText';
+import { getJSON, setJSON, StorageKeys } from '@/utils/storage';
+import { dateKey } from '@/utils/timeUtils';
+
+/**
+ * Günde en fazla kaç "bir tane daha" — feed kapısı açılmasın diye sert sınır
+ * (W1.4 kararı: "Next butonu yok" ilkesi bu sınırla korunuyor).
+ */
+export const ONE_MORE_DAILY_LIMIT = 2;
+/** "Bir tane daha" bildiriminin gelişine kadar bekleme (ms) — anlık hissettirir. */
+const ONE_MORE_DELAY_MS = 5000;
+/** `engagementLog`'un en fazla kaç kayıt taşıyacağı — sonsuza büyümesin. */
+const ENGAGEMENT_LOG_CAP = 200;
+
+/** Günlük "bir tane daha" sayacı. Bkz. `StorageKeys.extraQuoteLog`. */
+export type ExtraQuoteLog = { date: string; count: number };
+/** Bildirim gövdesine dokunma anı. Bkz. `StorageKeys.engagementLog`. */
+export type EngagementEntry = { hour: number; at: number };
+
+/**
+ * `favorites` listesinin başına ekler; zaten varsa DOKUNMAZ (idempotent) — aynı
+ * söz bildirimden iki kez ❤️'lense de liste sırası bozulmaz, tekrar eklenmez.
+ */
+export function addFavorite(favorites: number[], quoteId: number): number[] {
+  if (favorites.includes(quoteId)) return favorites;
+  return [quoteId, ...favorites];
+}
+
+/** Gün değiştiyse sayaç sıfır sayılır — log yalnızca BUGÜNÜN sayacını taşır. */
+function todaysCount(log: ExtraQuoteLog | null, today: string): number {
+  return log && log.date === today ? log.count : 0;
+}
+
+/**
+ * `engagementLog`'a yeni kayıt ekler; cap aşılırsa EN ESKİSİ atılır (baştan
+ * kesilir) — en yeni etkileşimler her zaman korunur.
+ */
+export function pushEngagement(
+  log: EngagementEntry[],
+  entry: EngagementEntry,
+  cap: number = ENGAGEMENT_LOG_CAP
+): EngagementEntry[] {
+  const next = [...log, entry];
+  return next.length > cap ? next.slice(next.length - cap) : next;
+}
+
+/**
+ * ❤️ aksiyonu: `quoteId`'yi favorilerin başına ekler (zaten varsa no-op).
+ * `useFavorites` mount'ta okuduğu için arka planda yazılan bu değişikliği
+ * kaçırabilir — hook'a ayrıca `AppState → active` yeniden-okuma eklendi
+ * (bkz. `useFavorites.ts`), yoksa açık duran uygulamada favori görünmez.
+ */
+export async function handleFavoriteAction(quoteId: number | undefined): Promise<void> {
+  if (typeof quoteId !== 'number') return;
+  const favorites = await getJSON<number[]>(StorageKeys.favorites, []);
+  const next = addFavorite(favorites, quoteId);
+  if (next !== favorites) await setJSON(StorageKeys.favorites, next);
+}
+
+/**
+ * "Bir tane daha" aksiyonu: günlük sınıra (`ONE_MORE_DAILY_LIMIT`) takılırsa
+ * SESSİZCE no-op — yeni bildirim KURULMAZ ("hakkın bitti" bildirimi göndermek
+ * dırdıra döner, W1.4 kararı). Sınır altındaysa havuzdan (W1.1 dışlama kurallı
+ * `pickQuoteId`) bir söz seçip +5 sn'ye tek bildirim kurar; `scheduledQuoteIds`'e
+ * eklenir ki `syncDeliveredToHistory` onu geçmişe taşısın.
+ */
+export async function handleOneMoreAction(now: Date = new Date()): Promise<void> {
+  const today = dateKey(now);
+  const log = await getJSON<ExtraQuoteLog | null>(StorageKeys.extraQuoteLog, null);
+  const count = todaysCount(log, today);
+  if (count >= ONE_MORE_DAILY_LIMIT) return;
+
+  const storedSettings = await getJSON<Partial<Settings>>(StorageKeys.settings, {});
+  const settings: Settings = { ...DEFAULT_SETTINGS, ...storedSettings };
+  const pool = getQuotesByThemes(settings.themes);
+  if (pool.length === 0) return;
+
+  const history = await getJSON<number[]>(StorageKeys.seenHistory, []);
+  const excludeSet = new Set(
+    history.slice(0, Math.min(history.length, Math.floor(pool.length * 0.5)))
+  );
+  const quoteId = pickQuoteId(pool, null, excludeSet);
+  const quote = getQuoteById(quoteId);
+  if (!quote) return;
+
+  const fireDate = new Date(now.getTime() + ONE_MORE_DELAY_MS);
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: randomTitle(settings.goal),
+      body: quoteDisplayText(quote, i18n.locale),
+      subtitle: `${localizeAuthor(quote.author, i18n.locale)} · ${localizeOrigin(quote.origin, i18n.locale)}`,
+      data: { quoteId },
+      categoryIdentifier: QUOTE_CATEGORY, // "evet, onun da ❤️'si olur" — W1.4 kararı
+    },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.DATE,
+      date: fireDate,
+      channelId: NOTIFICATION_CHANNEL_ID,
+    },
+  });
+
+  await setJSON(StorageKeys.extraQuoteLog, { date: today, count: count + 1 });
+
+  const scheduled = await getJSON<ScheduledQuote[]>(StorageKeys.scheduledQuoteIds, []);
+  await setJSON(StorageKeys.scheduledQuoteIds, [
+    ...scheduled,
+    { id: quoteId, at: fireDate.getTime() },
+  ]);
+}
+
+/**
+ * Söz bildirimi aksiyon cevabını işler — hem foreground listener
+ * (`useNotificationObserver`) hem headless background task
+ * (`notificationTaskHandler`) AYNI fonksiyonu çağırır (`recordReckoningAction`
+ * deseniyle aynı). `data.kind === RECKONING_KIND` ise no-op: kategoriler
+ * karışmasın, hesaplaşma cevapları yalnızca `recordReckoningAction`dan geçer.
+ */
+export async function recordQuoteAction(
+  actionIdentifier: string,
+  data: { quoteId?: number; kind?: string } | undefined
+): Promise<void> {
+  if (data?.kind === RECKONING_KIND) return;
+  if (actionIdentifier === QUOTE_ACTION_FAVORITE) {
+    await handleFavoriteAction(data?.quoteId);
+    return;
+  }
+  if (actionIdentifier === QUOTE_ACTION_ONE_MORE) {
+    await handleOneMoreAction();
+    return;
+  }
+  // bilinmeyen aksiyon kimliği → no-op
+}
+
+/**
+ * Bildirim gövdesine dokunma (DEFAULT aksiyon) anını kaydeder — W3.2'nin
+ * "hangi saatte okunuyor" verisinin ham girdisi. Yalnızca söz bildirimlerinde
+ * çağrılır (`useNotificationObserver`daki quoteId dalı); hesaplaşma/deneme
+ * bildirimleri bu logu beslemez.
+ */
+export async function recordEngagement(now: Date = new Date()): Promise<void> {
+  const log = await getJSON<EngagementEntry[]>(StorageKeys.engagementLog, []);
+  const next = pushEngagement(log, { hour: now.getHours(), at: now.getTime() });
+  await setJSON(StorageKeys.engagementLog, next);
+}

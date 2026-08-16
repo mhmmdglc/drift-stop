@@ -275,9 +275,15 @@ User demanded a real monetization funnel ("how will we sell subscriptions?"). No
   **W1.3 (gece hesaplaşması + streak) kod tarafı bitti** (`utils/reckoning.ts`,
   `hooks/useReckoning.tsx`, `/reckoning` modal ekranı, Home şeridi, Settings toggle'ı,
   `expo-task-manager` bağımlılığı) — **yeni dev client build gerektiriyor** (headless aksiyon
-  işleyicisi native modül; mevcut build'de test edilemedi) ve cihaz-QA henüz yapılmadı. Kalan:
-  bildirim aksiyonları (W1.4), geleceğe mesaj kasası, SOS, sertlik ayarı, akıllı zamanlama, özel
-  bildirim sesi.
+  işleyicisi native modül; mevcut build'de test edilemedi) ve cihaz-QA henüz yapılmadı.
+  **W1.4 (bildirim aksiyonları — ❤️ favorile / "bir tane daha") kod tarafı bitti**
+  (`utils/quoteAction.ts`, `quote` kategorisi `setupNotificationCategories`'e eklendi,
+  `useNotificationObserver` genişledi, `useFavorites`'e `AppState` yeniden-okuma eklendi, 8 locale).
+  W1.3'ün headless görevi (`reckoningTaskHandler.ts` → `notificationTaskHandler.ts`) hem
+  hesaplaşma hem söz aksiyonlarını işleyecek şekilde genişletildi — **yeni native bağımlılık
+  eklenmedi**, W1.3 ile AYNI dev-client build'inde birlikte cihaz-QA'sı yapılabilir (henüz
+  yapılmadı). Kalan: geleceğe mesaj kasası (W2.1), SOS (W2.2), sertlik ayarı (W3.1), akıllı
+  zamanlama (W3.2 — W1.4'ün `engagementLog`'unun birikmesini bekliyor), özel bildirim sesi (W3.3).
 
 From the backend roadmap's rollout order — now unblocked since the webhook is deployed:
 - Cross-device sync (favorites + settings + streak)

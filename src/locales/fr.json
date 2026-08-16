@@ -182,7 +182,9 @@
     "permissionTitle": "Autorisation des notifications",
     "permissionBody": "On a besoin de ton autorisation pour te prévenir dans la journée.",
     "permissionGranted": "Merci. On est avec toi.",
-    "permissionDenied": "Tu peux l'activer dans les réglages quand tu veux."
+    "permissionDenied": "Tu peux l'activer dans les réglages quand tu veux.",
+    "actionFavorite": "❤️ Favori",
+    "actionOneMore": "Encore un"
   },
   "share": {
     "quoteTemplate": "{{quote}}\n\n— {{author}}\n\navec DriftStop",

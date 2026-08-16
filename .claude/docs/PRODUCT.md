@@ -116,6 +116,20 @@ enters history (it isn't a quote). Answers go to `driftstop:reckoningLog`; a str
 7-day summary are shown on a Home strip (hidden until the first answer) and on `/reckoning`. See
 `specs/engagement-roadmap.md` §W1.3 and `specs/w1.3-ux.md` for the full design rationale.
 
+**Quote notification actions (W1.4).** Every daily quote notification now carries category `quote`
+with two action buttons, both `opensAppToForeground: false` (headless, per the W0.a spike): **❤️
+Favorite** adds the quote to `driftstop:favorites` without opening the app, and **"One more"**
+schedules a single extra quote notification 5 seconds later (same rotation-avoidance rule as the
+daily pool, `pickQuoteId`), capped at 2 per day (`driftstop:extraQuoteLog`) — hitting the cap is a
+silent no-op, no "you're out" notification is ever sent (deliberate anti-feed decision, see "Won't
+do" list). Tapping the notification body (unchanged `/quote/[id]` routing) also appends
+`{ hour, at }` to `driftstop:engagementLog` (cap 200) — the raw input for the future W3.2 smart-timing
+feature. Both actions are processed by a single shared headless task
+(`src/utils/notificationTaskHandler.ts`, `NOTIFICATION_BACKGROUND_TASK`) that also handles the
+reckoning actions — `expo-notifications` only allows one registered background notification-response
+task per app, so W1.3's reckoning-only task was generalized rather than a second one being registered.
+See `specs/engagement-roadmap.md` §W1.4.
+
 ### `applySchedule(settings)` — `scheduler.ts:82-137`
 
 1. Bails out entirely when `nativeFeaturesAvailable` is false (Expo Go — `src/utils/runtime.ts:11`).
@@ -353,6 +367,7 @@ mandatory for this content type, so no external payment path exists.
 | Authors section on `/packs` | 🔒 visible but locked | 🔒 | ✅ |
 | Favorites, history, widget, share, themes, 6-language UI | ✅ | ✅ | ✅ |
 | Nightly reckoning + streak (`/reckoning`, W1.3) | ✅ no gate | ✅ | ✅ |
+| Notification actions — ❤️ favorite / "one more" (W1.4) | ✅ no gate, ≤2 extra/day | ✅ | ✅ |
 | Cross-device sync | ❌ not built for anyone | ❌ | ❌ |
 | Premium quotes in notifications / widget / Home | ❌ | ❌ | ❌ (by design, see §4) |
 

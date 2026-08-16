@@ -182,7 +182,9 @@
     "permissionTitle": "Bildirim İzni",
     "permissionBody": "Gün içinde seni uyarmamız için izne ihtiyacımız var.",
     "permissionGranted": "Teşekkürler. Seninleyiz.",
-    "permissionDenied": "Dilediğin zaman ayarlardan açabilirsin."
+    "permissionDenied": "Dilediğin zaman ayarlardan açabilirsin.",
+    "actionFavorite": "❤️ Favorile",
+    "actionOneMore": "Bir tane daha"
   },
   "share": {
     "quoteTemplate": "{{quote}}\n\n— {{author}}\n\nDriftStop ile",
