@@ -196,6 +196,19 @@ sonra bir build, sonra abonelik grubunun inceleme ekran görüntüsü (paywall'�
 
 ## Needs device QA (not blocked on you)
 
+- **W1.1/W1.2 (2026-08-16 QA pass) — two criteria have no on-device surface to verify against.**
+  (a) That a real 200-notification window has zero repeats (`pickQuoteId` exclusion, `scheduler.ts`) —
+  no screen exposes `getAllScheduledNotificationsAsync`; only unit-tested. (b) That a real fired/scheduled
+  notification actually shows a `goalTitles`-personalized title (`randomTitle(goal)`, ~30% ratio) — same
+  gap. Both are logic-verified (unit tests + isolated-worktree run, 52/52 green at `778f46d`) but never
+  seen on screen. Consider a dev-only debug screen dumping the scheduled-notification plan if this keeps
+  recurring across future scheduler changes (W1.3/W1.4/W2.1 all touch the same function).
+- **Unconfirmed observation, not a filed bug:** during that same QA pass, one relaunch briefly showed
+  settings reverted to Turkish/dark/default-frequency instead of the just-set English/light/goal state.
+  Happened during a crash-and-reload cycle caused by unrelated concurrent-write contamination (see
+  WORKLOG 2026-08-16) — plausibly just a fresh process rendering before `AsyncStorage` finished loading,
+  not a real persistence race. Re-test once in a clean, uncontaminated environment before treating as real.
+
 - **Cached-premium purge/restore (finding #8, fixed in code 2026-07-25).** Cannot be verified without a device and a real RevenueCat entitlement. Sequence for `qa-tester`: grant Pro → open a premium pack so content syncs → favorite one premium quote and one free quote → revoke Pro (or sign out) → relaunch → the premium favorite must show the locked row (not a blank card, not a vanished favorite), the free favorite must be untouched, pack detail must be locked again, and pack/author *counts* must still be visible → re-grant Pro → relaunch → premium content and the favorite must come back within a few seconds.
   - **Also check, from the review follow-up:** (a) **purchase while Favorites is open** — buy Pro from the paywall reached by tapping a locked favorite, then go back without leaving the tab; the row must flip from lock → real text on its own within ~5 s (this is the version-counter path, and Favorites stays mounted so a tab switch would not save it); (b) **airplane mode cold start as a paying user** — kill the app, disable networking, launch: premium favourites must still render (nothing may be purged when `getCustomerInfo()` fails), then re-enable networking; (c) **sign out during the restore** — re-grant Pro, relaunch, and sign out within the 2–5 s restore window: premium rows must stay gone rather than reappearing.
 
