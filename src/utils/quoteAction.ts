@@ -81,34 +81,71 @@ export async function handleFavoriteAction(quoteId: number | undefined): Promise
  * üzerine-yazmaya dayanıyor, `oneMore` ise sayaç ARTIRAN bir yan etki.
  * Kilit olmadan iki eşzamanlı çağrı aynı sayacı okuyup ikisi de bildirim
  * kurabiliyordu, günlük sınırı (`ONE_MORE_DAILY_LIMIT`) aşarak (code review,
- * 2026-08-16 — eşzamanlı çağrıyla doğrudan tekrarlandı). Çapraz-soğuk-başlatma
- * tekrarı ayrıca `Notifications.clearLastNotificationResponseAsync()` ile
- * kapatılıyor (bkz. `useNotifications.ts`).
+ * 2026-08-16 — eşzamanlı çağrıyla doğrudan tekrarlandı).
+ *
+ * BU KİLİT TEK BAŞINA YETMEZ: headless görev tam kapalı bir uygulamada AYRI
+ * bir JS sürecinde çalışır, kendi modül kapsamının kendi (taze) `oneMoreQueue`'su
+ * vardır. Kullanıcı headless işlemden SONRA uygulamayı normal açarsa,
+ * `getLastNotificationResponseAsync` aynı cevabı YENİ bir süreçte tekrar
+ * döndürebilir — bu ikinci turda kilit hiçbir şeyi görmez, çünkü bambaşka bir
+ * process'te taze başlıyor (ikinci code review turu, 2026-08-16: "mimari boşluk,
+ * cihazda doğrulanmadı ama makul"). Bu yüzden asıl garanti kalıcı: bildirimin
+ * kendi `identifier`'ı `processedOneMoreIds`'e yazılır, `alreadyProcessed` bunu
+ * SÜREÇTEN BAĞIMSIZ kontrol eder — aynı cevap kaç kez/hangi süreçte tekrar
+ * gelirse gelsin ikinci kez işlenmez.
  */
 let oneMoreQueue: Promise<unknown> = Promise.resolve();
 
+/** `processedOneMoreIds`'in en fazla kaç kayıt taşıyacağı. */
+const PROCESSED_ONE_MORE_CAP = 50;
+
+async function alreadyProcessedOneMore(notificationId: string | undefined): Promise<boolean> {
+  if (!notificationId) return false; // kimlik yoksa (eski/test çağrısı) dedup uygulanamaz
+  const ids = await getJSON<string[]>(StorageKeys.processedOneMoreIds, []);
+  return ids.includes(notificationId);
+}
+
+async function markOneMoreProcessed(notificationId: string | undefined): Promise<void> {
+  if (!notificationId) return;
+  const ids = await getJSON<string[]>(StorageKeys.processedOneMoreIds, []);
+  if (ids.includes(notificationId)) return;
+  const next = [...ids, notificationId];
+  await setJSON(
+    StorageKeys.processedOneMoreIds,
+    next.length > PROCESSED_ONE_MORE_CAP ? next.slice(next.length - PROCESSED_ONE_MORE_CAP) : next
+  );
+}
+
 /**
  * "Bir tane daha" aksiyonu: günlük sınıra (`ONE_MORE_DAILY_LIMIT`) takılırsa
- * SESSİZCE no-op — yeni bildirim KURULMAZ ("hakkın bitti" bildirimi göndermek
- * dırdıra döner, W1.4 kararı). Sınır altındaysa havuzdan (W1.1 dışlama kurallı
- * `pickQuoteId`) bir söz seçip +5 sn'ye tek bildirim kurar; `scheduledQuoteIds`'e
- * eklenir ki `syncDeliveredToHistory` onu geçmişe taşısın. `triggeringQuoteId`
- * (aksiyona basılan bildirimin kendi sözü) dışlama setine eklenir — headless
- * yolda bu söz henüz `seenHistory`'ye girmemiş olabilir, o yüzden "bir tane
- * daha" aynı sözü tekrar seçebilirdi (code review bulgusu).
+ * ya da bu TAM CEVAP (`notificationId`) daha önce işlendiyse SESSİZCE no-op —
+ * yeni bildirim KURULMAZ ("hakkın bitti" bildirimi göndermek dırdıra döner,
+ * W1.4 kararı). Sınır altındaysa havuzdan (W1.1 dışlama kurallı `pickQuoteId`)
+ * bir söz seçip +5 sn'ye tek bildirim kurar; `scheduledQuoteIds`'e eklenir ki
+ * `syncDeliveredToHistory` onu geçmişe taşısın. `triggeringQuoteId` (aksiyona
+ * basılan bildirimin kendi sözü) dışlama setine eklenir — headless yolda bu
+ * söz henüz `seenHistory`'ye girmemiş olabilir, o yüzden "bir tane daha" aynı
+ * sözü tekrar seçebilirdi (code review bulgusu).
  */
 export function handleOneMoreAction(
   now: Date = new Date(),
-  triggeringQuoteId?: number
+  triggeringQuoteId?: number,
+  notificationId?: string
 ): Promise<void> {
-  const task = oneMoreQueue.then(() => runOneMoreAction(now, triggeringQuoteId));
+  const task = oneMoreQueue.then(() => runOneMoreAction(now, triggeringQuoteId, notificationId));
   // Zincir bir sonraki çağrı için canlı kalsın diye hatayı burada yutuyoruz;
   // bu çağrının kendi reddi `task` üzerinden çağırana aynen ulaşır.
   oneMoreQueue = task.catch(() => undefined);
   return task;
 }
 
-async function runOneMoreAction(now: Date, triggeringQuoteId?: number): Promise<void> {
+async function runOneMoreAction(
+  now: Date,
+  triggeringQuoteId?: number,
+  notificationId?: string
+): Promise<void> {
+  if (await alreadyProcessedOneMore(notificationId)) return;
+
   const today = dateKey(now);
   const log = await getJSON<ExtraQuoteLog | null>(StorageKeys.extraQuoteLog, null);
   const count = todaysCount(log, today);
@@ -151,6 +188,11 @@ async function runOneMoreAction(now: Date, triggeringQuoteId?: number): Promise<
     ...scheduled,
     { id: quoteId, at: fireDate.getTime() },
   ]);
+
+  // En son: her şey durdurulabilir bir hataya çarpmadan bitti, bu cevap artık
+  // kalıcı olarak "işlendi" sayılabilir — hangi süreçte/kaç kez tekrar
+  // gelirse gelsin bir daha bildirim kurmaz.
+  await markOneMoreProcessed(notificationId);
 }
 
 /**
@@ -162,7 +204,8 @@ async function runOneMoreAction(now: Date, triggeringQuoteId?: number): Promise<
  */
 export async function recordQuoteAction(
   actionIdentifier: string,
-  data: { quoteId?: number; kind?: string } | undefined
+  data: { quoteId?: number; kind?: string } | undefined,
+  notificationId?: string
 ): Promise<void> {
   if (data?.kind === RECKONING_KIND) return;
   if (actionIdentifier === QUOTE_ACTION_FAVORITE) {
@@ -170,7 +213,7 @@ export async function recordQuoteAction(
     return;
   }
   if (actionIdentifier === QUOTE_ACTION_ONE_MORE) {
-    await handleOneMoreAction(new Date(), data?.quoteId);
+    await handleOneMoreAction(new Date(), data?.quoteId, notificationId);
     return;
   }
   // bilinmeyen aksiyon kimliği → no-op

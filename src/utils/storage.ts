@@ -27,6 +27,18 @@ export const StorageKeys = {
    * "akıllı zamanlama" için biriktirdiği ham etkileşim verisi. Bkz. utils/quoteAction.ts
    */
   engagementLog: 'driftstop:engagementLog',
+  /**
+   * "Bir tane daha" aksiyonu zaten işlenmiş bildirim kimlikleri (`identifier`),
+   * en fazla 50 kayıt — headless task + soğuk-başlatma yedeğinin AYNI cevabı
+   * farklı JS süreçlerinde iki kez işlemesine karşı kalıcı tekilleştirme.
+   * Bkz. utils/quoteAction.ts
+   */
+  processedOneMoreIds: 'driftstop:processedOneMoreIds',
+  /**
+   * SOS açılışları: `{ at, quoteId }[]`, en yeni index 0, cap 100. Son-20 kaydı
+   * bir sonraki SOS'un tekrar-önleme dışlama setini kurar. Bkz. utils/sos.ts
+   */
+  sosLog: 'driftstop:sosLog',
 } as const;
 
 export async function getJSON<T>(key: string, fallback: T): Promise<T> {

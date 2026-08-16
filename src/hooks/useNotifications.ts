@@ -70,20 +70,24 @@ export function useNotificationObserver() {
           await recordEngagement();
           if (mounted) router.push(`/quote/${data.quoteId}`);
         } else {
-          await recordQuoteAction(response.actionIdentifier, data);
+          // notificationId: bildirimin kendi `identifier`'ı — `recordQuoteAction`
+          // "bir tane daha"nın kalıcı tekilleştirmesinde kullanır (bkz. quoteAction.ts).
+          await recordQuoteAction(response.actionIdentifier, data, response.notification.request.identifier);
         }
       }
     };
 
     try {
-      Notifications.getLastNotificationResponseAsync().then((response) => {
-        if (mounted) void handle(response);
-        // Native taraf bu cevabı bir sonraki soğuk başlatmada da döndürmeye
-        // devam eder — temizlemezsek `oneMore` gibi yan etkili aksiyonlar
-        // günler sonra tekrar "işlenmiş" sayılıp yeniden tetiklenebilir
-        // (code review, 2026-08-16: handleOneMoreAction'ın günlük sınır
-        // yarışının ikinci kök nedeni buydu).
-        if (response) void Notifications.clearLastNotificationResponseAsync().catch(() => {});
+      Notifications.getLastNotificationResponseAsync().then(async (response) => {
+        // ÖNCE işle, SONRA temizle — tersi, işleme bitmeden temizlenip cevabın
+        // hem işlenmemiş hem de bir daha asla görünmeyecek şekilde kaybolduğu
+        // bir pencere açardı (ikinci code review turu, 2026-08-16). Native taraf
+        // bu cevabı temizlenmeden sonraki soğuk başlatmalarda da döndürmeye
+        // devam eder — `oneMore` gibi yan etkili aksiyonların süreç değişse bile
+        // tekrar işlenmemesinin asıl garantisi artık `quoteAction.ts`teki kalıcı
+        // `processedOneMoreIds` tekilleştirmesi; bu temizleme ona ek bir katman.
+        if (mounted) await handle(response);
+        if (response) await Notifications.clearLastNotificationResponseAsync().catch(() => {});
       });
     } catch {
       // sessizce geç

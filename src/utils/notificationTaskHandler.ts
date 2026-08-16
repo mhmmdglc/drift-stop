@@ -33,9 +33,13 @@ if (nativeFeaturesAvailable) {
         | undefined;
       // İkisi de kendi `kind`/aksiyon kimliğiyle guard'lı — biri diğerinin
       // verisine dokunmaz, ikisini de çağırmak zararsız (bkz. recordReckoningAction
-      // ve recordQuoteAction'daki no-op dalları).
+      // ve recordQuoteAction'daki no-op dalları). Bildirimin kendi `identifier`'ı
+      // geçiriliyor — `recordQuoteAction`'ın "bir tane daha" dalı bunu, bu headless
+      // süreç ile sonraki bir soğuk-başlatmanın AYNI cevabı iki kez işlememesi için
+      // kalıcı tekilleştirmede kullanıyor (ikinci code review turu, 2026-08-16).
+      const notificationId = response.notification?.request?.identifier;
       await recordReckoningAction(response.actionIdentifier, notifData);
-      await recordQuoteAction(response.actionIdentifier, notifData);
+      await recordQuoteAction(response.actionIdentifier, notifData, notificationId);
     });
     // Tanımla + kaydet aynı modülde: docs'un önerdiği desen ("module scope of a
     // JS module which is required early"). Native modül henüz build'e girmediyse

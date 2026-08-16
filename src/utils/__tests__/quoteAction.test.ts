@@ -167,6 +167,30 @@ describe('handleOneMoreAction', () => {
     expect(scheduled[0].at).toBe(day1.getTime() + 5000);
   });
 
+  it('regresyon: AYNI bildirim kimliği, farklı çağrılar arasında (süreç değişse bile) yalnızca BİR kez işlenir', async () => {
+    // İkinci code review turunun bulduğu mimari boşluk: modül-içi kilit
+    // (`oneMoreQueue`) yalnızca AYNI JS süreci içindeki eşzamanlılığı kapatır.
+    // Headless task tam kapalı bir uygulamada AYRI bir süreçte çalışır — kendi
+    // taze kilidiyle başlar. Bu testte iki çağrı arasına `oneMoreQueue`'yu
+    // sıfırlayan bir mikro-görev arası koymuyoruz bile: asıl garanti artık
+    // KALICI (`processedOneMoreIds`), kilipten bağımsız. Aynı `notificationId`
+    // ile art arda 3 çağrı — sonuncular no-op olmalı.
+    await handleOneMoreAction(day1, undefined, 'notif-abc');
+    await handleOneMoreAction(day1, undefined, 'notif-abc');
+    await handleOneMoreAction(day1, undefined, 'notif-abc');
+
+    expect(mockNotifications.scheduleNotificationAsync).toHaveBeenCalledTimes(1);
+    expect(await readExtraQuoteLog()).toEqual({ date: '2026-08-19', count: 1 });
+  });
+
+  it('farklı bildirim kimlikleriyle gelen çağrılar birbirini ENGELLEMEZ', async () => {
+    await handleOneMoreAction(day1, undefined, 'notif-a');
+    await handleOneMoreAction(day1, undefined, 'notif-b');
+
+    expect(mockNotifications.scheduleNotificationAsync).toHaveBeenCalledTimes(2);
+    expect(await readExtraQuoteLog()).toEqual({ date: '2026-08-19', count: 2 });
+  });
+
   it('regresyon: eşzamanlı 2 çağrı yarışmaz — sayaç sıralı olduğu gibi tam 2 olur', async () => {
     // Bulunan bug (code review, 2026-08-16): kod tabanı headless task +
     // getLastNotificationResponseAsync yedeğinin AYNI cevabı iki kez

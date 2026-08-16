@@ -46,7 +46,12 @@ export function useFavorites() {
 
   const persist = useCallback((next: number[]) => {
     setIds(next);
-    pendingWrite.current = setJSON(StorageKeys.favorites, next);
+    // Önceki yazımın ÜZERİNE değil ARDINA zincirlenir — art arda hızlı iki
+    // `persist()` çağrısı (örn. iki hızlı dokunuş) diske YARIŞMADAN, çağrı
+    // sırasıyla yazılır. `setJSON` kendi hatasını yutar (asla reddetmez),
+    // o yüzden zincir asla kopmaz (ikinci code review turu, 2026-08-16 —
+    // önceki sürüm `pendingWrite`i zincirlemek yerine DEĞİŞTİRİYORDU).
+    pendingWrite.current = pendingWrite.current.then(() => setJSON(StorageKeys.favorites, next));
   }, []);
 
   const isFavorite = useCallback((id: number) => ids.includes(id), [ids]);
