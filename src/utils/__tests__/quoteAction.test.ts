@@ -18,7 +18,7 @@ import {
   recordQuoteAction,
   type ExtraQuoteLog,
 } from '../quoteAction';
-import { QUOTE_ACTION_FAVORITE, QUOTE_ACTION_ONE_MORE, RECKONING_KIND } from '../scheduler';
+import { QUOTE_ACTION_FAVORITE, QUOTE_ACTION_ONE_MORE, RECKONING_KIND, quoteCategoryId } from '../scheduler';
 import { StorageKeys } from '../storage';
 import type { Quote } from '@/types/quote';
 
@@ -123,7 +123,7 @@ describe('handleOneMoreAction', () => {
       content: { data: { quoteId: number }; categoryIdentifier: string };
     };
     expect(typeof call.content.data.quoteId).toBe('number');
-    expect(call.content.categoryIdentifier).toBe('quote');
+    expect(call.content.categoryIdentifier).toBe(quoteCategoryId());
   });
 
   it('1 → 2: ikinci istekte de kurulur (sınıra henüz takılmadı)', async () => {

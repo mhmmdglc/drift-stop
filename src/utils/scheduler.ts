@@ -38,18 +38,35 @@ export const TRIAL_NOTICE_KIND = 'trial-notice';
  * değildir, kotadan yemez (bkz. W1.3 kabul kriteri).
  */
 export const RECKONING_KIND = 'reckoning';
-/** Bildirim aksiyon kategorisi kimliği — `setupNotificationCategories` ile kaydedilir. */
-export const RECKONING_CATEGORY = 'reckoning';
 export const RECKONING_ACTION_RESISTED = 'resisted';
 export const RECKONING_ACTION_DRIFTED = 'drifted';
+export const QUOTE_ACTION_FAVORITE = 'favorite';
+export const QUOTE_ACTION_ONE_MORE = 'oneMore';
+/**
+ * Kategori kimlikleri BİLE İSMİNE `i18n.locale`i taşır (`reckoning_tr`,
+ * `quote_en`, ...) — SABİT string DEĞİL, her çağrıda TAZE hesaplanan bir
+ * fonksiyon. Neden: Android, `setNotificationCategoryAsync`'e AYNI kimlikle
+ * ikinci kez verilen buton metinlerini GÜNCELLEMİYOR (kanalın sesi gibi,
+ * kategorinin de buton metinleri ilk kayıttan sonra donuyor — cihaz QA'sında
+ * bulundu, 2026-08-16: `_layout.tsx`'teki ilk kayıt `SettingsProvider`'ın
+ * gerçek dili yüklemesinden ÖNCE, `i18n.locale`in modül-yüklemede sabitlenen
+ * 'tr' varsayılanıyla koşuyordu — ve dil sonradan doğru ayarlanıp
+ * `applySchedule` yeniden kaydetse bile Android o ilk 'tr' buton metinlerini
+ * kalıcı olarak koruyordu). Kimliği dile göre değiştirmek, "güncelleme" değil
+ * "yeni kategori" olarak kaydettirdiği için bu donmayı bypass ediyor — en
+ * fazla 8 dil × 2 kategori = 16 kalıcı Android kaydı, ihmal edilebilir.
+ */
+export function reckoningCategoryId(): string {
+  return `reckoning_${i18n.locale}`;
+}
 /**
  * Günlük söz bildirimlerinin aksiyon kategorisi (W1.4: ❤️ favorile / "bir tane
  * daha"). Hesaplaşma ve deneme bildirimlerinde bu kategori KULLANILMAZ — aksiyonlar
  * yalnızca söz bildirimlerinde anlamlı (bkz. `recordQuoteAction` guard'ı).
  */
-export const QUOTE_CATEGORY = 'quote';
-export const QUOTE_ACTION_FAVORITE = 'favorite';
-export const QUOTE_ACTION_ONE_MORE = 'oneMore';
+export function quoteCategoryId(): string {
+  return `quote_${i18n.locale}`;
+}
 /**
  * Hesaplaşma bildirimi için gün-içi son temsil edilebilir dakika (23:59) — yalnızca
  * `dateAt` aynı gün içinde kalsın diye bir tavan, pencere bitişinin ÖNÜNE geçmez (aşağıya bkz.).
@@ -103,14 +120,17 @@ export async function ensurePermissions(): Promise<boolean> {
  * Bildirim aksiyon butonlarını kaydeder (W0.a: `expo-task-manager` ile headless
  * işleme birincil yol, `getLastNotificationResponseAsync` yedek). Hesaplaşma VE
  * söz kategorileri AYNI çağrıda pişiyor — ikisinin de buton metinleri o an aktif
- * `i18n.locale`den geliyor, dil değişince ikisi de yeniden kaydedilmeli, bu yüzden
- * `applySchedule` başında da çağrılır (`_layout.tsx`'teki boot çağrısı yalnızca ilk
- * kurulum içindir). API cihaz/OS sürümüne göre desteklenmeyebilir → sessizce geç.
+ * `i18n.locale`den geliyor. Kimlikler `reckoningCategoryId()`/`quoteCategoryId()`
+ * ile dil-özelinde olduğu için dil değişince "güncelleme" değil "yeni kayıt"
+ * olur (yukarıdaki fonksiyon yorumuna bkz. — Android eski kimlikli bir kategorinin
+ * buton metnini asla güncellemiyor). `applySchedule` başında da çağrılır
+ * (`_layout.tsx`'teki boot çağrısı yalnızca `settingsLoaded` sonrası, ilk kurulum
+ * içindir). API cihaz/OS sürümüne göre desteklenmeyebilir → sessizce geç.
  */
 export async function setupNotificationCategories(): Promise<void> {
   if (!nativeFeaturesAvailable) return;
   try {
-    await Notifications.setNotificationCategoryAsync(RECKONING_CATEGORY, [
+    await Notifications.setNotificationCategoryAsync(reckoningCategoryId(), [
       {
         identifier: RECKONING_ACTION_RESISTED,
         buttonTitle: i18n.t('reckoning.actionResisted'),
@@ -124,7 +144,7 @@ export async function setupNotificationCategories(): Promise<void> {
         options: { opensAppToForeground: false },
       },
     ]);
-    await Notifications.setNotificationCategoryAsync(QUOTE_CATEGORY, [
+    await Notifications.setNotificationCategoryAsync(quoteCategoryId(), [
       {
         identifier: QUOTE_ACTION_FAVORITE,
         buttonTitle: i18n.t('notifications.actionFavorite'),
@@ -269,7 +289,7 @@ export async function applySchedule(settings: Settings): Promise<void> {
           body,
           subtitle: `${localizeAuthor(quote.author, i18n.locale)} · ${localizeOrigin(quote.origin, i18n.locale)}`,
           data: { quoteId },
-          categoryIdentifier: QUOTE_CATEGORY, // ❤️ / "bir tane daha" aksiyonları (W1.4)
+          categoryIdentifier: quoteCategoryId(), // ❤️ / "bir tane daha" aksiyonları (W1.4)
           // sound: kanal varsayılanı kullanılır (özel 'default' uyarısını önlemek için belirtilmedi)
         },
         trigger: {
@@ -300,7 +320,7 @@ export async function applySchedule(settings: Settings): Promise<void> {
             title: i18n.t('reckoning.notifTitle'),
             body: i18n.t('reckoning.notifBody'),
             data: { kind: RECKONING_KIND, date: dateKey(day) },
-            categoryIdentifier: RECKONING_CATEGORY,
+            categoryIdentifier: reckoningCategoryId(),
           },
           trigger: {
             type: Notifications.SchedulableTriggerInputTypes.DATE,

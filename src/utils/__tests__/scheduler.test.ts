@@ -71,10 +71,10 @@ import {
   TRIAL_CHANNEL_ID,
   TRIAL_NOTICE_KIND,
   RECKONING_KIND,
-  RECKONING_CATEGORY,
+  reckoningCategoryId,
   RECKONING_ACTION_RESISTED,
   RECKONING_ACTION_DRIFTED,
-  QUOTE_CATEGORY,
+  quoteCategoryId,
   QUOTE_ACTION_FAVORITE,
   QUOTE_ACTION_ONE_MORE,
 } from '../scheduler';
@@ -267,7 +267,7 @@ describe('applySchedule', () => {
       expect(arg.trigger.channelId).toBe(NOTIFICATION_CHANNEL_ID);
       expect(typeof arg.content.data.quoteId).toBe('number');
       // ❤️ / "bir tane daha" aksiyonları yalnızca bu kategoride görünür (W1.4).
-      expect(arg.content.categoryIdentifier).toBe(QUOTE_CATEGORY);
+      expect(arg.content.categoryIdentifier).toBe(quoteCategoryId());
       // Boş gövdeli bildirim kullanıcıya boş kart gösterir.
       expect(arg.content.body.length).toBeGreaterThan(0);
     }
@@ -559,7 +559,7 @@ describe('setupNotificationCategories', () => {
     await setupNotificationCategories();
 
     expect(mockNotifications.setNotificationCategoryAsync).toHaveBeenCalledWith(
-      RECKONING_CATEGORY,
+      reckoningCategoryId(),
       [
         {
           identifier: RECKONING_ACTION_RESISTED,
@@ -578,7 +578,7 @@ describe('setupNotificationCategories', () => {
   it('quote kategorisini AYNI çağrıda favorite + oneMore aksiyonlarıyla kaydeder — ikisi de opensAppToForeground:false', async () => {
     await setupNotificationCategories();
 
-    expect(mockNotifications.setNotificationCategoryAsync).toHaveBeenCalledWith(QUOTE_CATEGORY, [
+    expect(mockNotifications.setNotificationCategoryAsync).toHaveBeenCalledWith(quoteCategoryId(), [
       {
         identifier: QUOTE_ACTION_FAVORITE,
         buttonTitle: i18n.t('notifications.actionFavorite'),
@@ -598,6 +598,32 @@ describe('setupNotificationCategories', () => {
     mockNotifications.setNotificationCategoryAsync.mockRejectedValueOnce(new Error('nope'));
 
     await expect(setupNotificationCategories()).resolves.toBeUndefined();
+  });
+
+  it('regresyon: dil değişince YENİ bir kategori kimliğiyle kaydeder, eskisini "güncellemeye" çalışmaz', async () => {
+    // Bulunan bug (cihaz QA, 2026-08-16): Android, AYNI kimlikle ikinci kez
+    // kaydedilen bir kategorinin buton metinlerini güncellemiyor — ilk kayıt
+    // hangi dildeyse buton metinleri kalıcı olarak o dilde donuyordu (boot
+    // sırasında `i18n.locale` henüz gerçek dile ayarlanmadan ilk kayıt oluyordu).
+    // Kimlik artık dile göre değiştiği için "güncelleme" hiç denenmiyor, her dil
+    // kendi kimliğiyle YENİ bir kategori olarak kayıtlı kalıyor.
+    const originalLocale = i18n.locale;
+    try {
+      i18n.locale = 'tr';
+      await setupNotificationCategories();
+      const trCall = mockNotifications.setNotificationCategoryAsync.mock.calls.at(-1)?.[0];
+
+      mockNotifications.setNotificationCategoryAsync.mockClear();
+      i18n.locale = 'en';
+      await setupNotificationCategories();
+      const enCall = mockNotifications.setNotificationCategoryAsync.mock.calls.at(-1)?.[0];
+
+      expect(trCall).not.toBe(enCall);
+      expect(trCall).toBe('quote_tr');
+      expect(enCall).toBe('quote_en');
+    } finally {
+      i18n.locale = originalLocale;
+    }
   });
 });
 
@@ -706,7 +732,7 @@ describe('applySchedule — gece hesaplaşması', () => {
         trigger: { channelId: string };
       };
       expect(arg.trigger.channelId).toBe(NOTIFICATION_CHANNEL_ID);
-      expect(arg.content.categoryIdentifier).toBe(RECKONING_CATEGORY);
+      expect(arg.content.categoryIdentifier).toBe(reckoningCategoryId());
       expect(arg.content.data.kind).toBe(RECKONING_KIND);
       expect(typeof arg.content.data.date).toBe('string');
       expect(arg.content.title).toBe(i18n.t('reckoning.notifTitle'));

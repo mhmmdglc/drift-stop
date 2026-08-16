@@ -60,13 +60,25 @@ function AppShell() {
 
   useEffect(() => {
     void setupAndroidChannel();
-    void setupNotificationCategories();
     initAds();
     void syncQuotes();
     void syncPacks();
     void syncAuthorCounts();
     getJSON<boolean>(StorageKeys.onboardingComplete, false).then(setOnboarded);
   }, []);
+
+  // `setupNotificationCategories` AYRI bir effect'te, `settingsLoaded`e bağlı:
+  // kategori kimlikleri artık dil-özelinde (`quoteCategoryId`/`reckoningCategoryId`,
+  // bkz. scheduler.ts) ama `i18n.locale` `SettingsProvider` gerçek dili yükleyene
+  // kadar modül-yüklemedeki 'tr' varsayılanında kalıyor. Bu effect boot'ta hemen
+  // çalışsaydı ('tr' henüz doğru dile güncellenmeden) ilk kurulum İngilizce bir
+  // cihazda bile 'tr' kimlikli bir kategori kaydederdi — dil-özelinde kimlik
+  // şeması bunu ZATEN kurtarır (doğru dil sonra `applySchedule`de kaydolur), ama
+  // gereksiz bir 'tr' kaydı hiç oluşmasın diye ilk kayıt da doğru dille yapılsın.
+  useEffect(() => {
+    if (!settingsLoaded) return;
+    void setupNotificationCategories();
+  }, [settingsLoaded]);
 
   // Ön plandayken gelen bildirimin sözünü geçmişe ekle
   useEffect(() => {

@@ -253,9 +253,16 @@ export default function SettingsScreen() {
                 accessibilityLabel={t('settings.reckoning.label')}
               />
             </Row>
-            <ThemedText variant="label" tone="textMuted">
-              {t('settings.reckoning.hint')}
-            </ThemedText>
+            {/* PRODUCT.md /reckoning erişim yollarından birini "Settings → hint link"
+                diye belgeliyordu ama ipucu düz metindi, hiçbir yere gitmiyordu —
+                hafta sonu muafiyeti hariç bildirimi kapatan/hiç ilk cevabı vermeyen
+                bir kullanıcı için ekrana ulaşacak HİÇBİR yol yoktu (Home şeridi ilk
+                cevaba kadar gizli). Cihaz QA'sında bulundu, 2026-08-16. */}
+            <Pressable onPress={() => router.push('/reckoning')} accessibilityRole="link">
+              <ThemedText variant="label" tone="textMuted" style={styles.link}>
+                {t('settings.reckoning.hint')}
+              </ThemedText>
+            </Pressable>
           </Section>
 
           {/* Zamanlama */}

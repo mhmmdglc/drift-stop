@@ -7,9 +7,9 @@ import {
   NOTIFICATION_CHANNEL_ID,
   QUOTE_ACTION_FAVORITE,
   QUOTE_ACTION_ONE_MORE,
-  QUOTE_CATEGORY,
   RECKONING_KIND,
   pickQuoteId,
+  quoteCategoryId,
   randomTitle,
   type ScheduledQuote,
 } from '@/utils/scheduler';
@@ -172,7 +172,7 @@ async function runOneMoreAction(
       body: quoteDisplayText(quote, i18n.locale),
       subtitle: `${localizeAuthor(quote.author, i18n.locale)} · ${localizeOrigin(quote.origin, i18n.locale)}`,
       data: { quoteId },
-      categoryIdentifier: QUOTE_CATEGORY, // "evet, onun da ❤️'si olur" — W1.4 kararı
+      categoryIdentifier: quoteCategoryId(), // "evet, onun da ❤️'si olur" — W1.4 kararı
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.DATE,
