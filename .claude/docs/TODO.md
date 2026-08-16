@@ -256,6 +256,11 @@ User demanded a real monetization funnel ("how will we sell subscriptions?"). No
 
 ## Not started yet (future phases, no urgency)
 
+- **Engagement dalgası spec'i yazıldı (2026-08-16), iş başlamadı.** Onboarding hedef sorusu, gece
+  hesaplaşması + streak, bildirim aksiyonları, geleceğe mesaj kasası, SOS, sertlik ayarı, akıllı
+  zamanlama, özel bildirim sesi — dosya dosya TODO, testler ve cihaz-QA adımlarıyla:
+  [`specs/engagement-roadmap.md`](../../specs/engagement-roadmap.md). İlk adım W0 spike'ları.
+
 From the backend roadmap's rollout order — now unblocked since the webhook is deployed:
 - Cross-device sync (favorites + settings + streak)
 - Ritual layer (streak, notes/reflection, weekly summary)
