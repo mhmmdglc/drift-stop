@@ -613,15 +613,39 @@ describe('applySchedule — gece hesaplaşması', () => {
     }
   });
 
-  it('23:15 üst sınırını aşmaz', async () => {
-    await applySchedule(settings({ startHour: 20, startMinute: 0, endHour: 23, endMinute: 0 }));
+  it('gün taşarsa 23:59 tavanına kırpılır (23:45 değil 00:xx üretmez)', async () => {
+    await applySchedule(settings({ startHour: 20, startMinute: 0, endHour: 23, endMinute: 30 }));
 
     const calls = reckoningCalls();
     expect(calls.length).toBeGreaterThan(0);
     for (const c of calls) {
       const date = (c[0] as { trigger: { date: Date } }).trigger.date;
       expect(date.getHours()).toBe(23);
-      expect(date.getMinutes()).toBe(15);
+      expect(date.getMinutes()).toBe(59);
+    }
+  });
+
+  it('regresyon: kırpma penceresinin bitişinden ASLA erken kurulmaz', async () => {
+    // Bulunan bug: sabit 23:15 tavanı, endMin zaten 23:15'i geçmişse hesaplaşmayı
+    // pencere kapanmadan ÖNCE kuruyordu. 23:00-23:45 penceresinde +45dk = 00:30 (ertesi
+    // gün) taşar; doğru davranış 23:59'a kırpmak ve bunun endMin'den (23:45) ERKEN
+    // olmamasıdır — 23:15'e kırpmak burada endMin'den 30 dk ERKEN bir zaman üretirdi.
+    await applySchedule(settings({ startHour: 21, startMinute: 0, endHour: 23, endMinute: 45 }));
+
+    const reckoning = reckoningCalls();
+    const quotes = quoteCalls();
+    expect(reckoning.length).toBeGreaterThan(0);
+    for (const c of reckoning) {
+      const date = (c[0] as { trigger: { date: Date } }).trigger.date;
+      const minuteOfDay = date.getHours() * 60 + date.getMinutes();
+      expect(minuteOfDay).toBeGreaterThanOrEqual(23 * 60 + 45); // >= endMin
+    }
+    // Aynı günün söz bildirimleri de pencere içinde kalmalı — hesaplaşmadan SONRA
+    // gelen bir söz olmamalı (kronolojik ters dönme regresyonu).
+    for (const c of quotes) {
+      const date = (c[0] as { trigger: { date: Date } }).trigger.date;
+      const minuteOfDay = date.getHours() * 60 + date.getMinutes();
+      expect(minuteOfDay).toBeLessThanOrEqual(23 * 60 + 45);
     }
   });
 

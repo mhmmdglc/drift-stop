@@ -42,8 +42,11 @@ export const RECKONING_KIND = 'reckoning';
 export const RECKONING_CATEGORY = 'reckoning';
 export const RECKONING_ACTION_RESISTED = 'resisted';
 export const RECKONING_ACTION_DRIFTED = 'drifted';
-/** Hesaplaşma bildirimi hiçbir zaman bu saatten geç kurulmaz (23:15). */
-const RECKONING_LATEST_MIN = 23 * 60 + 15;
+/**
+ * Hesaplaşma bildirimi için gün-içi son temsil edilebilir dakika (23:59) — yalnızca
+ * `dateAt` aynı gün içinde kalsın diye bir tavan, pencere bitişinin ÖNÜNE geçmez (aşağıya bkz.).
+ */
+const RECKONING_DAY_CAP_MIN = 23 * 60 + 59;
 /** Hesaplaşma, pencerenin bitişinden bu kadar dakika sonra gelir. */
 const RECKONING_OFFSET_MIN = 45;
 const DAYS_AHEAD = 3; // tampon: birkaç gün önceden zamanla
@@ -253,10 +256,16 @@ export async function applySchedule(settings: Settings): Promise<void> {
 
     // Gece hesaplaşması: söz DEĞİLDİR, `scheduled` planına eklenmez (syncDeliveredToHistory
     // yalnızca data.quoteId okur, bu tür doğal olarak dışarıda kalır). Pencere bitişinden
-    // 45 dk sonra, 23:15 üst sınırıyla — hafta sonu kuralı yukarıdaki `continue` ile zaten
-    // uygulanmış oluyor (o gün için hiçbir bildirim kurulmuyor).
+    // 45 dk sonra — ama pencere zaten 23:14'ten geç bitiyorsa (kullanıcı 23:30'a kadar
+    // seçebiliyor) +45 dk gün taşırdığı için 23:59'a kırpılır. Kırpma ASLA endMin'in
+    // altına düşmez (`Math.max(endMin, ...)`) — aksi halde hesaplaşma, kapanmamış bir
+    // pencerenin ortasında, kendi sözlerinden ÖNCE gelirdi (bulundu: code review, 2026-08-16).
+    // Hafta sonu kuralı yukarıdaki `continue` ile zaten uygulanmış oluyor.
     if (settings.reckoningEnabled) {
-      const reckoningMinute = Math.min(endMin + RECKONING_OFFSET_MIN, RECKONING_LATEST_MIN);
+      const reckoningMinute = Math.max(
+        endMin,
+        Math.min(endMin + RECKONING_OFFSET_MIN, RECKONING_DAY_CAP_MIN)
+      );
       const reckoningFireDate = dateAt(day, reckoningMinute);
       if (reckoningFireDate.getTime() > now.getTime() + 60_000) {
         await Notifications.scheduleNotificationAsync({
