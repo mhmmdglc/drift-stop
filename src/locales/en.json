@@ -45,7 +45,8 @@
     "reckoningWaiting": "Today's reckoning is waiting",
     "reckoningWeek": "This week %{resisted}/%{total}",
     "reckoningA11yAnswered": "Reckoning: %{streak} days in a row resisted, %{resisted}/%{total} this week. Tap for details.",
-    "reckoningA11yPending": "Today's reckoning is waiting. Tap to answer."
+    "reckoningA11yPending": "Today's reckoning is waiting. Tap to answer.",
+    "sosLabel": "I'm about to give up."
   },
   "quote": {
     "authorPrefix": "—",
@@ -193,7 +194,8 @@
   "widget": {
     "defaultQuote": "What are you doing right now?",
     "defaultAuthor": "DriftStop",
-    "tapHint": "Open"
+    "tapHint": "Open",
+    "sosLabel": "Stop"
   },
   "errors": {
     "noQuotes": "No quotes found.",
@@ -382,5 +384,10 @@
     "settingsLink": "Settings",
     "closeButton": "Close",
     "a11yAnsweredToday": "Today's answer is recorded: %{answer}"
+  },
+  "sos": {
+    "pauseLine": "Stop.",
+    "title": "Stop, just for a moment.",
+    "continueButton": "I'm continuing."
   }
 }

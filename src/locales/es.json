@@ -45,7 +45,8 @@
     "reckoningWaiting": "El balance de hoy está pendiente",
     "reckoningWeek": "Esta semana %{resisted}/%{total}",
     "reckoningA11yAnswered": "Balance: %{streak} días seguidos resistiendo, %{resisted}/%{total} esta semana. Toca para ver más.",
-    "reckoningA11yPending": "El balance de hoy está pendiente. Toca para responder."
+    "reckoningA11yPending": "El balance de hoy está pendiente. Toca para responder.",
+    "sosLabel": "Estoy a punto de rendirme."
   },
   "quote": {
     "authorPrefix": "—",
@@ -193,7 +194,8 @@
   "widget": {
     "defaultQuote": "¿Qué estás haciendo ahora?",
     "defaultAuthor": "DriftStop",
-    "tapHint": "Abrir"
+    "tapHint": "Abrir",
+    "sosLabel": "Alto"
   },
   "errors": {
     "noQuotes": "No se encontró ninguna frase.",
@@ -382,5 +384,10 @@
     "settingsLink": "Ajustes",
     "closeButton": "Cerrar",
     "a11yAnsweredToday": "La respuesta de hoy quedó registrada: %{answer}"
+  },
+  "sos": {
+    "pauseLine": "Alto.",
+    "title": "Detente, solo un momento.",
+    "continueButton": "Sigo adelante."
   }
 }

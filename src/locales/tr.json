@@ -45,7 +45,8 @@
     "reckoningWaiting": "Bugünün hesabı bekliyor",
     "reckoningWeek": "Bu hafta %{resisted}/%{total}",
     "reckoningA11yAnswered": "Hesaplaşma: %{streak} gün üst üste direndin, bu hafta %{resisted}/%{total}. Detay için dokun.",
-    "reckoningA11yPending": "Bugünün hesabı bekliyor. Dokun ve cevapla."
+    "reckoningA11yPending": "Bugünün hesabı bekliyor. Dokun ve cevapla.",
+    "sosLabel": "Vazgeçmek üzereyim"
   },
   "quote": {
     "authorPrefix": "—",
@@ -193,7 +194,8 @@
   "widget": {
     "defaultQuote": "Şimdi ne yapıyorsun?",
     "defaultAuthor": "DriftStop",
-    "tapHint": "Aç"
+    "tapHint": "Aç",
+    "sosLabel": "Dur"
   },
   "errors": {
     "noQuotes": "Söz bulunamadı.",
@@ -382,5 +384,10 @@
     "settingsLink": "Ayarlar",
     "closeButton": "Kapat",
     "a11yAnsweredToday": "Bugünün cevabı verildi: %{answer}"
+  },
+  "sos": {
+    "pauseLine": "Dur.",
+    "title": "Bir anlığına dur.",
+    "continueButton": "Devam ediyorum"
   }
 }

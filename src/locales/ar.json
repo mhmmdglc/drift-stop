@@ -45,7 +45,8 @@
     "reckoningWaiting": "",
     "reckoningWeek": "",
     "reckoningA11yAnswered": "",
-    "reckoningA11yPending": ""
+    "reckoningA11yPending": "",
+    "sosLabel": ""
   },
   "quote": {
     "authorPrefix": "",
@@ -171,7 +172,8 @@
   "widget": {
     "defaultQuote": "",
     "defaultAuthor": "",
-    "tapHint": ""
+    "tapHint": "",
+    "sosLabel": "Stop"
   },
   "errors": {
     "noQuotes": "",
@@ -287,5 +289,10 @@
     "settingsLink": "",
     "closeButton": "",
     "a11yAnsweredToday": ""
+  },
+  "sos": {
+    "pauseLine": "",
+    "title": "",
+    "continueButton": ""
   }
 }

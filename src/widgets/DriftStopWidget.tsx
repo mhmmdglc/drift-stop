@@ -14,6 +14,8 @@ const C = {
   text: DarkColors.text as `#${string}`,
   muted: DarkColors.textMuted as `#${string}`,
   accent: DarkColors.accent as `#${string}`,
+  paperTint: DarkColors.paperTint as `#${string}`,
+  faintLine: DarkColors.faintLine as `#${string}`,
 };
 
 function clip(s: string): string {
@@ -39,23 +41,63 @@ export function DriftStopWidget({ quote }: { quote: Quote | null }) {
     author = quote?.author ? `— ${quote.author}` : '— DriftStop';
   }
   const uri = `driftstop://quote/${quote?.id ?? ''}`;
+  // Headless render'da i18n çökerse dahi SOS şeridi anlamsız kalmasın diye kendi try/catch'i var.
+  let sosLabel: string;
+  let sosA11yLabel: string;
+  try {
+    sosLabel = i18n.t('widget.sosLabel');
+    sosA11yLabel = i18n.t('home.sosLabel');
+  } catch {
+    sosLabel = 'Stop';
+    sosA11yLabel = 'Stop';
+  }
 
   return (
     <FlexWidget
-      clickAction="OPEN_URI"
-      clickActionData={{ uri }}
       style={{
         height: 'match_parent',
         width: 'match_parent',
         flexDirection: 'column',
-        justifyContent: 'space-between',
         backgroundColor: C.bg,
         borderRadius: 16,
-        padding: 16,
       }}>
-      <TextWidget text="🔥 DriftStop" style={{ fontSize: 11, color: C.muted }} />
-      <TextWidget text={text} style={{ fontSize: 18, color: C.text }} />
-      <TextWidget text={author} style={{ fontSize: 12, color: C.accent }} />
+      {/* Ana bölge — bugünküyle AYNI davranış, yalnızca bir kapsayıcı seviye içeri
+          taşındı (SOS şeridine yer açmak için `w2.2-ux.md` §4.2). */}
+      <FlexWidget
+        clickAction="OPEN_URI"
+        clickActionData={{ uri }}
+        accessibilityLabel={`${text} — ${author}`}
+        style={{
+          flex: 1,
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          padding: 14,
+        }}>
+        <TextWidget text="🔥 DriftStop" style={{ fontSize: 11, color: C.muted }} />
+        <TextWidget text={text} style={{ fontSize: 18, color: C.text }} />
+        <TextWidget text={author} style={{ fontSize: 12, color: C.accent }} />
+      </FlexWidget>
+
+      {/* SOS şeridi — dokun → `driftstop://sos`. Sabit dil-başına kısa kelime
+          (`widget.sosLabel`, pinlenmiş — `w2.2-ux.md` §4.2/§5); tam cümle yalnızca
+          a11y etiketinde (`home.sosLabel`), görünen metin her dilde 26dp'ye sığsın diye kısa. */}
+      <FlexWidget
+        clickAction="OPEN_URI"
+        clickActionData={{ uri: 'driftstop://sos' }}
+        accessibilityLabel={sosA11yLabel}
+        style={{
+          height: 26,
+          width: 'match_parent',
+          borderTopWidth: 1,
+          borderTopColor: C.faintLine,
+          backgroundColor: C.paperTint,
+          borderBottomLeftRadius: 16,
+          borderBottomRightRadius: 16,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <TextWidget text={`✋ ${sosLabel}`} style={{ fontSize: 12, color: C.accent }} />
+      </FlexWidget>
     </FlexWidget>
   );
 }

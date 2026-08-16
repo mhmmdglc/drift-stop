@@ -16,6 +16,7 @@ import { AdBanner } from '@/components/AdBanner';
 import { PaperBackground } from '@/components/PaperBackground';
 import { QuoteCard } from '@/components/QuoteCard';
 import { SketchButton } from '@/components/SketchButton';
+import { SketchHandStop } from '@/components/SketchIcons';
 import { FlameSketch } from '@/components/SketchOnboardingIcons';
 import { ThemedText } from '@/components/ThemedText';
 import { WobblyBorder } from '@/components/WobblyBorder';
@@ -162,12 +163,23 @@ export default function HomeScreen() {
     <PaperBackground>
       <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
         <View style={styles.header}>
+          {/* Header'ın YENİ İLK çocuğu: dişliyle eşit genişlikte bir eleman
+              `space-between`'i başlığı otomatik ortalıyor — `styles.header`
+              DEĞİŞMEDEN "dişlinin karşısı" talimatı karşılanıyor (`w2.2-ux.md` §2.1). */}
+          <Pressable
+            onPress={() => router.push('/sos')}
+            hitSlop={12}
+            accessibilityRole="button"
+            accessibilityLabel={t('home.sosLabel')}>
+            <SketchHandStop size={22} color={colors.fire} />
+          </Pressable>
           <ThemedText variant="heading" tone="text">
             {t('app.name')}
           </ThemedText>
           <Pressable
             onPress={() => router.push('/settings')}
             hitSlop={12}
+            accessibilityRole="button"
             accessibilityLabel={t('settings.screenTitle')}>
             <Gear size={24} weight="thin" color={colors.textMuted} />
           </Pressable>

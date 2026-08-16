@@ -109,6 +109,12 @@ function AppShell() {
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="onboarding" />
         <Stack.Screen name="reckoning" options={{ presentation: 'modal' }} />
+        {/* Nefes perdesi tam ekran karartma gerektirir — 'modal' iOS'ta kısmi/kart
+            görünümüyle o hissi kuramaz (`w2.2-ux.md` §3.1). `gestureEnabled` AÇIKÇA
+            true: kurulu `react-native-screens` sürümünde varsayılan zaten true, ama
+            kriz anındaki kullanıcı asla bir ekranda sıkışmamalı — güvenlik-kritik
+            şart örtük varsayılana bırakılmıyor. */}
+        <Stack.Screen name="sos" options={{ presentation: 'fullScreenModal', gestureEnabled: true }} />
         <Stack.Screen name="quote/[id]" />
         <Stack.Screen name="packs/index" />
         <Stack.Screen name="packs/[id]" />

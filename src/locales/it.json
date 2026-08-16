@@ -45,7 +45,8 @@
     "reckoningWaiting": "Il bilancio di oggi ti aspetta",
     "reckoningWeek": "Questa settimana %{resisted}/%{total}",
     "reckoningA11yAnswered": "Bilancio: %{streak} giorni di fila resistendo, %{resisted}/%{total} questa settimana. Tocca per i dettagli.",
-    "reckoningA11yPending": "Il bilancio di oggi ti aspetta. Tocca per rispondere."
+    "reckoningA11yPending": "Il bilancio di oggi ti aspetta. Tocca per rispondere.",
+    "sosLabel": "Sto per mollare."
   },
   "quote": {
     "authorPrefix": "—",
@@ -193,7 +194,8 @@
   "widget": {
     "defaultQuote": "Cosa stai facendo ora?",
     "defaultAuthor": "DriftStop",
-    "tapHint": "Apri"
+    "tapHint": "Apri",
+    "sosLabel": "Ferma"
   },
   "errors": {
     "noQuotes": "Nessuna frase trovata.",
@@ -382,5 +384,10 @@
     "settingsLink": "Impostazioni",
     "closeButton": "Chiudi",
     "a11yAnsweredToday": "La risposta di oggi è stata registrata: %{answer}"
+  },
+  "sos": {
+    "pauseLine": "Ferma.",
+    "title": "Fermati, solo un momento.",
+    "continueButton": "Continuo."
   }
 }

@@ -45,7 +45,8 @@
     "reckoningWaiting": "Die heutige Abrechnung wartet",
     "reckoningWeek": "Diese Woche %{resisted}/%{total}",
     "reckoningA11yAnswered": "Abrechnung: %{streak} Tage in Folge durchgehalten, diese Woche %{resisted}/%{total}. Zum Öffnen tippen.",
-    "reckoningA11yPending": "Die heutige Abrechnung wartet. Zum Antworten tippen."
+    "reckoningA11yPending": "Die heutige Abrechnung wartet. Zum Antworten tippen.",
+    "sosLabel": "Ich stehe kurz vorm Aufgeben."
   },
   "quote": {
     "authorPrefix": "—",
@@ -193,7 +194,8 @@
   "widget": {
     "defaultQuote": "Was machst du gerade?",
     "defaultAuthor": "DriftStop",
-    "tapHint": "Öffnen"
+    "tapHint": "Öffnen",
+    "sosLabel": "Stopp"
   },
   "errors": {
     "noQuotes": "Kein Satz gefunden.",
@@ -382,5 +384,10 @@
     "settingsLink": "Einstellungen",
     "closeButton": "Schließen",
     "a11yAnsweredToday": "Die heutige Antwort ist gespeichert: %{answer}"
+  },
+  "sos": {
+    "pauseLine": "Stopp.",
+    "title": "Halt, nur für einen Moment.",
+    "continueButton": "Ich mache weiter."
   }
 }
