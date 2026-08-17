@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
-import { Linking, Platform, Pressable, StyleSheet, View } from 'react-native';
+import { Linking, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { PACKAGE_TYPE, type PurchasesPackage } from 'react-native-purchases';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -122,7 +122,16 @@ export default function PaywallScreen() {
           </Pressable>
         </View>
 
-        <View style={styles.content}>
+        {/* App Review 1.2.0 (6) reddi (Guideline 2.1(a), iPad, 2026-08-17): "Unable to
+            scroll up the Go pro page to access privacy policy and term of Use." Ekran
+            hiç ScrollView içermiyordu — `content` sabit `flex:1` bir View'dı. İçerik
+            (paketler + yenileme beyanı + satın alma sonrası mesaj + "already Pro" durumu
+            aynı anda görünebiliyor) bazı durum kombinasyonlarında/ekran boylarında
+            viewport'tan taşınca en alttaki gizlilik/koşullar linklerine ULAŞILAMIYORDU. */}
+        <ScrollView
+          testID="paywallScroll"
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled">
           <ThemedText variant="heading">{t('paywall.title')}</ThemedText>
           {/* Eski `paywall.subtitle` (özellik cümlesi) burada DEĞİL: iki paragraf
               üst üste binince planlar ekranın altına kaçıyordu. Somut liste
@@ -383,7 +392,7 @@ export default function PaywallScreen() {
               </>
             ) : null}
           </View>
-        </View>
+        </ScrollView>
       </SafeAreaView>
     </PaperBackground>
   );
@@ -398,9 +407,13 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.sm,
   },
   content: {
-    flex: 1,
+    // `flex: 1` BİLİNÇLİ OLARAK KALDIRILDI: bu artık ScrollView'ın
+    // `contentContainerStyle`'ı — flex:1 içeriği viewport yüksekliğine
+    // sabitleyip taşan kısmın kaydırılamamasına yol açabilir (`settings.tsx`
+    // içindeki AYNI desen de flex'siz).
     padding: Spacing.lg,
     gap: Spacing.md,
+    paddingBottom: Spacing.xxl,
   },
   intro: {
     marginTop: -Spacing.xs,
