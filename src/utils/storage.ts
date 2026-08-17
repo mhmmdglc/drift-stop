@@ -39,6 +39,20 @@ export const StorageKeys = {
    * bir sonraki SOS'un tekrar-önleme dışlama setini kurar. Bkz. utils/sos.ts
    */
   sosLog: 'driftstop:sosLog',
+  /**
+   * Geleceğe mesaj kasası (W2.1): `VaultMessage[]`. Sözlerden farklı — hiçbir
+   * söz yüzeyinden (Home/geçmiş/widget) geçmez. Bkz. utils/vault.ts
+   */
+  vaultMessages: 'driftstop:vaultMessages',
+  /**
+   * Planı henüz fire etmemiş kasa bildirimleri: `{ vaultId, at }[]`.
+   * `scheduledQuoteIds`'ten BİLİNÇLİ olarak AYRI: kasa mesajı söz değildir,
+   * o planın içine karışırsa `syncDeliveredToHistory` onu geçmişe taşımaya
+   * çalışabilirdi (yanlışlıkla `quoteId` alanı eklenirse). Teslim tespiti
+   * `scheduler.ts#syncDeliveredVaultMessages`de bu listeyi okur ve
+   * `utils/vault.ts#markDelivered` çağırır.
+   */
+  scheduledVaultMessages: 'driftstop:scheduledVaultMessages',
 } as const;
 
 export async function getJSON<T>(key: string, fallback: T): Promise<T> {
