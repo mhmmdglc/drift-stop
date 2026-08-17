@@ -198,6 +198,20 @@ export default function SettingsScreen() {
             </ThemedText>
           </Pressable>
 
+          {/* Kasa, packs'ın HEMEN altında — ikisi de parayla ilgili yüzeyler bir
+              blok (Pro kartı → packs → kasa), saf kişiselleştirme (Hedefin) ikinci
+              blok (`w2.1-ux.md` §5.1). Kasa Pro-ÖZEL DEĞİL (free 1 mesajla tam
+              kullanır) — bu yüzden `settings.premium.*` değil kendi `settings.vault.*`
+              namespace'inde; kapı burada değil `/vault/new`'in İÇİNDE (§2.3). */}
+          <Pressable
+            onPress={() => router.push('/vault')}
+            accessibilityRole="button"
+            accessibilityLabel={t('settings.vault.label')}>
+            <ThemedText variant="body" tone="text" style={styles.link}>
+              {t('settings.vault.label')}
+            </ThemedText>
+          </Pressable>
+
           {/* Hedef — kimlik beyanı: ayar mekaniğinin üstünde, monetizasyon
               yüzeylerinin altında durur. `key`: kaydedilmiş değer dışarıdan
               değişince (ilk diskten yükleme, commit sonrası trim) taslak state'i

@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { recordEngagement, recordQuoteAction } from '@/utils/quoteAction';
 import { recordReckoningAction } from '@/utils/reckoningAction';
 import { nativeFeaturesAvailable } from '@/utils/runtime';
-import { RECKONING_KIND } from '@/utils/scheduler';
+import { RECKONING_KIND, VAULT_KIND } from '@/utils/scheduler';
 
 // Uygulama ön plandayken bildirim nasıl gösterilsin (Expo Go'da çağırma → çökme)
 if (nativeFeaturesAvailable) {
@@ -23,7 +23,7 @@ if (nativeFeaturesAvailable) {
   }
 }
 
-type NotificationData = { quoteId?: number; kind?: string; date?: string };
+type NotificationData = { quoteId?: number; kind?: string; date?: string; vaultId?: number };
 
 function extractData(response: Notifications.NotificationResponse | null): NotificationData {
   return (response?.notification?.request?.content?.data as NotificationData | undefined) ?? {};
@@ -43,6 +43,7 @@ function extractData(response: Notifications.NotificationResponse | null): Notif
  *   sessizce işler, sözü AÇMAZ — aynı "uygulamayı açmadan etkileşim" vaadi.
  * - Söz bildirimi gövdesine dokunma (DEFAULT): mevcut davranış (`/quote/[id]`)
  *   korunur, ek olarak `engagementLog`a dokunma anı yazılır (W3.2'nin girdisi).
+ * - Kasa mesajı bildirimi (W2.1): aksiyon YOK, her zaman `/vault/[id]`e götürür.
  * Expo Go'da no-op (native bildirim yok).
  */
 export function useNotificationObserver() {
@@ -62,6 +63,15 @@ export function useNotificationObserver() {
         } else {
           await recordReckoningAction(response.actionIdentifier, data);
         }
+        return;
+      }
+
+      // Kasa mesajı bildirimi (W2.1): kategori/aksiyon YOK (❤️/"bir tane daha"
+      // kullanıcının kendi cümlesinde anlamsız, bkz. scheduler.ts#VAULT_KIND) —
+      // her zaman gövdeye dokunma sayılır, doğrudan teslim edilen mesaja gider.
+      // `engagementLog`a YAZILMAZ: bu W3.2'nin söz-okuma sinyali, kasa söz değil.
+      if (data.kind === VAULT_KIND && typeof data.vaultId === 'number') {
+        if (mounted) router.push(`/vault/${data.vaultId}`);
         return;
       }
 

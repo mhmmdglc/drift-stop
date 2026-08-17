@@ -7,6 +7,7 @@ import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useRef, useState } from 'react';
+import { AppState } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -31,6 +32,7 @@ import {
   rescheduleIfNeeded,
   setupAndroidChannel,
   setupNotificationCategories,
+  syncDeliveredVaultMessages,
 } from '@/utils/scheduler';
 import { getJSON, StorageKeys } from '@/utils/storage';
 import { syncQuotes } from '@/services/quotesSync';
@@ -90,6 +92,24 @@ function AppShell() {
     return () => sub.remove();
   }, [record]);
 
+  // Fire zamanı geçmiş kasa bildirimlerini teslim edildi işaretler —
+  // `syncDeliveredToHistory`nin mount + AppState→active deseninin AYNISI
+  // (useHistory.tsx:46-85), kasa için AYRI (söz değildir, geçmişe girmez).
+  // `applySchedule` bunu zaten çağırıyor ama yalnızca günde bir/ayar değişince
+  // koşuyor — kullanıcı `/vault`'u AYNI gün, plan yeniden kurulmadan açarsa
+  // mesaj hâlâ "uykuda" görünürdü; bu iki effect o boşluğu kapatır.
+  useEffect(() => {
+    void syncDeliveredVaultMessages();
+  }, []);
+
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state !== 'active') return;
+      void syncDeliveredVaultMessages();
+    });
+    return () => sub.remove();
+  }, []);
+
   // Deneme bitiş ekranı: SPLASH BİTTİKTEN SONRA. Açılış sırasında yapılan `push`
   // sessizce düşüyordu (emülatörde görüldü) ve ekran bir daha hiç açılmıyordu.
   //
@@ -131,6 +151,11 @@ function AppShell() {
         <Stack.Screen name="packs/index" />
         <Stack.Screen name="packs/[id]" />
         <Stack.Screen name="packs/author/[name]" />
+        <Stack.Screen name="vault/index" />
+        <Stack.Screen name="vault/[id]" />
+        {/* Editör ayrı bir modal: "yaz, kaydet, kapan" çerçevesi (`w2.1-ux.md` §3.1),
+            listeden başlatılan kısa bir görev — `reckoning`'in seçtiği aynı aile. */}
+        <Stack.Screen name="vault/new" options={{ presentation: 'modal' }} />
         <Stack.Screen name="auth" />
         <Stack.Screen name="paywall" />
         <Stack.Screen name="trial-ended" options={{ gestureEnabled: false }} />
