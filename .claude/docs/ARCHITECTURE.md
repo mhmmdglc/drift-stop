@@ -230,7 +230,7 @@ both of which swallow errors (`:16-32`).
 | `driftstop:seenToday` | *(nothing)* | *(nothing)* | dead key |
 | `driftstop:reckoningLog` | `hooks/useReckoning.tsx`, `utils/reckoningAction.ts` | `hooks/useReckoning.tsx` | `Record<dateKey, 'resisted' \| 'drifted'>` — nightly reckoning (W1.3), cap 90 days via `utils/reckoning.ts#pruneLog` |
 | `driftstop:extraQuoteLog` | `utils/quoteAction.ts#handleOneMoreAction` | `utils/quoteAction.ts#handleOneMoreAction` | `{ date, count }` — today's "one more" tally (W1.4), reset when `date` is stale, capped at `ONE_MORE_DAILY_LIMIT = 2` |
-| `driftstop:engagementLog` | `utils/quoteAction.ts#recordEngagement` (quote-notification body tap, W1.4) | *(not yet consumed — W3.2 input)* | `{ hour, at }[]`, cap 200, oldest dropped first |
+| `driftstop:engagementLog` | `utils/quoteAction.ts#recordEngagement` (quote-notification body tap, W1.4) | `utils/scheduler.ts#applySchedule` via `utils/engagement.ts#hourWeights`/`pruneEngagementLog` (W3.2) | `{ hour, at }[]`, cap 200, oldest dropped first; pruned to 90 days and turned into an hour-of-day histogram only when `Settings.smartTiming` is on and there are ≥20 records |
 
 ### SQLite (`driftstop.db`)
 

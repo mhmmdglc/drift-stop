@@ -285,7 +285,9 @@ User demanded a real monetization funnel ("how will we sell subscriptions?"). No
   hesaplaşması + streak, `/reckoning`), W1.4 (bildirim aksiyonları ❤️/"bir tane daha" — iki
   review turunda gerçek yarış koşulu bulunup düzeltildi), W2.2 (SOS, `/sos`), W2.1 (geleceğe
   mesaj kasası, `/vault` — scheduler tarafında iki gerçek bug bulunup düzeltildi, kırmızı-yeşil
-  testle kanıtlandı). Ayrıca bu tur bulunan **kritik bir bildirim-dili bug'ı** düzeltildi:
+  testle kanıtlandı), W3.2 (akıllı zamanlama, `Settings.smartTiming` — `engagementLog` artık
+  gerçekten tüketiliyor, `utils/engagement.ts`, dört dar-kapsamlı parçaya bölünerek yazıldı,
+  review'lar temiz). Ayrıca bu tur bulunan **kritik bir bildirim-dili bug'ı** düzeltildi:
   aksiyon butonları (❤️/"bir tane daha"/Direndim/Kaçtım) cihaz dili ne olursa olsun kalıcı
   olarak Türkçe donuyordu — muhtemelen bugüne kadarki her kurulumu etkiliyordu (bkz.
   `baa9c85`). **`expo-task-manager` yeni native bağımlılık** — W1.3/W1.4'ün headless yolu
@@ -293,10 +295,9 @@ User demanded a real monetization funnel ("how will we sell subscriptions?"). No
   Android widget'ına da yeni bir tıklama bölgesi ekledi. **Hiçbiri bu turda cihazda/emülatörde
   doğrulanmadı** — kullanıcı testleri kasıtlı olarak sona bıraktı, bir sonraki cihaz-QA turunda
   hepsi birlikte (tek dev-client build'inde) doğrulanmalı.
-  **Kalan:** sertlik ayarı (W3.1 — içerik etiketleme CSV'si için sahip onayı gerekiyor, henüz
-  başlamadı), akıllı zamanlama (W3.2 — kod tarafı owner onayı gerektirmiyor, W1.4'ün
-  `engagementLog`'unun gerçek kullanımdan birikmesini bekliyor ama mekanizma şimdiden
-  uygulanabilir), özel bildirim sesi (W3.3 — ses dosyasının sahip tarafından seçilmesi/
+  **Kalan — ikisi de sahip aksiyonu bekliyor, kod tarafı bloklu:** sertlik ayarı (W3.1 —
+  içerik etiketleme CSV'si için sahip onayı gerekiyor, henüz başlamadı), özel bildirim sesi
+  (W3.3 — ses dosyasının sahip tarafından seçilmesi/
   sağlanması gerekiyor, ayrıca yeni bir native build/kanal göçü gerektirir).
 
 From the backend roadmap's rollout order — now unblocked since the webhook is deployed:

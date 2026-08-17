@@ -127,8 +127,7 @@ schedules a single extra quote notification 5 seconds later (same rotation-avoid
 daily pool, `pickQuoteId`), capped at 2 per day (`driftstop:extraQuoteLog`) — hitting the cap is a
 silent no-op, no "you're out" notification is ever sent (deliberate anti-feed decision, see "Won't
 do" list). Tapping the notification body (unchanged `/quote/[id]` routing) also appends
-`{ hour, at }` to `driftstop:engagementLog` (cap 200) — the raw input for the future W3.2 smart-timing
-feature. Both actions are processed by a single shared headless task
+`{ hour, at }` to `driftstop:engagementLog` (cap 200) — the raw input for W3.2 smart timing (below). Both actions are processed by a single shared headless task
 (`src/utils/notificationTaskHandler.ts`, `NOTIFICATION_BACKGROUND_TASK`) that also handles the
 reckoning actions — `expo-notifications` only allows one registered background notification-response
 task per app, so W1.3's reckoning-only task was generalized rather than a second one being registered.
@@ -160,6 +159,15 @@ See `specs/engagement-roadmap.md` §W1.4.
 `generateRandomTimes` (`src/utils/timeUtils.ts:35-74`) shrinks the gap to fit narrow windows
 (`gap = min(90, floor(span/(count−1)))`), halves it after repeated failures, and finally fills with any unique
 random minute. So a 2-hour window with 10/day yields clustered times rather than failing.
+
+**Smart timing (W3.2, `Settings.smartTiming`, default on):** when enabled and `driftstop:engagementLog`
+holds ≥20 records, `applySchedule` computes an hour-of-day histogram once per call
+(`utils/engagement.ts#hourWeights`, ±1-hour smoothing) and uses `generateWeightedTimes` instead of
+`generateRandomTimes` for all 3 planned days — each candidate minute is drawn from the weighted
+distribution 30% of the time (`SMART_TIMING_MIX`) and uniformly the rest, so times drift toward the hours
+the user has actually tapped a notification without becoming fully predictable. Below the 20-record
+threshold, or with the toggle off, scheduling is bit-for-bit identical to the non-weighted path — the log
+itself is only read/pruned when the toggle is on.
 
 ### What re-triggers scheduling
 
