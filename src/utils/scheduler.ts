@@ -9,6 +9,7 @@ import { nativeFeaturesAvailable } from '@/utils/runtime';
 import type { Settings } from '@/types/settings';
 import { quoteDisplayText } from '@/utils/quoteText';
 import { getJSON, setJSON, StorageKeys } from '@/utils/storage';
+import { eligibleMessages, markDelivered, type VaultMessage } from '@/utils/vault';
 import {
   dateAt,
   dateKey,
@@ -40,6 +41,14 @@ export const TRIAL_NOTICE_KIND = 'trial-notice';
 export const RECKONING_KIND = 'reckoning';
 export const RECKONING_ACTION_RESISTED = 'resisted';
 export const RECKONING_ACTION_DRIFTED = 'drifted';
+/**
+ * Kasa mesajı bildiriminin işareti (`data.kind`). Söz DEĞİLDİR — bir günün söz
+ * saatlerinden birinin YERİNE geçer (W2.1 kararı, `VAULT_DAILY_CHANCE`). Kategori
+ * bilinçli olarak atanmaz (❤️/"bir tane daha" bir kullanıcı cümlesinde anlamsız).
+ */
+export const VAULT_KIND = 'vault';
+/** Kasa mesajının günlük teslim olasılığı — W2.1 kararı, "ortalama 4 günde bir". */
+export const VAULT_DAILY_CHANCE = 0.25;
 export const QUOTE_ACTION_FAVORITE = 'favorite';
 export const QUOTE_ACTION_ONE_MORE = 'oneMore';
 /**
@@ -84,6 +93,27 @@ const HISTORY_CAP = 200; // useHistory ile aynı
  * `scheduledQuoteIds`'e ekleme yapar (`syncDeliveredToHistory` bunu okur).
  */
 export type ScheduledQuote = { id: number; at: number };
+
+/**
+ * Henüz fire etmemiş kasa bildirimi kaydı — `ScheduledQuote`den BİLİNÇLİ olarak
+ * ayrı bir dizi (`StorageKeys.scheduledVaultMessages`): aynı diziye karışırsa
+ * `syncDeliveredToHistory` `quoteId` bekleyen okumasıyla onu geçmişe taşımaya
+ * çalışabilirdi. Teslim tespiti `syncDeliveredVaultMessages` bu tipi okur.
+ */
+export type ScheduledVaultMessage = { vaultId: number; at: number };
+
+/**
+ * Kasa bildiriminin gövdesindeki imza satırı için okunur tarih ("3 Mayıs" gibi).
+ * Hermes'in bazı sürümlerinde tam ICU verisi olmayabilir (`reckoning.tsx`daki
+ * aynı gerekçe) — desteklenmeyen bir locale/motor `dateKey` biçimine düşer.
+ */
+function vaultDateLabel(day: Date): string {
+  try {
+    return new Intl.DateTimeFormat(i18n.locale, { day: 'numeric', month: 'long' }).format(day);
+  } catch {
+    return dateKey(day);
+  }
+}
 
 /** Android bildirim kanalını oluştur (HIGH önem, titreşim, badge). */
 export async function setupAndroidChannel(): Promise<void> {
@@ -246,6 +276,10 @@ export async function applySchedule(settings: Settings): Promise<void> {
 
   if (!settings.notificationsEnabled) {
     await setJSON(StorageKeys.scheduledQuoteIds, []);
+    // Kasa planı da eski OS kayıtlarıyla birlikte iptal edildi (yukarıdaki `cancelAll`) —
+    // burada temizlenmezse `syncDeliveredVaultMessages` hiç fire etmemiş kayıtları
+    // "teslim edildi" sanıp mesajı erken emekli edebilir.
+    await setJSON(StorageKeys.scheduledVaultMessages, []);
     await setJSON(StorageKeys.lastScheduledDate, '');
     return;
   }
@@ -264,6 +298,12 @@ export async function applySchedule(settings: Settings): Promise<void> {
   const scheduled: ScheduledQuote[] = [];
   let prevId: number | null = null;
 
+  // Kasa: uygun mesajlar bir kez okunur, plan boyunca tüketilir (`usedVaultIds`) — aynı
+  // mesaj bu 3 günlük planda İKİNCİ kez seçilmez (W2.1 kararı).
+  const vaultCandidates = await eligibleMessages(now.getTime());
+  const usedVaultIds = new Set<number>();
+  const scheduledVault: ScheduledVaultMessage[] = [];
+
   for (let offset = 0; offset < DAYS_AHEAD; offset++) {
     const day = new Date(now);
     day.setDate(now.getDate() + offset);
@@ -271,9 +311,45 @@ export async function applySchedule(settings: Settings): Promise<void> {
     if (settings.disableWeekends && isWeekend(day)) continue;
 
     const times = generateRandomTimes(startMin, endMin, settings.frequency, MIN_GAP);
-    for (const minuteOfDay of times) {
+
+    // Zar + uygunluk, saatler üretildikten ama hiçbir bildirim kurulmadan ÖNCE atılır:
+    // günde en fazla 1 kasa mesajı, söz saatlerinden birinin YERİNE geçer (toplam
+    // bildirim sayısı sabit kalır — "net bildirim artışı sıfır" kararı).
+    let vaultSlotIndex = -1;
+    let vaultSlotMessage: VaultMessage | null = null;
+    if (times.length > 0 && Math.random() < VAULT_DAILY_CHANCE) {
+      const candidate = vaultCandidates.find((m) => !usedVaultIds.has(m.id));
+      if (candidate) {
+        vaultSlotIndex = Math.floor(Math.random() * times.length);
+        vaultSlotMessage = candidate;
+        usedVaultIds.add(candidate.id);
+      }
+    }
+
+    for (let i = 0; i < times.length; i++) {
+      const minuteOfDay = times[i];
       const fireDate = dateAt(day, minuteOfDay);
       if (fireDate.getTime() <= now.getTime() + 60_000) continue; // geçmiş/çok yakın atla
+
+      if (i === vaultSlotIndex && vaultSlotMessage) {
+        await Notifications.scheduleNotificationAsync({
+          content: {
+            title: randomTitle(settings.goal), // normal havuzdan — sürpriz bozulmasın
+            body: vaultSlotMessage.text,
+            subtitle: i18n.t('vault.signature', { date: vaultDateLabel(day) }),
+            data: { kind: VAULT_KIND, vaultId: vaultSlotMessage.id },
+            // categoryIdentifier YOK: ❤️ / "bir tane daha" bir kullanıcı cümlesinde anlamsız.
+          },
+          trigger: {
+            type: Notifications.SchedulableTriggerInputTypes.DATE,
+            date: fireDate,
+            channelId: NOTIFICATION_CHANNEL_ID,
+          },
+        });
+        // `scheduled` (söz planı) DEĞİL, ayrı diziye — bkz. `ScheduledVaultMessage` yorumu.
+        scheduledVault.push({ vaultId: vaultSlotMessage.id, at: fireDate.getTime() });
+        continue;
+      }
 
       const quoteId = pickQuoteId(pool, prevId, excludeSet);
       prevId = quoteId;
@@ -333,6 +409,7 @@ export async function applySchedule(settings: Settings): Promise<void> {
   }
 
   await setJSON(StorageKeys.scheduledQuoteIds, scheduled);
+  await setJSON(StorageKeys.scheduledVaultMessages, scheduledVault);
   await setJSON(StorageKeys.lastScheduledDate, dateKey(now));
 }
 
@@ -383,6 +460,30 @@ export async function syncDeliveredToHistory(): Promise<number[] | null> {
   next = next.slice(0, HISTORY_CAP);
   await setJSON(StorageKeys.seenHistory, next);
   return next;
+}
+
+/**
+ * Fire zamanı geçmiş kasa bildirimlerini `utils/vault.ts#markDelivered` ile teslim
+ * edildi olarak işaretler ve bekleyen listeden düşürür — `syncDeliveredToHistory`nin
+ * kasa karşılığı, ama AYRI: kasa mesajları `seenHistory`ye asla girmez (söz değildir).
+ * Çağıran taraf (UI/route katmanı) bu iş kapsamının dışında; yalnızca export edilir.
+ */
+export async function syncDeliveredVaultMessages(): Promise<void> {
+  const scheduled = await getJSON<ScheduledVaultMessage[]>(StorageKeys.scheduledVaultMessages, []);
+  if (scheduled.length === 0) return;
+
+  const now = Date.now();
+  const remaining: ScheduledVaultMessage[] = [];
+  for (const s of scheduled) {
+    if (s && s.at <= now) {
+      await markDelivered(s.vaultId, s.at);
+    } else if (s) {
+      remaining.push(s);
+    }
+  }
+  if (remaining.length !== scheduled.length) {
+    await setJSON(StorageKeys.scheduledVaultMessages, remaining);
+  }
 }
 
 /** Bugün için plan yoksa (yeni gün / yeniden başlatma) yeniden zamanla. */

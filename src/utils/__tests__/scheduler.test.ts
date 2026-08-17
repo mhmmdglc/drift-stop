@@ -1,6 +1,7 @@
 /// <reference types="jest" />
 // Tip-import derlemede silinir → jest.mock hoisting'inden etkilenmez, en üstte durabilir.
 import type { Quote } from '@/types/quote';
+import type { VaultMessage } from '@/utils/vault';
 // i18n mock'lanmıyor ve jest.mock çağrıları babel'ce bunun üstüne taşınır —
 // gerçek çeviri dosyalarıyla çalışır (interpolasyon davranışı gerçek motorda sınanır).
 import i18n from '@/i18n';
@@ -46,6 +47,10 @@ jest.mock('@/utils/storage', () => ({
     scheduledQuoteIds: 'k:scheduled',
     lastScheduledDate: 'k:lastDate',
     seenHistory: 'k:history',
+    // `utils/vault.ts` bu iki anahtarı `@/utils/storage`den okuyor — scheduler
+    // onu transitif olarak import ediyor, aynı mock kayıt defterini paylaşmalı.
+    vaultMessages: 'k:vault',
+    scheduledVaultMessages: 'k:scheduledVault',
   },
   getJSON: jest.fn(async (key: string, fallback: unknown) =>
     key in store ? store[key] : fallback
@@ -67,6 +72,7 @@ import {
   setupAndroidChannel,
   setupNotificationCategories,
   syncDeliveredToHistory,
+  syncDeliveredVaultMessages,
   NOTIFICATION_CHANNEL_ID,
   TRIAL_CHANNEL_ID,
   TRIAL_NOTICE_KIND,
@@ -77,6 +83,8 @@ import {
   quoteCategoryId,
   QUOTE_ACTION_FAVORITE,
   QUOTE_ACTION_ONE_MORE,
+  VAULT_KIND,
+  VAULT_DAILY_CHANCE,
 } from '../scheduler';
 import { DEFAULT_SETTINGS, type Settings } from '@/types/settings';
 import { dateKey } from '@/utils/timeUtils';
@@ -742,5 +750,199 @@ describe('applySchedule — gece hesaplaşması', () => {
     // scheduledQuoteIds diske yazılan planda quoteId sayısı kadar kayıt olmalı —
     // hesaplaşma bildirimleri o planın İÇİNDE olmamalı.
     expect((store['k:scheduled'] as unknown[]).length).toBe(quoteCalls().length);
+  });
+});
+
+describe('applySchedule — kasa mesajları (W2.1)', () => {
+  const DAY_MS = 24 * 60 * 60 * 1000;
+  // `Frequency` tipi yalnızca 3|5|7|10'a izin veriyor (bkz. `types/settings.ts`) — 1
+  // kullanılamıyor, o yüzden `Math.random`'ı SABİT bir değerle mock'lamak güvenli değil:
+  // `generateRandomTimes`in çakışma-giderme geri dönüşü (aynı aday sürekli üretilir,
+  // hiçbir gap eşiğini asla geçemez) SONSUZ DÖNGÜYE düşüyor. Bunun yerine `Math.random`
+  // GERÇEK bırakılıyor ve zar/istenen sonuca ulaşana kadar plan birkaç kez yeniden
+  // kuruluyor — günde %25 ihtimalle 3 günde en az bir tutma olasılığı ≈ %58, aksi yönde
+  // (hiç tutmama) ≈ %42, ikisi de birkaç denemede pratikte kesinleşiyor.
+  const FREQ = 3;
+  const EXPECTED_SLOTS = 3 * FREQ; // DAYS_AHEAD(3) × frekans — hesaplaşma HARİÇ
+
+  const mkVaultMessage = (id: number, overrides: Partial<VaultMessage> = {}): VaultMessage => ({
+    id,
+    text: `vault-mesaj-${id}`,
+    createdAt: Date.now() - 8 * DAY_MS, // > VAULT_SLEEP_DAYS (7) → uygun
+    deliveredAt: null,
+    rearmedAt: null,
+    ...overrides,
+  });
+
+  const vaultCalls = () =>
+    mockNotifications.scheduleNotificationAsync.mock.calls.filter(
+      (c) => (c[0] as { content: { data?: { kind?: string } } }).content.data?.kind === VAULT_KIND
+    );
+
+  // Hesaplaşma dışındaki tüm bildirimler — kasa YERİNE geçtiği söz slotunu da içerir,
+  // "toplam bildirim sayısı değişmez" iddiası bu toplamı ölçer.
+  const slotCalls = () =>
+    mockNotifications.scheduleNotificationAsync.mock.calls.filter(
+      (c) => (c[0] as { content: { data?: { kind?: string } } }).content.data?.kind !== RECKONING_KIND
+    );
+
+  /** Koşul sağlanana kadar planı yeniden kurar (sonsuz döngü riskine karşı üst sınırlı). */
+  async function scheduleUntil(
+    predicate: () => boolean,
+    maxAttempts: number,
+    frequency: Settings['frequency'] = FREQ
+  ): Promise<void> {
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      mockNotifications.scheduleNotificationAsync.mockClear();
+      await applySchedule(settings({ frequency }));
+      if (predicate()) return;
+    }
+  }
+
+  beforeEach(() => {
+    // Sabit bir sabah: pencere (varsayılan 09:00-21:00) test hangi saatte koşarsa
+    // koşsun hep gelecekte kalsın — gerçek saate bağlı gevşek testlerden kaçınıyoruz.
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date('2024-01-08T08:00:00')); // Pazartesi
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it(`zar sabiti ${VAULT_DAILY_CHANCE}`, () => {
+    expect(VAULT_DAILY_CHANCE).toBe(0.25);
+  });
+
+  it('uygun mesaj var ve zar tutunca bir slot kasaya ayrılır, TOPLAM bildirim sayısı DEĞİŞMEZ', async () => {
+    store['k:vault'] = [mkVaultMessage(1)];
+
+    await scheduleUntil(() => vaultCalls().length > 0, 300);
+
+    expect(vaultCalls().length).toBeGreaterThan(0);
+    expect(slotCalls()).toHaveLength(EXPECTED_SLOTS); // net artış sıfır
+
+    const call = vaultCalls()[0][0] as {
+      content: {
+        title: string;
+        body: string;
+        subtitle: string;
+        data: { kind: string; vaultId: number };
+        categoryIdentifier?: string;
+      };
+      trigger: { channelId: string };
+    };
+    expect(call.content.body).toBe('vault-mesaj-1');
+    expect(call.content.data).toEqual({ kind: VAULT_KIND, vaultId: 1 });
+    expect(call.content.categoryIdentifier).toBeUndefined(); // ❤️/"bir tane daha" anlamsız
+    expect(call.trigger.channelId).toBe(NOTIFICATION_CHANNEL_ID);
+    expect(call.content.title.length).toBeGreaterThan(0); // randomTitle havuzundan, boş değil
+
+    // Subtitle hangi plan gününe denk geldiyse (0/1/2. gün) o günün imzasıyla eşleşmeli.
+    const base = new Date('2024-01-08T08:00:00');
+    const possibleSubtitles = [0, 1, 2].map((offset) => {
+      const day = new Date(base);
+      day.setDate(base.getDate() + offset);
+      const label = new Intl.DateTimeFormat(i18n.locale, { day: 'numeric', month: 'long' }).format(day);
+      return i18n.t('vault.signature', { date: label });
+    });
+    expect(possibleSubtitles).toContain(call.content.subtitle);
+  });
+
+  it('uygun mesaj yokken hiç kasa bildirimi kurulmaz, sayı hiç değişmez', async () => {
+    // Henüz 7 gün beklememiş — uygun değil. Zardan bağımsız, deterministik.
+    store['k:vault'] = [mkVaultMessage(1, { createdAt: Date.now() - 1 * DAY_MS })];
+
+    await applySchedule(settings({ frequency: FREQ }));
+
+    expect(vaultCalls()).toHaveLength(0);
+    expect(slotCalls()).toHaveLength(EXPECTED_SLOTS);
+  });
+
+  it('zar tutmadığı günlerde kasa bildirimi kurulmaz — sayı yine sabit kalır', async () => {
+    store['k:vault'] = [mkVaultMessage(1)];
+
+    await scheduleUntil(() => vaultCalls().length === 0, 300);
+
+    expect(vaultCalls()).toHaveLength(0);
+    expect(slotCalls()).toHaveLength(EXPECTED_SLOTS); // uygun mesaj olsa da sayı sabit
+  });
+
+  it("kasa bildirimi scheduledQuoteIds'e SIZMAZ, kendi diskine yazılır", async () => {
+    store['k:vault'] = [mkVaultMessage(1)];
+
+    await scheduleUntil(() => vaultCalls().length > 0, 300);
+
+    expect(vaultCalls().length).toBeGreaterThan(0);
+    const quoteCallCount = mockNotifications.scheduleNotificationAsync.mock.calls.filter(
+      (c) => typeof (c[0] as { content: { data?: { quoteId?: number } } }).content.data?.quoteId === 'number'
+    ).length;
+    expect((store['k:scheduled'] as unknown[]).length).toBe(quoteCallCount);
+    expect(store['k:scheduledVault']).toEqual(
+      vaultCalls().map((c) => {
+        const arg = c[0] as { content: { data: { vaultId: number } }; trigger: { date: Date } };
+        return { vaultId: arg.content.data.vaultId, at: arg.trigger.date.getTime() };
+      })
+    );
+  });
+
+  it('3 günlük planda AYNI mesaj iki kez seçilmez — iki uygun mesaj iki farklı günde kullanılır', async () => {
+    store['k:vault'] = [
+      mkVaultMessage(1, { createdAt: Date.now() - 10 * DAY_MS }), // en uzun bekleyen → önce
+      mkVaultMessage(2, { createdAt: Date.now() - 8 * DAY_MS }),
+    ];
+
+    await scheduleUntil(() => vaultCalls().length >= 2, 2000);
+
+    expect(vaultCalls().length).toBeGreaterThanOrEqual(2);
+    const ids = vaultCalls().map((c) => (c[0] as { content: { data: { vaultId: number } } }).content.data.vaultId);
+    expect(ids).toEqual([1, 2]); // en uzun bekleyen ilk tutan günde, ikincisi bir sonraki tutan günde
+    expect(new Set(ids).size).toBe(ids.length); // hiçbir mesaj plan içinde tekrar etmedi
+  });
+});
+
+describe('syncDeliveredVaultMessages', () => {
+  const mkVaultMessage = (id: number): VaultMessage => ({
+    id,
+    text: `vault-mesaj-${id}`,
+    createdAt: 0,
+    deliveredAt: null,
+    rearmedAt: null,
+  });
+
+  it('teslim edilecek bir şey yoksa dokunmaz', async () => {
+    store['k:scheduledVault'] = [];
+
+    await syncDeliveredVaultMessages();
+
+    expect(store['k:scheduledVault']).toEqual([]);
+  });
+
+  it('fire zamanı geçmiş kayıtları markDelivered\'a yönlendirir ve listeden düşürür', async () => {
+    const past = Date.now() - 60_000;
+    const future = Date.now() + 60_000;
+    store['k:vault'] = [mkVaultMessage(1), mkVaultMessage(2)];
+    store['k:scheduledVault'] = [
+      { vaultId: 1, at: past },
+      { vaultId: 2, at: future },
+    ];
+
+    await syncDeliveredVaultMessages();
+
+    const messages = store['k:vault'] as VaultMessage[];
+    expect(messages.find((m) => m.id === 1)?.deliveredAt).toBe(past);
+    expect(messages.find((m) => m.id === 2)?.deliveredAt).toBeNull(); // gelecekteki henüz teslim değil
+    // Gelecekteki kayıt korunmalı; silinirse o bildirim geldiğinde hiç işaretlenmez.
+    expect(store['k:scheduledVault']).toEqual([{ vaultId: 2, at: future }]);
+  });
+
+  it('zaten teslim edilmiş bir mesaja tekrar dokunmaz (markDelivered idempotent)', async () => {
+    store['k:vault'] = [{ ...mkVaultMessage(1), deliveredAt: 111 }];
+    store['k:scheduledVault'] = [{ vaultId: 1, at: Date.now() - 1000 }];
+
+    await syncDeliveredVaultMessages();
+
+    const messages = store['k:vault'] as VaultMessage[];
+    expect(messages.find((m) => m.id === 1)?.deliveredAt).toBe(111);
   });
 });
