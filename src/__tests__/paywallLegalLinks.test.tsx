@@ -114,4 +114,14 @@ describe('paywall legal links', () => {
     expect(screen.getByLabelText('Privacy Policy')).toBeTruthy();
     expect(screen.getByLabelText('Terms of Use')).toBeTruthy();
   });
+
+  // App Review 1.2.0 (6) reddi (iPad, Guideline 2.1(a), 2026-08-17): "Unable to scroll
+  // up the Go pro page to access privacy policy and term of Use." Ekranın hiç kaydırma
+  // konteyneri yoktu; RNTL gerçek viewport/kaydırma ölçmediği için yukarıdaki testler
+  // (linkler AĞAÇTA var mı) bunu hiç yakalayamazdı — bu test en azından yapısal
+  // garantiyi (bir ScrollView var mı) sabitliyor.
+  it('wraps the screen in a ScrollView so overflowing content stays reachable', async () => {
+    await render(<PaywallScreen />);
+    expect(screen.getByTestId('paywallScroll')).toBeTruthy();
+  });
 });
