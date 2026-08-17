@@ -51,6 +51,8 @@ jest.mock('@/utils/storage', () => ({
     // onu transitif olarak import ediyor, aynı mock kayıt defterini paylaşmalı.
     vaultMessages: 'k:vault',
     scheduledVaultMessages: 'k:scheduledVault',
+    // W3.2: akıllı zamanlamanın ham girdisi.
+    engagementLog: 'k:engagement',
   },
   getJSON: jest.fn(async (key: string, fallback: unknown) =>
     key in store ? store[key] : fallback
@@ -59,6 +61,18 @@ jest.mock('@/utils/storage', () => ({
     store[key] = value;
   }),
 }));
+
+// Gerçek üreteçler korunuyor (`jest.requireActual`) — yalnızca HANGİ üretecin
+// çağrıldığını gözlemlemek için sarmalanıyor. `pruneEngagementLog`/`hourWeights`
+// de gerçek: W3.2 testleri gerçek histogram/eşik davranışını sınıyor.
+jest.mock('@/utils/timeUtils', () => {
+  const actual = jest.requireActual('@/utils/timeUtils');
+  return {
+    ...actual,
+    generateRandomTimes: jest.fn(actual.generateRandomTimes),
+    generateWeightedTimes: jest.fn(actual.generateWeightedTimes),
+  };
+});
 
 import * as ExpoNotifications from 'expo-notifications';
 import { Platform } from 'react-native';
@@ -87,9 +101,11 @@ import {
   VAULT_DAILY_CHANCE,
 } from '../scheduler';
 import { DEFAULT_SETTINGS, type Settings } from '@/types/settings';
-import { dateKey } from '@/utils/timeUtils';
+import { dateKey, generateRandomTimes, generateWeightedTimes } from '@/utils/timeUtils';
 
 const mockNotifications = ExpoNotifications as unknown as Record<string, jest.Mock>;
+const mockGenerateRandomTimes = generateRandomTimes as jest.Mock;
+const mockGenerateWeightedTimes = generateWeightedTimes as jest.Mock;
 
 const settings = (over: Partial<Settings> = {}): Settings => ({ ...DEFAULT_SETTINGS, ...over });
 
@@ -297,6 +313,79 @@ describe('applySchedule', () => {
     await applySchedule(settings());
 
     expect(mockNotifications.cancelAllScheduledNotificationsAsync).toHaveBeenCalled();
+  });
+});
+
+describe('applySchedule — akıllı zamanlama (W3.2)', () => {
+  const DAY_MS = 24 * 60 * 60 * 1000;
+  // `MIN_ENGAGEMENT_LOG_FOR_WEIGHTS` (engagement.ts) = 20 — eşiğin üstü/altı ayrımı testlerin kalbi.
+  const ENOUGH = 25;
+  const NOT_ENOUGH = 5;
+
+  const mkEntries = (n: number, ageDays = 1): { hour: number; at: number }[] =>
+    Array.from({ length: n }, (_, i) => ({
+      hour: 14,
+      at: Date.now() - ageDays * DAY_MS - i * 1000,
+    }));
+
+  it('smartTiming açık + yeterli (≥20) kayıt varken ağırlıklı üreteç kullanılır', async () => {
+    store['k:engagement'] = mkEntries(ENOUGH);
+
+    await applySchedule(settings({ smartTiming: true }));
+
+    expect(mockGenerateWeightedTimes).toHaveBeenCalled();
+    expect(mockGenerateRandomTimes).not.toHaveBeenCalled();
+    // Ağırlıklar `applySchedule` başına BİR KEZ hesaplanır, 3 güne aynen uygulanır —
+    // her çağrıya AYNI ağırlık nesnesi geçmeli (gün başına yeniden okunmamalı).
+    const weightArgs = mockGenerateWeightedTimes.mock.calls.map((c) => c[4]);
+    expect(weightArgs.length).toBeGreaterThan(0);
+    for (const w of weightArgs) expect(w).toBe(weightArgs[0]);
+  });
+
+  it('smartTiming kapalıyken davranış eskisiyle AYNI — düz üreteç, log okunmaz/yazılmaz', async () => {
+    const entries = mkEntries(ENOUGH);
+    store['k:engagement'] = entries;
+    const storageMock = jest.requireMock('@/utils/storage') as { setJSON: jest.Mock };
+
+    await applySchedule(settings({ smartTiming: false }));
+
+    expect(mockGenerateRandomTimes).toHaveBeenCalled();
+    expect(mockGenerateWeightedTimes).not.toHaveBeenCalled();
+    // Özellik kapalıyken engagementLog'a hiç dokunulmaz (mevcut davranışla bit-bit aynı).
+    const engagementWrites = storageMock.setJSON.mock.calls.filter((c) => c[0] === 'k:engagement');
+    expect(engagementWrites).toHaveLength(0);
+    expect(store['k:engagement']).toBe(entries);
+  });
+
+  it('smartTiming açık ama kayıt < 20 iken düz üretece düşer (regresyon yok)', async () => {
+    store['k:engagement'] = mkEntries(NOT_ENOUGH);
+
+    await applySchedule(settings({ smartTiming: true }));
+
+    expect(mockGenerateRandomTimes).toHaveBeenCalled();
+    expect(mockGenerateWeightedTimes).not.toHaveBeenCalled();
+  });
+
+  it('90 günden eski kayıtları budar ve diske geri yazar', async () => {
+    const fresh = mkEntries(ENOUGH, 1); // 1 gün önce → tutulur
+    const stale = mkEntries(10, 91); // 91 gün önce → budanır
+    store['k:engagement'] = [...fresh, ...stale];
+
+    await applySchedule(settings({ smartTiming: true }));
+
+    const saved = store['k:engagement'] as { hour: number; at: number }[];
+    expect(saved).toHaveLength(fresh.length);
+    expect(saved.every((e) => e.at >= Date.now() - 90 * DAY_MS)).toBe(true);
+  });
+
+  it('budanacak eski kayıt yoksa engagementLog gereksiz yere yeniden yazılmaz', async () => {
+    store['k:engagement'] = mkEntries(ENOUGH, 1);
+    const storageMock = jest.requireMock('@/utils/storage') as { setJSON: jest.Mock };
+
+    await applySchedule(settings({ smartTiming: true }));
+
+    const engagementWrites = storageMock.setJSON.mock.calls.filter((c) => c[0] === 'k:engagement');
+    expect(engagementWrites).toHaveLength(0);
   });
 });
 

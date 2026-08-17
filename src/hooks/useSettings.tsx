@@ -45,6 +45,7 @@ const SCHEDULE_KEYS: (keyof Settings)[] = [
   'themes', // tema seçimi değişince bildirim havuzu değişir
   'goal', // başlıklar zamanlama anında pişiyor; hedef değişince plan yeniden kurulmalı
   'reckoningEnabled', // kapatılınca hesaplaşma bildirimi plandan tamamen çıkmalı
+  'smartTiming', // açılıp kapanınca üretici fonksiyon değişir, plan yeniden kurulmalı
 ];
 
 export function SettingsProvider({ children }: { children: ReactNode }) {

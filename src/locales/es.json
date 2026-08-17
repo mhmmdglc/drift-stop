@@ -163,6 +163,10 @@
       "label": "Balance nocturno",
       "labelOff": "Balance nocturno desactivado",
       "hint": "Una pregunta cada noche: ¿resististe o cediste? La excepción de fin de semana depende del ajuste en Horario."
+    },
+    "smartTiming": {
+      "label": "Aprender mis horarios",
+      "hint": "Aprendemos en qué horas te llegamos más y les damos más peso. Desactívalo para un horario totalmente aleatorio."
     }
   },
   "notifications": {

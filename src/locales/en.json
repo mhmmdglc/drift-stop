@@ -163,6 +163,10 @@
       "label": "Night reckoning",
       "labelOff": "Night reckoning off",
       "hint": "One question every evening: did you resist, or drift? The weekend exemption follows the setting in Schedule."
+    },
+    "smartTiming": {
+      "label": "Learn my hours",
+      "hint": "We learn which hours hit you hardest and lean toward them. Turn it off for fully random timing."
     }
   },
   "notifications": {

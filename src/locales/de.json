@@ -163,6 +163,10 @@
       "label": "Nächtliche Abrechnung",
       "labelOff": "Nächtliche Abrechnung aus",
       "hint": "Jeden Abend eine Frage: widerstanden oder abgedriftet? Die Wochenend-Ausnahme richtet sich nach der Einstellung unter Zeitplan."
+    },
+    "smartTiming": {
+      "label": "Meine Zeiten lernen",
+      "hint": "Wir lernen, zu welchen Stunden wir dich am meisten erreichen, und gewichten sie stärker. Schalte es aus für eine völlig zufällige Zeitplanung."
     }
   },
   "notifications": {

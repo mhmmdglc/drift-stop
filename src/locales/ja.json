@@ -141,6 +141,10 @@
       "label": "",
       "labelOff": "",
       "hint": ""
+    },
+    "smartTiming": {
+      "label": "",
+      "hint": ""
     }
   },
   "notifications": {

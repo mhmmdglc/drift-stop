@@ -163,6 +163,10 @@
       "label": "Bilancio notturno",
       "labelOff": "Bilancio notturno disattivato",
       "hint": "Una domanda ogni sera: hai resistito o hai ceduto? L'esenzione nel weekend segue l'impostazione in Programmazione."
+    },
+    "smartTiming": {
+      "label": "Impara i miei orari",
+      "hint": "Impariamo in quali ore ti colpiamo di più e li privilegiamo. Disattivalo per una programmazione completamente casuale."
     }
   },
   "notifications": {

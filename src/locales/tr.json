@@ -163,6 +163,10 @@
       "label": "Gece hesaplaşması",
       "labelOff": "Gece hesaplaşması kapalı",
       "hint": "Her akşam tek soru: direndin mi, kaçtın mı? Hafta sonu muafiyeti Zamanlama bölümündeki ayara bağlı."
+    },
+    "smartTiming": {
+      "label": "Saatlerimi öğren",
+      "hint": "Seni en çok sarstığımız saatleri öğrenip oralara ağırlık veririz. Kapatırsan tamamen rastgele."
     }
   },
   "notifications": {

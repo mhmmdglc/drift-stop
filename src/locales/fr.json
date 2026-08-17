@@ -163,6 +163,10 @@
       "label": "Bilan nocturne",
       "labelOff": "Bilan nocturne désactivé",
       "hint": "Une question chaque soir : as-tu résisté ou cédé ? L'exemption du week-end suit le réglage dans Horaires."
+    },
+    "smartTiming": {
+      "label": "Apprendre mes horaires",
+      "hint": "Nous apprenons à quelles heures tu es le plus touché·e et nous les privilégions. Désactive-le pour un horaire totalement aléatoire."
     }
   },
   "notifications": {

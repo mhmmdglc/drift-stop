@@ -50,6 +50,13 @@ export type Settings = {
   goal: string | null;
   /** Gece hesaplaşması bildirimi + Home şeridi açık mı. Kapatınca bildirim kurulmaz. */
   reckoningEnabled: boolean;
+  /**
+   * Akıllı zamanlama (W3.2): açıkken bildirim saatleri `engagementLog`dan çıkan
+   * saat ağırlıklarına doğru hafifçe kayar (`SMART_TIMING_MIX`). Kapalıyken ya
+   * da yeterli veri yokken (`< MIN_ENGAGEMENT_LOG_FOR_WEIGHTS`) tamamen rastgele
+   * üretime düşer — davranış farkı yalnızca üretici fonksiyon seçiminde.
+   */
+  smartTiming: boolean;
 };
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -65,6 +72,7 @@ export const DEFAULT_SETTINGS: Settings = {
   themes: [],
   goal: null,
   reckoningEnabled: true,
+  smartTiming: true,
 };
 
 /** Bitiş, başlangıçtan en az bu kadar dakika sonra olmalı (2 saat). */

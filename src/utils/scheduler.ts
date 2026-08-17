@@ -10,10 +10,16 @@ import type { Settings } from '@/types/settings';
 import { quoteDisplayText } from '@/utils/quoteText';
 import { getJSON, setJSON, StorageKeys } from '@/utils/storage';
 import { eligibleMessages, markDelivered, type VaultMessage } from '@/utils/vault';
+import { hourWeights, pruneEngagementLog } from '@/utils/engagement';
+// `EngagementEntry` yalnızca tip olarak lazım — `quoteAction.ts` da bu dosyadan
+// (`pickQuoteId`, `quoteCategoryId`...) değer import ediyor; `import type` derleme
+// zamanında silindiği için döngüsel require oluşmuyor.
+import type { EngagementEntry } from '@/utils/quoteAction';
 import {
   dateAt,
   dateKey,
   generateRandomTimes,
+  generateWeightedTimes,
   isValidWindow,
   isWeekend,
   windowOf,
@@ -311,13 +317,35 @@ export async function applySchedule(settings: Settings): Promise<void> {
   const usedVaultIds = new Set<number>();
   const scheduledVault: ScheduledVaultMessage[] = [];
 
+  // Akıllı zamanlama (W3.2): ağırlıklar `applySchedule` başına BİR KEZ hesaplanır,
+  // 3 günün hepsine aynen uygulanır — log/histogram bu üç gün boyunca değişmez,
+  // günde bir okuma da gereksiz iş yaratmaz. `smartTiming` kapalıysa log'a hiç
+  // dokunulmaz (mevcut davranışla bit-bit aynı kalsın diye).
+  let weights: Record<number, number> | null = null;
+  if (settings.smartTiming) {
+    const rawLog = await getJSON<EngagementEntry[]>(StorageKeys.engagementLog, []);
+    // 90 günden eski kayıtlar burada budanır (spec kararı) — log zaten push
+    // sırasında 200 kayıtla sınırlı, ama bu tazelik için: kullanıcının okuma
+    // saatleri zamanla kayarsa histogram eski alışkanlığı süresiz taşımasın.
+    const prunedLog = pruneEngagementLog(rawLog, now.getTime());
+    if (prunedLog.length !== rawLog.length) {
+      await setJSON(StorageKeys.engagementLog, prunedLog);
+    }
+    weights = hourWeights(prunedLog);
+  }
+
   for (let offset = 0; offset < DAYS_AHEAD; offset++) {
     const day = new Date(now);
     day.setDate(now.getDate() + offset);
 
     if (settings.disableWeekends && isWeekend(day)) continue;
 
-    const times = generateRandomTimes(startMin, endMin, settings.frequency, MIN_GAP);
+    // `weights` `null` ise (özellik kapalı ya da veri < 20) `generateWeightedTimes`
+    // zaten `generateRandomTimes`'a düşer — ama koşulu burada açıkça yazmak, "hangi
+    // üreteç ne zaman koşuyor" sorusunu okuyanlar için tek satırda cevaplıyor.
+    const times = weights
+      ? generateWeightedTimes(startMin, endMin, settings.frequency, MIN_GAP, weights)
+      : generateRandomTimes(startMin, endMin, settings.frequency, MIN_GAP);
 
     // Zar + uygunluk, saatler üretildikten ama hiçbir bildirim kurulmadan ÖNCE atılır:
     // günde en fazla 1 kasa mesajı, söz saatlerinden birinin YERİNE geçer (toplam

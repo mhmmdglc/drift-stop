@@ -277,6 +277,19 @@ export default function SettingsScreen() {
                 {t('settings.reckoning.hint')}
               </ThemedText>
             </Pressable>
+            {/* Akıllı zamanlama (W3.2): hesaplaşmanın hemen altında — ikisi de
+                bildirim ANA anahtarının şemsiyesinde, ayrı bölüm açmak yanlış
+                bağımsızlık izlenimi verir (reckoning toggle'ıyla aynı gerekçe). */}
+            <Row label={t('settings.smartTiming.label')}>
+              <SketchToggle
+                value={settings.smartTiming}
+                onChange={(v) => update({ smartTiming: v })}
+                accessibilityLabel={t('settings.smartTiming.label')}
+              />
+            </Row>
+            <ThemedText variant="label" tone="textMuted">
+              {t('settings.smartTiming.hint')}
+            </ThemedText>
           </Section>
 
           {/* Zamanlama */}
