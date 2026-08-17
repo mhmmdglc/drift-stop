@@ -167,6 +167,48 @@ describe('generateWeightedTimes', () => {
     }
   });
 
+  it('dar pencerede (gap daralma zinciri tetiklenirken) ağırlıklı seçimle bile asla sonsuz döngüye girmez / pencere dışına taşmaz (property test, N=1000)', () => {
+    // Yukarıdaki property testi bilerek span'i geniş tutuyor ("gap hiç daralmaz").
+    // Bu test tam tersini dener: span'i minGap*(count-1)'den KÜÇÜK tutarak
+    // `generateRandomTimes`in kendi daralma/tamamlama zincirini zorluyor —
+    // fonksiyonun kendi doc yorumunun VAAT ETTİĞİ tek iki garanti bunlar
+    // (asla sonsuz döngü, asla pencere dışı); dar pencerede MIN_GAP'in kendisi
+    // zaten daralıyor, o yüzden burada MIN_GAP'i DEĞİL sadece bu iki garantiyi
+    // ölçüyoruz (code review bulgusu, 2026-08-16: ağırlıklı dal bu dalda hiç
+    // test edilmemişti — elle sınandı, bug bulunmadı, ama kapsam boşluğu vardı).
+    const ITERATIONS = 1000;
+    for (let i = 0; i < ITERATIONS; i++) {
+      const paramRng = mulberry32(i * 53 + 3);
+
+      const startMin = Math.floor(paramRng() * 600);
+      const minGap = 20 + Math.floor(paramRng() * 70);
+      const count = 2 + Math.floor(paramRng() * 5);
+      // Kasıtlı DAR: span, minGap*(count-1)'in altında — daralma zinciri şart.
+      // Alt sınır count*3: span count'tan küçük olursa `count` kadar BENZERSİZ
+      // tamsayı dakika matematiksel olarak imkansız olur (gerçek pencereler
+      // zaten hiç bu kadar dar olamaz, MIN_WINDOW_MINUTES=120 uygulama genelinde
+      // zorunlu) — bu, algoritmanın bir hatası değil, testin kendi parametre
+      // üretiminin gerçekçi kalması gereken sınırı.
+      const minFeasibleSpan = count * 3;
+      const maxNarrowSpan = Math.max(minFeasibleSpan + 1, minGap * (count - 1) - 1);
+      const span = minFeasibleSpan + Math.floor(paramRng() * (maxNarrowSpan - minFeasibleSpan));
+      const endMin = startMin + span;
+
+      const weights: Record<number, number> = {};
+      for (let h = 0; h < 24; h++) weights[h] = Math.floor(paramRng() * 6);
+
+      const genRng = mulberry32(i * 173 + 11);
+      const times = generateWeightedTimes(startMin, endMin, count, minGap, weights, genRng);
+
+      expect(times).toHaveLength(count); // her zaman tam count kadar dolduruluyor
+      for (const t of times) {
+        expect(t).toBeGreaterThanOrEqual(startMin);
+        expect(t).toBeLessThanOrEqual(endMin);
+      }
+      expect(new Set(times).size).toBe(times.length); // benzersiz
+    }
+  });
+
   it('clusters generated times around heavily-weighted hours (statistical, N=2000)', () => {
     // Yalnızca saat 20 ağırlıklı — ağırlıklı dal seçildiğinde (rng < SMART_TIMING_MIX)
     // sonuç deterministik olarak saat 20 içine düşer (tek pozitif ağırlık orada).
