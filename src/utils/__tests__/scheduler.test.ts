@@ -899,6 +899,31 @@ describe('applySchedule — kasa mesajları (W2.1)', () => {
     expect(ids).toEqual([1, 2]); // en uzun bekleyen ilk tutan günde, ikincisi bir sonraki tutan günde
     expect(new Set(ids).size).toBe(ids.length); // hiçbir mesaj plan içinde tekrar etmedi
   });
+
+  it('regresyon: gün-0 tamamen geçmişteyken (örn. pencere zaten kapandıktan sonra yeniden planlama) mesaj o günün rastgele bir geçmiş slotuna atanıp KAYBOLMAZ', async () => {
+    // Bulunan bug (code review, 2026-08-16): eski kod, vaultSlotIndex'i o günün
+    // TÜM saatlerinden (geçmiştekiler dahil) seçip usedVaultIds'e HEMEN ekliyordu.
+    // "now" pencere kapanışından (21:00) SONRAYSA gün-0'ın ürettiği tüm saatler
+    // geçmişte kalır — zar gün-0'da tutarsa mesaj gerçek bir bildirime hiç
+    // dönüşmeden "kullanıldı" sayılıp gün-1/gün-2'nin şansını da kaybederdi.
+    // İstatistiksel ayrım: doğru davranışta yalnızca gün-1/gün-2 teslim
+    // edebilir → P(en az bir tutma) = 1-0.75² ≈ %43.75. Bug'lı davranışta
+    // gün-0'ın zarı tutan çalışmaların TAMAMI (yaklaşık %25'i) o çalışma için
+    // mesajı baştan siler → P(başarı) ≈ 0.75×0.4375 ≈ %32.8. 1000 denemede
+    // bu iki oran (~438 vs ~328) gürültüden (σ≈15) çok uzakta, testi kararlı kılar.
+    jest.setSystemTime(new Date('2024-01-08T22:00:00')); // pencere (09:00-21:00) çoktan kapandı
+    store['k:vault'] = [mkVaultMessage(1)];
+
+    let successes = 0;
+    const N = 1000;
+    for (let i = 0; i < N; i++) {
+      mockNotifications.scheduleNotificationAsync.mockClear();
+      await applySchedule(settings({ frequency: FREQ }));
+      if (vaultCalls().length > 0) successes++;
+    }
+
+    expect(successes).toBeGreaterThan(380); // buggy davranışın beklenen ~328'inin üstünde
+  });
 });
 
 describe('syncDeliveredVaultMessages', () => {

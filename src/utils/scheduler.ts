@@ -269,6 +269,13 @@ export async function cancelAll(): Promise<void> {
  */
 export async function applySchedule(settings: Settings): Promise<void> {
   if (!nativeFeaturesAvailable) return;
+  // Plan HER ZAMAN tamamen yeniden yazılır (aşağıda `scheduledVaultMessages`
+  // de dahil) — bu senkron BUNUN ÖNÜNDE çalışmalı, yoksa fire zamanı geçmiş
+  // ama henüz `markDelivered` çağrılmamış bir kasa kaydı, hiç teslim
+  // işaretlenmeden listeden düşer ve o mesaj SONSUZA KADAR "teslim edilmemiş"
+  // kalıp tekrar tekrar planlanabilirdi ("teslim edilen emekli olur" kararının
+  // ihlali — code review, 2026-08-16).
+  await syncDeliveredVaultMessages();
   // Buton metinleri aktif dilden pişiyor — dil değişip de kategori yeniden
   // kaydedilmezse kullanıcı eski dildeki butonları görmeye devam eder.
   await setupNotificationCategories();
@@ -314,15 +321,25 @@ export async function applySchedule(settings: Settings): Promise<void> {
 
     // Zar + uygunluk, saatler üretildikten ama hiçbir bildirim kurulmadan ÖNCE atılır:
     // günde en fazla 1 kasa mesajı, söz saatlerinden birinin YERİNE geçer (toplam
-    // bildirim sayısı sabit kalır — "net bildirim artışı sıfır" kararı).
+    // bildirim sayısı sabit kalır — "net bildirim artışı sıfır" kararı). Slot yalnızca
+    // GERÇEKTEN kurulabilecek (henüz geçmemiş) saatlerden seçilir — aksi halde rastgele
+    // seçim geçmiş bir saate denk gelirse (örn. gün ortasında yeniden planlama) mesaj hiç
+    // kurulmadan kaybolur; `usedVaultIds`e ekleme de yalnızca bildirim GERÇEKTEN
+    // kurulduğunda yapılır (aşağıda) — aksi halde tek uygun mesaj varken tüm 3 günlük
+    // plan sıfır kasa bildirimiyle bitebilirdi (code review bulgusu, 2026-08-16).
     let vaultSlotIndex = -1;
     let vaultSlotMessage: VaultMessage | null = null;
     if (times.length > 0 && Math.random() < VAULT_DAILY_CHANCE) {
       const candidate = vaultCandidates.find((m) => !usedVaultIds.has(m.id));
       if (candidate) {
-        vaultSlotIndex = Math.floor(Math.random() * times.length);
-        vaultSlotMessage = candidate;
-        usedVaultIds.add(candidate.id);
+        const futureIndices: number[] = [];
+        for (let i = 0; i < times.length; i++) {
+          if (dateAt(day, times[i]).getTime() > now.getTime() + 60_000) futureIndices.push(i);
+        }
+        if (futureIndices.length > 0) {
+          vaultSlotIndex = futureIndices[Math.floor(Math.random() * futureIndices.length)];
+          vaultSlotMessage = candidate;
+        }
       }
     }
 
@@ -348,6 +365,8 @@ export async function applySchedule(settings: Settings): Promise<void> {
         });
         // `scheduled` (söz planı) DEĞİL, ayrı diziye — bkz. `ScheduledVaultMessage` yorumu.
         scheduledVault.push({ vaultId: vaultSlotMessage.id, at: fireDate.getTime() });
+        // Yalnızca bildirim GERÇEKTEN kurulduktan sonra "kullanıldı" sayılır.
+        usedVaultIds.add(vaultSlotMessage.id);
         continue;
       }
 
