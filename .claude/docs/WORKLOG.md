@@ -8,6 +8,12 @@ The orchestrator writes an entry **when an agent is dispatched** and updates it 
 
 ---
 
+## 2026-08-17
+
+| Time | Agent | Task | Outcome | Evidence |
+|---|---|---|---|---|
+| — | orchestrator | iOS 1.2.0 (6) App Review reddi bulundu, düzeltildi, build 7 gönderildi | **Red (bugün 14:28):** Guideline 2.1(a) Performance/App Completeness — iPad'de (iPadOS 26.6) "Go Pro" ekranında yukarı kaydırılıp Gizlilik Politikası/Kullanım Şartları'na ulaşılamıyor. **Kök neden:** `paywall.tsx` hiç `ScrollView` içermiyordu, sabit `flex:1` bir `View`. Bazı durum kombinasyonları (kullanıcı gösterdiği ekran görüntüsü: "already Pro" + "purchase success" mesajları üst üste) viewport'u aşınca en alttaki hukuki linkler kalıcı olarak erişilemez oluyordu. **Düzeltme:** `settings.tsx`'teki ScrollView desenini birebir uyguladım, regresyon testi ekledim (RNTL gerçek layout ölçmediği için mevcut testler bunu hiç yakalayamazdı). **Dal kararı:** `monetization-v2` `main`'den 97 commit ileride ve bugünkü engagement roadmap işinin (20+ commit, hiç cihazda test edilmemiş, `expo-task-manager` gibi yeni native bağımlılıklar dahil) Apple'a gitmesini istemedik — düzeltmeyi izole `ios-1.2.0-hotfix` dalına (roadmap başlamadan önceki commit `030b65b`'den) cherry-pick ettim. **Build + submit:** `eas build --platform ios --profile production` (autoIncrement 6→7) → `eas submit` → App Store Connect'te build 7 sürüme bağlandı, "Update Review" ile 4 kalem `Ready for Review`'a alındı, "Resubmit to App Review" ile gönderildi. **Doğrulandı:** sürüm artık `Waiting for Review`, 1.2.0 (7) | `723a00c` (monetization-v2), `c95ecaf`+`be08c16` (ios-1.2.0-hotfix); EAS build `573accfe`; submission `1cc18361-…` |
+
 ## 2026-08-16
 
 | Time | Agent | Task | Outcome | Evidence |
