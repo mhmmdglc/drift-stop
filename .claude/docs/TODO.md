@@ -223,6 +223,16 @@ sonra bir build, sonra abonelik grubunun inceleme ekran görüntüsü (paywall'�
 
 ## Needs your action (blocking)
 
+- **W3.1 — sertlik ayarı (specs/engagement-roadmap.md):** 1000 sözü etiketlemek için bir script
+  yazılabilir (metin ÜRETMEZ, sadece mevcut sözleri `intensity: 1|2|3` diye etiketler), ama
+  script'in düşük-güvenli çıktısı (~150-200 satır) **senin gözden geçirmen** gerekiyor —
+  ürün kararı bu (roadmap'in kendi kuralı: içerikte tek taraflı hareket edilmez). Henüz
+  başlamadı, script'i istersen şimdi hazırlarım.
+- **W3.3 — özel bildirim sesi (specs/engagement-roadmap.md):** kod tarafı (kanal göçü, iOS
+  içerik-sesi, i18n yorum güncellemesi) hazır olabilir ama **ses dosyasının kendisini** (~1 sn,
+  telifsiz/özgün) senin seçmen/sağlaman gerekiyor. Ayrıca Android'de kanal sesi sonradan
+  değiştirilemediği için yeni bir dev-client build ve kullanıcı-görünür bir kanal sıfırlaması
+  gerektirir — bir sonraki store sürümüyle hizalanmalı, tek başına acele değil.
 - **On your real phone once v11 reaches the Alpha track:** verify the paywall lists all 3 products with real prices and that a purchase completes. This is the ONLY thing never verified anywhere — the Android emulator has no Play Billing (`BILLING_UNAVAILABLE`), so product listing/purchase can only be checked on a real device with a Play account on the closed-testing list.
 - **Play Console needs 12 testers + 14 days** on closed testing before production is unlockable (personal developer account rule). **Resolved on the tester side: 16 testers, testing daily, day 4 as of 2026-08-05** — production should unlock around **2026-08-15**. The 14 days must be continuous, so nobody should be removed from the Alpha track until then.
 - **Create the Android OAuth client for Google sign-in** (spec blocker B1) — Google Cloud project `driftstop`, package `com.driftstop.app`, registering **all three** SHA-1s: debug keystore, upload key (`93:64:96:08:BB:0F:2F:51:C9:7E:6D:9D:FE:34:43:E1:6F:F7:4D:B3`) and the **Play App Signing** certificate from Play Console → Test and release → Setup → App integrity. Without it the Google button fails with `DEVELOPER_ERROR` on Android — and if only the upload key is registered it will work everywhere *except* for real closed testers. Supabase's side of Google sign-in is already done (2026-08-09).
