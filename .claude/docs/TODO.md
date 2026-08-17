@@ -280,19 +280,24 @@ User demanded a real monetization funnel ("how will we sell subscriptions?"). No
 
 - **Engagement dalgası sürüyor (spec 2026-08-16):**
   [`specs/engagement-roadmap.md`](../../specs/engagement-roadmap.md). W0 spike'ları tamamlandı.
-  **W1.1 (tekrar önleme) ve W1.2 (onboarding hedef sorusu) shipped**, cihaz-QA bekliyor.
-  **W1.3 (gece hesaplaşması + streak) kod tarafı bitti** (`utils/reckoning.ts`,
-  `hooks/useReckoning.tsx`, `/reckoning` modal ekranı, Home şeridi, Settings toggle'ı,
-  `expo-task-manager` bağımlılığı) — **yeni dev client build gerektiriyor** (headless aksiyon
-  işleyicisi native modül; mevcut build'de test edilemedi) ve cihaz-QA henüz yapılmadı.
-  **W1.4 (bildirim aksiyonları — ❤️ favorile / "bir tane daha") kod tarafı bitti**
-  (`utils/quoteAction.ts`, `quote` kategorisi `setupNotificationCategories`'e eklendi,
-  `useNotificationObserver` genişledi, `useFavorites`'e `AppState` yeniden-okuma eklendi, 8 locale).
-  W1.3'ün headless görevi (`reckoningTaskHandler.ts` → `notificationTaskHandler.ts`) hem
-  hesaplaşma hem söz aksiyonlarını işleyecek şekilde genişletildi — **yeni native bağımlılık
-  eklenmedi**, W1.3 ile AYNI dev-client build'inde birlikte cihaz-QA'sı yapılabilir (henüz
-  yapılmadı). Kalan: geleceğe mesaj kasası (W2.1), SOS (W2.2), sertlik ayarı (W3.1), akıllı
-  zamanlama (W3.2 — W1.4'ün `engagementLog`'unun birikmesini bekliyor), özel bildirim sesi (W3.3).
+  **Shipped ve code-review'dan geçmiş (kod + birim test; kullanıcı kararıyla cihaz-QA sona
+  bırakıldı, 2026-08-16):** W1.1 (tekrar önleme), W1.2 (onboarding hedef sorusu), W1.3 (gece
+  hesaplaşması + streak, `/reckoning`), W1.4 (bildirim aksiyonları ❤️/"bir tane daha" — iki
+  review turunda gerçek yarış koşulu bulunup düzeltildi), W2.2 (SOS, `/sos`), W2.1 (geleceğe
+  mesaj kasası, `/vault` — scheduler tarafında iki gerçek bug bulunup düzeltildi, kırmızı-yeşil
+  testle kanıtlandı). Ayrıca bu tur bulunan **kritik bir bildirim-dili bug'ı** düzeltildi:
+  aksiyon butonları (❤️/"bir tane daha"/Direndim/Kaçtım) cihaz dili ne olursa olsun kalıcı
+  olarak Türkçe donuyordu — muhtemelen bugüne kadarki her kurulumu etkiliyordu (bkz.
+  `baa9c85`). **`expo-task-manager` yeni native bağımlılık** — W1.3/W1.4'ün headless yolu
+  (aksiyon butonlarının uygulama kapalıyken işlenmesi) yeni bir dev-client build ister; W2.2
+  Android widget'ına da yeni bir tıklama bölgesi ekledi. **Hiçbiri bu turda cihazda/emülatörde
+  doğrulanmadı** — kullanıcı testleri kasıtlı olarak sona bıraktı, bir sonraki cihaz-QA turunda
+  hepsi birlikte (tek dev-client build'inde) doğrulanmalı.
+  **Kalan:** sertlik ayarı (W3.1 — içerik etiketleme CSV'si için sahip onayı gerekiyor, henüz
+  başlamadı), akıllı zamanlama (W3.2 — kod tarafı owner onayı gerektirmiyor, W1.4'ün
+  `engagementLog`'unun gerçek kullanımdan birikmesini bekliyor ama mekanizma şimdiden
+  uygulanabilir), özel bildirim sesi (W3.3 — ses dosyasının sahip tarafından seçilmesi/
+  sağlanması gerekiyor, ayrıca yeni bir native build/kanal göçü gerektirir).
 
 From the backend roadmap's rollout order — now unblocked since the webhook is deployed:
 - Cross-device sync (favorites + settings + streak)

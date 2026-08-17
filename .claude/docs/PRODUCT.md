@@ -69,6 +69,10 @@ The three main screens live in a `(tabs)` group with a fully custom hand-drawn t
 | `/packs` | `src/app/packs/index.tsx` | Premium catalog browser: "Collections" (packs) + "Authors" sections, each row with a 🔒 badge when locked and a public quote count. | Settings → "Explore content packs" (`settings.tsx:157`), only rendered when `purchasesConfigured` |
 | `/packs/[id]` | `src/app/packs/[id].tsx` | Pack detail. If locked → lock screen + "Go Pro" → paywall. If unlocked → quote list from local SQLite cache; empty list shows "Syncing quotes…". | Packs list row |
 | `/packs/author/[name]` | `src/app/packs/author/[name].tsx` | Same as pack detail but grouped by author across packs (`getAuthorQuotes`). Author name is URL-encoded. | Packs list Authors row |
+| `/sos` | `src/app/sos.tsx` | **New (W2.2).** `fullScreenModal`. Breath curtain ("Stop.") → cross-fade → one full-screen quote from the `reckoning`+`discipline` pool, independent of the user's own theme filter → "I'm continuing". No favorite/share/wallpaper actions, no "one more" — a single sentence, not a feed. The quote never enters `seenHistory` and this route never triggers the interstitial-ad counter. | Home header icon (`colors.fire`), Android widget's bottom strip (`driftstop://sos`) |
+| `/vault` | `src/app/vault/index.tsx` | **New (W2.1).** List of "messages to your future self." Sleeping (not yet delivered) rows show only a lock label, never the text — self-spoiler protection. Delivered rows show the full text + delivery date. "+ New message" always enabled; the free-tier gate lives in the editor, not here. | Settings → "Message to the future" |
+| `/vault/new` | `src/app/vault/new.tsx` | **New (W2.1).** Modal editor, 4–280 chars. Free users past `VAULT_FREE_ACTIVE_LIMIT` (1 active/undelivered message) see a lock panel → paywall instead of the input, mirroring `packs/[id].tsx`'s locked state. | `/vault`'s add button |
+| `/vault/[id]` | `src/app/vault/[id].tsx` | **New (W2.1).** Full-screen delivered message (`sos.tsx`'s plain layout, not `QuoteCard` — this is the user's own sentence, not catalog content), with "Rearm" (returns it to sleep, ≥7 more days) and "Delete". A message that isn't yet delivered redirects straight back to `/vault` and renders nothing — this route is not reachable for a sleeping message. | Vault list row (delivered only), vault notification tap |
 
 Not a route, but user-facing surfaces:
 
@@ -368,6 +372,8 @@ mandatory for this content type, so no external payment path exists.
 | Favorites, history, widget, share, themes, 6-language UI | ✅ | ✅ | ✅ |
 | Nightly reckoning + streak (`/reckoning`, W1.3) | ✅ no gate | ✅ | ✅ |
 | Notification actions — ❤️ favorite / "one more" (W1.4) | ✅ no gate, ≤2 extra/day | ✅ | ✅ |
+| SOS — emergency full-screen quote (`/sos`, W2.2) | ✅ no gate | ✅ | ✅ |
+| Vault — messages to your future self (`/vault`, W2.1) | 1 active message | 1 active message | ✅ unlimited |
 | Cross-device sync | ❌ not built for anyone | ❌ | ❌ |
 | Premium quotes in notifications / widget / Home | ❌ | ❌ | ❌ (by design, see §4) |
 
