@@ -151,6 +151,9 @@
       "cardBenefits": "Sans publicité · Plus de 3 325 citations premium dans 18 packs · Jusqu’à 10 rappels par jour",
       "cardCta": "Passer en Pro"
     },
+    "vault": {
+      "label": "Message au futur"
+    },
     "goal": {
       "label": "Ton combat",
       "placeholder": "Donne-lui un nom…",
@@ -389,5 +392,30 @@
     "pauseLine": "Stop.",
     "title": "Arrête-toi, un instant.",
     "continueButton": "Je continue."
+  },
+  "vault": {
+    "title": "Message au futur",
+    "subtitle": "Ce que tu écris aujourd'hui revient au moins une semaine plus tard, quand tu t'y attends le moins.",
+    "addButton": "Nouveau message",
+    "emptyTitle": "Tu n'as encore rien laissé.",
+    "sleeping": "En sommeil",
+    "deliveredSectionTitle": "Livré",
+    "deliveredAt": "Livré : %{date}",
+    "signature": "— Toi, %{date}",
+    "editorTitle": "Qu'as-tu à te dire ?",
+    "editorHint": "Tu liras ceci au moins une semaine plus tard, quand tu t'y attendras le moins.",
+    "editorPlaceholder": "pour le jour où tu liras ceci…",
+    "editorLimitHint": "Entre 4 et 280 caractères.",
+    "charCount": "%{count}/280",
+    "rearm": "Remettre en veille",
+    "rearmHint": "Ça reviendra dans au moins 7 jours, quand tu t'y attendras le moins.",
+    "delete": "Supprimer",
+    "deleteConfirmTitle": "Supprimer ce message ?",
+    "deleteConfirm": "Tu ne pourras plus jamais le relire. Cette action est irréversible.",
+    "proGateTitle": "Un message t'attend déjà en sommeil",
+    "proGateBody": "Avec Pro, laisse autant de messages que tu veux, quand tu veux.",
+    "notFound": "Ce message n'est plus là.",
+    "backToList": "Retour au coffre",
+    "a11ySleeping": "Un message en sommeil. Son contenu est caché — même pour toi, jusqu'à son arrivée."
   }
 }

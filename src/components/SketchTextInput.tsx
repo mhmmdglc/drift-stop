@@ -24,6 +24,11 @@ type Props = {
   returnKeyType?: ReturnKeyTypeOptions;
   onSubmitEditing?: () => void;
   onBlur?: () => void;
+  /** Çok satırlı girdi (kasa mesajı editörü gibi 4-280 karakterlik serbest metin için). Varsayılan
+   * false — mevcut tek satırlık kullanımlar (onboarding/settings hedef alanı) davranış değiştirmez. */
+  multiline?: boolean;
+  /** Yalnızca multiline true iken anlamlı; yüksekliği bu satır sayısına göre büyütür. */
+  numberOfLines?: number;
   /** Zorunlu — anonim input yasak. */
   accessibilityLabel: string;
   accessibilityHint?: string;
@@ -45,12 +50,20 @@ export function SketchTextInput({
   returnKeyType,
   onSubmitEditing,
   onBlur,
+  multiline = false,
+  numberOfLines,
   accessibilityLabel,
   accessibilityHint,
   style,
 }: Props) {
   const { colors } = useTheme();
   const [focused, setFocused] = useState(false);
+  // Satır yüksekliği variant'a göre değişir (Caveat el yazısı fontu body'den daha
+  // ferah ister) — sabit bir minHeight yerine satır sayısından hesaplanır, böylece
+  // numberOfLines değişirse (ör. daha kısa bir editör) yükseklik de takip eder.
+  const lineHeight = variant === 'quote' ? 28 : 22;
+  const multilineMinHeight =
+    multiline && numberOfLines ? numberOfLines * lineHeight + (Spacing.sm + 2) * 2 : undefined;
 
   return (
     <View style={[styles.wrap, style]}>
@@ -66,6 +79,8 @@ export function SketchTextInput({
         placeholderTextColor={colors.textMuted}
         maxLength={maxLength}
         autoFocus={autoFocus}
+        multiline={multiline}
+        numberOfLines={numberOfLines}
         returnKeyType={returnKeyType}
         onSubmitEditing={onSubmitEditing}
         onFocus={() => setFocused(true)}
@@ -87,6 +102,9 @@ export function SketchTextInput({
           styles.input,
           variant === 'quote' ? styles.quoteText : styles.bodyText,
           { color: colors.text },
+          // Android multiline metni varsayılan dikeyde ortalar — üstten başlamalı.
+          multiline && styles.multilineInput,
+          multilineMinHeight != null && { minHeight: multilineMinHeight },
         ]}
       />
     </View>
@@ -111,5 +129,8 @@ const styles = StyleSheet.create({
   quoteText: {
     fontFamily: Fonts.quote,
     fontSize: 22,
+  },
+  multilineInput: {
+    textAlignVertical: 'top',
   },
 });

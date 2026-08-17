@@ -129,6 +129,9 @@
     "account": {
       "appleRelayNote": "これは DriftStop 用に Apple が発行した非公開の転送アドレスです。ここ宛のメールは実際の受信箱に届きます。"
     },
+    "vault": {
+      "label": ""
+    },
     "goal": {
       "label": "",
       "placeholder": "",
@@ -294,5 +297,30 @@
     "pauseLine": "",
     "title": "",
     "continueButton": ""
+  },
+  "vault": {
+    "title": "",
+    "subtitle": "",
+    "addButton": "",
+    "emptyTitle": "",
+    "sleeping": "",
+    "deliveredSectionTitle": "",
+    "deliveredAt": "",
+    "signature": "",
+    "editorTitle": "",
+    "editorHint": "",
+    "editorPlaceholder": "",
+    "editorLimitHint": "",
+    "charCount": "",
+    "rearm": "",
+    "rearmHint": "",
+    "delete": "",
+    "deleteConfirmTitle": "",
+    "deleteConfirm": "",
+    "proGateTitle": "",
+    "proGateBody": "",
+    "notFound": "",
+    "backToList": "",
+    "a11ySleeping": ""
   }
 }

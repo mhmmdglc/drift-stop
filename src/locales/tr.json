@@ -151,6 +151,9 @@
       "cardBenefits": "Reklamsız kullanım · 3.325+ premium söz, 18 koleksiyon · Günde 10’a kadar hatırlatma",
       "cardCta": "Pro’ya geç"
     },
+    "vault": {
+      "label": "Geleceğe mesaj"
+    },
     "goal": {
       "label": "Hedefin",
       "placeholder": "Adını koy…",
@@ -389,5 +392,30 @@
     "pauseLine": "Dur.",
     "title": "Bir anlığına dur.",
     "continueButton": "Devam ediyorum"
+  },
+  "vault": {
+    "title": "Geleceğe mesaj",
+    "subtitle": "Bugün yazdığın, en az bir hafta sonra hiç ummadığın bir anda karşına çıkar.",
+    "addButton": "Yeni mesaj",
+    "emptyTitle": "Henüz bir şey bırakmadın.",
+    "sleeping": "Uykuda",
+    "deliveredSectionTitle": "Teslim edildi",
+    "deliveredAt": "Teslim edildi: %{date}",
+    "signature": "— Sen, %{date}",
+    "editorTitle": "Kendine ne diyeceksin?",
+    "editorHint": "Bunu, en az bir hafta sonra, hiç beklemediğin bir anda okuyacaksın.",
+    "editorPlaceholder": "bunu okuyacağın gün için…",
+    "editorLimitHint": "4-280 karakter arası.",
+    "charCount": "%{count}/280",
+    "rearm": "Yeniden kur",
+    "rearmHint": "En az 7 gün sonra, hiç ummadığın bir anda tekrar karşına çıkar.",
+    "delete": "Sil",
+    "deleteConfirmTitle": "Bu mesajı sil?",
+    "deleteConfirm": "Bu satırı bir daha okuyamayacaksın. Bu işlem geri alınamaz.",
+    "proGateTitle": "Bir kasa mesajın zaten uykuda",
+    "proGateBody": "Pro ile aynı anda istediğin kadar mesaj bırakabilirsin.",
+    "notFound": "Bu mesaj artık burada değil.",
+    "backToList": "Kasaya dön",
+    "a11ySleeping": "Uykuda bir mesaj. İçeriği gizli, teslim olana kadar sen de göremezsin."
   }
 }

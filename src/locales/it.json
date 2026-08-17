@@ -151,6 +151,9 @@
       "cardBenefits": "Niente annunci · Oltre 3.325 citazioni premium in 18 pacchetti · Fino a 10 promemoria al giorno",
       "cardCta": "Passa a Pro"
     },
+    "vault": {
+      "label": "Messaggio al futuro"
+    },
     "goal": {
       "label": "La tua lotta",
       "placeholder": "Dagli un nome…",
@@ -389,5 +392,30 @@
     "pauseLine": "Ferma.",
     "title": "Fermati, solo un momento.",
     "continueButton": "Continuo."
+  },
+  "vault": {
+    "title": "Messaggio al futuro",
+    "subtitle": "Quello che scrivi oggi torna almeno una settimana dopo, quando meno te lo aspetti.",
+    "addButton": "Nuovo messaggio",
+    "emptyTitle": "Non hai ancora lasciato nulla.",
+    "sleeping": "Dormiente",
+    "deliveredSectionTitle": "Consegnato",
+    "deliveredAt": "Consegnato: %{date}",
+    "signature": "— Tu, %{date}",
+    "editorTitle": "Cosa vuoi dirti?",
+    "editorHint": "Leggerai questo almeno una settimana dopo, quando meno te lo aspetti.",
+    "editorPlaceholder": "per il giorno in cui leggerai questo…",
+    "editorLimitHint": "Tra 4 e 280 caratteri.",
+    "charCount": "%{count}/280",
+    "rearm": "Riaddormenta",
+    "rearmHint": "Tornerà tra almeno 7 giorni, quando meno te lo aspetti.",
+    "delete": "Elimina",
+    "deleteConfirmTitle": "Eliminare questo messaggio?",
+    "deleteConfirm": "Non potrai più rileggerlo. Questa azione non può essere annullata.",
+    "proGateTitle": "Hai già un messaggio in attesa",
+    "proGateBody": "Con Pro puoi lasciare tutti i messaggi che vuoi, quando vuoi.",
+    "notFound": "Questo messaggio non è più qui.",
+    "backToList": "Torna alla cassaforte",
+    "a11ySleeping": "Un messaggio dormiente. Il suo contenuto è nascosto — anche a te, finché non arriva."
   }
 }

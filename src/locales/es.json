@@ -151,6 +151,9 @@
       "cardBenefits": "Sin anuncios · Más de 3.325 citas premium en 18 packs · Hasta 10 recordatorios diarios",
       "cardCta": "Hazte Pro"
     },
+    "vault": {
+      "label": "Mensaje al futuro"
+    },
     "goal": {
       "label": "Tu lucha",
       "placeholder": "Ponle nombre…",
@@ -389,5 +392,30 @@
     "pauseLine": "Alto.",
     "title": "Detente, solo un momento.",
     "continueButton": "Sigo adelante."
+  },
+  "vault": {
+    "title": "Mensaje al futuro",
+    "subtitle": "Lo que escribes hoy vuelve al menos una semana después, cuando menos lo esperas.",
+    "addButton": "Nuevo mensaje",
+    "emptyTitle": "Todavía no has dejado nada.",
+    "sleeping": "Dormido",
+    "deliveredSectionTitle": "Entregado",
+    "deliveredAt": "Entregado: %{date}",
+    "signature": "— Tú, %{date}",
+    "editorTitle": "¿Qué vas a decirte?",
+    "editorHint": "Leerás esto al menos una semana después, cuando menos lo esperes.",
+    "editorPlaceholder": "para el día en que leas esto…",
+    "editorLimitHint": "Entre 4 y 280 caracteres.",
+    "charCount": "%{count}/280",
+    "rearm": "Volver a activar",
+    "rearmHint": "Volverá a aparecer en al menos 7 días, cuando menos lo esperes.",
+    "delete": "Eliminar",
+    "deleteConfirmTitle": "¿Eliminar este mensaje?",
+    "deleteConfirm": "No podrás volver a leerlo. Esta acción no se puede deshacer.",
+    "proGateTitle": "Ya tienes un mensaje esperando",
+    "proGateBody": "Con Pro puedes dejar tantos mensajes como quieras, cuando quieras.",
+    "notFound": "Este mensaje ya no está aquí.",
+    "backToList": "Volver al cofre",
+    "a11ySleeping": "Un mensaje dormido. Su contenido está oculto, ni siquiera tú puedes verlo hasta que llegue."
   }
 }

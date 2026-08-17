@@ -151,6 +151,9 @@
       "cardBenefits": "Keine Werbung · Über 3.325 Premium-Zitate in 18 Paketen · Bis zu 10 tägliche Erinnerungen",
       "cardCta": "Pro werden"
     },
+    "vault": {
+      "label": "Nachricht an die Zukunft"
+    },
     "goal": {
       "label": "Dein Kampf",
       "placeholder": "Gib ihm einen Namen…",
@@ -389,5 +392,30 @@
     "pauseLine": "Stopp.",
     "title": "Halt, nur für einen Moment.",
     "continueButton": "Ich mache weiter."
+  },
+  "vault": {
+    "title": "Nachricht an die Zukunft",
+    "subtitle": "Was du heute schreibst, kommt frühestens in einer Woche zurück, wenn du es am wenigsten erwartest.",
+    "addButton": "Neue Nachricht",
+    "emptyTitle": "Du hast noch nichts hinterlassen.",
+    "sleeping": "Schläft",
+    "deliveredSectionTitle": "Zugestellt",
+    "deliveredAt": "Zugestellt: %{date}",
+    "signature": "— Du, %{date}",
+    "editorTitle": "Was sagst du dir selbst?",
+    "editorHint": "Du liest das frühestens in einer Woche, wenn du es am wenigsten erwartest.",
+    "editorPlaceholder": "für den Tag, an dem du das liest…",
+    "editorLimitHint": "Zwischen 4 und 280 Zeichen.",
+    "charCount": "%{count}/280",
+    "rearm": "Erneut stellen",
+    "rearmHint": "Kommt frühestens in 7 Tagen zurück, wenn du es am wenigsten erwartest.",
+    "delete": "Löschen",
+    "deleteConfirmTitle": "Diese Nachricht löschen?",
+    "deleteConfirm": "Du wirst das nicht noch einmal lesen können. Das lässt sich nicht rückgängig machen.",
+    "proGateTitle": "Du hast bereits eine Nachricht, die wartet",
+    "proGateBody": "Mit Pro kannst du gleichzeitig so viele Nachrichten hinterlassen, wie du willst.",
+    "notFound": "Diese Nachricht gibt es hier nicht mehr.",
+    "backToList": "Zurück zum Tresor",
+    "a11ySleeping": "Eine schlafende Nachricht. Ihr Inhalt ist verborgen — sogar vor dir, bis sie ankommt."
   }
 }

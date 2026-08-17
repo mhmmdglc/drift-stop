@@ -151,6 +151,9 @@
       "cardBenefits": "No ads · 3,325+ premium quotes in 18 packs · Up to 10 daily reminders",
       "cardCta": "Go Pro"
     },
+    "vault": {
+      "label": "Message to the future"
+    },
     "goal": {
       "label": "Your fight",
       "placeholder": "Name it…",
@@ -389,5 +392,30 @@
     "pauseLine": "Stop.",
     "title": "Stop, just for a moment.",
     "continueButton": "I'm continuing."
+  },
+  "vault": {
+    "title": "Message to the future",
+    "subtitle": "What you write today comes back at least a week from now, when you least expect it.",
+    "addButton": "New message",
+    "emptyTitle": "You haven't left anything yet.",
+    "sleeping": "Asleep",
+    "deliveredSectionTitle": "Delivered",
+    "deliveredAt": "Delivered: %{date}",
+    "signature": "— You, %{date}",
+    "editorTitle": "What will you tell yourself?",
+    "editorHint": "You'll read this at least a week from now, when you least expect it.",
+    "editorPlaceholder": "for the day you'll read this…",
+    "editorLimitHint": "Between 4 and 280 characters.",
+    "charCount": "%{count}/280",
+    "rearm": "Set it again",
+    "rearmHint": "It'll return again in at least 7 days, when you least expect it.",
+    "delete": "Delete",
+    "deleteConfirmTitle": "Delete this message?",
+    "deleteConfirm": "You won't be able to read this again. This can't be undone.",
+    "proGateTitle": "You already have one message waiting",
+    "proGateBody": "With Pro, leave as many messages as you want, whenever you want.",
+    "notFound": "This message isn't here anymore.",
+    "backToList": "Back to the vault",
+    "a11ySleeping": "A sleeping message. Its content is hidden — even from you, until it arrives."
   }
 }

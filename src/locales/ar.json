@@ -129,6 +129,9 @@
     "account": {
       "appleRelayNote": "هذا عنوان التحويل الخاص من Apple لتطبيق DriftStop. الرسائل المُرسَلة إليه تصل إلى بريدك الحقيقي."
     },
+    "vault": {
+      "label": ""
+    },
     "goal": {
       "label": "",
       "placeholder": "",
@@ -294,5 +297,30 @@
     "pauseLine": "",
     "title": "",
     "continueButton": ""
+  },
+  "vault": {
+    "title": "",
+    "subtitle": "",
+    "addButton": "",
+    "emptyTitle": "",
+    "sleeping": "",
+    "deliveredSectionTitle": "",
+    "deliveredAt": "",
+    "signature": "",
+    "editorTitle": "",
+    "editorHint": "",
+    "editorPlaceholder": "",
+    "editorLimitHint": "",
+    "charCount": "",
+    "rearm": "",
+    "rearmHint": "",
+    "delete": "",
+    "deleteConfirmTitle": "",
+    "deleteConfirm": "",
+    "proGateTitle": "",
+    "proGateBody": "",
+    "notFound": "",
+    "backToList": "",
+    "a11ySleeping": ""
   }
 }
