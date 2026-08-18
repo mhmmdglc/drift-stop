@@ -456,34 +456,69 @@ Tamamen yerel, hiçbir veri cihazdan çıkmaz.
 
 ---
 
-## W3.3 — Özel bildirim sesi (S kod / M süreç)
+## W3.3 — Bildirim sesi seçimi (M kod / M süreç)
 
-**Neden:** Bütün temas anları varsayılan sesle geliyor; kısa, tanınabilir, hafif rahatsız edici bir
-DriftStop sesi telefona bakılmadan "bu o" dedirtir. Kod küçük, süreç tuzaklı — o yüzden ayrı iş.
+**Neden:** Bütün temas anları varsayılan sesle geliyor; kısa, tanınabilir bir DriftStop sesi
+telefona bakılmadan "bu o" dedirtir. **2026-08-18 kararı (sahip):** tek sabit ses yerine
+kullanıcının kendi seçtiği bir ses — 6 aday, 1'i free, 5'i Pro. Sesin kendisini sahip
+seçmedi, "sen bul" dedi: 6 aday `sox` ile SENTEZLENDİ (örnekleme/kayıt değil, saf sinyal
+üretimi — telif riski yok), sahibe dinletildi.
+
+**Ses aileleri (`assets/sounds/*.wav`, ~0.1–1 sn, mono 44.1kHz):**
+
+| id | Anlatım | Süre | Kilit |
+|---|---|---|---|
+| `quill` | Kalem/tüy cızırtısı (bant-geçişli gürültü) — el çizimi kimlikle akraba | 0.32s | **Free, varsayılan** |
+| `chime` | Parlak iki notalı çan | 0.55s | Pro |
+| `tap` | Kısa alçak tık | 0.09s | Pro |
+| `page` | Sayfa çevirme benzeri gürültü süpürmesi | 0.42s | Pro |
+| `bell` | Tekil çınlayan ton, uzun sönüm | 0.95s | Pro |
+| `knock` | Yumuşak ahşap vuruşu | 0.13s | Pro |
 
 **Kritik tuzaklar (bu yüzden release ile hizalanır):**
-1. **Android'de kanal sesi kanal oluşturulduktan sonra DEĞİŞTİRİLEMEZ.** Mevcut
-   `driftstop_motivation` kanalına ses eklenemez; yeni kanal id (`driftstop_motivation_v2`) açılır,
-   eski kanal `deleteNotificationChannelAsync` ile silinir (kullanıcının eski kanal ayarları
-   — susturma dahil — kaybolur; release notunda söylenir).
-2. **CNG rebuild gerekir:** ses dosyası `expo-notifications` config plugin'i ile native'e gömülür —
-   mevcut dev client'ta test EDİLEMEZ, yeni dev client + yeni store build ister.
+1. **Android'de kanal sesi kanal oluşturulduktan sonra DEĞİŞTİRİLEMEZ.** Tek kanal + "sonra
+   değiştir" yaklaşımı burada zaten uygun değil — 6 SEÇENEK olduğu için tasarım baştan
+   ses-başına-kanal: `driftstop_motivation_${sound}` (W1.4'ün dil-kilidi düzeltmesindeki AYNI
+   desen — `quoteCategoryId()`/`reckoningCategoryId()`'nin locale-suffix'i gibi, burada sound-suffix).
+   Kullanıcı ses değiştirince "güncelleme" değil, o sesin kendi kanalına GEÇİŞ olur; eski kanal
+   silinmez (en fazla 6 kalıcı kayıt, ihmal edilebilir — aynı gerekçe). Trial kanalı DOKUNULMAZ.
+   Hesaplaşma (W1.3) ana kanalı paylaştığından otomatik aynı seçili sesi alır.
+2. **CNG rebuild gerekir:** ses dosyaları `expo-notifications` config plugin'i ile native'e
+   gömülür — mevcut dev client'ta test EDİLEMEZ, yeni dev client + yeni store build ister.
+   (6 sesin hepsi native'e gömülür, kullanıcı hangisini seçerse seçsin — Pro kapısı sadece
+   SEÇİMİ kilitler, dosyalar zaten binary'nin içinde.)
 
-- [ ] Ses varlığı: ~1 sn, .wav, telifsiz/özgün. Sahip seçer ya da yaptırır — **sahip aksiyonu,
-      bloklayıcı**. Aday: tek kalem vuruşu/kâğıt hışırtısı (el çizimi görsel kimlikle akraba).
-- [ ] `assets/sounds/driftstop.wav` + `app.json` → `["expo-notifications", { "sounds": ["./assets/sounds/driftstop.wav"] }]`
-      (plugin zaten listede mi kontrol et; değilse ekle — v56 dokümanından sözdizimi teyidi).
-- [ ] `setupAndroidChannel` → `driftstop_motivation_v2` (`sound: 'driftstop.wav'`), ardından eski
-      kanalı sil. `NOTIFICATION_CHANNEL_ID` sabitini güncelle — trial kanalı DOKUNULMAZ.
-      Hesaplaşma (W1.3) aynı kanalda olduğundan otomatik aynı sesi alır.
-- [ ] iOS: bildirim içeriğine `sound: 'driftstop.wav'` (kanal kavramı yok, içerik başına) —
-      scheduler'daki "sound belirtilmedi" yorumunu güncelle (`scheduler.ts:54` ve `:165` yorumları).
-- [ ] Yeni dev client build → emülatörde ses geliyor mu; sessiz moda saygı duyuyor mu.
-- [ ] `release-manager` maddesi: bu değişiklik hangi store sürümüne biniyorsa onun release notunda
-      kanal sıfırlama uyarısı; `OPERATIONS.md` release bölümüne kanal-göçü notu.
+- [x] **Ses varlıkları üretildi ve sahibe dinletildi (2026-08-18).** `assets/sounds/{quill,chime,tap,page,bell,knock}.wav`.
+- [ ] `app.json` → `["expo-notifications", { "sounds": ["./assets/sounds/quill.wav", ".../chime.wav", ".../tap.wav", ".../page.wav", ".../bell.wav", ".../knock.wav"] }]`
+      (plugin zaten listede mi kontrol et; sözdizimini v56 dokümanından teyit et).
+- [ ] `Settings.notificationSound: 'quill' | 'chime' | 'tap' | 'page' | 'bell' | 'knock'`
+      (varsayılan `'quill'`), `DEFAULT_SETTINGS`e ve `SCHEDULE_KEYS`e eklenir (ses değişince
+      kanal geçişi için yeniden planlama tetiklenmeli).
+      `FREE_SOUND_IDS = ['quill']`; geri kalanı Pro (`purchasesConfigured && !isPro` gate deseni —
+      frequency/packs'teki AYNI desen).
+- [ ] `setupAndroidChannel` (veya yeni bir `ensureSoundChannel(sound)`) → yalnızca O AN seçili
+      sesin kanalını lazy oluşturur (6'sını baştan açmaz). `applySchedule` bu kanalı kullanır.
+- [ ] iOS: bildirim içeriğine `sound: '${notificationSound}.wav'` (kanal kavramı yok, içerik
+      başına) — scheduler'daki "sound belirtilmedi" yorumlarını güncelle.
+- [ ] Settings UI: ses seçici (frequency selector'daki kilit-rozeti deseni — Pro olmayan bir
+      sesi seçmeye çalışınca `/paywall`). **Önizleme:** kullanıcı seçmeden ÖNCE duymalı —
+      proje şu an hiçbir ses çalma kütüphanesi kullanmıyor (`expo-av`/`expo-audio` yok); bu
+      özellik zaten yeni bir native build istediği için (yukarıdaki tuzak #2) `expo-audio`
+      eklemek EK bir build maliyeti YARATMIYOR — aynı build'e biniyor. v56 dokümanından
+      `expo-audio`'nun (deprecated `expo-av`'ın yerine) doğru paket olduğunu teyit et.
+- [ ] i18n: `settings.notificationSound.*` (label, hint, ve 6 sesin kısa adı) × 8 dosya.
+- [ ] Testler: kanal-kimliği fonksiyonunun sound-suffix'i doğru ürettiği (W1.4'ün
+      `quoteCategoryId` testleriyle aynı desen), Pro-kapısının doğru sesleri kilitlediği,
+      `smartTiming`/`reckoningEnabled` gibi `SCHEDULE_KEYS` merge/reschedule testleri.
+- [ ] Yeni dev client build → her 6 sesin de emülatörde çalması, sessiz moda saygı, önizleme
+      butonunun gerçek ses çalması.
+- [ ] `release-manager` maddesi: bu değişiklik hangi store sürümüne biniyorsa onun release
+      notunda "yeni: bildirim sesi seçimi" + kanal-geçişi davranışı; `PRODUCT.md`'nin
+      free-vs-Pro matrisine satır.
 
-**Kabul kriteri:** Yeni build'de günlük söz ve hesaplaşma bildirimleri DriftStop sesiyle gelir;
-trial bildirimleri etkilenmez; kanal göçü kullanıcı görünür bir hataya yol açmaz.
+**Kabul kriteri:** Free kullanıcı `quill` sesini duyar ve değiştiremez (paywall'a yönlenir);
+Pro kullanıcı 6 sesten istediğini seçebilir, seçim kalıcıdır ve sonraki bildirimlerde duyulur;
+kanal geçişi kullanıcı görünür bir hataya yol açmaz; trial bildirimleri etkilenmez.
 
 ---
 
