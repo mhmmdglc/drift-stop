@@ -3,6 +3,10 @@
 # dependencies
 node_modules/
 
+# W3.1: tag-intensity.mjs'in ürettiği inceleme çıktısı — çalışan bir araç
+# çıktısı, kalıcı kaynak değil; sahibe doğrudan dosya olarak gönderiliyor.
+intensity-review.csv
+
 # Expo
 .expo/
 dist/
