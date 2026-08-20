@@ -265,7 +265,8 @@
     "continueWithGoogle": "Continua con Google",
     "continueWithApple": "Continua con Apple",
     "orEmail": "oppure via e-mail",
-    "appleRelayHint": "Se scegli «Nascondi la mia email», Apple ci dà un indirizzo di inoltro privato: quell’indirizzo diventa un account separato."
+    "appleRelayHint": "Se scegli «Nascondi la mia email», Apple ci dà un indirizzo di inoltro privato: quell’indirizzo diventa un account separato.",
+    "appleDidNotComplete": "L'accesso con Apple non è andato a buon fine (%{code}). Riprova oppure usa la tua email qui sotto."
   },
   "paywall": {
     "title": "Passa a Pro",

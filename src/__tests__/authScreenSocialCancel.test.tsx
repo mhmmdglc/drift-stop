@@ -49,11 +49,26 @@ jest.mock('@/hooks/useAuth', () => ({
     signInWithProvider: mockSignInWithProvider,
   }),
 }));
+let mockAppleReady = false;
 jest.mock('@/lib/socialAuth', () => ({
   googleSignInAvailable: true,
-  // Apple düğmesi yerel bir iOS bileşeni; bu testin konusu değil.
-  appleSignInAvailable: () => Promise.resolve(false),
+  // Apple düğmesi yerel bir iOS bileşeni; Google senaryolarında kapalı, Apple
+  // senaryolarında açılıyor.
+  appleSignInAvailable: () => Promise.resolve(mockAppleReady),
 }));
+// Yerel Apple düğmesi Jest'te yok; etiketi ve onPress'i geçiren düz bir yerine koyuluyor.
+jest.mock('@/components/AppleSignInButton', () => {
+  const React = require('react');
+  const { Pressable, Text } = require('react-native');
+  return {
+    AppleSignInButton: ({ label, onPress }: { label: string; onPress: () => void }) =>
+      React.createElement(
+        Pressable,
+        { onPress, accessibilityRole: 'button', accessibilityLabel: label },
+        React.createElement(Text, null, label)
+      ),
+  };
+});
 jest.mock('@/i18n/useTranslation', () => ({
   useTranslation: () => ({ t: (key: string) => key, locale: 'en' }),
 }));
@@ -80,7 +95,20 @@ async function pressGoogle() {
 
 beforeEach(() => {
   jest.clearAllMocks();
+  mockAppleReady = false;
 });
+
+const APPLE_BUTTON = 'auth.continueWithApple';
+
+async function pressApple() {
+  mockAppleReady = true;
+  await render(<AuthScreen />);
+  // `appleSignInAvailable` async: düğme ikinci render'da geliyor.
+  await act(async () => {});
+  await act(async () => {
+    fireEvent.press(screen.getByLabelText(APPLE_BUTTON));
+  });
+}
 
 describe('/auth — social sign-in outcomes', () => {
   it('stays open and silent when the user cancels the provider sheet', async () => {
@@ -115,5 +143,38 @@ describe('/auth — social sign-in outcomes', () => {
 
     expect(mockBack).toHaveBeenCalledTimes(1);
     expect(screen.queryByText(/auth\.errors\./)).toBeNull();
+  });
+
+  /**
+   * App Review 1.2.0 (7)'yi *"Sign in with Apple was unresponsive"* diye reddetti.
+   * Sebep buradaydı: Apple, GERÇEK yapılandırma hatalarını da kullanıcı iptaliyle
+   * aynı koda sıkıştırıyor (`ERR_REQUEST_CANCELED`) ve ekran iptalde sessiz
+   * kalıyordu — yani başarısız bir giriş, hiçbir şey olmamış gibi görünüyordu.
+   * Google'ın iptali kesin olduğu için orada sessizlik DOĞRU; Apple'da değil.
+   */
+  it('says something when Apple sign-in does not complete, instead of looking dead', async () => {
+    mockSignInWithProvider.mockResolvedValue({
+      error: null,
+      cancelled: true,
+      code: 'ERR_REQUEST_CANCELED',
+    });
+
+    await pressApple();
+
+    expect(screen.getByText('auth.appleDidNotComplete')).toBeTruthy();
+    // Yine de hata değil: ekran kapanmamalı, kırmızı satır çıkmamalı.
+    expect(mockBack).not.toHaveBeenCalled();
+    expect(screen.queryByText(/auth\.errors\./)).toBeNull();
+  });
+
+  it('puts the raw provider code in the error line so a rejection can be diagnosed', async () => {
+    mockSignInWithProvider.mockResolvedValue({
+      error: 'auth.errors.generic',
+      code: 'ERR_REQUEST_FAILED',
+    });
+
+    await pressApple();
+
+    expect(screen.getByText('auth.errors.generic (ERR_REQUEST_FAILED)')).toBeTruthy();
   });
 });

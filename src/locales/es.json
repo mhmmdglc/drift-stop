@@ -265,7 +265,8 @@
     "continueWithGoogle": "Continuar con Google",
     "continueWithApple": "Continuar con Apple",
     "orEmail": "o usa el correo",
-    "appleRelayHint": "Si eliges «Ocultar mi correo», Apple nos da una dirección de reenvío privada: esa dirección se convierte en una cuenta aparte."
+    "appleRelayHint": "Si eliges «Ocultar mi correo», Apple nos da una dirección de reenvío privada: esa dirección se convierte en una cuenta aparte.",
+    "appleDidNotComplete": "El inicio de sesión con Apple no se completó (%{code}). Vuelve a intentarlo o usa tu correo abajo."
   },
   "paywall": {
     "title": "Hazte Pro",

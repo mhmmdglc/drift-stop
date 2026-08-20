@@ -265,7 +265,8 @@
     "continueWithGoogle": "Continue with Google",
     "continueWithApple": "Continue with Apple",
     "orEmail": "or use email",
-    "appleRelayHint": "If you pick \"Hide My Email\", Apple gives us a private relay address — that address becomes a separate account."
+    "appleRelayHint": "If you pick \"Hide My Email\", Apple gives us a private relay address — that address becomes a separate account.",
+    "appleDidNotComplete": "Sign in with Apple didn't complete (%{code}). Try again, or use your email below."
   },
   "paywall": {
     "title": "Go Pro",
