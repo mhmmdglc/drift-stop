@@ -167,6 +167,29 @@ describe('/auth — social sign-in outcomes', () => {
     expect(screen.queryByText(/auth\.errors\./)).toBeNull();
   });
 
+  /**
+   * "Unresponsive" için ikinci ve daha sinsi yol: `signInWithProvider` FIRLATIRSA
+   * meşgul bayrağı takılı kalıyordu, kapı her yeni dokunuşu geri çeviriyordu ve
+   * Apple düğmesi `pointerEvents: 'none'` ile oturumun geri kalanında ölüyordu.
+   * Yani tek bir ağ hatası, düğmeyi kalıcı olarak öldürüyordu.
+   */
+  it('survives a throw and leaves the button usable for the next tap', async () => {
+    mockSignInWithProvider.mockRejectedValueOnce(new Error('network blew up'));
+
+    await pressApple();
+
+    // Hata görünmeli — sessiz kalmak zaten reddedilme sebebiydi.
+    expect(screen.getByText(/auth\.errors\.generic/)).toBeTruthy();
+
+    // Ve asıl mesele: ikinci dokunuş İŞLEMELİ, yani meşgul bayrağı sıfırlanmış olmalı.
+    mockSignInWithProvider.mockResolvedValueOnce({ error: null });
+    await act(async () => {
+      fireEvent.press(screen.getByLabelText(APPLE_BUTTON));
+    });
+    expect(mockSignInWithProvider).toHaveBeenCalledTimes(2);
+    expect(mockBack).toHaveBeenCalledTimes(1);
+  });
+
   it('puts the raw provider code in the error line so a rejection can be diagnosed', async () => {
     mockSignInWithProvider.mockResolvedValue({
       error: 'auth.errors.generic',

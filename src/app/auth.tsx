@@ -67,8 +67,23 @@ export default function AuthScreen() {
     setSocialBusy(provider);
     setError(null);
     setNotice(null);
-    const result = await signInWithProvider(provider);
-    setSocialBusy(null);
+
+    // ⚠️ `try/finally` ŞART. Eskiden `signInWithProvider` fırlattığında
+    // `setSocialBusy(null)` hiç çalışmıyordu: `socialBusy` takılı kalıyor,
+    // yukarıdaki kapı her yeni dokunuşu geri çeviriyor ve Apple düğmesinin
+    // `disabled`'ı true kaldığı için `pointerEvents: 'none'` oluyordu — düğme
+    // OTURUMUN GERİ KALANINDA tamamen ölü. Fırlatma uzak bir ihtimal değil:
+    // `signInWithIdToken` ve `updateUser` ağ çağrısı. App Review 1.2.0 (7)'yi
+    // "Sign in with Apple was unresponsive" diye reddetti ve bu, o semptomu
+    // birebir üreten yol.
+    let result: Awaited<ReturnType<typeof signInWithProvider>>;
+    try {
+      result = await signInWithProvider(provider);
+    } catch {
+      result = { error: 'auth.errors.generic' };
+    } finally {
+      setSocialBusy(null);
+    }
     // Vazgeçme ÖNCE ayıklanıyor: `error` iptalde de null olduğu için bu satır
     // olmadan iptal "başarı" sayılıyor ve ekran kapanıyordu — kullanıcı hiçbir
     // açıklama olmadan misafir olarak Ayarlar'a düşüyordu. Doğrusu: hiçbir şey
