@@ -73,9 +73,22 @@ export default function AuthScreen() {
     // olmadan iptal "başarı" sayılıyor ve ekran kapanıyordu — kullanıcı hiçbir
     // açıklama olmadan misafir olarak Ayarlar'a düşüyordu. Doğrusu: hiçbir şey
     // olmasın, düğme yeniden basılabilir kalsın.
-    if (result.cancelled) return;
+    if (result.cancelled) {
+      // Google'ın iptali kesin: kullanıcı vazgeçti, sessiz kalmak doğru.
+      // Apple'ınki DEĞİL — sistem yetkilendirmeyi kendi iptal ettiğinde de aynı
+      // kod geliyor (bkz. socialAuth.ts). Sessiz kalınca ekran ölü görünüyordu
+      // ve App Review 1.2.0 (7)'yi tam olarak bu yüzden "unresponsive" diye
+      // reddetti. Artık her zaman bir şey söyleniyor ve çıkış yolu gösteriliyor.
+      if (provider === 'apple') {
+        setNotice(result.code ? t('auth.appleDidNotComplete', { code: result.code }) : t('auth.appleDidNotComplete', { code: '—' }));
+      }
+      return;
+    }
     if (result.error) {
-      setError(t(result.error));
+      // Ham kod mesaja ekleniyor: kullanıcı için gürültü ama destek ve App
+      // Review yazışması için tek kanıt. Kodsuz "bir şeyler ters gitti" satırı
+      // bize hiçbir şey söylemiyordu.
+      setError(result.code ? `${t(result.error)} (${result.code})` : t(result.error));
       return;
     }
     if (router.canGoBack()) router.back();

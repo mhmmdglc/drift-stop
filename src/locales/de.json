@@ -227,7 +227,8 @@
     "continueWithGoogle": "Mit Google fortfahren",
     "continueWithApple": "Mit Apple fortfahren",
     "orEmail": "oder per E-Mail",
-    "appleRelayHint": "Wenn du „Meine E-Mail-Adresse verbergen“ wählst, gibt Apple uns eine private Weiterleitungsadresse – diese Adresse wird ein eigenes Konto."
+    "appleRelayHint": "Wenn du „Meine E-Mail-Adresse verbergen“ wählst, gibt Apple uns eine private Weiterleitungsadresse – diese Adresse wird ein eigenes Konto.",
+    "appleDidNotComplete": "Die Anmeldung mit Apple wurde nicht abgeschlossen (%{code}). Versuche es erneut oder nutze unten deine E-Mail."
   },
   "paywall": {
     "title": "Pro werden",

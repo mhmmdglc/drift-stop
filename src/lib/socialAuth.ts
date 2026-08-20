@@ -64,8 +64,16 @@ export type SocialCredential = {
 };
 
 export type SocialError =
-  | { cancelled: true }
-  | { cancelled?: false; reason: 'unavailable' | 'noToken' | 'playServices' | 'error' };
+  /**
+   * `code`: sağlayıcının ham hata kodu. Taşınıyor çünkü Apple, GERÇEK
+   * yapılandırma hatalarını da kullanıcı iptaliyle aynı koda
+   * (`ERR_REQUEST_CANCELED`) sıkıştırabiliyor — ikisini ayıramadığımız için en
+   * azından hangi kodun geldiğini ekranda/raporda görebilmek gerekiyor.
+   * App Review 1.2.0 (7)'yi "Sign in with Apple was unresponsive" diye
+   * reddetti ve elimizde tek bir kod bile yoktu.
+   */
+  | { cancelled: true; code?: string }
+  | { cancelled?: false; reason: 'unavailable' | 'noToken' | 'playServices' | 'error'; code?: string };
 
 /** Google Sign-In SDK'sı yalnızca gerektiğinde yükleniyor — açılış süresini uzatmasın. */
 async function googleModule() {
@@ -171,8 +179,15 @@ export async function signInWithApple(): Promise<SocialCredential | SocialError>
       fullName: name.length > 0 ? name : null,
     };
   } catch (e) {
-    if ((e as { code?: string })?.code === 'ERR_REQUEST_CANCELED') return { cancelled: true };
-    return { reason: 'error' };
+    const code = (e as { code?: string })?.code;
+    // ⚠️ `ERR_REQUEST_CANCELED` iki ayrı şey demek: kullanıcı vazgeçti, VEYA
+    // sistem yetkilendirmeyi kendi iptal etti (yapılandırma sorunu, örn. -7026).
+    // Apple ikisini ayırmıyor. Bu yüzden burada "iptal" demek yetmiyor —
+    // çağıran taraf sessiz kalırsa ekran ÖLÜ görünüyor, ki App Review'ın
+    // "unresponsive" dediği durum tam olarak buydu. Kodu yukarı taşıyoruz ve
+    // arayüz iptalde bile bir şey söylüyor.
+    if (code === 'ERR_REQUEST_CANCELED') return { cancelled: true, code };
+    return { reason: 'error', code };
   }
 }
 

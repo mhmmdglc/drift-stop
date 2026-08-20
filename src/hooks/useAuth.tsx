@@ -15,7 +15,7 @@ type AuthResult = { error: string | null };
  * hiçbir açıklama olmadan misafir olarak Ayarlar'a düşüyordu. Satın almadaki
  * `PurchaseResult` ile aynı biçim (`usePurchases.tsx`).
  */
-type SocialAuthResult = AuthResult & { cancelled?: boolean };
+type SocialAuthResult = AuthResult & { cancelled?: boolean; code?: string };
 
 type AuthContextValue = {
   /** Supabase yapılandırılmamışsa (anon key eksik) her zaman false — ekranlar guest gibi davranır. */
@@ -118,12 +118,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           provider === 'google' ? await signInWithGoogle() : await signInWithApple();
 
         if (isSocialError(result)) {
-          if (result.cancelled) return { error: null, cancelled: true };
-          if (result.reason === 'unavailable') return { error: 'auth.errors.providerUnavailable' };
+          // Ham kod her dalda taşınıyor: iptalde bile, çünkü Apple gerçek
+          // hataları da iptal koduyla döndürebiliyor (bkz. socialAuth.ts).
+          if (result.cancelled) return { error: null, cancelled: true, code: result.code };
+          if (result.reason === 'unavailable')
+            return { error: 'auth.errors.providerUnavailable', code: result.code };
           // Play Services eksik/eskiyse kullanıcının yapabileceği bir şey var:
           // genel "bir şeyler ters gitti" satırı bunu gizliyordu.
-          if (result.reason === 'playServices') return { error: 'auth.errors.playServices' };
-          return { error: 'auth.errors.generic' };
+          if (result.reason === 'playServices')
+            return { error: 'auth.errors.playServices', code: result.code };
+          return { error: 'auth.errors.generic', code: result.code };
         }
 
         const { data, error } = await supabase.auth.signInWithIdToken({

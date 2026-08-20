@@ -227,7 +227,8 @@
     "continueWithGoogle": "Continuer avec Google",
     "continueWithApple": "Continuer avec Apple",
     "orEmail": "ou par e-mail",
-    "appleRelayHint": "Si tu choisis « Masquer mon adresse e-mail », Apple nous donne une adresse relais privée : cette adresse devient un compte distinct."
+    "appleRelayHint": "Si tu choisis « Masquer mon adresse e-mail », Apple nous donne une adresse relais privée : cette adresse devient un compte distinct.",
+    "appleDidNotComplete": "La connexion avec Apple ne s'est pas terminée (%{code}). Réessaie ou utilise ton e-mail ci-dessous."
   },
   "paywall": {
     "title": "Passer en Pro",

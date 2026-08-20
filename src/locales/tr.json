@@ -227,7 +227,8 @@
     "continueWithGoogle": "Google ile devam et",
     "continueWithApple": "Apple ile devam et",
     "orEmail": "ya da e-posta ile",
-    "appleRelayHint": "\"E-postamı Gizle\" seçersen Apple bize gizli bir yönlendirme adresi verir; o adres ayrı bir hesap olur."
+    "appleRelayHint": "\"E-postamı Gizle\" seçersen Apple bize gizli bir yönlendirme adresi verir; o adres ayrı bir hesap olur.",
+    "appleDidNotComplete": "Apple ile giriş tamamlanmadı (%{code}). Tekrar dene ya da aşağıdan e-postanla devam et."
   },
   "paywall": {
     "title": "Pro'ya geç",
