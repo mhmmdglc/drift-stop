@@ -115,10 +115,18 @@ Aynı gün sistematik olarak denendi; sıralama önemli çünkü her adım bir s
 | Entitlement'lı yeniden imza (ad-hoc) | Açılmıyor: `launchd job spawn failed`, POSIX **163** |
 | Entitlement'lı yeniden imza (gerçek kimlikle) | Yine açılmıyor |
 | `CODE_SIGN_ENTITLEMENTS` global override | Pods hedeflerine de uygulanıyor → build **kırılıyor** (4 hata) |
+| Xcode ile imzalı build (`CODE_SIGN_IDENTITY` + `DEVELOPMENT_TEAM`) | Build başarılı ama Xcode **yine ad-hoc** imzalıyor, entitlement yok |
+| Aynısı + `CODE_SIGNING_ALLOWED=YES CODE_SIGNING_REQUIRED=YES` | Değişmiyor: `Signature=adhoc`, `TeamIdentifier=not set`, entitlement yok |
 
-**Çıkarım:** engel "simülatör SIWA yapamaz" değil; entitlement'ı simülatör build'ine
-**Xcode'un kendi imzalama akışı dışında** gömmek çalışmıyor. Elle yeniden imzalama her
-varyantta uygulamayı açılamaz yapıyor.
+**Sonuç: simülatörde Apple ile giriş DENENEMEZ.** Xcode `iphonesimulator` SDK'sında
+imzalama ayarlarını geçersiz kılıyor ve entitlement'ı hiçbir koşulda gömmüyor; elle
+gömmek de uygulamayı açılamaz yapıyor. Bu bir yapılandırma eksikliği değil, platformun
+sınırı — **bir daha denemeyin.**
+
+**Ama artık imzalama kimliği olduğu için gerçek cihaz yolu AÇIK.** Bir iPhone bulunduğunda
+TestFlight'a bile gerek yok: cihazı `/v1/devices`'a kaydet, `/v1/profiles` ile bir
+IOS_APP_DEVELOPMENT profili üret, `expo run:ios --device` ile doğrudan kur. SIWA'yı
+gözle görmenin tek yolu bu.
 
 ### ⚠️ Gotcha: the build number lives in `app.json`, and `eas build` edits that file
 
