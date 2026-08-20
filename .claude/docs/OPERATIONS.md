@@ -75,6 +75,51 @@ The Google Play Console listing for DriftStop **and** the Expo/EAS project are b
 | RevenueCat offering | `default` (Annual / Monthly). The `$rc_lifetime` package was removed with `remove_ads`. |
 | Closed-testing opt-in link | https://play.google.com/apps/testing/com.driftstop.app |
 
+### Bu Mac'te artık bir imzalama kimliği VAR (2026-08-20)
+
+Altı aydır `security find-identity` **0** dönüyordu ve bu, "Apple ile giriş hiçbir yerde
+denenemiyor" tıkanıklığının asıl sebebiydi — cihaz eksikliği değil.
+
+Kimlik **ASC API'siyle** üretildi, Xcode'a interaktif giriş gerekmedi:
+
+```bash
+openssl req -new -newkey rsa:2048 -nodes -keyout dev.key -out dev.csr \
+  -subj "/CN=DriftStop Dev/O=Muhammed Gulcu/C=TR"
+# POST /v1/certificates  { certificateType: "DEVELOPMENT", csrContent: <csr> }
+base64 -d -i cert.b64 -o dev.cer && openssl x509 -inform DER -in dev.cer -out dev.pem
+openssl pkcs12 -export -legacy -inkey dev.key -in dev.pem -out dev.p12 -passout pass:...
+security import dev.p12 -k ~/Library/Keychains/login.keychain-db -P ... -T /usr/bin/codesign
+```
+
+⚠️ **İçe aktarmak tek başına yetmiyor.** Sertifika **WWDR G3** ile imzalanıyor, sistemde ise
+G3 **olmayan** eski ara sertifika vardı; zincir kopuk olduğu için `find-identity` hâlâ 0
+diyordu. Eksik parça:
+
+```bash
+curl -sLO https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer
+security import AppleWWDRCAG3.cer -k ~/Library/Keychains/login.keychain-db
+```
+
+Sertifika kimliği `9T33AS2SSD`, **2027-08-20**'ye kadar geçerli. Süresi dolduğunda aynı
+tarifle yenilenir.
+
+### ⛔ Simülatörde Apple ile giriş — neyin işe yaramadığı, kanıtlarıyla
+
+Aynı gün sistematik olarak denendi; sıralama önemli çünkü her adım bir sonrakini eliyor:
+
+| Deneme | Sonuç |
+|---|---|
+| `CODE_SIGNING_ALLOWED=NO` (eski yöntem) | Entitlement **siliniyor** → SIWA çalışmaz. Aylardır kullanılan buydu |
+| Ad-hoc build (`CODE_SIGN_IDENTITY="-"`) | Entitlement **taşınmıyor** (`[Dict]` boş) |
+| Entitlement'sız yeniden imza | **Açılıyor** (kontrol grubu — yeniden imzalamanın kendisi zararsız) |
+| Entitlement'lı yeniden imza (ad-hoc) | Açılmıyor: `launchd job spawn failed`, POSIX **163** |
+| Entitlement'lı yeniden imza (gerçek kimlikle) | Yine açılmıyor |
+| `CODE_SIGN_ENTITLEMENTS` global override | Pods hedeflerine de uygulanıyor → build **kırılıyor** (4 hata) |
+
+**Çıkarım:** engel "simülatör SIWA yapamaz" değil; entitlement'ı simülatör build'ine
+**Xcode'un kendi imzalama akışı dışında** gömmek çalışmıyor. Elle yeniden imzalama her
+varyantta uygulamayı açılamaz yapıyor.
+
 ### ⚠️ Gotcha: the build number lives in `app.json`, and `eas build` edits that file
 
 `cli.appVersionSource` is unset, so EAS uses the **local** default: `autoIncrement` reads the number out of
