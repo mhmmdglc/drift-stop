@@ -52,14 +52,14 @@ yerine **"Close"** oluyor; *"Continue with the free version"* ekrandan çekiliyo
 söylenecek söz değil). **Otomatik kapatma bilerek yapılmadı:** misafirin "giriş yap ki premium
 koleksiyonlar insin" onayı tam o ekranda gösteriliyor, anında `back()` onu okunmadan yok ederdi.
 
-**Binary'den doğrulandı — build 8 ile build 9'un `Info.plist` farkı sadece şu üç şey:**
+**Binary'den doğrulandı — build 8 ile build 9/10'un `Info.plist` farkı sadece şu üç şey:**
 
 | Anahtar | build 8 | build 9 |
 |---|---|---|
 | `UIBackgroundModes` | `["audio"]` ← reddin sebebi | **yok** |
 | `NSMicrophoneUsageDescription` | `"Allow DriftStop to access your microphone"` | **yok** |
 | `GADApplicationIdentifier` | `…6963122807813930~4613840458` | `…3817081931651779~3993212711` |
-| `CFBundleVersion` | `8` | `9` |
+| `CFBundleVersion` | `8` | `9`, sonra `10` |
 
 Başka hiçbir anahtar değişmedi, hiçbir anahtar eklenmedi. (İki `.ipa` da indirilip
 `plutil -convert json` ile karşılaştırıldı — `app.json`'a bakılarak değil.)
@@ -90,19 +90,30 @@ sabitliyor.
 `src/__tests__/paywallExitAfterPurchase.test.tsx` (8 test: çıkış var mı, iptal/hata durumunda
 çıkmıyor mu, yığın boşken köke düşüyor mu, misafir onayı ekranda kalıyor mu).
 
-**✅ Yeniden gönderildi — 2026-08-24 11:00 UTC.** Tarif aynen tuttu:
-1. `.ipa` `xcrun altool --upload-app` ile yüklendi (17 sn), Apple'ın işlemesi **~8 dakika** sürdü
-2. `PATCH /v1/appStoreVersions/{id}/relationships/build` → sürüm `REJECTED`'dan
-   **`PREPARE_FOR_SUBMISSION`**'a düştü, ama gönderim kalemi hâlâ `REJECTED`'dı
-3. Sürüm sayfasındaki **"Update Review"** düğmesi dört kalemi birden `Ready for Review` yaptı
-4. **"Resubmit to App Review"**
+**✅ İncelemede — `1.2.0 (10)`, gönderim `a252a46b-6a51-4834-a6bf-2cf1d1de5d95`.**
 
-Şu an: gönderim `1cc18361-6c57-42bb-908a-9fe0e8be3fab` → **`WAITING_FOR_REVIEW`**, sürüm
-`2c376703-e1a8-4791-9b5b-43b365b4b4cb` → **`WAITING_FOR_REVIEW`**, dört kalemin dördü de
-`READY_FOR_REVIEW` (sürüm + abonelik grubu + iki abonelik — yani 10 Ağustos'taki "abonelikler
-arkada kaldı" tuzağı bu turda yok).
+Önce build 9 gönderildi (11:00 UTC), sonra reklam kimliklerinin pakete hiç girmediği ortaya
+çıkınca **build 10 ile değiştirildi**. Kuyruk sıfırlandı; kazanç, iOS'un reklamları gerçekten
+çalışan ilk build'iyle incelemeye girmesi.
 
-### ✅ AdMob çalışan hesaba taşındı — ama Android build'i 1 Eylül'e kaldı
+**Build 9 → 10 takas tarifi** (bir dahakine aynen işe yarar):
+1. `.ipa` `xcrun altool --upload-app` (17 sn), Apple işlemesi **~7 dk** — build ASC API'sinde
+   `VALID` görünmeden bağlamaya çalışma
+2. `PATCH /v1/reviewSubmissions/{id}` `{attributes:{canceled:true}}` → `CANCELING`, birkaç saniyede
+   `COMPLETE`
+3. `PATCH /v1/appStoreVersions/{id}/relationships/build` → sürüm `PREPARE_FOR_SUBMISSION`, build 10
+4. Sürüm sayfasında **"Add for Review"** → yeni bir **taslak gönderim** oluşuyor
+5. ⚠️ **Gönderimi iptal etmek abonelikleri `Developer Rejected`'a düşürüyor** ve otomatik geri
+   gelmiyorlar. Abonelik grubu **ve iki aboneliğin her biri** ayrı ayrı sayfalarından
+   *Add for Review → Draft iOS Submission* ile taslağa eklenmeli. Taslak paneli 4 kalem
+   göstermeden **Submit'e basma** — yoksa iOS hiçbir şey satamayan bir paywall'la yayına girer
+6. **"Submit for Review"**
+
+Şu an dört kalemin dördü de `READY_FOR_REVIEW`, sürüm ve gönderim `WAITING_FOR_REVIEW`.
+
+⚠️ **Metadata'ya dokunma** — ASO düzenlemek build'i incelemeden çıkarır.
+
+### ✅ AdMob çalışan hesaba taşındı ve iki platforma da çıktı
 
 `pub-3817081931651779` (`authuser=0`) artık tek yayıncı. O hesapta **iOS uygulaması yoktu**;
 "DriftStop iOS" ve iki reklam birimi oluşturuldu. Altı kimlik de konsol ekranından okundu:
@@ -118,10 +129,14 @@ arkada kaldı" tuzağı bu turda yok).
 Google'ın test birimlerini kullanıyor). `src/constants/__tests__/admobPublisher.test.ts` kimliklerden
 biri başka yayıncıya kayarsa kırılıyor.
 
-⚠️ **Android build ALINAMADI.** `eas build -p android` `app.json`'ı 20'ye çıkardı, sonra işi
-reddetti: **EAS ücretsiz planın aylık Android kotası dolu, 1 Eylül'de yenileniyor.** `build:list`
-en yeni Android build'i hâlâ `versionCode 19` gösteriyor, yani **20 tüketilmedi** — geri sarılmadı,
-sadece atlanacak. **Play'de canlı olan build hâlâ ölü kimliklerle çalışıyor, yani hâlâ sıfır reklam.**
+**EAS'in ücretsiz Android kotası doluydu (1 Eylül'de yenileniyor), o yüzden `versionCode 22`
+lokalde alındı** — Android Studio'nun içindeki JDK 21 ile `eas build --local`, buluta hiç
+dokunmadan, 4dk38sn. `scripts/play-upload.js … production` ile %100 yayına çıktı. 20 ve 21
+tüketilip yayınlanmadı (20: kota reddi, 21: reklam id'lerinin pakette olmadığını kanıtlayan build).
+
+⚠️ **Sadece hesabı değiştirmek yetmezdi.** Aynı gün `process.env[key]` tuzağı bulundu (aşağıda);
+o düzeltilmeden hiçbir build reklam gösteremiyordu. Android 22 ve iOS 10 ikisini birden taşıyan
+ilk build'ler.
 
 ⚠️ **Sunum iki tarafta da sınırlı.** İki AdMob uygulaması da *"Onay durumu: İnceleme gerekli"*
 diyor — Google her yeni uygulamayı tam hacimde sunmadan önce inceliyor (birkaç gün). Android
@@ -149,36 +164,23 @@ build'lerden sonra geldi.
 ## ⛔ SIRADAKİ İŞ
 
 ### 1. iOS incelemesini bekle (aksiyon yok)
-`1.2.0 (9)` `WAITING_FOR_REVIEW`. ⚠️ **Metadata'ya dokunma** — ASO düzenlemek build'i incelemeden
-çıkarır. Reddedilirse gerekçe Resolution Center'da; Apple bu turda cevap yazmaya davet etti ama
-**cevap yazılmadı**, sadece yeniden gönderildi.
+`1.2.0 (10)` `WAITING_FOR_REVIEW`. Reddedilirse gerekçe Resolution Center'da. **Cevap yazma kutusu
+yalnız gönderim `Unresolved Issues`'dayken görünüyor** — `Waiting for Review`'a geçtiği an ASC onu
+kaldırıyor, geriye sadece *Cancel Submission* kalıyor.
 
-### 2. 1 Eylül: Android build → Play production
-AdMob kimlikleri repoda ve EAS `production`'da hazır; eksik olan tek şey **build kotası**
-(EAS ücretsiz plan, 2026-09-01'de yenileniyor). O gün:
-
-```bash
-npx eas build -p android --profile production --non-interactive
-```
-
-sonra `git diff app.json` → `versionCode`'u commit et, `scripts/play-upload.js` ile production'a
-yükle. **Artık kademeli yayın mümkün** (ilk sürüm değil). Bu build çıkana kadar Play'deki uygulama
-tek reklam göstermiyor.
-
-Kota beklemek istemiyorsan alternatif yerel build: makinede Android SDK var ama **Java yok**
-(`java -version` → "Unable to locate a Java Runtime"), yani önce bir JDK kurulmalı.
+### 2. Onaydan sonra: reklamın gerçekten döndüğünü gör
+Kod tarafı artık doğru (kimlikler pakette, hesap onaylı) ama **hiçbir platformda ekranda bir reklam
+görülmedi**. İki AdMob uygulaması da *"İnceleme gerekli"* durumunda; Google onayı geçince Android'de
+canlı uygulamadan bakılabilir.
 
 ### 3. AdMob'da sahibin yapması gerekenler
 - **Verify app** (Android kaydı, *"Uygulama doğrulama: Doğrulanmadı"*) — `app-ads.txt` yayında
-  (HTTP 200, doğru yayıncı), tarama bunu temizlemeli; düğme bir politika beyanı isteyebilir diye
-  ajan basmadı
+  (HTTP 200, doğru yayıncı); düğme bir politika beyanı isteyebilir diye ajan basmadı
 - iOS uygulaması **"mağazada listelenmiyor"** olarak oluşturuldu; App Store'a çıkınca
   **mağaza listelemesini bağla** (⚠️ paket adıyla arama sonuç vermiyor, mağaza URL'siyle ara)
-- İki uygulama da *"İnceleme gerekli"* — Google'ın kendi incelemesi, birkaç gün
 
 ### 4. Düzeltmeleri dallara yay
-`ios-1.2.0-hotfix` `main`'in 4 commit önünde. İnceleme sonuçlanınca `main`'e, oradan
-`monetization-v2`'ye alınmalı.
+`ios-1.2.0-hotfix` `main`'in önünde. İnceleme sonuçlanınca `main`'e, oradan `monetization-v2`'ye.
 
 ---
 
