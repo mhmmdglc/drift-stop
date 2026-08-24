@@ -173,13 +173,32 @@ Kod tarafı artık doğru (kimlikler pakette, hesap onaylı) ama **hiçbir platf
 görülmedi**. İki AdMob uygulaması da *"İnceleme gerekli"* durumunda; Google onayı geçince Android'de
 canlı uygulamadan bakılabilir.
 
-### 3. AdMob'da sahibin yapması gerekenler
-- **Verify app** (Android kaydı, *"Uygulama doğrulama: Doğrulanmadı"*) — `app-ads.txt` yayında
-  (HTTP 200, doğru yayıncı); düğme bir politika beyanı isteyebilir diye ajan basmadı
-- iOS uygulaması **"mağazada listelenmiyor"** olarak oluşturuldu; App Store'a çıkınca
-  **mağaza listelemesini bağla** (⚠️ paket adıyla arama sonuç vermiyor, mağaza URL'siyle ara)
+### 3. AdMob doğrulaması — Google'ın taramasını bekliyor, yapılacak bir şey yok
+**Verify app'e basıldı; ekran hâlâ "Doğrulanmadı" diyor ve gerekçesi *"app-ads.txt dosyası
+oluşturmuş olabilirsiniz ancak bilgileriniz AdMob hesabınızdaki bilgilerle eşleşmiyor"*.**
+Bu mesaj **bayat** — dosyanın kendisi byte byte doğru, tekrar teşhis etmeye gerek yok:
 
-### 4. Düzeltmeleri dallara yay
+| Kontrol | Sonuç |
+|---|---|
+| `https://mgulcu.me/app-ads.txt` | HTTP **200**, `content-type: text/plain`, 59 byte |
+| İçerik | `google.com, pub-3817081931651779, DIRECT, f08c47fec0942fa0\n` — AdMob'un istediği satırın aynısı, BOM yok |
+| Play listelemesindeki site | `contactWebsite: https://mgulcu.me` — yani AdMob apex'i tarayacak, eşleşiyor |
+| Dosyanın yaşı | 2026-08-24 09:59 UTC'de yayına girdi; AdMob'un taraması **24 saate kadar** sürebiliyor |
+
+Sayfadaki **"Güncellemeleri kontrol edin"** düğmesine basıldı, durum değişmedi. Yapılacak tek şey
+beklemek. (Not: `www.mgulcu.me/app-ads.txt` **404** dönüyor; Play apex'i beyan ettiği için sorun
+olmamalı, ama doğrulama günlerce takılırsa ilk bakılacak yer burası.)
+
+### 4. iOS AdMob kaydına mağaza listelemesi bağla — App Store onayından SONRA
+iOS uygulaması **"mağazada listelenmiyor"** olarak oluşturuldu; yayına çıkınca bağlanmalı
+(⚠️ paket adıyla arama sonuç vermiyor, mağaza URL'siyle ara).
+
+### 5. ASC: sosyal medya yaş derecelendirme soruları — **incelemeden SONRA**
+ASC sürüm sayfası *"New Age Ratings Responses Required for Social Media"* uyarısı gösteriyor;
+cevaplar **7 Eylül 2026**'ya kadar zorunlu değil. ⚠️ **Şimdi dokunma:** App Information'daki
+cevapları güncellemek incelemedeki build'i kuyruktan çıkarır.
+
+### 6. Düzeltmeleri dallara yay
 `ios-1.2.0-hotfix` `main`'in önünde. İnceleme sonuçlanınca `main`'e, oradan `monetization-v2`'ye.
 
 ---
