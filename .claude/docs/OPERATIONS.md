@@ -9,24 +9,6 @@ Scope: this is the *operational* doc. Product/architecture rationale lives in [b
 ---
 
 
-### ⚠️ AdMob: her zaman `?authuser=1` ile aç
-
-Bu Mac'teki Chrome'un **birincil** Google hesabı, AdMob'un **kapattığı eski hesap**.
-`admob.google.com` düz açıldığında "Hesabınız kapatıldı" ekranına düşüyor ve yeni hesabın
-öldüğü sanılıyor — bir oturum tam olarak buna zaman kaybetti.
-
-Yeni (çalışan) yayıncı hesabı `authuser=1`:
-
-```
-https://admob.google.com/v2/apps/list?authuser=1
-```
-
-Yeni hesabın yayıncı kimliği `pub-6963122807813930`. Android tarafı orada kurulu:
-uygulama `DriftStop` (`ca-app-pub-6963122807813930~1493084605`), banner ve geçiş
-birimleri aktif. Ayrıca AdMob oturumu sık düşüyor; düştüğünde tarayıcıdan Google
-girişi gerekiyor ve bunu ajan yapamaz (kimlik bilgisi girişi).
-
-
 ## Table of contents
 
 1. [Accounts & ownership](#1-accounts--ownership)
@@ -57,7 +39,7 @@ The Google Play Console listing for DriftStop **and** the Expo/EAS project are b
 | Supabase | project ref **`ftohdffebzhrthrpeuos`**, region **`ap-northeast-1`** (Tokyo) | URL `https://ftohdffebzhrthrpeuos.supabase.co` |
 | RevenueCat | project **"DriftStop"** (`proj9019ea60`); Android app `com.driftstop.app` (`app2be5c8cadb`) | An auto-created sample iOS app ("EvolaRoa") exists and is unused — leave it alone |
 | Google Cloud | project **`extreme-lattice-470518-d8`** (display name "My First Project") | Hosts the RevenueCat service account, the Google Play Android Developer API, and the Pub/Sub topic `driftstop-play-notifications` |
-| AdMob | app + banner + interstitial units; IDs live in `app.json` (plugin config) and `src/constants/adUnits.ts` | Real IDs in prod, Google test IDs under `__DEV__` |
+| AdMob | ⚠️ **Two accounts, and the app points at the wrong one** — see the red section below | `app.json` (plugin config) + `EXPO_PUBLIC_ADMOB_*`; `adUnits.ts` serves nothing when an id is missing rather than falling back to test ids |
 | Privacy policy site | repo `~/workspace/MyWorkspace/my-site` → `git@github.com:mhmmdglc/my-website.git` | Page source `app/driftstop/privacy/page.tsx`; serves https://mgulcu.me/driftstop/privacy; **auto-deploys on push to `main`** — no manual deploy step |
 | Android upload keystore | `credentials/driftstop-upload.keystore` + `credentials.json` (both gitignored) | See the keystore warning below |
 
@@ -67,13 +49,15 @@ The Google Play Console listing for DriftStop **and** the Expo/EAS project are b
 |---|---|
 | Android package / iOS bundle id | `com.driftstop.app` |
 | Current app version | `1.2.0` (`app.json` → `expo.version`) |
-| Current Android versionCode | `17` (live in Play alpha, 2026-08-10) |
-| Current iOS buildNumber | `6` (`1.2.0`, in review 2026-08-13). Builds 4 and 5 abandoned — 5 was rejected under 3.1.2(c) |
+| Current Android versionCode | **`19` — LIVE in Play production** (2026-08-24, all countries, full rollout) |
+| Current iOS buildNumber | **`8`** — in App Review since 2026-08-20. Builds 3-7 abandoned: 3 shipped Expo's icon, 5 rejected under 3.1.2(c), 6 under 2.1 (info), 7 under 2.1(a) (Sign in with Apple unresponsive) |
 | iOS signing | cert `S583744M99` (expires 2027-08-04) · profile `568J8YR282` · files in `credentials/` (gitignored) |
 | IAP product ids | `pro_monthly`, `pro_yearly` — **`remove_ads` is retired**, see below |
 | RevenueCat entitlements | `pro`, `no_ads` — both subscriptions grant both |
 | RevenueCat offering | `default` (Annual / Monthly). The `$rc_lifetime` package was removed with `remove_ads`. |
 | Closed-testing opt-in link | https://play.google.com/apps/testing/com.driftstop.app |
+| **Public Play listing** | https://play.google.com/store/apps/details?id=com.driftstop.app — live since 2026-08-24 |
+| Play store listing locales | `en-US` + `tr-TR` (titles carry keywords; see ASO note in §6) |
 
 ### Bu Mac'te artık bir imzalama kimliği VAR (2026-08-20)
 
@@ -137,22 +121,57 @@ still said `15`, so the next production build would have re-minted `16` and Play
 duplicate. Both numbers were resynced on 2026-08-10. After every production build: `git diff app.json`, then
 commit it.
 
-### ⚠️ Gotcha: AdMob lives in a *third* Google account, and ads cannot serve yet
+### 🔴 AdMob: the account table below was WRONG until 2026-08-24 — read this
 
-There are three Google accounts in play, which is easy to get wrong:
+The old note said `pub-6963122807813930` was "the account the app actually uses" and
+`pub-3817081931651779` was "a separate, unused entry — consider deleting it". The first half is
+true and the second half is backwards, and together they hid a shipping defect: **the app's ad ids
+belong to an account that is not approved and therefore cannot serve a single ad.**
 
-| Account | Publisher | What it holds |
-|---|---|---|
-| `muhammed.gulcu.x@gmail.com` | `pub-6963122807813930` | **The account the app actually uses** — DriftStop Android (`~1493084605`) and DriftStop iOS (`~4613840458`), 2 ad units each. Matches `app.json` and the `EXPO_PUBLIC_ADMOB_*` vars. |
-| `muhammed.gulcu@gmail.com` | `pub-3817081931651779` | A *separate, unused* DriftStop Android entry. Not referenced by any build — a decoy; consider deleting it. |
-| `evolaroa.app@gmail.com` | — | AdMob account is **closed**. Unrelated to DriftStop; don't be alarmed by it. |
+Verified by opening each account in Chrome on 2026-08-24:
 
-**Ads serve nowhere today, for two reasons that are not code:**
+| Chrome | Account | Publisher | Reality |
+|---|---|---|---|
+| `authuser=0` | `muhammed.gulcu@gmail.com` | **`pub-3817081931651779`** | ✅ **Works.** Payment profile complete, DriftStop **Android** app (`3768978323`) with 2 live ad units, earnings recorded last month |
+| `authuser=1` | `muhammed.gulcu.x@gmail.com` | `pub-6963122807813930` | ❌ **"Hesabınız onaylanmadı."** Blocked behind a policy-acceptance checkbox the owner must tick |
+| — | `evolaroa.app@gmail.com` | — | Unrelated to DriftStop |
 
-1. The `…x@gmail.com` account is still **pending verification** ("Hesabınız henüz onaylanmadı").
-2. Both apps show **"İnceleme gerekli · Sınırlı reklam sunumu — limiti kaldırmak için mağaza ekleyin."**
+⚠️ **`app.json` and `.env` still point at `pub-6963…`** — the unapproved one. Both AdMob app ids in
+the `react-native-google-mobile-ads` plugin block and all four `EXPO_PUBLIC_ADMOB_*` unit ids.
+So the build live on Play today shows **no ads at all**. The code is behaving correctly:
+`resolveUnit` returns `null` rather than falling back to Google's test ids, which would be a policy
+violation. The revenue is simply zero.
 
-**The store link cannot be added yet, and testing does not change that.** AdMob's store search only finds apps that are *publicly listed*; a closed-testing app is not. Verified on 2026-08-05 by searching `com.driftstop.app` in the "Mağaza ekle" flow — zero results. So: Android can be linked once it reaches production, iOS once it is live on the App Store. Each platform is a separate AdMob app and must be linked separately.
+**Owner's decision (2026-08-24): switch to `pub-3817081931651779`.** Remaining work is in
+`HANDOFF.md`. It needs a **new build** on both platforms — ad ids are compiled in, not OTA.
+
+⚠️ **The working account has no iOS app.** Only `DriftStop (Android)` exists there; an iOS app and
+its two ad units have to be created before iOS can serve ads.
+
+### AdMob store link + app-ads.txt — both done 2026-08-24
+
+The store link was impossible while DriftStop was in closed testing (AdMob's search only finds
+publicly listed apps). Publishing to production unblocked it, and it was added the same hour.
+
+**The package-name search still returns nothing — search by the store URL instead:**
+`https://play.google.com/store/apps/details?id=com.driftstop.app`. Searching `com.driftstop.app`
+gave zero results minutes after publishing; the URL found it immediately.
+
+`app-ads.txt` is now live at **https://mgulcu.me/app-ads.txt** (repo `~/workspace/MyWorkspace/my-site`,
+`public/app-ads.txt`, auto-deploys on push to `main`):
+
+```
+google.com, pub-3817081931651779, DIRECT, f08c47fec0942fa0
+```
+
+`mgulcu.me` is the only external domain declared on the Play listing, so AdMob will crawl the right
+place. Verification was still pending when written — Google crawls on its own schedule, up to 24h.
+⚠️ If the publisher is ever switched, this file must change with it or verification breaks.
+
+### ⚠️ Gotcha: always open AdMob with an explicit `authuser`
+
+Going to `admob.google.com` bare lands on whichever account Chrome picks and has repeatedly cost
+time. Use `?authuser=0` for the working publisher.
 
 ### ⚠️ Gotcha: `credentials/` and `credentials.json` are gitignored, but production builds depend on them
 

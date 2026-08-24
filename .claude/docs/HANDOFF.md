@@ -1,4 +1,4 @@
-# Devir notu — 2026-08-14
+# Devir notu — 2026-08-24
 
 Yeni oturum bu dosyayı okuyup kaldığı yerden devam edebilir. Bu, 2026-08-03 tarihli
 devir notunun yerini alıyor; oradaki App Store gönderim tarifleri ve API tuzakları
@@ -9,55 +9,95 @@ Plan [`specs/monetization-v2.md`](../specs/monetization-v2.md) ve
 
 ---
 
-## Tek satırlık durum — 2026-08-14
+## Durum — 2026-08-24
 
-**Android canlı:** `1.2.0 (versionCode 19)` Play kapalı test → **alpha** kanalında,
-Play API'sinden okunarak doğrulandı. Production kanalı **boş**, sayaç ~15 Ağustos.
+### 🎉 Android CANLI
 
-**iOS incelemede (üçüncü tur).** `1.2.0 (build 6)` + iki abonelik `WAITING_FOR_REVIEW`,
-gönderim `1cc18361-…`, **4 kalem**.
+`1.2.0 (versionCode 19)` **Play production'da**, tüm ülkeler, tam yayın.
+https://play.google.com/store/apps/details?id=com.driftstop.app
 
-Kapılar: `tsc` temiz · **296 test / 34 suite** · `expo lint` **11 hata = değişmemiş taban**.
+Yayın için üç kapı arka arkaya açıldı, üçü de ilk denemede tıkanmıştı:
+1. **Üretim erişimi** — Google'ın başvuru incelemesi (Çarşamba başvurulmuş, o gün onaylanmış)
+2. **"first release cannot be staged"** — bir kanaldaki İLK sürüm kademeli olamıyor, %100 zorunlu
+3. **"targeting no countries"** — production kanalında hiç ülke seçili değildi; konsoldan
+   *Üretim → Ülkeler/bölgeler* ile tüm ülkeler eklendi. `countryTargeting` sürümün alanı ama
+   yalnız kademeli sürümlerde çalışıyor, yani ilk sürümde API'den verilemiyor
 
-**HEAD ile mağazadakiler artık aynı.** Build 6 ve versionCode 19, bugünkü bütün
-düzeltmeleri taşıyor — geride kalan bir şey yok.
+⚠️ **Yayınlama tamamen otomatik** — hesapta "yönetilen yayınlama" KAPALI. `tracks.update` +
+`commit` yaptığın an yayına gidiyor, ayrıca "incelemeye gönder" adımı yok.
+
+### ⏳ iOS incelemede
+
+`1.2.0 (build 8)` + iki abonelik `WAITING_FOR_REVIEW`, gönderim `1cc18361-…`, 4 kalem.
+Build 8, 2.1(a) *"Sign in with Apple was unresponsive"* reddine karşı iki düzeltme taşıyor.
+
+### ✅ Her iki canlı build de TEMİZ
+
+`monetization-v2`'deki test edilmemiş roadmap işi (kasa, akıllı zamanlama, `expo-task-manager`)
+**hiçbir mağaza build'inde YOK** — doğrulandı: Android 19 (`063060f`, 14 Ağu) ve iOS build 8
+(`fcdcd85`) ikisinde de `src/utils/vault.ts` ve `engagement.ts` bulunmuyor. O çalışma 16 Ağustos'ta,
+build'lerden sonra geldi.
+
+### Dal düzeni
+
+| Dal | Commit | Not |
+|---|---|---|
+| `main` | mağazadaki kodla aynı | 2026-08-24'te 71 commit ilerletildi, artık gerçeği yansıtıyor |
+| `ios-1.2.0-hotfix` | `main` ile aynı | iOS build'leri buradan çıkıyor |
+| `monetization-v2` | `main`'i içerir, +41 | **Cihaz QA'sı yapılmadan `main`'e alınmamalı** |
 
 ---
 
-## Apple iki kez reddetti, ikisi de kapatıldı
+## ⛔ SIRADAKİ İŞ — AdMob'u çalışan hesaba taşı (sahip onayladı)
 
-**1. Guideline 3.1.2(c) — build 5 (2026-08-13).** *"Haftalık hesaplanmış fiyat, tahsil
-edilen tutardan daha belirgin."* Sebep bizim kendi tasarım kararımızdı (`90fb3f2`).
-Hiyerarşi ters çevrildi, yenileme/iptal beyanı eklendi, açık bir ücretsiz çıkış kondu.
-**Bu tur bir daha yazılmadı — yani geçti.**
+**Sorun:** uygulamanın reklam kimlikleri `pub-6963122807813930`'dan, ama o hesap
+**"Hesabınız onaylanmadı"** durumunda. Yani **bugün Play'de canlı olan build tek bir reklam bile
+gösteremiyor.** Kod doğru davranıyor (`resolveUnit` gerçek id yoksa reklam göstermiyor, Google'ın
+test id'lerine düşmüyor — o bir politika ihlali olurdu); gelir sadece sıfır.
 
-**2. Guideline 2.1 Information Needed — build 6 (2026-08-14).** Kod hatası değil, bilgi
-talebi. 8 maddenin tamamı hem cevaba hem App Review Notes'a yazıldı, 8:42'lik ekran kaydı
-eklendi. Cevap `Messages (3)` altında duruyor.
+Detaylı hesap tablosu `OPERATIONS.md`'de (kırmızı bölüm). Özet: **`authuser=0` /
+`pub-3817081931651779` çalışıyor**, DriftStop Android uygulaması (`3768978323`) ve 2 reklam birimi
+orada, ödeme profili tamam.
 
-⚠️ **Apple'a açıkça söylenen iki şey** — bir sonraki oturum bunları bilsin, çünkü Apple
-bunlara geri dönebilir:
-- Kayıt **fiziksel cihazda değil, simülatörde** alındı. Gerçek cihaz şart koşulursa tek
-  çıkış bir iPhone bulup TestFlight'tan kurmak.
-- Hesap silme **onay ekranında durduruldu**, çünkü giriş yapılan hesap denetçinin
-  kullanacağı demo hesap. Silinseydi bir sonraki tur "erişemedik" diye reddedilirdi.
+**Bugün yapılanlar (mağaza tarafı hazır):**
+- ✅ AdMob mağaza bağlantısı eklendi — Play'e çıkınca mümkün oldu.
+  ⚠️ **Paket adıyla arama sonuç vermiyor, mağaza URL'siyle ara.**
+- ✅ `app-ads.txt` yayında: https://mgulcu.me/app-ads.txt →
+  `google.com, pub-3817081931651779, DIRECT, f08c47fec0942fa0`
+  (`~/workspace/MyWorkspace/my-site`, `public/app-ads.txt`, push'ta otomatik deploy).
+  Play listelemesindeki tek dış alan adı `mgulcu.me`, yani AdMob doğru yeri tarayacak.
+- ⏳ AdMob doğrulaması Google'ın taramasını bekliyor (≤24 saat)
+
+**Yapılacaklar:**
+1. `authuser=0`'daki DriftStop Android uygulamasının **tam uygulama kimliğini** ve **2 reklam
+   biriminin id'lerini** al (`ca-app-pub-3817081931651779~…` ve `/…`)
+2. O hesapta **iOS uygulaması YOK** — iOS uygulaması + banner/interstitial birimleri oluştur
+3. `app.json` → `react-native-google-mobile-ads` bloğundaki `androidAppId` / `iosAppId`
+4. `.env` **ve** `eas env:create` ile üç ortam — dört `EXPO_PUBLIC_ADMOB_*` birimi
+   ⚠️ `.env` EAS'in bulut derleyicilerine ULAŞMIYOR; ikisini de güncellemek şart
+5. Yeni Android build → Play production'a güncelleme (artık kademeli yayın **mümkün**, ilk sürüm
+   değil). iOS için build 8'in sonucunu bekle, sonra aynı değişiklikle yeni build
+6. `OPERATIONS.md`'deki kırmızı bölümü "çözüldü" diye güncelle
+
+**Alternatif (sahip reddetti ama duruyor):** `pub-6963…` hesabını onaylatmak — `authuser=1`'de
+politika onay kutusu + *Yeniden gönder*. Kod değişmez ama Google'ın onayı belirsiz sürede.
+Politika beyanı olduğu için ajan işaretleyemez.
 
 ---
 
-## ⛔ SIRADAKİ İŞ — Apple'ın cevabını beklemek
+## Diğer açık işler
 
-**Onaylanırsa:** iOS canlıya çıkar. Android production sayacı da ~15 Ağustos'ta dolduğu
-için ikisi birlikte yayına alınabilir.
-
-**Yine 2.1 gelirse:** büyük ihtimalle fiziksel cihaz kaydı isteyeceklerdir. Bu noktada
-herhangi bir iPhone + TestFlight tek çözüm; build 6 zaten ASC'de, kurulum dakikalar sürer.
-
-**Başka bir gerekçe gelirse:** `OPERATIONS.md` §7'deki denetim tablosuyla karşılaştır ve
-yeni çıkan maddeyi tabloya ekle. Sürüm kaydı `REJECTED`'a düşer ve **yeniden kullanılır** —
-yeni kayıt açma. Reddi temizleyen düğme sürüm sayfasındaki **"Update Review"**; yeni build
-bağlamak tek başına yetmiyor (bkz. `OPERATIONS.md` §7).
-
-**Her durumda:** `app.json`'daki `autoIncrement` yazımını commit et.
+1. **Tamamlanmış bir satın alma hâlâ hiçbir platformda kanıtlanmadı.** Artık Android canlı, yani
+   **kendi telefonundan Play Store'dan indirip gerçek bir satın alma** yapmak mümkün — gelir
+   yolunun ilk kanıtı buradan gelebilir.
+2. **Apple ile giriş hiçbir cihazda çalıştırılmadı.** Simülatörde İMKÂNSIZ (altı varyant denendi,
+   `OPERATIONS.md`'de tablo). Ama artık **imzalama kimliği var**, yani bir iPhone bulunduğunda
+   TestFlight'sız doğrudan kurulabilir.
+3. **`intensity-review.csv`** çalışma dizininde duruyor ve **gitignore'da değil** — sahibin onayını
+   bekleyen sertlik etiketleme dosyası. Bir sonraki `git add -A` onu yanlışlıkla içeri alır.
+4. **iOS ASO yapılmadı.** App Store'da 100 karakterlik ayrı anahtar kelime alanı var ve listeleme
+   yalnız `en-US` + `en-GB` — Türkçe yok. ⚠️ **İnceleme bitmeden dokunma**: metadata düzenlemek
+   build 8'i incelemeden çıkarır.
 
 ---
 
@@ -82,33 +122,10 @@ bağlamak tek başına yetmiyor (bkz. `OPERATIONS.md` §7).
 | `246ec1f` `ed8c8e1` | 1.2.0 (6) yeniden gönderildi; reddi temizleyen "Update Review" tarifi |
 | `063060f` | **Android'e "Apple Account" deniyordu** — platforma göre ayrıldı, 2 testle sabitlendi |
 | `8b82121` | Android 1.2.0 (versionCode 19) Alpha'ya |
-
----
-
-## Sahipten bekleyen kararlar / işler
-
-1. **Tamamlanmış bir satın alma — hâlâ tek gerçek boşluk, ama artık çok daha dar.**
-   2026-08-10'da zincirin **iki ucu ayrı ayrı** kanıtlandı:
-   - **Ön uç:** simülatörde paywall iki ürünü de **gerçek App Store fiyatlarıyla** çekti
-     (`$3.99` / `$35.99`, ASC'yle birebir) ve "Satın Al" **StoreKit'in ödeme ekranını açtı**.
-   - **Arka uç:** RevenueCat panelinden promotional `pro` verildiğinde uygulama **doğru
-     davrandı** — Go Pro kartı gitti, 7 ve 10 seçilebilir oldu, paketler açıldı.
-
-   Test edilmemiş tek halka **Apple'ın satın almayı onaylaması**. Bunun için sandbox testçi
-   hesabı gerekiyor; `muhammed.gulcu+dsbox1@gmail.com` oluşturuldu ama simülatörde giriş
-   Apple'ın **iki faktörlü doğrulamasına** takıldı ve tamamlanamadı. Doğru yer
-   **Ayarlar → Developer → Sandbox Apple Account** (satın alma sırasında çıkan sistem
-   penceresi DEĞİL — oradan girmek hesabı tam Apple hesabı sanıp 2FA kurmaya çalışıyor).
-   İlk gerçek satın alma büyük ihtimalle App Review'da olacak.
-
-2. **Android üretim ~2026-08-15'te açılıyor** (14 gün × 16 testçi). Süre **kesintisiz**
-   olmalı — sayaç dolmadan Alpha kanalından kimse çıkarılmamalı.
-3. **AdMob** iki kapı da kapalı: hesap (`muhammed.gulcu.x@gmail.com` / `pub-6963122807813930`)
-   hâlâ doğrulanıyor, ve mağaza bağlantısı ancak uygulamalar **herkese açık listelendiğinde**
-   eklenebiliyor. Kapalı testte eklenemiyor — 2026-08-05'te arama ile denendi, sıfır sonuç.
-4. **Apple ile giriş hiçbir cihazda çalıştırılmadı.** Simülatör bunu çözemiyor: imzasız build
-   `com.apple.developer.applesignin` entitlement'ını taşımıyor (`AKAuthenticationError -7026`),
-   bu Mac'te imzalama kimliği yok. İlk kanıt App Review'dan gelecek.
+| `4e288d3` `0bd9f0d` | **2.1(a) SIWA reddi** — sessiz yutma + `try/finally` eksikliği (kalıcı ölü düğme) |
+| `8ca889f` `8172137` | **İmzalama kimliği** ASC API'siyle üretildi; simülatörde SIWA'nın neden imkânsız olduğu |
+| `368e504` `fcdcd85` `71394e6` | Aynı iki düzeltme izole dala alındı → **iOS build 8** |
+| — | **Android production'a çıkarıldı** (`versionCode 19`), Play ASO (`en-US` + `tr-TR`), AdMob mağaza bağlantısı, `app-ads.txt` |
 
 ---
 
