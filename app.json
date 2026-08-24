@@ -60,8 +60,8 @@
       [
         "react-native-google-mobile-ads",
         {
-          "androidAppId": "ca-app-pub-6963122807813930~1493084605",
-          "iosAppId": "ca-app-pub-6963122807813930~4613840458",
+          "androidAppId": "ca-app-pub-3817081931651779~3768978323",
+          "iosAppId": "ca-app-pub-3817081931651779~3993212711",
           "userTrackingUsageDescription": "Allowing this lets us show you more relevant ads. Your quotes, favourites and reminders work exactly the same either way.",
           "skAdNetworkItems": [
             "cstr6suwn9.skadnetwork",
