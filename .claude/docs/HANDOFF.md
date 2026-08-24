@@ -61,6 +61,24 @@ Başka hiçbir anahtar değişmedi, hiçbir anahtar eklenmedi. (İki `.ipa` da i
 ⚠️ `CFBundleIconName` **iki build'de de yok**. Bu bir gerileme değil, build 8 bu hâliyle yüklenip
 incelemeye girdi; ama bir gün ITMS-90713 gelirse sebebi burada yazıyor.
 
+**✅ Ekranda görüldü (iPhone 17 Pro simülatörü, Release build).** RevenueCat panelinden QA
+müşterisine (`$RCAnonymousID:a63aa173…`) **bir günlük promosyon `pro` hakkı** verildi, uygulama
+yeniden başlatıldı, paywall'a `driftstop://paywall` ile girildi:
+
+- üst köşe *"Belki sonra"* değil **"Kapat"**
+- *"Zaten Pro'sun. Desteğin için teşekkürler!"*
+- çerçeveli, ekranın en belirgin eylemi olan **"Uygulamaya dön"** düğmesi
+- *"Ücretsiz sürümle devam et"* **ekranda yok**
+- düğmeye basıldı → paywall kapandı, Ayarlar'a dönüldü
+
+Hak sahibi olmayan hâli de aynı oturumda görüldü: paketler, yenileme beyanı, *"Belki sonra"* ve
+*"Ücretsiz sürümle devam et"* yerli yerinde, **"Uygulamaya dön" yok**. (Promosyon hakkı 24 saatte
+kendiliğinden düşüyor; istenirse panelden erken geri alınabilir.)
+
+⚠️ **Gerçek bir satın alma yine denenmedi** — simülatörde StoreKit yok. Sınanan şey "hak sahibi
+olan kullanıcı bu ekrandan çıkabiliyor mu"; `buy()` başarısının aynı durumu ürettiğini testler
+sabitliyor.
+
 **Koruma testleri** — ikisi de düzeltme geri alınarak kırdırıldı:
 `src/__tests__/backgroundAudioConfig.test.ts` (düz-string eklenti kaydını da yakalar),
 `src/__tests__/paywallExitAfterPurchase.test.tsx` (8 test: çıkış var mı, iptal/hata durumunda
