@@ -103,11 +103,16 @@ defines none on purpose — `__DEV__` builds use Google's test units). `src/cons
 now fails if any one of them drifts to a different publisher, which is exactly how the shipped
 defect looked: nothing broken, just silent.
 
-⚠️ **Ad ids are compiled in, not OTA.** iOS `1.2.0 (9)` carries the new ones. **Android does not
-yet** — `eas build -p android` was refused on 2026-08-24 because the free plan's Android builds for
-the month were spent (they reset **2026-09-01**), so Play production still runs the dead ids. The
-`versionCode` counter was already bumped to **20** by that refused attempt and no build consumed it;
-the next Android build will therefore be 20 or later.
+⚠️ **Ad ids are compiled in, not OTA**, and they only reach the binary if they are read as
+*static* `process.env.EXPO_PUBLIC_…` — see the trap in `HANDOFF.md`. Android `versionCode 22` and iOS
+`1.2.0 (10)` are the first builds where the ids are actually present in the JS bundle; verify with
+`strings -a` on the bundle, never from `.env`.
+
+⚠️ **EAS's free plan ran out of Android builds on 2026-08-24** (resets 2026-09-01), so 22 was built
+**locally**: `eas build -p android --profile production --local` with
+`JAVA_HOME=/Applications/Android Studio.app/Contents/jbr/Contents/Home` (there is no other JDK on
+this Mac) and `ANDROID_HOME=~/Library/Android/sdk`. Same credentials.json signing, ~5 minutes, no
+cloud quota. Upload with `node scripts/play-upload.js <aab> production`.
 
 ⚠️ **Serving is still limited on both.** Both AdMob apps read *"Onay durumu: İnceleme gerekli"* —
 Google reviews every new app before it serves at full volume, usually a few days. The Android entry

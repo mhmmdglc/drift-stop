@@ -13,8 +13,14 @@ Plan [`specs/monetization-v2.md`](../specs/monetization-v2.md) ve
 
 ### 🎉 Android CANLI
 
-`1.2.0 (versionCode 19)` **Play production'da**, tüm ülkeler, tam yayın.
+`1.2.0 (versionCode 22)` **Play production'da**, tüm ülkeler, %100 yayın.
 https://play.google.com/store/apps/details?id=com.driftstop.app
+
+**22, reklam kimliklerini gerçekten taşıyan İLK build.** 19 çalışan hesabın
+kimliklerini taşımıyordu; 20 ve 21 hiç yayınlanmadı (20'yi EAS kota reddi, 21'i
+paketin içinde reklam id'si olmadığını kanıtlayan lokal build tüketti). 22 lokalde
+`eas build --local` ile alındı — Android Studio'nun JDK 21'i, EAS bulut kotasına
+hiç dokunmadan; `scripts/play-upload.js … production` ile çıkıldı.
 
 Yayın için üç kapı arka arkaya açıldı, üçü de ilk denemede tıkanmıştı:
 1. **Üretim erişimi** — Google'ın başvuru incelemesi (Çarşamba başvurulmuş, o gün onaylanmış)
@@ -26,7 +32,7 @@ Yayın için üç kapı arka arkaya açıldı, üçü de ilk denemede tıkanmı�
 ⚠️ **Yayınlama tamamen otomatik** — hesapta "yönetilen yayınlama" KAPALI. `tracks.update` +
 `commit` yaptığın an yayına gidiyor, ayrıca "incelemeye gönder" adımı yok.
 
-### ✅ iOS build 8'in iki reddi de düzeltildi → **1.2.0 (9)**
+### ✅ iOS build 8'in iki reddi de düzeltildi → **1.2.0 (10)**
 
 **SIWA artık yazmıyor** (build 8'deki iki düzeltme tuttu, denetçi o adımı geçti). Bu turda yalnız
 sürüm kalemi reddedilmişti; üç abonelik kalemi `Ready for Review`'da kaldı.
@@ -273,6 +279,27 @@ parçasını çözüyor ama tamamını değil.
 ---
 
 ## 2026-08-24'te öğrenilenler
+
+### 🔴 En pahalı sessiz hata: `process.env[key]` derlemede gömülmüyor
+`constants/adUnits.ts` dört reklam birimini bir yardımcıyla okuyordu:
+`const env = (key) => process.env[key]`. `babel-preset-expo` `EXPO_PUBLIC_*`
+değerlerini pakete gömerken **yalnızca statik üye erişimini** (`process.env.X`)
+tanıyor; hesaplanmış erişim olduğu gibi kalıyor ve cihazda `process.env` diye bir
+nesne olmadığı için değer `undefined` oluyor. Yani **bugüne kadar çıkan hiçbir
+yayın derlemesi tek bir reklam gösteremezdi** — yanlış AdMob hesabından bağımsız
+olarak. Sadece hesabı düzeltmek tek bir gösterim bile üretmeyecekti.
+
+Hiçbir gösterge bunu söylemedi: `tsc` temiz, testler yeşil (jest gerçek
+`process.env`i okur, Babel dönüşümü koşmaz), EAS build logu dört değişkeni de
+"yüklendi" diye yazdı. **Tek dürüst kaynak derlenmiş paketti:**
+
+```bash
+unzip -p <aab> base/assets/index.android.bundle > bundle.hbc   # iOS: Payload/*.app/main.jsbundle
+strings -a bundle.hbc | grep -oE "ca-app-pub-[0-9]+/[0-9]+" | sort -u
+```
+
+`src/__tests__/noDynamicEnvAccess.test.ts` bu yazımı `src/` genelinde yasaklıyor.
+**Yeni bir `EXPO_PUBLIC_*` eklerken: değeri paketin içinde gördüğünü doğrula.**
 
 ### Reddin sebebini `app.json` değil, iki `.ipa`'nın farkı söyler
 Build 8 ve build 9'un `Info.plist`'leri indirilip `plutil -convert json` ile karşılaştırıldı; fark
