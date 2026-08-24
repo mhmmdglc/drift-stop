@@ -8,6 +8,22 @@ The orchestrator writes an entry **when an agent is dispatched** and updates it 
 
 ---
 
+## 2026-08-24
+
+> ℹ️ **2026-08-17 ve 2026-08-20 satırları bu dalda yok**, `monetization-v2`'nin WORKLOG'unda
+> duruyor (iOS hotfix dalı o tarihlerden önce ayrıldı). İçerikleri: iPad paywall scroll düzeltmesi
+> + build 7, ve SIWA teşhisi + imzalama kimliği. Özetleri `HANDOFF.md`'de.
+
+| Time | Agent | Task | Outcome | Evidence |
+|---|---|---|---|---|
+| 15:30 | orchestrator | **🔴 AdMob hesabı: doküman TERSİNİ yazıyormuş** | Üç hesap Chrome'da tek tek açıldı. `OPERATIONS.md` `pub-6963…` için *"uygulamanın kullandığı hesap"*, `pub-3817…` için *"kullanılmayan sahte kayıt, silmeyi düşün"* diyordu. **Gerçek:** `pub-3817081931651779` (`authuser=0`) **çalışıyor** — ödeme profili tamam, DriftStop Android (`3768978323`) + 2 reklam birimi, geçen ay kazanç. `pub-6963122807813930` (`authuser=1`) **"Hesabınız onaylanmadı"**. Ve `app.json` + `.env` **onaylanmamış** olanı kullanıyor → **bugün canlıya çıkan build tek reklam gösteremiyor**. Kod suçsuz: `resolveUnit` id yoksa reklam basmıyor, test id'lerine düşmüyor. Sahip kararı: çalışan hesaba geç (yeni build gerekir) | `OPERATIONS.md` kırmızı bölüm |
+| 15:15 | orchestrator | **AdMob mağaza bağlantısı + `app-ads.txt`** | Mağaza bağlantısı **eklendi** — Play'e çıkmak bu kapıyı açtı (kapalı testte AdMob araması uygulamayı bulamıyordu). **Tuzak:** paket adıyla arama hâlâ sıfır sonuç, **mağaza URL'siyle** arayınca anında buldu. `app-ads.txt` `mgulcu.me`'ye kondu ve **HTTP 200 ile doğrulandı**; Play listelemesindeki tek dış alan adının `mgulcu.me` olduğu da teyit edildi | `my-site@c8412de`; https://mgulcu.me/app-ads.txt |
+| 15:00 | orchestrator | **🎉 Android production'a çıktı** | `versionCode 19`, tüm ülkeler, tam yayın. Mağaza sayfası **HTTP 200**. Üç kapı sırayla açıldı: (1) Google'ın **üretim erişimi onayı** gelmiş, (2) *"first release cannot be staged"* — ilk sürüm kademeli olamıyor, (3) *"targeting no countries"* — production kanalında hiç ülke yoktu, konsoldan eklendi. **Ayrı "incelemeye gönder" adımı yok** — yönetilen yayınlama kapalı, commit anında yayınlanıyor | Play production `["19"]` |
+| 14:30 | orchestrator | **Play ASO** | Başlık `DriftStop` (9/30) → **`DriftStop: Motivation Quotes`** (28/30); **`tr-TR` listelemesi sıfırdan eklendi**; tam açıklama 912 → **2.040/2.101**. Eski metindeki yanlış da düzeltildi: altı dil sayıyordu ama söz gövdeleri yalnız EN/TR | Play listings API |
+| 14:00 | orchestrator | **Dal düzeni toparlandı** | `main` Temmuz'da (`e6db845`) kalmıştı. `ios-1.2.0-hotfix`'e **fast-forward** (+71), sonra `main` → `monetization-v2` merge. Tek çakışma `app.json` build numarası (7 vs 8) → **8**, çünkü mağazaya yüklenen o. Kapılar: `tsc` temiz, **447 test / 47 suite** | `71394e6`, `8c42118` |
+| 13:45 | orchestrator | **Disk 41 GB → 3,2 GB** | 29,3 GB'ı SIWA araştırmasında alınan dört deneme build'iydi (tek klasör yerine dört ayrı `derivedDataPath` kullanmam). `node_modules/*/android/{build,.cxx}` temizliği "bayat `libworklets.so`" tuzağını da kaldırdı | — |
+| 13:30 | orchestrator | **Doğrulandı: canlı build'ler roadmap işi taşımıyor** | Android 19 (`063060f`) ve iOS build 8 (`fcdcd85`) içinde `vault.ts`/`engagement.ts` **yok** — `git cat-file` ile kanıtlandı | — |
+
 ## 2026-08-14
 
 | Time | Agent | Task | Outcome | Evidence |
