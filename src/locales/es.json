@@ -239,6 +239,7 @@
     "renewalTerms": "El pago se carga a tu Cuenta de Apple al confirmar. La suscripción se renueva automáticamente al mismo precio y periodo salvo que la canceles al menos 24 horas antes de que termine. Gestiónala o cancélala cuando quieras en Ajustes → Cuenta de Apple → Suscripciones.",
     "renewalTermsAndroid": "El pago se carga a tu cuenta de Google Play al confirmar. La suscripción se renueva automáticamente con el mismo precio y periodo salvo que la canceles al menos 24 horas antes de que termine. Gestiónala o cancélala cuando quieras en Google Play → Suscripciones.",
     "continueFree": "Continuar con la versión gratuita",
+    "done": "Continuar a la aplicación",
     "restoreSuccess": "Compras restauradas.",
     "restoreNothingFound": "No se encontró ninguna compra anterior.",
     "buyButton": "Continuar",

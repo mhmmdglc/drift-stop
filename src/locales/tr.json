@@ -239,6 +239,7 @@
     "renewalTerms": "Ödeme, onay anında Apple Hesabından tahsil edilir. Abonelik, bitiminden en az 24 saat önce iptal edilmezse aynı fiyat ve süreyle kendiliğinden yenilenir. Ayarlar → Apple Hesabı → Abonelikler'den istediğin zaman yönetebilir ya da iptal edebilirsin.",
     "renewalTermsAndroid": "Ödeme, onay anında Google Play hesabından tahsil edilir. Abonelik, bitmesine en az 24 saat kala iptal etmezsen aynı fiyat ve dönemle otomatik yenilenir. Google Play → Abonelikler'den istediğin an yönetebilir veya iptal edebilirsin.",
     "continueFree": "Ücretsiz sürümle devam et",
+    "done": "Uygulamaya dön",
     "restoreSuccess": "Satın alımlar geri yüklendi.",
     "restoreNothingFound": "Önceki bir satın alım bulunamadı.",
     "buyButton": "Devam et",
