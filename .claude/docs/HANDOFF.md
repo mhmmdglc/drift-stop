@@ -26,10 +26,53 @@ Yayın için üç kapı arka arkaya açıldı, üçü de ilk denemede tıkanmı�
 ⚠️ **Yayınlama tamamen otomatik** — hesapta "yönetilen yayınlama" KAPALI. `tracks.update` +
 `commit` yaptığın an yayına gidiyor, ayrıca "incelemeye gönder" adımı yok.
 
-### ⏳ iOS incelemede
+### 🔴 iOS build 8 REDDEDİLDİ (2026-08-24) — iki yeni gerekçe
 
-`1.2.0 (build 8)` + iki abonelik `WAITING_FOR_REVIEW`, gönderim `1cc18361-…`, 4 kalem.
-Build 8, 2.1(a) *"Sign in with Apple was unresponsive"* reddine karşı iki düzeltme taşıyor.
+**İyi haber önce: SIWA artık yazmıyor.** Build 8'deki iki düzeltme (sessiz yutma + `try/finally`
+eksikliğinden kaynaklanan kalıcı ölü düğme) işe yaradı, denetçi o adımı geçti. Bu tur **yalnız
+sürüm kalemi** reddedildi; üç abonelik kalemi `Ready for Review` durumunda.
+
+**1. Guideline 2.5.4 — bildirilen ama kullanılmayan arka plan sesi**
+
+> *"The app declares support for audio in the UIBackgroundModes key… but we are unable to play any
+> audible content when the app is running in the background."*
+
+**Teşhis edildi (aramaya gerek yok):**
+- `app.json`'ın `infoPlist`'inde `UIBackgroundModes` **yok**, ama gönderilen binary'de **`['audio']` var**
+- Kaynak: `expo-audio` config plugin'i. `node_modules/expo-audio/plugin/build/withAudio.js` →
+  **`enableBackgroundPlayback` varsayılanı `true`** ve düz string olarak (`"expo-audio"`) kaydedilince
+  bu varsayılan uygulanıp `audio` ekleniyor
+- **`expo-audio` `src/` içinde HİÇ kullanılmıyor** (grep sıfır sonuç)
+
+**Düzeltme (biri):**
+```jsonc
+// app.json → plugins
+["expo-audio", { "enableBackgroundPlayback": false }]
+// ya da gerçekten kullanılmıyorsa plugin'i ve bağımlılığı tamamen kaldır
+```
+⚠️ Düzelttikten sonra **binary'den doğrula**, `app.json`'dan değil:
+`unzip -p <ipa> "Payload/*.app/Info.plist" | plutil -convert json -o - -` → `UIBackgroundModes`
+anahtarı hiç görünmemeli. (Bu, projenin "düz string plugin sessizce farklı davranır" tuzağının
+tersi: burada düz string **istemediğimiz** varsayılanı getiriyor.)
+
+**2. Guideline 4 — satın alma sonrası paywall'dan çıkış yok**
+
+> *"After we make a successful purchase… there is no option to leave the purchase screen unless
+> tapping on Maybe Later or Continue with the free version, unless user closes the app."*
+
+Haklılar: `paywall.tsx` → `buy()` başarıda **sadece mesaj gösteriyor, hiçbir yere gitmiyor**
+(karşılaştır: `social()` başarıda `router.back()` yapıyor). Ekranda kalan tek çıkışlar
+"Maybe later" ve "Continue with the free version" — ve bu iki etiket **satın almış** biri için
+anlamsız, hatta yanıltıcı.
+
+**Öneri:** başarılı satın almadan sonra ya otomatik kapat, ya da net bir **"Bitti / Devam"**
+düğmesi göster; en azından kullanıcı hak sahibi olduğunda üstteki "Maybe later" etiketi
+"Kapat"a dönmeli. Hangi çözüm seçilirse seçilsin **koruma testi** yazılmalı — bu ekran üç kez
+reddedildi ve her seferinde testler yeşildi.
+
+**Yeniden gönderme:** yeni build → sürüme bağla → sürüm sayfasında **"Update Review"** (reddi
+temizleyen tek şey bu; API `409` veriyor) → **"Resubmit to App Review"**. Bu turda abonelikler
+`Ready for Review`'da kaldığı için muhtemelen yalnız sürüm kalemini güncellemek yetecek.
 
 ### ✅ Her iki canlı build de TEMİZ
 
