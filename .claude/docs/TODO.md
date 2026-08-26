@@ -40,6 +40,29 @@ flip `profiles.is_premium` from a real purchase, which has still never happened 
 QA of 2026-08-01 proved premium content for a **signed-in trial** user, which is a different path (the
 `trials` table, not the webhook).
 
+## 🔴 Found 2026-08-27 — one in five bundled quotes has no English text
+
+`src/data/quotes.json` carries 1,000 quotes with a `text` field (meant to be English) and a `textTr`
+field. **194 of them have `text` filled with the Turkish string** — byte-identical to `textTr`.
+`utils/quoteText.ts` is correct (`locale.startsWith('tr') ? textTr : text`); the data is not.
+
+**Who this hits:** everyone who is not Turkish. An English, Spanish, German, French or Italian user
+sees a Turkish quote roughly **19% of the time** — the app looks broken, not multilingual. Found
+while shooting localized store screenshots: the first Spanish home screen captured showed
+*"Demir, dövülmeden kılıç olmaz…" — Mevlânâ* under a fully Spanish interface.
+
+**Not fixed, deliberately.** Translating 194 quotes — mostly Rumi and Turkish proverbs — is a content
+decision about the product's voice, not a mechanical fix, and the owner should see the translations
+before they ship. The store screenshots taken tonight work around it by re-rolling until a quote with
+real English text comes up.
+
+**When fixed, it needs a new build on both platforms** — `quotes.json` is bundled, not fetched.
+
+```bash
+# etkilenen kayıtları listele
+node -e "const q=require('./src/data/quotes.json');console.log(q.filter(x=>x.text===x.textTr).length)"
+```
+
 ## Open bugs found during the 2026-07-25 documentation audit
 
 Found by reading the code against the shipped copy while writing `PRODUCT.md`. None of these are fixed yet; none were introduced by the docs work.
