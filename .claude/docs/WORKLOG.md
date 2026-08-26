@@ -8,6 +8,13 @@ The orchestrator writes an entry **when an agent is dispatched** and updates it 
 
 ---
 
+## 2026-08-26
+
+| Time | Agent | Task | Outcome | Evidence |
+|---|---|---|---|---|
+| — | orchestrator | **iOS neden mağazada değil?** | App Review **geçmiş** (`READY_FOR_SALE`), sorun oymuş ki değilmiş: ASC *"This app was removed from sale"* diyordu — **App Availability hiç kurulmamıştı**. Fiyat 175 ülkede tanımlı, sürüm onaylı, ama hiçbir ülkeye hedeflenmemiş; mağaza sayfası 404. Android'deki *"targeting no countries"* tuzağının Apple karşılığı. *Set Up Availability → All Countries → Confirm* (sahibi bastı) | `availableInNewTerritories: true` + 175 ülke, ASC API ile doğrulandı |
+| — | orchestrator | **Android reklamları ölçüldü — ilk kez gerçekten dönüyor** | AdMob: son 7 günde **7 istek, 2 gösterim**, %100 eşleşme, eBGBM ₺9,61, ₺0,02 kazanç; önceki 7 gün **sıfır**. `versionCode 22` (env düzeltmesini taşıyan ilk build) canlıya çıktıktan sonra. AdMob kaydı da temizlendi: doğrulama **Doğrulandı**, onay **Hazır**; `app-ads.txt` panosu %100 yetkilendirilmiş gösteriyor — 24 Ağustos'taki "eşleşmiyor" mesajı bayatmış | AdMob uygulama panosu (`3768978323`) |
+
 ## 2026-08-24
 
 > ℹ️ **2026-08-17 ve 2026-08-20 satırları bu dalda yok**, `monetization-v2`'nin WORKLOG'unda

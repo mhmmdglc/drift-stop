@@ -1,4 +1,4 @@
-# Devir notu — 2026-08-24
+# Devir notu — 2026-08-26 (24 Ağustos oturumunun üstüne)
 
 Yeni oturum bu dosyayı okuyup kaldığı yerden devam edebilir. Bu, 2026-08-03 tarihli
 devir notunun yerini alıyor; oradaki App Store gönderim tarifleri ve API tuzakları
@@ -6,6 +6,48 @@ hâlâ geçerli, git geçmişinde `bc2ea91` ve öncesinde duruyor.
 
 Plan [`specs/monetization-v2.md`](../specs/monetization-v2.md) ve
 [`specs/social-sign-in.md`](../specs/social-sign-in.md)'de; bu dosya **nerede kalındığı**.
+
+---
+
+## Durum — 2026-08-26
+
+### 🎉 iOS ONAYLANDI — ve satışa açılmayı bekliyordu
+`1.2.0 (10)` App Review'dan **geçti**, sürüm `READY_FOR_SALE` / *"Ready for Distribution"*.
+
+⚠️ **Ama uygulama App Store'da görünmüyordu ve sebebi inceleme değildi:**
+
+> *"This app was removed from sale from the App Store. Go to Pricing and Availability to add it back."*
+
+**App Availability hiç kurulmamıştı.** Fiyat tanımlıydı (175 ülke), sürüm onaylıydı, ama uygulama
+hiçbir ülkede satışta değildi — `apps.apple.com/app/id6797533621` **404** dönüyordu. Bu, 24
+Ağustos'ta Android'de yaşanan *"targeting no countries"* tuzağının **Apple'daki tam karşılığı**:
+onaylanmış bir sürüm, hiçbir ülkeye hedeflenmemiş.
+
+Çözüm: *Pricing and Availability → Set Up Availability → All Countries or Regions → Confirm*
+(2026-08-26'da sahibi bastı). Sonrasında `availableInNewTerritories: true` ve 175 ülke kaydı
+API'den doğrulandı. Mağaza sayfasının açılması Apple tarafında birkaç saat sürebiliyor.
+
+**➡️ Ders: `READY_FOR_SALE` "mağazada" demek DEĞİL.** Sürüm durumu ile App Availability iki ayrı
+şey; ikisini birden kontrol et.
+
+### 🎉 Android reklamları GERÇEKTEN dönüyor
+`versionCode 22` (reklam kimliklerini taşıyan ilk build) canlıya çıktıktan sonra AdMob'da ölçüldü:
+
+| | Son 7 gün | Önceki 7 gün |
+|---|---|---|
+| İstekler | **7** | 0 |
+| Gösterimler | **2** | 0 |
+| Eşleşme oranı | %100 | — |
+| eBGBM | ₺9,61 | — |
+| Tahmini kazanç | ₺0,02 | ₺0,00 |
+
+Rakamlar küçük (build iki günlük, kullanıcılar henüz güncellemedi) ama **boru hattı ilk kez uçtan
+uca çalışıyor**: istek → `app-ads.txt` ile yetkilendirme → gösterim → gelir. Daha önce istek sayısı
+**sıfırdı**, çünkü `resolveUnit` null dönüyor ve hiç reklam nesnesi kurulmuyordu.
+
+AdMob Android kaydı da temizlendi: **Uygulama doğrulama: Doğrulandı**, **Onay durumu: Hazır**.
+`app-ads.txt` panosu: *"Sorguların %100'ü için app-ads.txt bulundu ve satıcı hesapları
+yetkilendirildi"*, son tarama bugün. 24 Ağustos'taki *"eşleşmiyor"* mesajı gerçekten bayatmış.
 
 ---
 
@@ -163,43 +205,26 @@ build'lerden sonra geldi.
 
 ## ⛔ SIRADAKİ İŞ
 
-### 1. iOS incelemesini bekle (aksiyon yok)
-`1.2.0 (10)` `WAITING_FOR_REVIEW`. Reddedilirse gerekçe Resolution Center'da. **Cevap yazma kutusu
-yalnız gönderim `Unresolved Issues`'dayken görünüyor** — `Waiting for Review`'a geçtiği an ASC onu
-kaldırıyor, geriye sadece *Cancel Submission* kalıyor.
+### 1. iOS mağaza sayfasının açılmasını doğrula
+`https://apps.apple.com/app/id6797533621` — Confirm basıldığında hâlâ **404**'tü, Apple'ın yayması
+birkaç saat sürebiliyor. Açılmazsa bakılacak yer *Pricing and Availability → App Availability*.
 
-### 2. Onaydan sonra: reklamın gerçekten döndüğünü gör
-Kod tarafı artık doğru (kimlikler pakette, hesap onaylı) ama **hiçbir platformda ekranda bir reklam
-görülmedi**. İki AdMob uygulaması da *"İnceleme gerekli"* durumunda; Google onayı geçince Android'de
-canlı uygulamadan bakılabilir.
+### 2. iOS AdMob kaydına mağaza listelemesini bağla — sayfa açılır açılmaz
+`DriftStop iOS` (`ca-app-pub-3817081931651779~3993212711`) şu an *"Uygulama mağazası ayrıntıları: —"*
+ve *"Onay durumu: İnceleme gerekli"*. Mağaza sayfası yayına girince **Ekle** ile bağla.
+⚠️ **Paket adıyla arama sonuç vermiyor, mağaza URL'siyle ara** (Android'de bu tuzağa düşülmüştü).
+Bağlandıktan sonra Google'ın uygulama incelemesi birkaç gün sürüyor; o bitene kadar iOS'ta sunum
+sınırlı kalır.
 
-### 3. AdMob doğrulaması — Google'ın taramasını bekliyor, yapılacak bir şey yok
-**Verify app'e basıldı; ekran hâlâ "Doğrulanmadı" diyor ve gerekçesi *"app-ads.txt dosyası
-oluşturmuş olabilirsiniz ancak bilgileriniz AdMob hesabınızdaki bilgilerle eşleşmiyor"*.**
-Bu mesaj **bayat** — dosyanın kendisi byte byte doğru, tekrar teşhis etmeye gerek yok:
+### 3. iOS'ta reklamın döndüğünü gözle doğrula
+Android'de ölçüldü, **iOS'ta hiç görülmedi**. Uygulama App Store'a düşünce bir cihazda bak.
 
-| Kontrol | Sonuç |
-|---|---|
-| `https://mgulcu.me/app-ads.txt` | HTTP **200**, `content-type: text/plain`, 59 byte |
-| İçerik | `google.com, pub-3817081931651779, DIRECT, f08c47fec0942fa0\n` — AdMob'un istediği satırın aynısı, BOM yok |
-| Play listelemesindeki site | `contactWebsite: https://mgulcu.me` — yani AdMob apex'i tarayacak, eşleşiyor |
-| Dosyanın yaşı | 2026-08-24 09:59 UTC'de yayına girdi; AdMob'un taraması **24 saate kadar** sürebiliyor |
+### 4. ASC: sosyal medya yaş derecelendirme soruları
+Cevaplar **7 Eylül 2026**'ya kadar zorunlu. İnceleme bittiği için artık dokunulabilir
+(App Information → sosyal medya soruları).
 
-Sayfadaki **"Güncellemeleri kontrol edin"** düğmesine basıldı, durum değişmedi. Yapılacak tek şey
-beklemek. (Not: `www.mgulcu.me/app-ads.txt` **404** dönüyor; Play apex'i beyan ettiği için sorun
-olmamalı, ama doğrulama günlerce takılırsa ilk bakılacak yer burası.)
-
-### 4. iOS AdMob kaydına mağaza listelemesi bağla — App Store onayından SONRA
-iOS uygulaması **"mağazada listelenmiyor"** olarak oluşturuldu; yayına çıkınca bağlanmalı
-(⚠️ paket adıyla arama sonuç vermiyor, mağaza URL'siyle ara).
-
-### 5. ASC: sosyal medya yaş derecelendirme soruları — **incelemeden SONRA**
-ASC sürüm sayfası *"New Age Ratings Responses Required for Social Media"* uyarısı gösteriyor;
-cevaplar **7 Eylül 2026**'ya kadar zorunlu değil. ⚠️ **Şimdi dokunma:** App Information'daki
-cevapları güncellemek incelemedeki build'i kuyruktan çıkarır.
-
-### 6. Düzeltmeleri dallara yay
-`ios-1.2.0-hotfix` `main`'in önünde. İnceleme sonuçlanınca `main`'e, oradan `monetization-v2`'ye.
+### 5. `intensity-review.csv`
+Hâlâ takipsiz ve `.gitignore`'da değil; `git add -A` yaparken yanlışlıkla girmesin.
 
 ---
 
