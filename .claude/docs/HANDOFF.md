@@ -9,6 +9,51 @@ Plan [`specs/monetization-v2.md`](../specs/monetization-v2.md) ve
 
 ---
 
+## Durum — 2026-08-27 (gece)
+
+### ✅ Play artık altı dilde — metin + görsel
+Uygulama altı dil arayüzü sunuyor ve 175 ülkede satılıyor ama Play'de **iki** listeleme vardı
+(`en-US`, `tr-TR`) ve `tr-TR`'nin **hiç görseli yoktu**. Şimdi:
+
+| Dil | Başlık | Görsel |
+|---|---|---|
+| `en-US` | DriftStop: Motivation Quotes | 5 |
+| `tr-TR` | DriftStop: Motivasyon Sözleri | **4 (yeni)** |
+| `es-ES` | DriftStop: Frases Motivadoras | **4 (yeni)** |
+| `de-DE` | DriftStop: Motivationssprüche | **4 (yeni)** |
+| `fr-FR` | DriftStop: Phrases Motivantes | **4 (yeni)** |
+| `it-IT` | DriftStop: Frasi Motivazionali | **4 (yeni)** |
+
+Metinler çeviri değil, o dilde aranan terimlere göre uyarlama; başlıklar anahtar kelimeyi 30
+karakter sınırında taşıyor. Görseller `store-assets/capture-screenshots.py` ile üretildi
+(tarif ve tuzaklar `STORE-AUTOMATION.md` §2.6). Play listeleme metni/görseli **inceleme
+gerektirmiyor**, dakikalar içinde canlı.
+
+### ⚠️ iOS ASO hazır ama YENİ SÜRÜM bekliyor
+App Store'da yerelleştirme **sadece `en-US` + `en-GB`** — Türk, İspanyol, Alman, Fransız, İtalyan
+kullanıcı İngilizce liste görüyor. Altı dilin metinleri `store-assets/ios/*.json` içinde hazır
+(isim, altyazı, anahtar kelime, promo metni, açıklama — Apple limitleri içinde doğrulandı) ama
+**iOS metadata'sı yeni bir sürüm olmadan değişmiyor.** 1.2.1 kesildiğinde yüklenecek.
+
+En büyük eksik: iOS uygulama adı `DriftStop` — **9/30 karakter**. Play'de Ağustos'tan beri
+`DriftStop: Motivation Quotes` yazıyor. ⚠️ **Apple açıklamayı indekslemiyor**, yalnız
+isim + altyazı + anahtar kelime. TR App Store'da `motivasyon` aramasında ilk 50'de olmamamızın
+sebebi bu (ölçüldü: `motivasyon`, `motivasyon sözleri`, `stoacılık` → yok; `DriftStop` → tek sonuç).
+
+### 🔴 Canlı iOS açıklaması olmayan bir özelliği vaat ediyor
+*"A home screen widget with the quote of the day"* — widget `react-native-android-widget`,
+**yalnız Android'de var**. `store-assets/ios/*.json` bu satırı çıkarıyor; canlı metin hâlâ yanlış.
+Guideline 2.3 (doğru metadata) riski.
+
+### 🔴 Sözlerin %19'unun İngilizce gövdesi yok
+`src/data/quotes.json`'daki 1.000 sözün **194'ünde** `text` alanı Türkçe — `textTr` ile birebir aynı.
+`quoteText.ts` doğru çalışıyor, veri yanlış. Sonuç: **Türk olmayan her kullanıcı** (İngilizce dahil)
+her 5 sözden birinde Türkçe metin görüyor. Ayrıntı ve gerekçe `TODO.md`'de; **kasten düzeltilmedi**,
+194 sözü çevirmek ürünün sesine dair bir karar. Gece çekilen görseller temiz söz çıkana kadar
+yeniden deneyerek bu tuzağı atlattı.
+
+---
+
 ## Durum — 2026-08-26
 
 ### 🎉 iOS ONAYLANDI — ve satışa açılmayı bekliyordu
