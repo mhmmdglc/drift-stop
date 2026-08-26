@@ -277,6 +277,7 @@
     "renewalTerms": "Le paiement est débité de ton compte Apple à la confirmation. L'abonnement se renouvelle automatiquement au même tarif et pour la même durée sauf résiliation au moins 24 heures avant la fin. Gère ou résilie à tout moment dans Réglages → Compte Apple → Abonnements.",
     "renewalTermsAndroid": "Le paiement est débité de ton compte Google Play à la confirmation. L'abonnement se renouvelle automatiquement au même prix et pour la même période, sauf résiliation au moins 24 heures avant la fin. Gère-le ou résilie-le à tout moment dans Google Play → Abonnements.",
     "continueFree": "Continuer avec la version gratuite",
+    "done": "Continuer vers l'application",
     "restoreSuccess": "Achats restaurés.",
     "restoreNothingFound": "Aucun achat précédent trouvé.",
     "buyButton": "Continuer",

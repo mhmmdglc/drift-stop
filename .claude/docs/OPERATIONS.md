@@ -39,7 +39,7 @@ The Google Play Console listing for DriftStop **and** the Expo/EAS project are b
 | Supabase | project ref **`ftohdffebzhrthrpeuos`**, region **`ap-northeast-1`** (Tokyo) | URL `https://ftohdffebzhrthrpeuos.supabase.co` |
 | RevenueCat | project **"DriftStop"** (`proj9019ea60`); Android app `com.driftstop.app` (`app2be5c8cadb`) | An auto-created sample iOS app ("EvolaRoa") exists and is unused — leave it alone |
 | Google Cloud | project **`extreme-lattice-470518-d8`** (display name "My First Project") | Hosts the RevenueCat service account, the Google Play Android Developer API, and the Pub/Sub topic `driftstop-play-notifications` |
-| AdMob | ⚠️ **Two accounts, and the app points at the wrong one** — see the red section below | `app.json` (plugin config) + `EXPO_PUBLIC_ADMOB_*`; `adUnits.ts` serves nothing when an id is missing rather than falling back to test ids |
+| AdMob | publisher **`pub-3817081931651779`** (`authuser=0`) — moved there 2026-08-24; the second account `pub-6963…` is unapproved and no longer referenced | `app.json` (plugin config) + `EXPO_PUBLIC_ADMOB_*`; `adUnits.ts` serves nothing when an id is missing rather than falling back to test ids |
 | Privacy policy site | repo `~/workspace/MyWorkspace/my-site` → `git@github.com:mhmmdglc/my-website.git` | Page source `app/driftstop/privacy/page.tsx`; serves https://mgulcu.me/driftstop/privacy; **auto-deploys on push to `main`** — no manual deploy step |
 | Android upload keystore | `credentials/driftstop-upload.keystore` + `credentials.json` (both gitignored) | See the keystore warning below |
 
@@ -121,32 +121,58 @@ still said `15`, so the next production build would have re-minted `16` and Play
 duplicate. Both numbers were resynced on 2026-08-10. After every production build: `git diff app.json`, then
 commit it.
 
-### 🔴 AdMob: the account table below was WRONG until 2026-08-24 — read this
+### ✅ AdMob: the account was wrong until 2026-08-24, and every id moved that day
 
 The old note said `pub-6963122807813930` was "the account the app actually uses" and
-`pub-3817081931651779` was "a separate, unused entry — consider deleting it". The first half is
-true and the second half is backwards, and together they hid a shipping defect: **the app's ad ids
-belong to an account that is not approved and therefore cannot serve a single ad.**
+`pub-3817081931651779` was "a separate, unused entry — consider deleting it". The first half was
+true and the second half was backwards, and together they hid a shipping defect: **the app's ad ids
+belonged to an account that is not approved and therefore cannot serve a single ad.** The build live
+on Play today (`versionCode 19`) shows **no ads at all**. The code was never at fault — `resolveUnit`
+returns `null` rather than falling back to Google's test ids, which would be a policy violation. The
+revenue was simply zero.
 
 Verified by opening each account in Chrome on 2026-08-24:
 
 | Chrome | Account | Publisher | Reality |
 |---|---|---|---|
-| `authuser=0` | `muhammed.gulcu@gmail.com` | **`pub-3817081931651779`** | ✅ **Works.** Payment profile complete, DriftStop **Android** app (`3768978323`) with 2 live ad units, earnings recorded last month |
-| `authuser=1` | `muhammed.gulcu.x@gmail.com` | `pub-6963122807813930` | ❌ **"Hesabınız onaylanmadı."** Blocked behind a policy-acceptance checkbox the owner must tick |
+| `authuser=0` | `muhammed.gulcu@gmail.com` | **`pub-3817081931651779`** | ✅ **Works.** Payment profile complete, earnings recorded last month. **This is the one the app uses now.** |
+| `authuser=1` | `muhammed.gulcu.x@gmail.com` | `pub-6963122807813930` | ❌ **"Hesabınız onaylanmadı."** Blocked behind a policy-acceptance checkbox the owner must tick. No longer referenced anywhere in the repo |
 | — | `evolaroa.app@gmail.com` | — | Unrelated to DriftStop |
 
-⚠️ **`app.json` and `.env` still point at `pub-6963…`** — the unapproved one. Both AdMob app ids in
-the `react-native-google-mobile-ads` plugin block and all four `EXPO_PUBLIC_ADMOB_*` unit ids.
-So the build live on Play today shows **no ads at all**. The code is behaving correctly:
-`resolveUnit` returns `null` rather than falling back to Google's test ids, which would be a policy
-violation. The revenue is simply zero.
+**The ids now in use** — all six read off the AdMob console screen, not assumed:
 
-**Owner's decision (2026-08-24): switch to `pub-3817081931651779`.** Remaining work is in
-`HANDOFF.md`. It needs a **new build** on both platforms — ad ids are compiled in, not OTA.
+| What | Id | Origin |
+|---|---|---|
+| Android app | `ca-app-pub-3817081931651779~3768978323` | existed |
+| Android banner | `ca-app-pub-3817081931651779/3409885671` | existed |
+| Android interstitial | `ca-app-pub-3817081931651779/3532753144` | existed |
+| iOS app ("DriftStop iOS") | `ca-app-pub-3817081931651779~3993212711` | **created 2026-08-24** |
+| iOS banner | `ca-app-pub-3817081931651779/6401708030` | **created 2026-08-24** |
+| iOS interstitial | `ca-app-pub-3817081931651779/3282766272` | **created 2026-08-24** |
 
-⚠️ **The working account has no iOS app.** Only `DriftStop (Android)` exists there; an iOS app and
-its two ad units have to be created before iOS can serve ads.
+The two app ids live in `app.json`'s `react-native-google-mobile-ads` block; the four unit ids are
+`EXPO_PUBLIC_ADMOB_*` in `.env` **and** in EAS cloud env for `production` + `preview` (`development`
+defines none on purpose — `__DEV__` builds use Google's test units). `src/constants/__tests__/admobPublisher.test.ts`
+now fails if any one of them drifts to a different publisher, which is exactly how the shipped
+defect looked: nothing broken, just silent.
+
+⚠️ **Ad ids are compiled in, not OTA**, and they only reach the binary if they are read as
+*static* `process.env.EXPO_PUBLIC_…` — see the trap in `HANDOFF.md`. Android `versionCode 22` and iOS
+`1.2.0 (10)` are the first builds where the ids are actually present in the JS bundle; verify with
+`strings -a` on the bundle, never from `.env`.
+
+⚠️ **EAS's free plan ran out of Android builds on 2026-08-24** (resets 2026-09-01), so 22 was built
+**locally**: `eas build -p android --profile production --local` with
+`JAVA_HOME=/Applications/Android Studio.app/Contents/jbr/Contents/Home` (there is no other JDK on
+this Mac) and `ANDROID_HOME=~/Library/Android/sdk`. Same credentials.json signing, ~5 minutes, no
+cloud quota. Upload with `node scripts/play-upload.js <aab> production`.
+
+⚠️ **Serving is still limited on both.** Both AdMob apps read *"Onay durumu: İnceleme gerekli"* —
+Google reviews every new app before it serves at full volume, usually a few days. The Android entry
+additionally reads *"Uygulama doğrulama: Doğrulanmadı"* with a **Verify app** button; `app-ads.txt`
+is published (below) so the crawl should clear it, but nobody has clicked Verify. The iOS entry has
+**no store listing attached** — it was created as "not listed on a supported app store" because
+DriftStop is not on the App Store yet. Attach the store listing once it ships.
 
 ### AdMob store link + app-ads.txt — both done 2026-08-24
 
@@ -688,7 +714,7 @@ is as far as the products can get on their own; they ride along with the version
 | `ITSAppUsesNonExemptEncryption` | `false` (in `ios.infoPlist`) — pre-answers the export-compliance question |
 | Entitlements | `com.apple.developer.applesignin: ["Default"]` — present in the introspected config *and* in `credentials/driftstop-appstore.mobileprovision` |
 | URL schemes | `driftstop`, `com.driftstop.app`, and the reversed Google iOS client — verify with `expo config --type introspect`, never by reading the diff |
-| AdMob | real app id `ca-app-pub-6963122807813930~4613840458`; both iOS unit ids registered in EAS `production` |
+| AdMob | real app id `ca-app-pub-3817081931651779~3993212711`; both iOS unit ids registered in EAS `production` + `preview` |
 | RevenueCat | `EXPO_PUBLIC_REVENUECAT_IOS_API_KEY` present in `production` + `preview` (absent from `development` — see §4) |
 
 ### Pre-submission audit — what an iOS submission actually needs

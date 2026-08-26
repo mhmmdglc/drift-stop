@@ -51,6 +51,18 @@ export default function PaywallScreen() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [restoring, setRestoring] = useState(false);
   const [message, setMessage] = useState<{ text: string; tone: 'accent' | 'fire' } | null>(null);
+  // Satın alma bittiği ANDA doğru olan tek şey bu bayrak. `useEntitlement`
+  // RevenueCat'ten gelen müşteri bilgisini yenileyene kadar `isSubscribed`
+  // hâlâ false olabilir; ekrandan çıkış yolunu ona bağlamak, App Review'un
+  // yakaladığı "satın aldım ama çıkamıyorum" durumunu geri getirir.
+  const [purchased, setPurchased] = useState(false);
+
+  // Paywall her yerden açılabiliyor (onboarding, ayarlar, reklam kartı);
+  // `back()` yığın boşsa hiçbir şey yapmaz, o yüzden köke düşülüyor.
+  const dismiss = () => {
+    if (router.canGoBack()) router.back();
+    else router.replace('/');
+  };
 
   const buy = async (pkg: PurchasesPackage) => {
     setBusyId(pkg.identifier);
@@ -81,6 +93,13 @@ export default function PaywallScreen() {
           : proMessage,
       tone: 'accent',
     });
+    // App Review 1.2.0 (8) reddi (Guideline 4, 2026-08-24): "satın alma
+    // başarılı olduktan sonra, uygulamayı kapatmadıkça bu ekrandan çıkmanın
+    // yolu yok". Otomatik `router.back()` YAPILMIYOR: misafir kullanıcıya
+    // "premium sözler için giriş yap" onayı tam da burada gösteriliyor ve
+    // ekranı anında kapatmak o cümleyi okunmadan yok ederdi. Bunun yerine
+    // mesajın altında açık bir çıkış düğmesi beliriyor.
+    setPurchased(true);
   };
 
   const restore = async () => {
@@ -106,18 +125,21 @@ export default function PaywallScreen() {
   );
 
   const restoreDisabled = restoring || !configured;
+  // "Maybe later" / "Continue with the free version" etiketleri PARA ÖDEMİŞ
+  // birine gösterilince yanıltıcı oluyor — denetçi de tam olarak bunu yazdı.
+  const entitled = purchased || isSubscribed || isAdsRemoved;
 
   return (
     <PaperBackground>
       <SafeAreaView style={styles.safe}>
         <View style={styles.header}>
           <Pressable
-            onPress={() => router.back()}
+            onPress={dismiss}
             hitSlop={12}
             accessibilityRole="button"
-            accessibilityLabel={t('paywall.skip')}>
+            accessibilityLabel={entitled ? t('common.close') : t('paywall.skip')}>
             <ThemedText variant="label" tone="textMuted">
-              {t('paywall.skip')}
+              {entitled ? t('common.close') : t('paywall.skip')}
             </ThemedText>
           </Pressable>
         </View>
@@ -327,21 +349,41 @@ export default function PaywallScreen() {
             </ThemedText>
           )}
 
-          {/* Ücretsiz yola açık bir çıkış. Üstteki "Maybe later" bağlantısı
-              vardı ama ekranın en tepesinde ve sönüktü; fiyatları okuduktan
-              sonra kullanıcının gözü orada değil. Satın almanın zorunlu
-              olmadığını satın alma akışının İÇİNDE söylemek, 3.1.2'nin
-              "kullanıcıyı yanıltma" maddesinin de doğru tarafında durmak. */}
-          <Pressable
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))}
-            hitSlop={12}
-            accessibilityRole="button"
-            accessibilityLabel={t('paywall.continueFree')}
-            style={styles.continueFreeBtn}>
-            <ThemedText variant="body" tone="textMuted">
-              {t('paywall.continueFree')}
-            </ThemedText>
-          </Pressable>
+          {entitled ? (
+            /* Hak sahibi olan kullanıcının çıkışı ekrandaki EN BELİRGİN eylem:
+               satın alma satırlarıyla aynı dolgulu/çerçeveli kart dili, sönük
+               bir metin bağlantısı değil. Guideline 4 reddinin düzeltmesi bu. */
+            <Pressable
+              testID="paywallDone"
+              onPress={dismiss}
+              accessibilityRole="button"
+              accessibilityLabel={t('paywall.done')}
+              style={({ pressed }) => [
+                styles.doneBtn,
+                { backgroundColor: colors.surface, opacity: pressed ? 0.85 : 1 },
+              ]}>
+              <WobblyBorder stroke={colors.accent} strokeWidth={1.8} />
+              <ThemedText variant="body" tone="accent">
+                {t('paywall.done')}
+              </ThemedText>
+            </Pressable>
+          ) : (
+            /* Ücretsiz yola açık bir çıkış. Üstteki "Maybe later" bağlantısı
+               vardı ama ekranın en tepesinde ve sönüktü; fiyatları okuduktan
+               sonra kullanıcının gözü orada değil. Satın almanın zorunlu
+               olmadığını satın alma akışının İÇİNDE söylemek, 3.1.2'nin
+               "kullanıcıyı yanıltma" maddesinin de doğru tarafında durmak. */
+            <Pressable
+              onPress={dismiss}
+              hitSlop={12}
+              accessibilityRole="button"
+              accessibilityLabel={t('paywall.continueFree')}
+              style={styles.continueFreeBtn}>
+              <ThemedText variant="body" tone="textMuted">
+                {t('paywall.continueFree')}
+              </ThemedText>
+            </Pressable>
+          )}
 
           {/* Kurtarma eylemi, satın alma satırlarından daha "buton" görünmemeli —
               eskiden ekrandaki tek buton buydu ve hiyerarşi tersti. */}
@@ -456,6 +498,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: Spacing.lg,
     paddingVertical: Spacing.sm,
+  },
+  doneBtn: {
+    position: 'relative',
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    marginTop: Spacing.lg,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
   },
   billedText: {
     textAlign: 'right',

@@ -16,14 +16,24 @@ import { TestIds } from 'react-native-google-mobile-ads';
  * değiştirmeye gerek yok — cihazında test reklamı görmek istersen AdMob'da
  * cihazını "test device" olarak kaydet, gerçek birim id'leriyle test reklamı
  * alırsın.
+ *
+ * ⚠️⚠️ HER BİRİ **DÜZ, STATİK** `process.env.EXPO_PUBLIC_…` OLARAK YAZILMALI.
+ * Burada bir zamanlar `const env = (key) => process.env[key]` yardımcı işlevi
+ * vardı ve **hiçbir reklam birimi paketin içine girmiyordu**: `babel-preset-expo`
+ * yalnızca statik üye erişimini (`process.env.X`) derleme anında değerle
+ * değiştiriyor, hesaplanmış erişimi (`process.env[key]`) olduğu gibi bırakıyor.
+ * Cihazda `process.env` diye bir şey olmadığı için değer `undefined` kalıyor,
+ * `resolveUnit` `null` dönüyor ve uygulama sessizce **tek bir reklam bile
+ * göstermiyordu**. Testler yeşildi (jest gerçek `process.env`i okur, Babel
+ * dönüşümü çalışmaz), EAS build logu da dört değişkeni "yüklendi" diye yazıyordu.
+ * Tek kanıt derlenmiş paketti: 2026-08-24'te `.aab` içindeki Hermes paketinde
+ * birim id'lerinin hiç geçmediği görüldü. `noDynamicEnvAccess.test.ts` bekçisi.
  */
-const env = (key: string): string => (process.env[key] ?? '').trim();
-
 const REAL = {
-  bannerAndroid: env('EXPO_PUBLIC_ADMOB_BANNER_ANDROID'),
-  bannerIos: env('EXPO_PUBLIC_ADMOB_BANNER_IOS'),
-  interstitialAndroid: env('EXPO_PUBLIC_ADMOB_INTERSTITIAL_ANDROID'),
-  interstitialIos: env('EXPO_PUBLIC_ADMOB_INTERSTITIAL_IOS'),
+  bannerAndroid: (process.env.EXPO_PUBLIC_ADMOB_BANNER_ANDROID ?? '').trim(),
+  bannerIos: (process.env.EXPO_PUBLIC_ADMOB_BANNER_IOS ?? '').trim(),
+  interstitialAndroid: (process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_ANDROID ?? '').trim(),
+  interstitialIos: (process.env.EXPO_PUBLIC_ADMOB_INTERSTITIAL_IOS ?? '').trim(),
 };
 
 const pick = (android: string, ios: string): string =>

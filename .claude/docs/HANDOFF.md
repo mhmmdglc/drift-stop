@@ -1,4 +1,4 @@
-# Devir notu — 2026-08-24
+# Devir notu — 2026-08-26 (24 Ağustos oturumunun üstüne)
 
 Yeni oturum bu dosyayı okuyup kaldığı yerden devam edebilir. Bu, 2026-08-03 tarihli
 devir notunun yerini alıyor; oradaki App Store gönderim tarifleri ve API tuzakları
@@ -9,12 +9,60 @@ Plan [`specs/monetization-v2.md`](../specs/monetization-v2.md) ve
 
 ---
 
+## Durum — 2026-08-26
+
+### 🎉 iOS ONAYLANDI — ve satışa açılmayı bekliyordu
+`1.2.0 (10)` App Review'dan **geçti**, sürüm `READY_FOR_SALE` / *"Ready for Distribution"*.
+
+⚠️ **Ama uygulama App Store'da görünmüyordu ve sebebi inceleme değildi:**
+
+> *"This app was removed from sale from the App Store. Go to Pricing and Availability to add it back."*
+
+**App Availability hiç kurulmamıştı.** Fiyat tanımlıydı (175 ülke), sürüm onaylıydı, ama uygulama
+hiçbir ülkede satışta değildi — `apps.apple.com/app/id6797533621` **404** dönüyordu. Bu, 24
+Ağustos'ta Android'de yaşanan *"targeting no countries"* tuzağının **Apple'daki tam karşılığı**:
+onaylanmış bir sürüm, hiçbir ülkeye hedeflenmemiş.
+
+Çözüm: *Pricing and Availability → Set Up Availability → All Countries or Regions → Confirm*
+(2026-08-26'da sahibi bastı). Sonrasında `availableInNewTerritories: true` ve 175 ülke kaydı
+API'den doğrulandı. Mağaza sayfasının açılması Apple tarafında birkaç saat sürebiliyor.
+
+**➡️ Ders: `READY_FOR_SALE` "mağazada" demek DEĞİL.** Sürüm durumu ile App Availability iki ayrı
+şey; ikisini birden kontrol et.
+
+### 🎉 Android reklamları GERÇEKTEN dönüyor
+`versionCode 22` (reklam kimliklerini taşıyan ilk build) canlıya çıktıktan sonra AdMob'da ölçüldü:
+
+| | Son 7 gün | Önceki 7 gün |
+|---|---|---|
+| İstekler | **7** | 0 |
+| Gösterimler | **2** | 0 |
+| Eşleşme oranı | %100 | — |
+| eBGBM | ₺9,61 | — |
+| Tahmini kazanç | ₺0,02 | ₺0,00 |
+
+Rakamlar küçük (build iki günlük, kullanıcılar henüz güncellemedi) ama **boru hattı ilk kez uçtan
+uca çalışıyor**: istek → `app-ads.txt` ile yetkilendirme → gösterim → gelir. Daha önce istek sayısı
+**sıfırdı**, çünkü `resolveUnit` null dönüyor ve hiç reklam nesnesi kurulmuyordu.
+
+AdMob Android kaydı da temizlendi: **Uygulama doğrulama: Doğrulandı**, **Onay durumu: Hazır**.
+`app-ads.txt` panosu: *"Sorguların %100'ü için app-ads.txt bulundu ve satıcı hesapları
+yetkilendirildi"*, son tarama bugün. 24 Ağustos'taki *"eşleşmiyor"* mesajı gerçekten bayatmış.
+
+---
+
 ## Durum — 2026-08-24
 
 ### 🎉 Android CANLI
 
-`1.2.0 (versionCode 19)` **Play production'da**, tüm ülkeler, tam yayın.
+`1.2.0 (versionCode 22)` **Play production'da**, tüm ülkeler, %100 yayın.
 https://play.google.com/store/apps/details?id=com.driftstop.app
+
+**22, reklam kimliklerini gerçekten taşıyan İLK build.** 19 çalışan hesabın
+kimliklerini taşımıyordu; 20 ve 21 hiç yayınlanmadı (20'yi EAS kota reddi, 21'i
+paketin içinde reklam id'si olmadığını kanıtlayan lokal build tüketti). 22 lokalde
+`eas build --local` ile alındı — Android Studio'nun JDK 21'i, EAS bulut kotasına
+hiç dokunmadan; `scripts/play-upload.js … production` ile çıkıldı.
 
 Yayın için üç kapı arka arkaya açıldı, üçü de ilk denemede tıkanmıştı:
 1. **Üretim erişimi** — Google'ın başvuru incelemesi (Çarşamba başvurulmuş, o gün onaylanmış)
@@ -26,53 +74,117 @@ Yayın için üç kapı arka arkaya açıldı, üçü de ilk denemede tıkanmı�
 ⚠️ **Yayınlama tamamen otomatik** — hesapta "yönetilen yayınlama" KAPALI. `tracks.update` +
 `commit` yaptığın an yayına gidiyor, ayrıca "incelemeye gönder" adımı yok.
 
-### 🔴 iOS build 8 REDDEDİLDİ (2026-08-24) — iki yeni gerekçe
+### ✅ iOS build 8'in iki reddi de düzeltildi → **1.2.0 (10)**
 
-**İyi haber önce: SIWA artık yazmıyor.** Build 8'deki iki düzeltme (sessiz yutma + `try/finally`
-eksikliğinden kaynaklanan kalıcı ölü düğme) işe yaradı, denetçi o adımı geçti. Bu tur **yalnız
-sürüm kalemi** reddedildi; üç abonelik kalemi `Ready for Review` durumunda.
+**SIWA artık yazmıyor** (build 8'deki iki düzeltme tuttu, denetçi o adımı geçti). Bu turda yalnız
+sürüm kalemi reddedilmişti; üç abonelik kalemi `Ready for Review`'da kaldı.
 
-**1. Guideline 2.5.4 — bildirilen ama kullanılmayan arka plan sesi**
+**1. Guideline 2.5.4 — bildirilen ama kullanılmayan arka plan sesi.** `app.json` `UIBackgroundModes`
+yazmıyordu; anahtarı binary'ye **`expo-audio` config plugin'i** koyuyordu: düz string
+(`"expo-audio"`) olarak kaydedilince kendi `enableBackgroundPlayback: true` varsayılanını uyguluyor.
+Paket `src/` içinde **hiç kullanılmıyordu** ve hiçbir bağımlılık ona ihtiyaç duymuyordu, o yüzden
+`enableBackgroundPlayback: false` demek yerine **tamamen kaldırıldı**. Aynı eklenti bedavaya iOS'a
+`NSMicrophoneUsageDescription`, Android'e `RECORD_AUDIO` + `MODIFY_AUDIO_SETTINGS` de ekliyordu;
+üçü de gitti.
 
-> *"The app declares support for audio in the UIBackgroundModes key… but we are unable to play any
-> audible content when the app is running in the background."*
+**2. Guideline 4 — satın alma sonrası paywall'dan çıkış yok.** `buy()` başarıda artık bir `purchased`
+bayrağı kaldırıyor. Hak sahibi olan kullanıcıya, mesajın hemen altında **paket kartlarıyla aynı
+görsel dilde belirgin bir "Continue to the app" düğmesi** çıkıyor; üstteki bağlantı *"Maybe later"*
+yerine **"Close"** oluyor; *"Continue with the free version"* ekrandan çekiliyor (ödemiş birine
+söylenecek söz değil). **Otomatik kapatma bilerek yapılmadı:** misafirin "giriş yap ki premium
+koleksiyonlar insin" onayı tam o ekranda gösteriliyor, anında `back()` onu okunmadan yok ederdi.
 
-**Teşhis edildi (aramaya gerek yok):**
-- `app.json`'ın `infoPlist`'inde `UIBackgroundModes` **yok**, ama gönderilen binary'de **`['audio']` var**
-- Kaynak: `expo-audio` config plugin'i. `node_modules/expo-audio/plugin/build/withAudio.js` →
-  **`enableBackgroundPlayback` varsayılanı `true`** ve düz string olarak (`"expo-audio"`) kaydedilince
-  bu varsayılan uygulanıp `audio` ekleniyor
-- **`expo-audio` `src/` içinde HİÇ kullanılmıyor** (grep sıfır sonuç)
+**Binary'den doğrulandı — build 8 ile build 9/10'un `Info.plist` farkı sadece şu üç şey:**
 
-**Düzeltme (biri):**
-```jsonc
-// app.json → plugins
-["expo-audio", { "enableBackgroundPlayback": false }]
-// ya da gerçekten kullanılmıyorsa plugin'i ve bağımlılığı tamamen kaldır
-```
-⚠️ Düzelttikten sonra **binary'den doğrula**, `app.json`'dan değil:
-`unzip -p <ipa> "Payload/*.app/Info.plist" | plutil -convert json -o - -` → `UIBackgroundModes`
-anahtarı hiç görünmemeli. (Bu, projenin "düz string plugin sessizce farklı davranır" tuzağının
-tersi: burada düz string **istemediğimiz** varsayılanı getiriyor.)
+| Anahtar | build 8 | build 9 |
+|---|---|---|
+| `UIBackgroundModes` | `["audio"]` ← reddin sebebi | **yok** |
+| `NSMicrophoneUsageDescription` | `"Allow DriftStop to access your microphone"` | **yok** |
+| `GADApplicationIdentifier` | `…6963122807813930~4613840458` | `…3817081931651779~3993212711` |
+| `CFBundleVersion` | `8` | `9`, sonra `10` |
 
-**2. Guideline 4 — satın alma sonrası paywall'dan çıkış yok**
+Başka hiçbir anahtar değişmedi, hiçbir anahtar eklenmedi. (İki `.ipa` da indirilip
+`plutil -convert json` ile karşılaştırıldı — `app.json`'a bakılarak değil.)
 
-> *"After we make a successful purchase… there is no option to leave the purchase screen unless
-> tapping on Maybe Later or Continue with the free version, unless user closes the app."*
+⚠️ `CFBundleIconName` **iki build'de de yok**. Bu bir gerileme değil, build 8 bu hâliyle yüklenip
+incelemeye girdi; ama bir gün ITMS-90713 gelirse sebebi burada yazıyor.
 
-Haklılar: `paywall.tsx` → `buy()` başarıda **sadece mesaj gösteriyor, hiçbir yere gitmiyor**
-(karşılaştır: `social()` başarıda `router.back()` yapıyor). Ekranda kalan tek çıkışlar
-"Maybe later" ve "Continue with the free version" — ve bu iki etiket **satın almış** biri için
-anlamsız, hatta yanıltıcı.
+**✅ Ekranda görüldü (iPhone 17 Pro simülatörü, Release build).** RevenueCat panelinden QA
+müşterisine (`$RCAnonymousID:a63aa173…`) **bir günlük promosyon `pro` hakkı** verildi, uygulama
+yeniden başlatıldı, paywall'a `driftstop://paywall` ile girildi:
 
-**Öneri:** başarılı satın almadan sonra ya otomatik kapat, ya da net bir **"Bitti / Devam"**
-düğmesi göster; en azından kullanıcı hak sahibi olduğunda üstteki "Maybe later" etiketi
-"Kapat"a dönmeli. Hangi çözüm seçilirse seçilsin **koruma testi** yazılmalı — bu ekran üç kez
-reddedildi ve her seferinde testler yeşildi.
+- üst köşe *"Belki sonra"* değil **"Kapat"**
+- *"Zaten Pro'sun. Desteğin için teşekkürler!"*
+- çerçeveli, ekranın en belirgin eylemi olan **"Uygulamaya dön"** düğmesi
+- *"Ücretsiz sürümle devam et"* **ekranda yok**
+- düğmeye basıldı → paywall kapandı, Ayarlar'a dönüldü
 
-**Yeniden gönderme:** yeni build → sürüme bağla → sürüm sayfasında **"Update Review"** (reddi
-temizleyen tek şey bu; API `409` veriyor) → **"Resubmit to App Review"**. Bu turda abonelikler
-`Ready for Review`'da kaldığı için muhtemelen yalnız sürüm kalemini güncellemek yetecek.
+Hak sahibi olmayan hâli de aynı oturumda görüldü: paketler, yenileme beyanı, *"Belki sonra"* ve
+*"Ücretsiz sürümle devam et"* yerli yerinde, **"Uygulamaya dön" yok**. (Promosyon hakkı 24 saatte
+kendiliğinden düşüyor; istenirse panelden erken geri alınabilir.)
+
+⚠️ **Gerçek bir satın alma yine denenmedi** — simülatörde StoreKit yok. Sınanan şey "hak sahibi
+olan kullanıcı bu ekrandan çıkabiliyor mu"; `buy()` başarısının aynı durumu ürettiğini testler
+sabitliyor.
+
+**Koruma testleri** — ikisi de düzeltme geri alınarak kırdırıldı:
+`src/__tests__/backgroundAudioConfig.test.ts` (düz-string eklenti kaydını da yakalar),
+`src/__tests__/paywallExitAfterPurchase.test.tsx` (8 test: çıkış var mı, iptal/hata durumunda
+çıkmıyor mu, yığın boşken köke düşüyor mu, misafir onayı ekranda kalıyor mu).
+
+**✅ İncelemede — `1.2.0 (10)`, gönderim `a252a46b-6a51-4834-a6bf-2cf1d1de5d95`.**
+
+Önce build 9 gönderildi (11:00 UTC), sonra reklam kimliklerinin pakete hiç girmediği ortaya
+çıkınca **build 10 ile değiştirildi**. Kuyruk sıfırlandı; kazanç, iOS'un reklamları gerçekten
+çalışan ilk build'iyle incelemeye girmesi.
+
+**Build 9 → 10 takas tarifi** (bir dahakine aynen işe yarar):
+1. `.ipa` `xcrun altool --upload-app` (17 sn), Apple işlemesi **~7 dk** — build ASC API'sinde
+   `VALID` görünmeden bağlamaya çalışma
+2. `PATCH /v1/reviewSubmissions/{id}` `{attributes:{canceled:true}}` → `CANCELING`, birkaç saniyede
+   `COMPLETE`
+3. `PATCH /v1/appStoreVersions/{id}/relationships/build` → sürüm `PREPARE_FOR_SUBMISSION`, build 10
+4. Sürüm sayfasında **"Add for Review"** → yeni bir **taslak gönderim** oluşuyor
+5. ⚠️ **Gönderimi iptal etmek abonelikleri `Developer Rejected`'a düşürüyor** ve otomatik geri
+   gelmiyorlar. Abonelik grubu **ve iki aboneliğin her biri** ayrı ayrı sayfalarından
+   *Add for Review → Draft iOS Submission* ile taslağa eklenmeli. Taslak paneli 4 kalem
+   göstermeden **Submit'e basma** — yoksa iOS hiçbir şey satamayan bir paywall'la yayına girer
+6. **"Submit for Review"**
+
+Şu an dört kalemin dördü de `READY_FOR_REVIEW`, sürüm ve gönderim `WAITING_FOR_REVIEW`.
+
+⚠️ **Metadata'ya dokunma** — ASO düzenlemek build'i incelemeden çıkarır.
+
+### ✅ AdMob çalışan hesaba taşındı ve iki platforma da çıktı
+
+`pub-3817081931651779` (`authuser=0`) artık tek yayıncı. O hesapta **iOS uygulaması yoktu**;
+"DriftStop iOS" ve iki reklam birimi oluşturuldu. Altı kimlik de konsol ekranından okundu:
+
+| | id |
+|---|---|
+| Android app | `ca-app-pub-3817081931651779~3768978323` |
+| Android banner / geçiş | `…/3409885671` · `…/3532753144` |
+| iOS app | `ca-app-pub-3817081931651779~3993212711` |
+| iOS banner / geçiş | `…/6401708030` · `…/3282766272` |
+
+`app.json` + `.env` + EAS `production`/`preview` güncellendi (`development` bilerek boş — `__DEV__`
+Google'ın test birimlerini kullanıyor). `src/constants/__tests__/admobPublisher.test.ts` kimliklerden
+biri başka yayıncıya kayarsa kırılıyor.
+
+**EAS'in ücretsiz Android kotası doluydu (1 Eylül'de yenileniyor), o yüzden `versionCode 22`
+lokalde alındı** — Android Studio'nun içindeki JDK 21 ile `eas build --local`, buluta hiç
+dokunmadan, 4dk38sn. `scripts/play-upload.js … production` ile %100 yayına çıktı. 20 ve 21
+tüketilip yayınlanmadı (20: kota reddi, 21: reklam id'lerinin pakette olmadığını kanıtlayan build).
+
+⚠️ **Sadece hesabı değiştirmek yetmezdi.** Aynı gün `process.env[key]` tuzağı bulundu (aşağıda);
+o düzeltilmeden hiçbir build reklam gösteremiyordu. Android 22 ve iOS 10 ikisini birden taşıyan
+ilk build'ler.
+
+⚠️ **Sunum iki tarafta da sınırlı.** İki AdMob uygulaması da *"Onay durumu: İnceleme gerekli"*
+diyor — Google her yeni uygulamayı tam hacimde sunmadan önce inceliyor (birkaç gün). Android
+kaydında ayrıca *"Uygulama doğrulama: Doğrulanmadı"* ve bir **Verify app** düğmesi var; `app-ads.txt`
+yayında olduğu için tarama bunu temizlemeli ama **düğmeye basılmadı** (politika beyanı içerebilir,
+sahibin işi). iOS kaydına **mağaza listelemesi bağlı değil** — App Store'a çıkınca bağlanmalı.
 
 ### ✅ Her iki canlı build de TEMİZ
 
@@ -86,45 +198,33 @@ build'lerden sonra geldi.
 | Dal | Commit | Not |
 |---|---|---|
 | `main` | mağazadaki kodla aynı | 2026-08-24'te 71 commit ilerletildi, artık gerçeği yansıtıyor |
-| `ios-1.2.0-hotfix` | `main` ile aynı | iOS build'leri buradan çıkıyor |
+| `ios-1.2.0-hotfix` | `main` + 4 | iOS build'leri buradan çıkıyor. **Build 9'un düzeltmeleri burada, `main`'de değil** — inceleme sonuçlanınca `main`'e ve `monetization-v2`'ye alınmalı |
 | `monetization-v2` | `main`'i içerir, +41 | **Cihaz QA'sı yapılmadan `main`'e alınmamalı** |
 
 ---
 
-## ⛔ SIRADAKİ İŞ — AdMob'u çalışan hesaba taşı (sahip onayladı)
+## ⛔ SIRADAKİ İŞ
 
-**Sorun:** uygulamanın reklam kimlikleri `pub-6963122807813930`'dan, ama o hesap
-**"Hesabınız onaylanmadı"** durumunda. Yani **bugün Play'de canlı olan build tek bir reklam bile
-gösteremiyor.** Kod doğru davranıyor (`resolveUnit` gerçek id yoksa reklam göstermiyor, Google'ın
-test id'lerine düşmüyor — o bir politika ihlali olurdu); gelir sadece sıfır.
+### 1. iOS mağaza sayfasının açılmasını doğrula
+`https://apps.apple.com/app/id6797533621` — Confirm basıldığında hâlâ **404**'tü, Apple'ın yayması
+birkaç saat sürebiliyor. Açılmazsa bakılacak yer *Pricing and Availability → App Availability*.
 
-Detaylı hesap tablosu `OPERATIONS.md`'de (kırmızı bölüm). Özet: **`authuser=0` /
-`pub-3817081931651779` çalışıyor**, DriftStop Android uygulaması (`3768978323`) ve 2 reklam birimi
-orada, ödeme profili tamam.
+### 2. iOS AdMob kaydına mağaza listelemesini bağla — sayfa açılır açılmaz
+`DriftStop iOS` (`ca-app-pub-3817081931651779~3993212711`) şu an *"Uygulama mağazası ayrıntıları: —"*
+ve *"Onay durumu: İnceleme gerekli"*. Mağaza sayfası yayına girince **Ekle** ile bağla.
+⚠️ **Paket adıyla arama sonuç vermiyor, mağaza URL'siyle ara** (Android'de bu tuzağa düşülmüştü).
+Bağlandıktan sonra Google'ın uygulama incelemesi birkaç gün sürüyor; o bitene kadar iOS'ta sunum
+sınırlı kalır.
 
-**Bugün yapılanlar (mağaza tarafı hazır):**
-- ✅ AdMob mağaza bağlantısı eklendi — Play'e çıkınca mümkün oldu.
-  ⚠️ **Paket adıyla arama sonuç vermiyor, mağaza URL'siyle ara.**
-- ✅ `app-ads.txt` yayında: https://mgulcu.me/app-ads.txt →
-  `google.com, pub-3817081931651779, DIRECT, f08c47fec0942fa0`
-  (`~/workspace/MyWorkspace/my-site`, `public/app-ads.txt`, push'ta otomatik deploy).
-  Play listelemesindeki tek dış alan adı `mgulcu.me`, yani AdMob doğru yeri tarayacak.
-- ⏳ AdMob doğrulaması Google'ın taramasını bekliyor (≤24 saat)
+### 3. iOS'ta reklamın döndüğünü gözle doğrula
+Android'de ölçüldü, **iOS'ta hiç görülmedi**. Uygulama App Store'a düşünce bir cihazda bak.
 
-**Yapılacaklar:**
-1. `authuser=0`'daki DriftStop Android uygulamasının **tam uygulama kimliğini** ve **2 reklam
-   biriminin id'lerini** al (`ca-app-pub-3817081931651779~…` ve `/…`)
-2. O hesapta **iOS uygulaması YOK** — iOS uygulaması + banner/interstitial birimleri oluştur
-3. `app.json` → `react-native-google-mobile-ads` bloğundaki `androidAppId` / `iosAppId`
-4. `.env` **ve** `eas env:create` ile üç ortam — dört `EXPO_PUBLIC_ADMOB_*` birimi
-   ⚠️ `.env` EAS'in bulut derleyicilerine ULAŞMIYOR; ikisini de güncellemek şart
-5. Yeni Android build → Play production'a güncelleme (artık kademeli yayın **mümkün**, ilk sürüm
-   değil). iOS için build 8'in sonucunu bekle, sonra aynı değişiklikle yeni build
-6. `OPERATIONS.md`'deki kırmızı bölümü "çözüldü" diye güncelle
+### 4. ASC: sosyal medya yaş derecelendirme soruları
+Cevaplar **7 Eylül 2026**'ya kadar zorunlu. İnceleme bittiği için artık dokunulabilir
+(App Information → sosyal medya soruları).
 
-**Alternatif (sahip reddetti ama duruyor):** `pub-6963…` hesabını onaylatmak — `authuser=1`'de
-politika onay kutusu + *Yeniden gönder*. Kod değişmez ama Google'ın onayı belirsiz sürede.
-Politika beyanı olduğu için ajan işaretleyemez.
+### 5. `intensity-review.csv`
+Hâlâ takipsiz ve `.gitignore`'da değil; `git add -A` yaparken yanlışlıkla girmesin.
 
 ---
 
@@ -169,6 +269,9 @@ Politika beyanı olduğu için ajan işaretleyemez.
 | `8ca889f` `8172137` | **İmzalama kimliği** ASC API'siyle üretildi; simülatörde SIWA'nın neden imkânsız olduğu |
 | `368e504` `fcdcd85` `71394e6` | Aynı iki düzeltme izole dala alındı → **iOS build 8** |
 | — | **Android production'a çıkarıldı** (`versionCode 19`), Play ASO (`en-US` + `tr-TR`), AdMob mağaza bağlantısı, `app-ads.txt` |
+| `f80dd4e` | **Build 8'in iki reddi** — `expo-audio` kaldırıldı, paywall'a satın alma sonrası çıkış |
+| `c1d15ca` | **AdMob `pub-3817…`'e taşındı** + iOS uygulaması/birimleri oluşturuldu, yayıncı bekçisi |
+| `f1d355d` | iOS buildNumber 9 (Android sayacı 20'de, tüketilmedi) |
 
 ---
 
@@ -220,6 +323,63 @@ Ya rotasyona sokulmalı ya vaat dürüstleştirilmeli. Madde 1 (7'ye çıkarma) 
 parçasını çözüyor ama tamamını değil.
 
 ---
+
+## 2026-08-24'te öğrenilenler
+
+### 🔴 En pahalı sessiz hata: `process.env[key]` derlemede gömülmüyor
+`constants/adUnits.ts` dört reklam birimini bir yardımcıyla okuyordu:
+`const env = (key) => process.env[key]`. `babel-preset-expo` `EXPO_PUBLIC_*`
+değerlerini pakete gömerken **yalnızca statik üye erişimini** (`process.env.X`)
+tanıyor; hesaplanmış erişim olduğu gibi kalıyor ve cihazda `process.env` diye bir
+nesne olmadığı için değer `undefined` oluyor. Yani **bugüne kadar çıkan hiçbir
+yayın derlemesi tek bir reklam gösteremezdi** — yanlış AdMob hesabından bağımsız
+olarak. Sadece hesabı düzeltmek tek bir gösterim bile üretmeyecekti.
+
+Hiçbir gösterge bunu söylemedi: `tsc` temiz, testler yeşil (jest gerçek
+`process.env`i okur, Babel dönüşümü koşmaz), EAS build logu dört değişkeni de
+"yüklendi" diye yazdı. **Tek dürüst kaynak derlenmiş paketti:**
+
+```bash
+unzip -p <aab> base/assets/index.android.bundle > bundle.hbc   # iOS: Payload/*.app/main.jsbundle
+strings -a bundle.hbc | grep -oE "ca-app-pub-[0-9]+/[0-9]+" | sort -u
+```
+
+`src/__tests__/noDynamicEnvAccess.test.ts` bu yazımı `src/` genelinde yasaklıyor.
+**Yeni bir `EXPO_PUBLIC_*` eklerken: değeri paketin içinde gördüğünü doğrula.**
+
+### Reddin sebebini `app.json` değil, iki `.ipa`'nın farkı söyler
+Build 8 ve build 9'un `Info.plist`'leri indirilip `plutil -convert json` ile karşılaştırıldı; fark
+tam olarak **iki fazla anahtar** çıktı (`UIBackgroundModes`, `NSMicrophoneUsageDescription`) ve
+ikisi de `app.json`'da hiç yazmıyordu. Bir eklentinin ne eklediğini tartışmak yerine **eski ve yeni
+binary'yi diffleyin** — hem düzeltmeyi hem de yan etkisizliğini tek adımda kanıtlıyor:
+
+```bash
+unzip -p <ipa> "Payload/*.app/Info.plist" | plutil -convert json -o - -
+```
+
+### Düz string eklenti kaydı iki yönde de tuzak
+Bu proje daha önce `google-signin`'i props'suz kaydedip **hiçbir şey üretmemesini** yaşadı. Bu turda
+tersi oldu: `"expo-audio"` props'suz kaydedilince **kendi varsayılanını** (`enableBackgroundPlayback: true`)
+uygulayıp `UIBackgroundModes: ["audio"]` ekledi. Kural aynı: eklentiyi düz string yazma, ve etkisini
+`expo config --type introspect` ile oku.
+
+### Hiç kullanılmayan bir paketi susturmak yerine kaldırın
+`enableBackgroundPlayback: false` reddi çözerdi ama `expo-audio` yine iOS'a
+`NSMicrophoneUsageDescription`, Android'e `RECORD_AUDIO` + `MODIFY_AUDIO_SETTINGS` eklemeye devam
+ederdi. Bir söz uygulamasında mikrofon izni istemek Play politika incelemesi çeker. `src/` içinde
+tek `import` yoksa ve hiçbir paket ona bağlı değilse, doğru cevap `npm uninstall`.
+
+### EAS ücretsiz kotası build'i reddetmeden ÖNCE `app.json`'ı artırıyor
+`eas build -p android` `versionCode`'u 19 → 20 yazdı, **sonra** "bu ay Android kotan doldu" deyip
+işi hiç oluşturmadı. Yani sayaç, hiç var olmamış bir build için tükendi. Geri sarmayın (bir kez
+duplicate'e yol açtı); atlanan numara zararsız, Play yalnız artmasını istiyor.
+
+### "Update Review" hâlâ tek anahtar — ama artık sırası belli
+`PATCH .../relationships/build` sürümü `PREPARE_FOR_SUBMISSION` yapıyor, gönderim kalemi
+`REJECTED` kalıyor ve **"Resubmit" soluk duruyor**. Sürüm sayfasındaki **"Update Review"** dört
+kalemi birden `Ready for Review`'a çeviriyor, Resubmit ancak ondan sonra basılabiliyor. `altool`
+yüklemesi 17 saniye, Apple'ın işlemesi ~8 dakika: build ASC API'sinde görünene kadar bağlama
+denemeyin.
 
 ## 2026-08-13/14'te öğrenilenler
 
