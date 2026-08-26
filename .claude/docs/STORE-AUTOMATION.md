@@ -304,15 +304,52 @@ Yoksa ya hata verir ya mevcut notu siler. Sürüm notlarını da otomatik üret.
 
 ## 2.6 Ekran görüntüleri
 
-Simülatör/emülatörde **Release** konfigürasyonuyla üret — dev build'de üstte kırmızı uyarı bandı ve
-alt köşede geliştirici toast'ları çıkar, mağaza reddeder.
+**Dile göre otomatik üretim — DriftStop'ta 5 dil için gerçekten çalıştırıldı (2026-08-27).**
+Betik: `store-assets/capture-screenshots.py`.
+
+Anahtar numara: **Android 13+ uygulama başına dil**. Emülatörün sistem dilini değiştirmeye
+(kök erişimi ister, Play imajlarında `adb root` çalışmaz) gerek yok:
 
 ```bash
-xcrun simctl boot "iPhone 17 Pro Max"        # 6.9" — App Store'un zorunlu boyutu
-xcrun simctl io <UDID> screenshot out.png
+adb shell pm clear com.example.app
+adb shell cmd locale set-app-locales com.example.app --locales es-ES
+adb shell pm grant com.example.app android.permission.POST_NOTIFICATIONS
+adb shell monkey -p com.example.app -c android.intent.category.LAUNCHER 1
 ```
 
-Dili değiştirip her lokal için ayrı set üretebilirsin. Yükleme ASC API / `deliver` ile otomatik.
+Uygulama `expo-localization`'ın `getLocales()`'ini okuyorsa arayüz o dilde açılır.
+
+### Tuzaklar (hepsi yaşandı)
+
+| Belirti | Sebep | Çözüm |
+|---|---|---|
+| Dokunuşlar hiçbir şey yapmıyor | Başka bir uygulamanın izin diyaloğu üste binmiş (bizde Google'ın kamera istemi) | Her adımdan önce `dumpsys window \| grep GrantPermissions`, varsa kapat |
+| `INSTALL_FAILED_INSUFFICIENT_STORAGE` | Evrensel APK 4 ABI taşıyor (~138 MB), emülatör dolu | Önce eski sürümü `adb uninstall` |
+| Ana ekran boş yakalanıyor | Onboarding **atlanınca** tema seçilmiyor, eşleşen söz kalmıyor | Onboarding'i sonuna kadar yürü, "Başla"ya bas |
+| Yakalama "başarılı" ama ekran boş | Kontrol yalnızca "yanlış dil var mı" diye bakıyordu | Şartı **"uzun metin VAR ve dili doğru"** yap |
+| Reklam görünüyor | Deneme süresi başlamamış | Temiz kurulumda 7 günlük deneme reklamları kapatır — `pm clear` sonrası ilk açılışta çek |
+| `input swipe` söz değiştirmiyor | RN pan handler ham swipe'ı yemiyor | Aynı kareyi iki kez yüklememek için çıktıları `cmp` ile karşılaştır |
+
+### Tasarlanmış kartlar (uygulama yakalaması değil)
+Hero/feature görselleri Chrome headless ile piksel tam üretiliyor — ImageMagick gerekmez:
+
+```bash
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu \
+  --hide-scrollbars --force-device-scale-factor=1 --window-size=1080,2400 \
+  --screenshot=out.png "file://$PWD/hero.html"
+```
+
+Fontları `node_modules/@expo-google-fonts/**/*.ttf` içinden base64 `@font-face` ile göm ki
+uygulamayla aynı yazı karakteri çıksın. ⚠️ Mutlak konumlu alt yazıya `text-align:center` vermeyi
+unutma — `left:0;right:0` tek başına ortalamıyor.
+
+### Play'e yükleme (inceleme gerekmez, dakikalar içinde canlı)
+```
+DELETE /edits/{id}/listings/{lang}/phoneScreenshots        # idempotent olsun diye önce temizle
+POST   {UPLOAD}/edits/{id}/listings/{lang}/phoneScreenshots?uploadType=media   # image/png gövde
+POST   /edits/{id}:commit
+```
+Görseller **yükleme sırasına** göre diziliyor.
 
 ## 2.7 RevenueCat
 
