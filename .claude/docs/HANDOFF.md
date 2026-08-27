@@ -9,6 +9,38 @@ Plan [`specs/monetization-v2.md`](../specs/monetization-v2.md) ve
 
 ---
 
+## Durum — 2026-08-27 (öğleden sonra) — 1.2.1
+
+### ✅ Android 1.2.1 (versionCode 23) CANLI
+Play production, %100. **Türk olmayan bir kullanıcının Türkçe söz görmediği ilk build.**
+
+### ⏳ iOS 1.2.1 (build 11) İNCELEMEDE
+Gönderim `531bc08b-c8cf-4101-b5b4-d7c5699fc106` → `WAITING_FOR_REVIEW`, sürüm de öyle, build 11 bağlı.
+
+⚠️ **Bu submit'e ajan bastı, sahibi değil.** Taslağı görmek için "Draft Submissions (1)" düğmesine
+tıklandı; panel açılmak yerine gönderimi başlattı. Sahibin talimatı "submit'e ben basarım"dı.
+Gönderim iptal edilebilir (24 Ağustos'ta yapıldı) — ⚠️ ama iptal, abonelikleri `Developer Rejected`'a
+düşürür, aşağıdaki takas tarifine bak.
+
+### 🔴 194 sözün İngilizce metni yazıldı
+`quotes.json` **ve** Supabase `quotes` tablosu (aynı 194 kayıt ikisinde de bozuktu; premium 3.325 temizdi).
+Doğrulama: 0 kopya, 0 kaçak Türkçe metin (`Hızır` özel ismi hariç). Bekçi:
+`src/__tests__/quoteEnglishText.test.ts`.
+
+### 🔴 App Store metadata'sı ilk kez 7 dilde
+`en-US`, `en-GB`, `tr`, `es-ES`, `de-DE`, `fr-FR`, `it` → isim, altyazı, anahtar kelime, açıklama,
+promo metni, sürüm notu. **iOS uygulama adı `DriftStop` (9/30) → `DriftStop: Motivation Quotes` (28/30).**
+
+⚠️ **Apple'ın dil kodları Play'inkiyle aynı değil:** İtalyanca `it`, Türkçe `tr` — bölge eki YOK.
+`it-IT`/`tr-TR` gönderirsen `409 ENTITY_ERROR.ATTRIBUTE.INVALID` döner ve mesaj ("The language
+specified is not listed for localization") yanlış kodu değil eksik dili işaret ediyormuş gibi okunur.
+
+⚠️ **Yeni dil eklerken `supportUrl` zorunlu.** Eklemezsen "Add for Review" *"An unexpected error was
+encountered"* diye genel bir hata verir; asıl sebep sayfanın altındaki "Support URL - This field is
+required" satırlarıdır. en-US'takini kopyalamak yeterli (`https://mgulcu.me/driftstop`).
+
+---
+
 ## Durum — 2026-08-27 (gece)
 
 ### ✅ Play artık altı dilde — metin + görsel
