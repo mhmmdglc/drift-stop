@@ -2,14 +2,14 @@
   "expo": {
     "name": "DriftStop",
     "slug": "drift-stop",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "driftstop",
     "userInterfaceStyle": "automatic",
     "ios": {
       "bundleIdentifier": "com.driftstop.app",
-      "buildNumber": "10",
+      "buildNumber": "11",
       "supportsTablet": false,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
@@ -17,7 +17,7 @@
     },
     "android": {
       "package": "com.driftstop.app",
-      "versionCode": 22,
+      "versionCode": 23,
       "permissions": [
         "RECEIVE_BOOT_COMPLETED",
         "SCHEDULE_EXACT_ALARM"

@@ -330,6 +330,42 @@ Uygulama `expo-localization`'ın `getLocales()`'ini okuyorsa arayüz o dilde aç
 | Reklam görünüyor | Deneme süresi başlamamış | Temiz kurulumda 7 günlük deneme reklamları kapatır — `pm clear` sonrası ilk açılışta çek |
 | `input swipe` söz değiştirmiyor | RN pan handler ham swipe'ı yemiyor | Aynı kareyi iki kez yüklememek için çıktıları `cmp` ile karşılaştır |
 
+### iOS ekran görüntüleri — 6.9" boyutu doğru simülatörden gelir
+
+**iPhone 17 Pro Max** simülatörünün ham ekran görüntüsü **1320×2868** — Apple'ın 6.9" mağaza
+boyutunun tam kendisi, ölçekleme gerekmiyor.
+
+```bash
+xcrun simctl boot "iPhone 17 Pro Max"
+xcrun simctl install <udid> path/to/DriftStop.app     # Release derlemesi
+xcrun simctl io <udid> screenshot out.png             # 1320x2868
+```
+
+⚠️ **`-AppleLanguages` ile dil değiştirmek BU UYGULAMADA çalışmıyor.** DriftStop dili kendi
+ayarlarında tutuyor: `useSettings` ilk açılışta `expo-localization`'ın `getLocales()`'ini okuyup
+`settings.language` olarak **kaydediyor**. Sonraki açılışlarda kayıtlı değer kazanıyor, launch
+argümanı değil. 2026-08-28'de altı dil için çekim yapıldı ve **altısı da aynı kare çıktı** —
+dosya boyutları birebir eşitti, uyarı buradan geldi.
+
+Dili gerçekten değiştirmenin iki yolu var, ikisi de dokunuş istiyor:
+1. `xcrun simctl uninstall` + yeniden kur → onboarding'i o dilde geç (cihaz dili değişmeli)
+2. Uygulama içi **Ayarlar → Dil** seçicisinden değiştir
+
+⚠️ **Android'in `cmd locale set-app-locales` kolaylığının iOS karşılığı yok.**
+
+### iOS'ta çekimi bloke eden diyaloglar
+Sırayla üçü çıkıyor ve her biri dokunuşları yutuyor: **ATT** (izleme izni), **bildirim izni**, ve
+deep link kullanıyorsan her `simctl openurl` için **"Open in DriftStop?"**. Üçü de kurulum başına
+bir kez; onboarding bir kez tamamlandıktan sonra uygulama doğrudan ana ekrana açılıyor ve çekim
+tamamen `simctl` ile sürüyor.
+
+⚠️ **Deep link (`driftstop://settings`) dokunuşsuz gezinme için kullanılamaz** — iOS her seferinde
+onay diyaloğu gösteriyor.
+
+### ⚠️ İnceleme sırasında ekran görüntüsü YÜKLEME
+Sürüm `WAITING_FOR_REVIEW`'dayken görsel/metin değiştirmek build'i kuyruktan çıkarır. Yerelleştirilmiş
+ekran görüntüleri **inceleme sonuçlandıktan sonra**, bir sonraki sürüme yüklenmeli.
+
 ### Tasarlanmış kartlar (uygulama yakalaması değil)
 Hero/feature görselleri Chrome headless ile piksel tam üretiliyor — ImageMagick gerekmez:
 
