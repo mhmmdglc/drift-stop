@@ -9,6 +9,44 @@ Plan [`specs/monetization-v2.md`](../specs/monetization-v2.md) ve
 
 ---
 
+## Durum — 2026-08-29 — 1.2.1 iki mağazada da CANLI
+
+### ✅ iOS 1.2.1 (build 11) ONAYLANDI ve yayında
+`READY_FOR_SALE`, App Store'a **2026-08-29 00:51 UTC**'de düştü. Gönderim `531bc08b-…` → `COMPLETE`.
+Yerelleştirme canlı: TR mağazasında isim **`DriftStop: Motivasyon Sözü`** ve Türkçe açıklama
+görünüyor (`itunes.apple.com/lookup?...&lang=tr_tr` ile doğrulandı).
+
+### 🔴 AB'nin 27 ÜLKESİNDE UYGULAMA YOK — DSA doğrulaması takılı
+
+**Belirti:** `apps.apple.com/de|fr|it|es|nl|at|dk/app/id6797533621` → **404**.
+`us`, `gb`, `tr`, `ch`, `no` → **200**. Kesişim tam olarak **AB üyeliği**.
+
+⚠️ Ölçerken tuzak: ülkeleri arka arkaya `curl`'lersen Apple **429** döndürüyor ve 404 sanırsın.
+İstekler arasına **8+ saniye** koy.
+
+**Sebep — App Store Connect → Business → Compliance:**
+
+| Regülasyon | Ülke | Son güncelleme | Durum |
+|---|---|---|---|
+| Digital Services Act | 27 | **29 Tem 2026** | **In Review** |
+
+Beyan bir aydır incelemede. Uygulama seviyesindeki kayıt tamam (*"This developer has identified
+itself as a trader for this app"*, App Information → App Store Regulations & Permits), eksik olan
+**hesap seviyesindeki tüccar doğrulaması**. Apple bunu onaylayana kadar uygulama AB'de listelenmiyor.
+
+**Bu ajan tarafından çözülemez** — kimlik/hukuk doğrulaması. Sahibin yapması gerekenler:
+1. Apple'dan ek belge isteyen bir e-posta gelmiş mi bak (29 Tem sonrası)
+2. Gelmemişse ASC → Contact Us üzerinden DSA doğrulamasının neden bir aydır beklediğini sor
+3. Beyandaki ad/adres/telefonun **kamuya açık kayıtlarla birebir eşleştiğinden** emin ol — DSA
+   doğrulaması en çok bu yüzden takılıyor
+
+**Etkisi büyük:** yazdığımız `de-DE`, `fr-FR`, `it`, `es-ES` App Store metinleri şu an **görünmüyor**,
+çünkü o mağazalarda uygulama yok. Almanya, Fransa, İtalya, İspanya, Hollanda — hepsi kapalı.
+
+✅ **Play'de böyle bir sorun yok:** `de`, `fr`, `it`, `es` dahil hepsi **200**.
+
+---
+
 ## Durum — 2026-08-27 (öğleden sonra) — 1.2.1
 
 ### ✅ Android 1.2.1 (versionCode 23) CANLI
