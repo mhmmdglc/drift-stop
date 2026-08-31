@@ -1,0 +1,132 @@
+id,suggested_intensity,confidence,reasons,category,tags,raw_score,text
+1,2,LOW,sınıra-yakın,resilience,resilience|peace,1.65,"However long the night, the dawn will break."
+15,3,LOW,sınıra-yakın,suffering,resilience|wisdom|peace,2.50,Suffering ceases to be suffering at the moment it finds a meaning.
+19,2,LOW,sınıra-yakın,suffering,resilience|peace|wisdom,2.35,The wound is the place where the light enters you.
+22,2,LOW,sınıra-yakın,resilience,discipline|peace,1.50,Sabreden derviş muradına ermiş. Sen sabredemediğin için yerinde sayıyorsun.
+30,2,LOW,sınıra-yakın,fire,peace|legacy|discipline,1.60,The way of the warrior is resolute acceptance of death.
+31,2,LOW,sınıra-yakın,resilience,resilience|peace,1.50,"You can cut all the flowers, but you cannot stop the spring from coming."
+34,3,LOW,sınıra-yakın,discipline,discipline|reckoning,2.50,"Ağaç yaşken eğilir. Sen büyüdün ama hâlâ eğilmedin, eğitmedin kendini."
+35,2,LOW,sınıra-yakın,discipline,discipline|motivation,2.40,Great things come from hard work and perseverance. No excuses.
+44,2,LOW,sınıra-yakın,discipline,focus|peace,1.50,Confine yourself to the present.
+46,3,LOW,sınıra-yakın,discipline,discipline|reckoning,2.50,I have nothing in common with lazy people who blame others for their lack of success.
+78,2,LOW,sınıra-yakın,discipline,discipline|legacy|wisdom,1.50,"A true man does not look at which side he sleeps better on, but on which side lies the duty."
+87,2,LOW,sınıra-yakın,discipline,discipline|motivation,2.40,"Strength is life, weakness is death. Choose every single morning."
+88,2,LOW,sınıra-yakın,fire,resilience|wisdom|legacy,1.50,Mum olmak kolay değildir; ışık saçmak için önce yanmak gerekir.
+92,3,LOW,sınıra-yakın,discipline,focus|reckoning|discipline,2.50,Do every act of your life as if it were your last.
+103,3,LOW,sınıra-yakın,discipline,focus|reckoning|discipline,2.65,"Stop drifting. You are not going to reread your notebooks, your old battles, the histories you collected for old age."
+104,2,LOW,sınıra-yakın,wisdom,focus|discipline|reckoning,1.50,"Yuvarlanan taş yosun tutmaz. Ama bir yere de varmaz, bir kök de salmaz; sen dur ve kazı."
+114,2,LOW,sınıra-yakın,legacy,discipline|motivation|reckoning,2.45,Tomorrow belongs to those who prepare for it today; the rest only watch it pass.
+116,3,LOW,sınıra-yakın,fire,discipline|reckoning,2.50,"Ateş düştüğü yeri yakar. Tembelliğin ateşi en çok seni yakar, başkasını değil."
+141,1,LOW,kategori-vs-metin-çelişkisi,wisdom,wisdom|focus|discipline,1.15,"If you know the enemy and know yourself, you need not fear the result of a hundred battles."
+143,2,LOW,sınıra-yakın,suffering,resilience|wisdom|peace,2.35,"Call it pain if you wish, but it is only your old self dying."
+157,3,LOW,sınıra-yakın,discipline,discipline|reckoning,2.50,Dawn does not arrive for those who slept through the night of struggle.
+158,2,LOW,sınıra-yakın,resilience,resilience|peace,1.50,Reject your sense of injury and the injury itself disappears.
+163,2,LOW,sınıra-yakın,resilience,resilience|motivation,2.40,"Success is not final, failure is not fatal: it is the courage to continue that counts."
+178,1,LOW,sınıra-yakın,fire,focus|peace|discipline,1.35,"When you decide to attack, keep calm and dash in quickly, ahead of the others."
+181,3,LOW,sınıra-yakın,identity,discipline|reckoning,2.50,"Her koyun kendi bacağından asılır. Senin işini kimse yapmaz, hesabını da kimse vermez."
+183,2,LOW,sınıra-yakın,identity,wisdom,1.55,Do not call the forest that shelters you a jungle.
+188,3,LOW,sınıra-yakın,suffering,resilience|peace,2.50,"Acıyı bal eyleyen, kendi içindeki ateştir."
+199,3,LOW,sınıra-yakın,discipline,discipline|reckoning,2.50,Bahçende açmayan tohumları suçlama; belki de toprağı kazmayı unuttun.
+203,3,LOW,sınıra-yakın,discipline,discipline|focus|reckoning,2.50,"Ekmeden biçilmez. Ekran karıştırıp durdun, tarlaya tohum atmadın; hasat nereden gelsin?"
+205,2,LOW,sınıra-yakın,legacy,wisdom|legacy,1.50,Education is the most powerful weapon which you can use to change the world.
+206,1,LOW,kategori-vs-metin-çelişkisi,wisdom,wisdom,1.15,The supreme art of war is to subdue the enemy without fighting.
+210,3,LOW,sınıra-yakın,fire,motivation|reckoning,2.60,"Eğer her gün aynıysan, bil ki ölmüşsün de farkında değilsin."
+214,2,LOW,sınıra-yakın,wisdom,focus|reckoning|discipline,1.50,Aç tavuk kendini buğday ambarında sanır. Sen de telefonda kendini çalışıyor sanıyorsun.
+225,2,LOW,sınıra-yakın,resilience,resilience|discipline|peace,1.50,"Sabırla koruk helva olur, dut yaprağı atlas. Sen sabretmeden hep koruk kalırsın."
+235,2,LOW,sınıra-yakın,suffering,peace|wisdom,2.35,We suffer more often in imagination than in reality.
+255,2,LOW,sınıra-yakın,discipline,focus|peace|discipline,1.50,"When walking, just walk. When sitting, just sit. Above all, don't wobble."
+258,3,LOW,sınıra-yakın,fire,discipline|reckoning,2.50,Ateşle oynayan elini yakar. Vaktinle oynayan ömrünü yakar.
+267,2,LOW,sınıra-yakın,legacy,legacy|wisdom,1.50,"Children should be taught to be men, not to bow before men."
+268,3,LOW,sınıra-yakın,discipline,discipline|reckoning,2.50,"Tembele iş buyur, sana akıl öğretsin. Bahane bulmakta usta, iş yapmakta acemisin."
+275,2,LOW,sınıra-yakın,discipline,focus|discipline|peace,1.50,"Sus ve yürü; cevabın, gittiğin yolun sonunda seni bekliyor."
+283,2,LOW,sınıra-yakın,legacy,legacy|wisdom,1.50,"We make a living by what we get, but we make a life by what we give."
+286,3,LOW,sınıra-yakın,fire,motivation|reckoning,2.60,Kanatların varken sürünmeyi seçme.
+290,3,LOW,sınıra-yakın,discipline,discipline|reckoning,2.50,"İğneyle kuyu kazılır. Büyük işler küçük adımlarla biter, sen ilk adımı bile atmadın."
+297,2,LOW,sınıra-yakın,discipline,discipline|peace|focus,1.50,"Before enlightenment, chop wood, carry water. After enlightenment, chop wood, carry water."
+299,2,LOW,sınıra-yakın,suffering,peace|wisdom,2.35,"He suffers more than necessary, who suffers before it is necessary."
+311,2,LOW,sınıra-yakın,wisdom,discipline|reckoning,1.50,"Boşboğazı cehenneme atmışlar, odununu yaş diye bağırmış. Bahaneci her yerde bahane bulur."
+324,2,LOW,sınıra-yakın,regret,peace|wisdom,2.35,Resentment is like drinking poison and then hoping it will kill your enemies.
+343,2,LOW,sınıra-yakın,resilience,resilience|peace,1.50,Sometimes even to live is an act of courage.
+346,2,LOW,sınıra-yakın,fire,focus|peace|discipline,1.50,The lion does not turn around when a small dog barks.
+352,2,LOW,sınıra-yakın,discipline,wisdom|focus,1.55,"Dumplings over flowers; chase substance, not beauty."
+361,2,LOW,sınıra-yakın,discipline,resilience|discipline|motivation,2.40,"Once you start working on something, do not be afraid of failure and do not abandon it."
+365,2,LOW,sınıra-yakın,resilience,resilience|focus|peace,1.50,It is the power of the mind to be unconquerable.
+370,1,LOW,sınıra-yakın,resilience,resilience|wisdom,1.40,Courage is like love; it must have hope to nourish it.
+375,3,LOW,sınıra-yakın,discipline,discipline|reckoning,2.50,Laziness travels so slowly that poverty soon overtakes it.
+378,2,LOW,sınıra-yakın,resilience,resilience|peace,1.50,"I never thought of losing, but now that it's happened, the only thing is to do it right."
+412,2,LOW,sınıra-yakın,legacy,legacy|wisdom,1.50,It is the duty of all of us to lift up the standard of human dignity.
+423,2,LOW,sınıra-yakın,legacy,wisdom|legacy,1.50,A man who pays respect to the great paves the way for his own greatness.
+431,2,LOW,sınıra-yakın,suffering,peace|wisdom|resilience,2.35,We are more often frightened than hurt; and we suffer more from imagination than from reality.
+436,3,LOW,sınıra-yakın,suffering,resilience|wisdom,2.55,Pain is the great teacher of mankind. Beneath its breath souls develop.
+444,3,LOW,sınıra-yakın,identity,reckoning|focus|motivation,2.60,"Your time is limited, so don't waste it living someone else's life."
+460,3,LOW,sınıra-yakın,discipline,discipline|reckoning,2.50,"Bugün nefsine yenildiğin her zaaf, yarın seni esir alacak bir alışkanlıktır."
+462,2,LOW,sınıra-yakın,discipline,discipline|peace,1.50,"No person has the power to have everything they want, but it is in their power not to want what they don't have."
+480,3,LOW,sınıra-yakın,discipline,discipline|reckoning,2.50,"Kendini hesaba çekmeyen, bir gün hesaba çekilince çaresiz kalır."
+481,2,LOW,sınıra-yakın,discipline,discipline|peace|focus,1.50,"In strategy, your spiritual bearing must not be any different from normal."
+486,2,LOW,sınıra-yakın,resilience,resilience|peace,1.65,New beginnings are often disguised as painful endings.
+494,2,LOW,sınıra-yakın,identity,wisdom|legacy,1.50,"A nation's strength lies in the unity of its people, not in the size of its army."
+505,3,LOW,sınıra-yakın,discipline,discipline|reckoning,2.50,Time is a created thing. To say 'I don't have time' is to say 'I don't want to.'
+518,2,LOW,sınıra-yakın,discipline,discipline|legacy|wisdom,1.65,Live as if you were to die tomorrow. Learn as if you were to live forever.
+530,2,LOW,sınıra-yakın,discipline,discipline|peace,1.50,Do not seek pleasure for its own sake.
+534,2,LOW,sınıra-yakın,identity,wisdom|legacy,1.50,"However far the stream flows, it never forgets its source."
+540,3,LOW,sınıra-yakın,regret,peace|resilience,2.50,Never let yourself be saddened by a separation.
+546,3,LOW,sınıra-yakın,discipline,discipline|reckoning,2.50,"Above all, do not lie to yourself."
+548,2,LOW,sınıra-yakın,discipline,discipline|peace,1.50,"Satisfaction lies in the effort, not in the attainment; full effort is full victory."
+558,2,LOW,sınıra-yakın,resilience,resilience|peace,1.65,The weak can never forgive; forgiveness is the attribute of the strong.
+559,2,LOW,sınıra-yakın,identity,wisdom|legacy,1.50,"Bir milletin gücü, dayanışmasının gücü kadardır; bölünen düşer."
+560,2,LOW,sınıra-yakın,discipline,peace|discipline,1.50,Be indifferent to where you live.
+564,2,LOW,sınıra-yakın,legacy,legacy|wisdom,1.50,"The one who plants trees, knowing he will never sit in their shade, has begun to understand life."
+575,2,LOW,sınıra-yakın,discipline,peace|focus,1.50,"Stop thinking, and end your problems."
+584,2,LOW,sınıra-yakın,discipline,peace|discipline,1.50,"No matter how hot your anger is, it cannot cook yams."
+591,2,LOW,sınıra-yakın,discipline,peace|discipline,1.50,Any person capable of angering you becomes your master.
+607,2,LOW,sınıra-yakın,legacy,legacy|wisdom,1.50,We do not inherit the earth from our ancestors; we borrow it from our children.
+624,2,LOW,sınıra-yakın,legacy,legacy|wisdom,1.50,"What you give is what you become, for the river that gives water never runs dry."
+629,2,LOW,sınıra-yakın,legacy,legacy|wisdom,1.50,"Bir hanedan üç nesilde gelir geçer: kuran, koruyan ve harcayan."
+631,2,LOW,sınıra-yakın,discipline,peace|discipline,1.50,"There is only one way to happiness, and that is to cease worrying about things which are beyond the power of our will."
+633,2,LOW,sınıra-yakın,resilience,resilience|peace,1.50,"If you don't like something, change it. If you can't change it, change your attitude."
+635,2,LOW,sınıra-yakın,legacy,legacy|wisdom,1.50,"The wise man does not lay up treasure; the more he gives, the more he has."
+637,2,LOW,sınıra-yakın,legacy,legacy|peace,1.60,"The dead are not under the earth; they are in the fire that dies down, in the grass that weeps."
+639,2,LOW,sınıra-yakın,legacy,legacy|wisdom,1.50,"Adaletsizlik medeniyetin temelini çürütür; zalim, kendi sarayını kazar."
+640,3,LOW,sınıra-yakın,suffering,peace|resilience,2.50,It is good to look upon the world as a dream when one has a nightmare.
+645,2,LOW,sınıra-yakın,identity,wisdom,1.55,We are shaped and fashioned by what we love.
+647,2,LOW,sınıra-yakın,resilience,resilience|peace,1.50,No one can hurt me without my permission.
+651,2,LOW,sınıra-yakın,legacy,legacy|wisdom,1.50,"I've learned that people will forget what you said, people will forget what you did, but people will never forget how you made them feel."
+652,2,LOW,sınıra-yakın,resilience,peace,1.50,"Flow with whatever may happen, and let your mind be free."
+655,2,LOW,sınıra-yakın,discipline,discipline|peace,1.50,You will not be punished for your anger; you will be punished by your anger.
+656,2,LOW,sınıra-yakın,legacy,legacy|wisdom,1.50,"Bir toplumun ahlakı bozulduğunda, surları en kalın olsa bile çöker."
+678,1,LOW,sınıra-yakın,legacy,legacy|peace,1.45,Death smiles at us all; all a man can do is smile back with a life worth remembering.
+682,2,LOW,sınıra-yakın,fire,resilience|peace,1.65,He who has overcome his fears will truly be free.
+687,2,LOW,sınıra-yakın,discipline,focus|peace,1.50,"Do not dwell in the past, do not dream of the future; concentrate the mind on the present moment."
+694,2,LOW,sınıra-yakın,legacy,legacy|wisdom,1.50,A good name is rather to be chosen than great riches.
+700,2,LOW,sınıra-yakın,identity,peace|focus,1.50,"Cherish that which is within you, and shut off that which is without."
+703,3,LOW,sınıra-yakın,suffering,peace,2.50,You only lose what you cling to.
+707,2,LOW,sınıra-yakın,fire,motivation|resilience,2.40,"It is far better to dare mighty things, to win glorious triumphs, even though checkered by failure, than to rank with those poor spirits who neither enjoy much nor suffer much."
+711,2,LOW,sınıra-yakın,suffering,peace|wisdom,2.35,Holding on to anger is like grasping a hot coal with the intent of throwing it at someone else; you are the one who gets burned.
+713,2,LOW,sınıra-yakın,discipline,discipline|peace,1.50,Make haste slowly.
+747,2,LOW,sınıra-yakın,resilience,resilience|peace,1.65,"Life is a shipwreck, but we must not forget to sing in the lifeboats."
+750,3,LOW,sınıra-yakın,suffering,resilience|peace,2.50,"Cold rice and cold tea are bearable, but cold looks and cold words are not."
+757,3,LOW,sınıra-yakın,discipline,motivation|discipline|reckoning,2.60,"İnsan ya öğrenir ya çürür; durmak, geriye gitmenin başka adıdır."
+796,2,LOW,sınıra-yakın,legacy,wisdom|legacy,1.50,They alone live who live for others; the rest are more dead than alive.
+797,2,LOW,sınıra-yakın,identity,discipline|wisdom|legacy,1.50,"Ayağa kalkacaksan adalet için kalk, oturacaksan da hak üzere otur."
+799,2,LOW,sınıra-yakın,identity,discipline|legacy|wisdom,1.50,The greatest way to live with honor in this world is to be what we pretend to be.
+805,2,LOW,sınıra-yakın,identity,wisdom|legacy,1.50,A man's worth is measured by how he treats those who can do nothing for him.
+840,2,LOW,sınıra-yakın,legacy,wisdom|legacy,1.50,Düşünce karanlığına ışık tutanlara ne mutlu.
+847,2,LOW,sınıra-yakın,legacy,wisdom|discipline|legacy,1.50,The price good men pay for indifference to public affairs is to be ruled by evil men.
+850,2,LOW,sınıra-yakın,identity,focus|peace|resilience,1.50,The eagle does not change his nest for the chatter of crows.
+851,2,LOW,sınıra-yakın,identity,wisdom|legacy,1.50,"Yolumuz; ilim, irfan ve insanlık sevgisi üzerine kurulmuştur."
+855,1,LOW,sınıra-yakın,discipline,resilience|discipline|peace,1.35,Patience is power; with time and patience the mulberry leaf becomes silk.
+856,2,LOW,sınıra-yakın,identity,wisdom|legacy,1.50,A river that forgets its source soon dries up.
+863,2,LOW,sınıra-yakın,resilience,resilience|peace,1.50,"Sabreyle gönül derdine, derman eylerim demiş."
+868,2,LOW,sınıra-yakın,resilience,resilience|discipline|peace,1.50,"Sabır ile koruk helva olur, dut yaprağı atlas."
+887,2,LOW,sınıra-yakın,identity,wisdom|legacy,1.50,Character is destiny.
+893,2,LOW,sınıra-yakın,legacy,legacy|wisdom|motivation,1.60,"If you want to lift yourself up, lift up someone else."
+897,2,LOW,sınıra-yakın,identity,discipline|wisdom|legacy,1.50,"Day by day, what you choose, what you think and what you do is who you become."
+907,2,LOW,sınıra-yakın,resilience,resilience|peace,1.50,The sun is new each day.
+913,2,LOW,sınıra-yakın,identity,resilience|wisdom,1.55,"The ultimate measure of a man is not where he stands in moments of comfort and convenience, but where he stands at times of challenge and controversy."
+919,1,LOW,sınıra-yakın,resilience,resilience|peace,1.35,"We must accept finite disappointment, but never lose infinite hope."
+931,2,LOW,sınıra-yakın,legacy,legacy|wisdom,1.65,"If a man hasn't discovered something that he will die for, he isn't fit to live."
+949,2,LOW,sınıra-yakın,fire,motivation|resilience,2.40,"I can accept failure, everyone fails at something. But I can't accept not trying."
+969,1,LOW,sınıra-yakın,resilience,resilience|peace,1.35,The mountain teaches patience; the storm teaches strength.
+980,3,LOW,sınıra-yakın,discipline,reckoning|discipline,2.50,"Bir günün, bir önceki günden kötüyse, sen ziyandasın."
+984,2,LOW,sınıra-yakın,resilience,discipline|resilience|peace,1.50,"Sabır iki türlüdür: istemediğin şeye sabır, sevdiğin şeyden uzak durmaya sabır."
+998,3,LOW,sınıra-yakın,discipline,reckoning|discipline,2.50,İki gün birbirine eşit olanı aldatılmıştır.

@@ -1,5 +1,38 @@
 # DriftStop — Pending / TODO
 
+## 🟡 Lock screen quote is not permanent on Android 16 — needs a native `SCREEN_ON` receiver
+
+Shipped in `1.2.2` (`versionCode 25`) and verified on the emulator: the last quote renders on the lock
+screen under the clock, before unlocking, silent and undismissable. **But Android 16 collapses it into
+an icon chip roughly two minutes after it is posted** (`scratchpad/LOCK6.png`). So the quote is a full,
+readable card while it is fresh — right after a delivered reminder, or after the user opens the app —
+and one tap away the rest of the time.
+
+The owner saw both screenshots and approved shipping it as is.
+
+To make it permanent the notification has to be **re-posted when the screen turns on**. `ACTION_SCREEN_ON`
+cannot be declared in the manifest since Android 8, so this needs a runtime-registered `BroadcastReceiver`
+living in a long-lived process — real native work (Kotlin + a config plugin), with battery and Play
+background-execution policy to think about. Not attempted.
+
+Cheaper partial mitigations, if the native route is not taken:
+- Re-post on every app foreground (already effectively happens — Home re-syncs on quote change).
+- The existing 3–10 daily reminders each refresh it for free.
+
+## 🟡 iOS has nothing on the lock screen — next piece of work (owner asked for it 2026-08-31)
+
+Neither half of the Android solution ports:
+- **The notification trick does not work.** iOS has no ongoing/sticky notification; anything posted is
+  dismissible and lands in Notification Center, not pinned under the clock.
+- **The widget does not exist at all.** `react-native-android-widget` is Android-only. iOS needs a real
+  **WidgetKit extension** (Swift, `accessoryRectangular` family for the lock screen, iOS 16+), plus an
+  App Group so the extension can read `seenHistory`. That is a new native target in the Expo prebuild,
+  not a JS change.
+
+WidgetKit's `accessoryRectangular` is the honest match for what the owner asked for: it sits under the
+clock on the iOS lock screen and stays there. It is also monochrome and roughly two short lines, so the
+quote will need much harder clipping than Android's.
+
 Single place to check what's actually outstanding, instead of hunting through scattered notes in other docs. Update this file (don't just append to old docs) whenever a pending item is resolved or a new one comes up.
 
 ## ~~🔴 Found 2026-08-10 on the iOS Simulator — a guest who buys Pro never gets the premium quotes~~ — **half fixed the same day (`99d782d`)**

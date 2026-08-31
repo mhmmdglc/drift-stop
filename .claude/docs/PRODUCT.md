@@ -341,9 +341,10 @@ mandatory for this content type, so no external payment path exists.
 | Interstitial ads | Yes | No | No |
 | 18 premium packs / 3325 quotes | 🔒 metadata + counts only | 🔒 | ✅ unlocked |
 | Authors section on `/packs` | 🔒 visible but locked | 🔒 | ✅ |
+| Quote on the lock screen (Android) | ✅ | ✅ | ✅ |
 | Favorites, history, widget, share, themes, 6-language UI | ✅ | ✅ | ✅ |
 | Cross-device sync | ❌ not built for anyone | ❌ | ❌ |
-| Premium quotes in notifications / widget / Home | ❌ | ❌ | ❌ (by design, see §4) |
+| Premium quotes in notifications / widget / lock screen / Home | ❌ | ❌ | ❌ (by design, see §4) |
 
 ### Entitlements
 

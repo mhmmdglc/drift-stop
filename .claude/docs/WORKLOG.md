@@ -8,6 +8,19 @@ The orchestrator writes an entry **when an agent is dispatched** and updates it 
 
 ---
 
+## 2026-08-31
+
+| Time | Agent | Task | Outcome | Evidence |
+|---|---|---|---|---|
+| 23:5x | orchestrator | **Play metni 6 dilde kilit ekranı odaklı yeniden yazıldı** | Başlık/kısa/tam açıklama tr, en, es, de, fr, it için güncellendi; açılış ve ayrı bir *"KİLİT EKRANINDA, SAATİN ALTINDA"* bölümü. es ve fr başlıkları 31 karakterle sınırı aşıyordu, kısaltıldı. Yeni betik `scripts/play-listings.js` — sınırları göndermeden önce kendisi kontrol ediyor. İlk deneme Play'den `503` aldı (AAB commit'i hâlâ işleniyordu), 20 sn aralıklı tekrar geçti | API'den geri okundu: 6 dilin başlıkları + `tr-TR` metninde kilit ekranı bölümü `true` |
+| 23:4x | orchestrator | **Android `versionCode 25` (1.2.2) production'a** | Lokal `eas build --local` ile AAB (90,6 MB). AAB'nin içi açıldı: `res/xml/widgetprovider_driftstop.xml` proto'sunda **`widgetCategory` → `home_screen|keyguard`** düz metin olarak duruyor, `drawable/driftstop_preview.png` (28 KB) pakette. `play-upload.js … production` → `status: completed` | Play production `["25"]`, API ile doğrulandı |
+| 23:0x–23:3x | orchestrator | **Kilit ekranında son söz — istenen asıl özellik** | İki yüzey: (1) kalıcı sessiz bildirim, her Android telefonda saatin altında; (2) kilit ekranı widget'ı, Android 16 QPR2+. Emülatörde (`sdk_full 36.1`) **gözle doğrulandı**: söz ve yazar kilit ekranında, şifre girilmeden görünüyor | `scratchpad/LOCK2.png`; `dumpsys`: kanal `lockscreen`, `mImportance=3`, `mSound=null`, `flags=ONGOING_EVENT` |
+| — | orchestrator | ⚠️ **Yolda iki hata, ikisi de sadece cihazda göründü** | (1) `trigger: null` kanal bilgisi taşımıyor → bildirim Expo'nun **HIGH önemli fallback kanalına** düşüyordu, yani **ses çıkaracaktı**; `trigger: { channelId }` ile düzeldi. (2) `IMPORTANCE_MIN` yanlıştı: Android 16 MIN/LOW bildirimlerini kilit ekranında noktaya indiriyor, söz okunmuyordu; kanal DEFAULT önemde ama `sound: null`. **Tip kontrolü ve testler ikisinde de yeşildi** | `dumpsys notification` çıktıları |
+| — | orchestrator | **Widget kilit ekranına uygun hale getirildi** | Android 16 modeli **opt-out**: `not_keyguard` yazmadıkça widget zaten uygun — yani mevcut `versionCode 23` de teknik olarak uygundu. `plugins/withLockScreenWidget.js` niyeti açık hale getiriyor ve kütüphanenin ileride `not_keyguard` yazmasına karşı koruyor. Plugin `plugins` dizisinin **başında** olmalı; Expo mod zinciri son eklendi-önce çalıştığı için sonraki konumlarda sessizce hiçbir şey yapmıyordu | APK: `aapt2` → `widgetCategory=0x3`; sistem: `dumpsys appwidget` → `widgetCategory=3` (YouTube'unki `1`) |
+| — | orchestrator | **Widget ölçüye duyarlı yapıldı + boş önizleme düzeltildi** | Sabit `MAX_LEN=110` ve `space-between`, kilit ekranının 4x3 hücresinde kısa bir sözü boşlukta bırakıyordu; artık `widgetInfo.height`'tan uzunluk ve punto türetiliyor, `requestWidgetUpdate` gerçek ölçüyü geçiriyor (eskiden her widget'ı ana ekran ölçüsüne düşürüyordu). Widget seçicideki kart bomboştu — `previewImage` eklendi | `scratchpad/hw5.png`, `hw7.png` (4x2 ve 4x3) |
+| — | orchestrator | 🟡 **Bilinen sınır — varsayım değil, gözlendi** | Android 16, bildirimi gönderildikten ~2 dk sonra kilit ekranında ikon çipine indiriyor. Söz **tazeyken** tam kart olarak okunuyor, sonrasında tek dokunuş uzakta. Kalıcı olması için ekran açılışında yeniden gönderen native bir `SCREEN_ON` receiver gerekir — yapılmadı. Sahibi bu haliyle göndermeyi onayladı | `scratchpad/LOCK6.png` |
+| — | orchestrator | ❌ **Doğrulanmayan** | Kilit ekranı widget **arayüzü**: bu AOSP emülatör imajında yok (Pixel'e özel), Ayarlar'da "Widgets" girişi de yok. Widget bu yüzden ana ekranda 4x2 ve 4x3'te sınandı. Gerçek bir Android 16 QPR2 cihazda kilit ekranına eklenmesi **denenmedi** | — |
+
 ## 2026-08-26
 
 | Time | Agent | Task | Outcome | Evidence |

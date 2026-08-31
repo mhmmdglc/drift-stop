@@ -520,8 +520,38 @@ without navigating. `quote/[id].tsx:33-35` records the opened quote — but **on
 | `app.json:65-82` | Declares widget `DriftStop`, 250×110 dp min, 4×2 cells, `updatePeriodMillis: 1800000` (30 min) |
 | `index.js:7-11` | Registers the task handler before the router — the only reason a custom entry exists |
 | `src/widgets/widget-task-handler.tsx:20` | Headless lifecycle handler. Returns early on `WIDGET_DELETED`; reads `seenHistory[0]` for the last-seen quote (`:25-27`), falls back to a random static quote (`:33`). **`renderWidget` is called unconditionally** (`:36`) — the comment at `:16-18` explains that skipping it leaves a transparent widget |
-| `src/widgets/DriftStopWidget.tsx:27` | The widget UI as `FlexWidget`/`TextWidget`. Cannot use hooks/context, so colors come straight from `DarkColors` (`:12-17`) — **the widget is always dark**. Text clipped to 110 chars (`:9,19-21`). Whole i18n block wrapped in try/catch with hardcoded Turkish fallbacks (`:32-40`). Tapping opens `driftstop://quote/<id>` via `clickAction="OPEN_URI"` (`:41,45-46`) |
-| `src/widgets/updateWidget.tsx:13` | In-app push: guards on `nativeFeaturesAvailable && Platform.OS === 'android'` (`:14`), writes `widgetQuoteId`, then `requestWidgetUpdate` with `widgetNotFound: () => {}`. Called from Home whenever the displayed quote changes (`(tabs)/index.tsx:51`) |
+| `src/widgets/DriftStopWidget.tsx` | The widget UI as `FlexWidget`/`TextWidget`. Cannot use hooks/context, so colors come straight from `DarkColors` — **the widget is always dark**. Length and font size come from `metricsFor(height, width)`: ≥170 dp (lock screen 4×3) gets 200 chars, ≥100 dp gets 110, below that 70/50. Whole i18n block wrapped in try/catch with hardcoded Turkish fallbacks. Tapping opens `driftstop://quote/<id>` via `clickAction="OPEN_URI"` |
+| `plugins/withLockScreenWidget.js` | Patches the generated `widgetprovider_driftstop.xml` to `android:widgetCategory="home_screen|keyguard"`. The library hardcodes `home_screen` and its `Widget` type exposes no `widgetCategory`. ⚠️ **Must be FIRST in `app.json`'s `plugins`** — Expo runs mods last-added-first, so from any later position this silently does nothing |
+| `src/widgets/updateWidget.tsx` | In-app push: guards on `nativeFeaturesAvailable && Platform.OS === 'android'`, writes `widgetQuoteId`, then `requestWidgetUpdate` with `widgetNotFound: () => {}`. **Passes `info.height`/`info.width` through to the component** — without it an in-app update resets a tall lock-screen widget to home-screen metrics. Called from Home whenever the displayed quote changes |
+
+### Lock screen quote (`src/utils/lockScreenQuote.ts`)
+
+The quote the user last saw, kept on the Android lock screen under the clock as a **persistent silent
+notification**. Separate from the widget on purpose: the lock screen *widget* surface only exists on
+Android 16 QPR2+, while a notification reaches the lock screen of every Android phone.
+
+| Export | Role |
+|---|---|
+| `ensureLockScreenChannel()` | Creates channel `lockscreen`. **DEFAULT importance, `sound: null`, vibration off, no badge** |
+| `showLockScreenQuote(id)` | Posts with a fixed identifier so each call replaces the previous one. `sticky: true` + `autoDismiss: false` → `FLAG_ONGOING_EVENT`, cannot be swiped away |
+| `hideLockScreenQuote()` | Dismisses and cancels |
+| `syncLockScreenQuote(enabled, id)` | Single entry point; called from Home on every quote change and whenever `settings.lockScreenEnabled` flips |
+
+**Two things that look right in code and are wrong on the device** — both found by reading `dumpsys`,
+not by reading the config:
+
+1. **`trigger: null` carries no channel.** The notification lands in expo's
+   `expo_notifications_fallback_notification_channel`, which is HIGH importance **and makes a sound**.
+   The channel is passed through `ChannelAwareTriggerInput`: `trigger: { channelId }`. Same "immediate"
+   semantics, correct channel.
+2. **`IMPORTANCE_MIN` hides the quote.** Android 16 shrinks MIN/LOW notifications on the lock screen to
+   a dot, so nothing is readable. The channel has to be DEFAULT importance to render as a card; silence
+   comes from `sound: null` and `enableVibrate: false` instead.
+
+🟡 **Known limit, observed not assumed:** Android 16 collapses the notification into an icon chip about
+two minutes after posting. The quote reads as a full card while it is fresh (after each delivered
+reminder, or after the user opens the app) and is one tap away after that. Making it permanent needs a
+native `SCREEN_ON` receiver to re-post — not built.
 
 **Why iOS has no widget.** `react-native-android-widget` is Android-only — no iOS native module at
 all. An iOS widget would need a separate WidgetKit extension (Swift + app group storage), which does

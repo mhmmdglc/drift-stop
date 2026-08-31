@@ -265,6 +265,46 @@ npx expo run:android
 
 First build with warm caches is roughly a minute. Metro stays attached for Fast Refresh afterwards.
 
+### ⚠️ Gotcha: `eas build --local` needs three env vars, and fails differently for each
+
+Local builds run in a fresh shell that does **not** inherit your interactive setup, and each missing
+piece fails at a different phase with an error that does not name the cause:
+
+| Missing | Where it fails | What it says |
+|---|---|---|
+| `JAVA_HOME` | `RUN_GRADLEW` | *"Unable to locate a Java Runtime"* |
+| `ANDROID_HOME` | `RUN_GRADLEW` | *"SDK location not found"* — after a full 4-minute prebuild |
+| Gradle heap | `:app:mergeExtDexRelease` | *"Error while merging dex archives"* — the real line is `D8: java.lang.OutOfMemoryError` further up |
+
+The generated `android/gradle.properties` ships `-Xmx2048m`, which is not enough to dex this app while
+an emulator is also running. CNG regenerates that file on every prebuild, so raise it per-build instead:
+
+```bash
+export GRADLE_OPTS="-Dorg.gradle.jvmargs=-Xmx8g -XX:MaxMetaspaceSize=1g"
+```
+
+Shutting the emulator down for the duration of the build helps too.
+
+### ⚠️ Gotcha: a failed local build prints the signing keystore to the log
+
+When `eas build --local` fails, the plugin echoes the job description it was invoked with — and that
+blob contains the **base64 keystore and its password in plain text**. Treat any saved local build log
+as a credential: do not paste it into an issue, a chat, or a bug report.
+
+### Store listing text — `scripts/play-listings.js`
+
+Play listing copy lives in `store-assets/listings/<locale>.json` (`title`, `shortDescription`,
+`fullDescription`); the script is only the transport.
+
+```bash
+node scripts/play-listings.js
+```
+
+Pass locales to limit it (`node scripts/play-listings.js tr-TR en-US`). It checks Play's limits
+(30 / 80 / 4000 characters) **before** opening an edit, so an over-length title fails locally instead
+of halfway through a commit. Expect a `503` if you run it right after an AAB commit — the edit API is
+briefly busy; retry after ~20 seconds.
+
 ### ⚠️ Gotcha: a new native module needs a fresh native build
 
 Fast Refresh only covers JS. After adding a package with native code (e.g. `react-native-purchases`, `react-native-android-widget`), kill the running `expo run:android` process and re-run it so CNG prebuilds and Gradle relinks. Editing JS and reloading will not pick up the new native module — you will get confusing "module not found"/undefined-native-module errors instead.
