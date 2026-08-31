@@ -139,6 +139,13 @@
       "cardTitle": "DriftStop Pro",
       "cardBenefits": "Sin anuncios · Más de 3.325 citas premium en 18 packs · Hasta 10 recordatorios diarios",
       "cardCta": "Hazte Pro"
+    },
+    "lockScreen": {
+      "title": "Pantalla de bloqueo",
+      "toggle": "Mostrar la frase en la pantalla de bloqueo",
+      "toggleOff": "No se muestra en la pantalla de bloqueo",
+      "hint": "La última frase te espera bajo el reloj cada vez que enciendes el móvil. Silencioso: sin sonido, sin vibración, sin ventana emergente.",
+      "channelName": "Frase en pantalla de bloqueo"
     }
   },
   "notifications": {

@@ -21,10 +21,12 @@ import { INTERSTITIAL_EVERY } from '@/constants/adUnits';
 import { Spacing } from '@/constants/layout';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useHistory } from '@/hooks/useHistory';
+import { useSettings } from '@/hooks/useSettings';
 import { useTheme } from '@/hooks/use-theme';
 import { useTranslation } from '@/i18n/useTranslation';
 import { showInterstitialIfReady } from '@/utils/ads';
 import { shareQuote } from '@/utils/share';
+import { syncLockScreenQuote } from '@/utils/lockScreenQuote';
 import { updateWidgetWithQuote } from '@/widgets/updateWidget';
 
 export default function HomeScreen() {
@@ -32,6 +34,7 @@ export default function HomeScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { quote, goOlder, randomFromHistory, canOlder, count } = useHistory();
+  const { settings } = useSettings();
   const favorites = useFavorites();
 
   const opacity = useSharedValue(1);
@@ -48,8 +51,12 @@ export default function HomeScreen() {
     ty.value = 8;
     opacity.value = withTiming(1, { duration: 250 });
     ty.value = withTiming(0, { duration: 250 });
-    if (quote) void updateWidgetWithQuote(quote.id);
-  }, [quote?.id, opacity, ty]);
+    if (quote) {
+      void updateWidgetWithQuote(quote.id);
+      // Kilit ekranındaki söz de aynı sözle güncellensin.
+      void syncLockScreenQuote(settings.lockScreenEnabled, quote.id);
+    }
+  }, [quote?.id, settings.lockScreenEnabled, opacity, ty]);
 
   const change = useCallback(
     (fn: () => void) => {

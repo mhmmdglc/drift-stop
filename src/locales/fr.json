@@ -139,6 +139,13 @@
       "cardTitle": "DriftStop Pro",
       "cardBenefits": "Sans publicité · Plus de 3 325 citations premium dans 18 packs · Jusqu’à 10 rappels par jour",
       "cardCta": "Passer en Pro"
+    },
+    "lockScreen": {
+      "title": "Écran de verrouillage",
+      "toggle": "Afficher la citation sur l'écran de verrouillage",
+      "toggleOff": "Non affichée sur l'écran de verrouillage",
+      "hint": "La dernière citation vous attend sous l'horloge à chaque réveil du téléphone. Silencieux : aucun son, aucune vibration, aucune fenêtre.",
+      "channelName": "Citation sur l'écran de verrouillage"
     }
   },
   "notifications": {

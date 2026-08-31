@@ -16,7 +16,15 @@ export async function updateWidgetWithQuote(quoteId: number): Promise<void> {
   try {
     await requestWidgetUpdate({
       widgetName: 'DriftStop',
-      renderWidget: () => <DriftStopWidget quote={getQuoteById(quoteId) ?? null} />,
+      // widgetInfo'yu geçmezsek uygulama içi güncelleme, kilit ekranındaki uzun
+      // hücreyi ana ekran ölçüsüne düşürüyor.
+      renderWidget: (info) => (
+        <DriftStopWidget
+          quote={getQuoteById(quoteId) ?? null}
+          height={info.height}
+          width={info.width}
+        />
+      ),
       widgetNotFound: () => {},
     });
   } catch {

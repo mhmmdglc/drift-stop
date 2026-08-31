@@ -117,6 +117,13 @@
     },
     "account": {
       "appleRelayNote": "これは DriftStop 用に Apple が発行した非公開の転送アドレスです。ここ宛のメールは実際の受信箱に届きます。"
+    },
+    "lockScreen": {
+      "title": "ロック画面",
+      "toggle": "ロック画面に言葉を表示",
+      "toggleOff": "ロック画面に表示しない",
+      "hint": "スマホを起こすたび、時計の下に最後の言葉が待っています。無音 — 音も振動もポップアップもありません。",
+      "channelName": "ロック画面の言葉"
     }
   },
   "notifications": {

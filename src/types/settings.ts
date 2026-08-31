@@ -31,6 +31,11 @@ export type Settings = {
   language: LanguageCode;
   /** Seçili tema tag'leri. Boş = hepsi (filtre yok). */
   themes: QuoteTag[];
+  /**
+   * Son sözü kilit ekranında kalıcı (sessiz) bildirim olarak tut.
+   * Android'e özel; iOS'ta yok sayılır.
+   */
+  lockScreenEnabled: boolean;
 };
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -44,6 +49,7 @@ export const DEFAULT_SETTINGS: Settings = {
   themeMode: 'dark',
   language: 'tr',
   themes: [],
+  lockScreenEnabled: true,
 };
 
 /** Bitiş, başlangıçtan en az bu kadar dakika sonra olmalı (2 saat). */

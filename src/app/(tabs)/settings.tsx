@@ -221,6 +221,30 @@ export default function SettingsScreen() {
             </View>
           </Section>
 
+          {/* Kilit ekranı — uygulamayı açmadan söze bakılan tek yer, bu yüzden
+              kendi bölümü var; bildirim ayarlarının içinde kaybolmasın. */}
+          <Section title={t('settings.lockScreen.title')}>
+            <Row
+              label={
+                settings.lockScreenEnabled
+                  ? t('settings.lockScreen.toggle')
+                  : t('settings.lockScreen.toggleOff')
+              }>
+              <SketchToggle
+                value={settings.lockScreenEnabled}
+                onChange={(v) => update({ lockScreenEnabled: v })}
+                accessibilityLabel={
+                  settings.lockScreenEnabled
+                    ? t('settings.lockScreen.toggle')
+                    : t('settings.lockScreen.toggleOff')
+                }
+              />
+            </Row>
+            <ThemedText variant="label" tone="textMuted">
+              {t('settings.lockScreen.hint')}
+            </ThemedText>
+          </Section>
+
           {/* Zamanlama */}
           <Section title={t('settings.sections.schedule')}>
             <View style={styles.timeRow}>

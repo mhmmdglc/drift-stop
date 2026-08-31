@@ -139,6 +139,13 @@
       "cardTitle": "DriftStop Pro",
       "cardBenefits": "Reklamsız kullanım · 3.325+ premium söz, 18 koleksiyon · Günde 10’a kadar hatırlatma",
       "cardCta": "Pro’ya geç"
+    },
+    "lockScreen": {
+      "title": "Kilit ekranı",
+      "toggle": "Sözü kilit ekranında göster",
+      "toggleOff": "Kilit ekranında gösterilmiyor",
+      "hint": "Son söz, telefonu her açtığında saatin altında seni bekler. Sessiz — ses, titreşim ya da açılır kart yok.",
+      "channelName": "Kilit ekranı sözü"
     }
   },
   "notifications": {

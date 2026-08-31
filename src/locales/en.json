@@ -139,6 +139,13 @@
       "cardTitle": "DriftStop Pro",
       "cardBenefits": "No ads · 3,325+ premium quotes in 18 packs · Up to 10 daily reminders",
       "cardCta": "Go Pro"
+    },
+    "lockScreen": {
+      "title": "Lock screen",
+      "toggle": "Show the quote on my lock screen",
+      "toggleOff": "Not shown on the lock screen",
+      "hint": "The latest quote waits under the clock every time you wake your phone. Silent — no sound, no vibration, no pop-up.",
+      "channelName": "Lock screen quote"
     }
   },
   "notifications": {

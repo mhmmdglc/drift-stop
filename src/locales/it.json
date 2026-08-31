@@ -139,6 +139,13 @@
       "cardTitle": "DriftStop Pro",
       "cardBenefits": "Niente annunci · Oltre 3.325 citazioni premium in 18 pacchetti · Fino a 10 promemoria al giorno",
       "cardCta": "Passa a Pro"
+    },
+    "lockScreen": {
+      "title": "Schermata di blocco",
+      "toggle": "Mostra la citazione sulla schermata di blocco",
+      "toggleOff": "Non mostrata sulla schermata di blocco",
+      "hint": "L'ultima citazione ti aspetta sotto l'orologio ogni volta che accendi il telefono. Silenzioso: nessun suono, nessuna vibrazione, nessun pop-up.",
+      "channelName": "Citazione sulla schermata di blocco"
     }
   },
   "notifications": {

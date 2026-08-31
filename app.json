@@ -2,7 +2,7 @@
   "expo": {
     "name": "DriftStop",
     "slug": "drift-stop",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "driftstop",
@@ -17,7 +17,7 @@
     },
     "android": {
       "package": "com.driftstop.app",
-      "versionCode": 23,
+      "versionCode": 24,
       "permissions": [
         "RECEIVE_BOOT_COMPLETED",
         "SCHEDULE_EXACT_ALARM"
@@ -38,6 +38,7 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "./plugins/withLockScreenWidget",
       "expo-router",
       [
         "expo-splash-screen",
@@ -130,7 +131,8 @@
               "targetCellWidth": 4,
               "targetCellHeight": 2,
               "resizeMode": "horizontal|vertical",
-              "updatePeriodMillis": 1800000
+              "updatePeriodMillis": 1800000,
+              "previewImage": "./assets/widget/preview.png"
             }
           ]
         }

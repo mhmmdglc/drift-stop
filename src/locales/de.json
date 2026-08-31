@@ -139,6 +139,13 @@
       "cardTitle": "DriftStop Pro",
       "cardBenefits": "Keine Werbung · Über 3.325 Premium-Zitate in 18 Paketen · Bis zu 10 tägliche Erinnerungen",
       "cardCta": "Pro werden"
+    },
+    "lockScreen": {
+      "title": "Sperrbildschirm",
+      "toggle": "Zitat auf dem Sperrbildschirm zeigen",
+      "toggleOff": "Wird nicht auf dem Sperrbildschirm gezeigt",
+      "hint": "Das letzte Zitat wartet unter der Uhr, sobald du dein Handy aufweckst. Lautlos – kein Ton, keine Vibration, kein Pop-up.",
+      "channelName": "Zitat auf dem Sperrbildschirm"
     }
   },
   "notifications": {

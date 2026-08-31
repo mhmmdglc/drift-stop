@@ -33,7 +33,13 @@ export async function widgetTaskHandler(props: WidgetTaskHandlerProps): Promise<
   if (!quote) quote = randomQuote();
 
   try {
-    props.renderWidget(<DriftStopWidget quote={quote} />);
+    props.renderWidget(
+      <DriftStopWidget
+        quote={quote}
+        height={props.widgetInfo.height}
+        width={props.widgetInfo.width}
+      />
+    );
   } catch {
     // Render bile başarısızsa yapacak bir şey yok; en azından çökmüyoruz.
   }
