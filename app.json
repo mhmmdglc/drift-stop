@@ -13,6 +13,12 @@
       "supportsTablet": false,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
+      },
+      "appleTeamId": "J8FX8G238M",
+      "entitlements": {
+        "com.apple.security.application-groups": [
+          "group.com.driftstop.app"
+        ]
       }
     },
     "android": {
@@ -160,7 +166,8 @@
           "iosUrlScheme": "com.googleusercontent.apps.591923071526-2le5mn1grsdie51f63afh8vkmm84pa13"
         }
       ],
-      "expo-apple-authentication"
+      "expo-apple-authentication",
+      "@bacons/apple-targets"
     ],
     "locales": {
       "tr": "./assets/locales/tr.json",

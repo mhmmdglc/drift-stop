@@ -553,10 +553,38 @@ two minutes after posting. The quote reads as a full card while it is fresh (aft
 reminder, or after the user opens the app) and is one tap away after that. Making it permanent needs a
 native `SCREEN_ON` receiver to re-post — not built.
 
-**Why iOS has no widget.** `react-native-android-widget` is Android-only — no iOS native module at
-all. An iOS widget would need a separate WidgetKit extension (Swift + app group storage), which does
-not exist in this repo. Every widget entry point is therefore platform-guarded: the registration
-(`index.js:7`) and the update call (`updateWidget.tsx:14`).
+### iOS lock screen widget (WidgetKit)
+
+Android's persistent-notification trick has no iOS equivalent — iOS has no ongoing, undismissable
+notification. The only thing that stays under the clock on an iOS lock screen is a WidgetKit
+`accessoryRectangular` widget, so that is what iOS got.
+
+| File | Role |
+|---|---|
+| `targets/quote/expo-target.config.js` | Target definition for `@bacons/apple-targets`. `type: "widget"`, bundle id `.quote` → `com.driftstop.app.quote`, deployment target 16.0 (the release `accessoryRectangular` shipped in). App Groups are read from the main app's config so the two can never drift apart |
+| `targets/quote/index.swift` | The widget. `Provider` reads `lastQuote` from `UserDefaults(suiteName:)`; timeline policy `.never` because the app pushes updates rather than the widget polling. Families: `accessoryRectangular` (lock screen), `accessoryInline`, `systemSmall`, `systemMedium`. `widgetURL` deep-links to `driftstop://quote/<id>` |
+| `src/widgets/updateIosWidget.ts` | Writes `{id, text, author}` into the App Group via `ExtensionStorage`, then `reloadWidget()`. The `@bacons/apple-targets` import is lazy so Expo Go does not blow up |
+| `src/widgets/updateWidget.tsx` | `updateWidgets(quoteId)` — the platform-agnostic entry point Home calls; it fans out to the Android widget and the iOS one |
+
+`app.json` gained `ios.appleTeamId` (the plugin refuses to sign the extension without it) and
+`ios.entitlements["com.apple.security.application-groups"] = ["group.com.driftstop.app"]`.
+
+⚠️ **The App Group string is load-bearing and fails silently.** If `APP_GROUP` in the Swift file, the
+constant in `updateIosWidget.ts`, and `app.json`'s entitlement ever disagree, `UserDefaults` returns
+nil, the widget quietly renders its fallback quote, and nothing errors. `iosLockScreenWidget.test.ts`
+asserts all three match.
+
+⚠️ **`CODE_SIGNING_ALLOWED=NO` strips entitlements**, so a simulator build made that way has no App
+Group at all and the widget always shows the fallback — which looks exactly like a broken data path.
+Build simulator test builds with ad-hoc signing instead:
+`CODE_SIGN_IDENTITY="-" CODE_SIGNING_REQUIRED=NO AD_HOC_CODE_SIGNING_ALLOWED=YES`.
+
+**Verified on an iPhone 17 Pro simulator (iOS 26.5):** the widget appears in the lock screen widget
+picker, its preview renders the real quote from the App Group, and after adding it the quote sits
+under the clock before unlocking — and unlike Android's notification it stays there indefinitely.
+
+**Android's widget** still uses `react-native-android-widget`, which is Android-only; the registration
+(`index.js`) and the Android update call remain platform-guarded.
 
 ---
 

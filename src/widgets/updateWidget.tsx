@@ -5,6 +5,7 @@ import { getQuoteById } from '@/data/quotes';
 import { nativeFeaturesAvailable } from '@/utils/runtime';
 import { setJSON, StorageKeys } from '@/utils/storage';
 import { DriftStopWidget } from './DriftStopWidget';
+import { updateIosWidgetWithQuote } from './updateIosWidget';
 
 /**
  * Uygulama içinden widget'ı belirli bir sözle günceller (ör. kullanıcı yeni söze geçince).
@@ -30,4 +31,12 @@ export async function updateWidgetWithQuote(quoteId: number): Promise<void> {
   } catch {
     // native modül yok (Expo Go) ya da widget yok — sessizce geç
   }
+}
+
+/**
+ * Platformdan bağımsız tek giriş noktası. Home her söz değişiminde bunu çağırır;
+ * hangi platformda hangi widget'ın güncelleneceğini burası bilir.
+ */
+export async function updateWidgets(quoteId: number): Promise<void> {
+  await Promise.all([updateWidgetWithQuote(quoteId), updateIosWidgetWithQuote(quoteId)]);
 }

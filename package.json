@@ -3,6 +3,7 @@
   "main": "index.js",
   "version": "1.0.0",
   "dependencies": {
+    "@bacons/apple-targets": "^5.0.0",
     "@expo-google-fonts/architects-daughter": "^0.4.1",
     "@expo-google-fonts/caveat": "^0.4.2",
     "@expo-google-fonts/kalam": "^0.4.1",

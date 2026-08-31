@@ -27,7 +27,7 @@ import { useTranslation } from '@/i18n/useTranslation';
 import { showInterstitialIfReady } from '@/utils/ads';
 import { shareQuote } from '@/utils/share';
 import { syncLockScreenQuote } from '@/utils/lockScreenQuote';
-import { updateWidgetWithQuote } from '@/widgets/updateWidget';
+import { updateWidgets } from '@/widgets/updateWidget';
 
 export default function HomeScreen() {
   const { colors } = useTheme();
@@ -52,7 +52,7 @@ export default function HomeScreen() {
     opacity.value = withTiming(1, { duration: 250 });
     ty.value = withTiming(0, { duration: 250 });
     if (quote) {
-      void updateWidgetWithQuote(quote.id);
+      void updateWidgets(quote.id);
       // Kilit ekranındaki söz de aynı sözle güncellensin.
       void syncLockScreenQuote(settings.lockScreenEnabled, quote.id);
     }
