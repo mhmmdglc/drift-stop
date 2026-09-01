@@ -8,6 +8,17 @@ The orchestrator writes an entry **when an agent is dispatched** and updates it 
 
 ---
 
+## 2026-09-01
+
+| Time | Agent | Task | Outcome | Evidence |
+|---|---|---|---|---|
+| 21:2x | orchestrator | **iOS 1.2.2 sürümü hazırlandı, gönderim bekliyor** | ASC'de `1.2.2` oluşturuldu, **build 13 bağlandı**, yedi dilde "Yenilikler" metni yazıldı (tr, en-US, en-GB, es-ES, de-DE, fr-FR, it). Sürüm `PREPARE_FOR_SUBMISSION`, `releaseType: AFTER_APPROVAL`. **App Review'a GÖNDERİLMEDİ** — sahibinin onayı bekleniyor | ASC API'den geri okundu: bağlı build 13 VALID |
+| 21:1x | orchestrator | **iOS build 13 yüklendi ve işlendi** | `eas build --local` ile imzalı IPA (37 MB), `altool` ile yüklendi (22 sn). Apple ~3 dk işledi. IPA'nın içi **yüklemeden önce** açıldı: `DriftStopQuote.appex` pakette, App Group entitlement hem uygulamanın hem eklentinin **imzasında**, eklenti `com.apple.widgetkit-extension` olarak kayıtlı, `UIBackgroundModes` yok (2.5.4 nüksetmemiş) | ASC: build 13 `VALID`; teslimat `e50ab1e5-…` |
+| 21:0x | orchestrator | **Apple hesabı: App Group ve profiller** | `group.com.driftstop.app` portal'dan oluşturuldu (ASC API'de `/v1/appGroups` 404) ve **iki bundle id'ye de atandı**. ⚠️ Yeteneği API ile açmak yetmiyor — atama diyaloğundan grup seçilene kadar ikisi de "Enabled App Groups (0)" gösteriyordu. Atama mevcut profilleri geçersizleştirdi; eski `DriftStop App Store` silinip ikisi de API'den yeniden üretildi | Her iki `.mobileprovision` içinde `com.apple.security.application-groups` doğrulandı |
+| 20:5x | orchestrator | **iOS kilit ekranı widget'ı — simülatörde gözle doğrulandı** | WidgetKit eklentisi (`@bacons/apple-targets`), `accessoryRectangular` + `accessoryInline` + `systemSmall/Medium`. iPhone 17 Pro / iOS 26.5: App Group plist'inde uygulamanın gösterdiği söz duruyor, DriftStop kilit ekranı widget seçicisinde, **seçicinin önizlemesi gerçek sözü render ediyor**, eklendikten sonra söz saatin altında kilit açılmadan görünüyor. **Android'in aksine küçülmüyor** | `scratchpad/ios-lock.png` |
+| — | orchestrator | ⚠️ **İki sessiz tuzak** | (1) App Group metni üç yerde geçiyor (Swift, TS, app.json); uyuşmazlarsa `UserDefaults` nil dönüyor, widget yedek sözü gösteriyor, **hiçbir yerde hata çıkmıyor**. (2) `CODE_SIGNING_ALLOWED=NO` entitlements'ı siliyor → simülatör build'inde App Group hiç oluşmuyor ve bu "veri yolu bozuk" gibi görünüyor. Simülatör build'leri ad-hoc imzayla alınmalı | `iosLockScreenWidget.test.ts` üçünün eşleştiğini doğruluyor |
+| — | orchestrator | **`credentials.json` çok hedefli yapıldı** | iOS bölümü artık hedef adına göre anahtarlı (`DriftStop`, `DriftStopQuote`); tek profil şeması ikinci hedefi imzalayamıyor | `841c781` |
+
 ## 2026-08-31
 
 | Time | Agent | Task | Outcome | Evidence |
